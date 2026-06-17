@@ -1,6 +1,6 @@
 ---
 title: 'Formule 1'
-description: 'Lorem ipsum dolor sit amet'
+description: 'The thrill of Formula 1 racing'
 pubDate: 'Jul 08 2022'
 heroImage: '../../assets/blog-placeholder-3.jpg'
 ---
