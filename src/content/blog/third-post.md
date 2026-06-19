@@ -5,4 +5,4 @@ pubDate: 'Jun 19 2026'
 heroImage: '../../assets/blog-placeholder-2.jpg'
 ---
 
-Rien
+Apprenage de la génération d'un site web à l'aide d'un générateur de pages statiques (Astro).
