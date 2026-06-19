@@ -8,6 +8,11 @@ import { defineConfig, fontProviders } from 'astro/config';
 export default defineConfig({
 	site: 'https://example.com',
 	integrations: [mdx(), sitemap()],
+	vite: {
+		ssr: {
+			noExternal: ['@vercel/analytics', '@vercel/speed-insights'],
+		},
+	},
 	fonts: [
 		{
 			provider: fontProviders.local(),
