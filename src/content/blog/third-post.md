@@ -7,4 +7,4 @@ heroImage: '../../assets/blog-placeholder-2.jpg'
 
 Apprenage de la génération d'un site web à l'aide d'un générateur de pages statiques (<a href="https://astro.build/">Astro</a>).
 Utilisation de [GitHub](https://github.com/)
-<img src="/home/arsene/far-flare/src/assets/AO_Porsche_WGI23_10.jpg"/>
+<img src="../../assets/AO_Porsche_WGI23_10.jpg"/>
