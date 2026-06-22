@@ -18,3 +18,5 @@ Au fil des décennies, la Formule 1 a construit une histoire riche, marquée par
 Aujourd’hui, la F1 continue d’évoluer. Les nouvelles réglementations, les enjeux environnementaux, l’amélioration de la sécurité et l’arrivée de nouvelles technologies façonnent l’avenir du championnat. Malgré ces changements, l’essence de la Formule 1 reste la même : repousser les limites de la performance humaine et mécanique dans une quête permanente d’excellence.
 
 Pour les fans, chaque week-end de course est une promesse de spectacle. Entre les qualifications, les stratégies d’équipe, les batailles en piste et l’ambiance unique des circuits, la Formule 1 reste l’un des sports les plus captivants au monde.
+
+![Arsène, ado mais déjà pro du brossage](../../assets/arsene-brossage.webp)
