@@ -2,7 +2,7 @@
 title: 'Formule 1'
 description: 'La passion et l’intensité de la Formule 1'
 pubDate: 'Jul 08 2022'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+heroImage: '../../assets/arsene-portrait.webp'
 ---
 
 La **Formule 1** est bien plus qu’un simple sport automobile : c’est un mélange spectaculaire de vitesse, de stratégie, de technologie et d’émotion. Chaque Grand Prix réunit les meilleurs pilotes du monde, des ingénieurs de pointe et des millions de passionnés qui suivent la saison avec ferveur. Sur chaque circuit, du départ jusqu’au drapeau à damier, tout se joue à la milliseconde.
