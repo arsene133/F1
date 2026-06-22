@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(node *)",
+      "Bash(npm install *)",
+      "Bash(jobs -l)",
+      "Bash(curl -s http://localhost:4321)",
+      "Bash(pkill -f \"astro dev\")",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(git config *)",
+      "Read(//Users/olivier.carrere/.ssh/**)",
+      "Bash(ssh -T git@github.com)",
+      "Bash(curl -s https://api.github.com/repos/arsene133/F1/collaborators)",
+      "Bash(curl -s https://api.github.com/repos/arsene133/F1/contributors)",
+      "Bash(gh auth *)",
+      "Bash(gh api *)",
+      "Bash(GIT_SSH_COMMAND=\"gh ssh\" git push origin main)",
+      "Bash(git remote *)",
+      "Bash(git checkout *)",
+      "Bash(git merge *)",
+      "Bash(xargs -I{} sh -c 'echo \"=== {} ===\"; cat {}')",
+      "Bash(ssh -i ~/.ssh/id_ed25519oca -o IdentitiesOnly=yes -T git@github.com)",
+      "Bash(ssh -i ~/.ssh/olivier.pub -o IdentitiesOnly=yes -T git@github.com)",
+      "Bash(ssh -i ~/.ssh/olivier -o IdentitiesOnly=yes -T git@github.com)",
+      "Bash(npm i *)",
+      "Bash(npm show *)"
+    ]
+  }
+}
