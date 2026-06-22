@@ -2,7 +2,7 @@
 title: 'Késkejéfé ?'
 description: "Pourquoi j'ai lancé ce blog et ce que vous allez y trouver"
 pubDate: 'Jun 19 2026'
-heroImage: '../../assets/blog-placeholder-2.jpg'
+heroImage: '../../assets/arsene-portrait.webp'
 ---
 
 Bonne question. Je me la suis posée moi-même avant de commencer.

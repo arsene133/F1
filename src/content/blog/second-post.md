@@ -2,7 +2,7 @@
 title: 'Ma première vraie sortie en montagne'
 description: "Le jour où j'ai compris que le vélo c'est autant dans la tête que dans les jambes"
 pubDate: 'Jul 15 2022'
-heroImage: '../../assets/blog-placeholder-4.jpg'
+heroImage: '../../assets/arsene-velo.webp'
 ---
 
 Ce matin-là, le réveil a sonné à 6h. Dehors il faisait encore frais, la lumière était grise, et honnêtement j'avais pas du tout envie de sortir du lit. Mais j'avais promis à mon copain Théo qu'on ferait la montée ensemble, alors j'ai enfilé mon cuissard et je suis sorti.

@@ -2,7 +2,7 @@
 title: 'Mon Grand Prix préféré de tous les temps'
 description: "Le GP qui m'a le plus marqué et pourquoi je le revois encore dans ma tête"
 pubDate: 'Jun 19 2024'
-heroImage: '../../assets/blog-placeholder-1.jpg'
+heroImage: '../../assets/arsene-portrait.webp'
 ---
 
 Si je devais choisir un seul Grand Prix à montrer à quelqu'un pour lui expliquer pourquoi j'aime la F1, ce serait Monaco 2021. Sans hésiter.

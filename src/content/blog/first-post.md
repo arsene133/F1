@@ -2,7 +2,7 @@
 title: "Pourquoi la F1, c'est ma vie"
 description: "Mon histoire avec la Formule 1, la passion d'un ado accro aux Grands Prix"
 pubDate: 'Jul 08 2022'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+heroImage: '../../assets/arsene-portrait.webp'
 ---
 
 Je me souviens exactement du moment où je suis tombé amoureux de la F1. J'avais 10 ans, mon père regardait le GP de Monaco sur la télé du salon, et j'ai vu une monoplace frôler les glissières à 280 km/h dans le tunnel. Depuis ce jour, je n'ai plus décroché.
