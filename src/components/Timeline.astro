@@ -583,10 +583,6 @@ const clientData = {
 						visible = item.type === 'literature';
 					} else if (filterId === 'history') {
 						visible = item.type !== 'literature' && item.type !== 'industry' && item.type !== 'science' && item.type !== 'painting' && item.type !== 'music';
-					} else if (filterId === 'regimes') {
-						visible = item.type === 'political-regime';
-					} else if (filterId === 'revolutions-wars') {
-						visible = item.type === 'revolution' || item.type === 'war';
 					} else if (filterId === 'industry') {
 						visible = item.type === 'industry';
 					} else if (filterId === 'science') {
@@ -605,7 +601,7 @@ const clientData = {
 					const banner = document.getElementById(`period-banner-${p.id}`);
 					if (!banner) return;
 					let visible = true;
-					if (filterId === 'literature' || filterId === 'industry' || filterId === 'science' || filterId === 'painting' || filterId === 'music' || filterId === 'revolutions-wars') {
+					if (filterId === 'literature' || filterId === 'industry' || filterId === 'science' || filterId === 'painting' || filterId === 'music') {
 						visible = false;
 					}
 					banner.classList.toggle('timeline-step-dimmed', !visible);
