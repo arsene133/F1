@@ -271,7 +271,10 @@ const canvasStyle = [
 				{rels.map((r) => (
 					<li>
 						<strong>{relTitle(r)}</strong> — <em>{r.label}</em>
-						{edgeTypes[r.type]?.legend && <span class="rm-index-type"> ({edgeTypes[r.type].legend.toLowerCase()})</span>}
+						{(() => {
+							const legend = r.type ? edgeTypes[r.type]?.legend : undefined;
+							return legend ? <span class="rm-index-type"> ({legend.toLowerCase()})</span> : null;
+						})()}
 						<br />
 						{r.description}
 					</li>

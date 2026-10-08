@@ -32,6 +32,7 @@ export interface TimelineImageCredit {
 	fileUrl?: string;
 	author?: string;
 	license: string;
+	licenseUrl?: string;
 	attributionRequired: boolean;
 	attribution?: string;
 	description?: string;
