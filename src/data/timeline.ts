@@ -168,6 +168,17 @@ const balzacZolaComparison: TimelineModelComparison = {
 	note: 'Une évolution des modèles explicatifs du personnage, non une filiation scientifique : Zola revendique une démarche nouvelle, plus physiologique et naturaliste, tout en héritant d’une tradition d’observation sociale dont Balzac constitue une figure majeure.',
 };
 
+const threeModelsComparison: TimelineModelComparison = {
+	heading: 'Trois modèles de compréhension du personnage',
+	relationLabel: 'Deux manières d’expliquer les comportements',
+	lines: [
+		{ author: 'Musset', formula: 'passions · croyances · psychologie' },
+		{ author: 'Balzac', formula: 'position sociale · volonté · milieu' },
+		{ author: 'Zola', formula: 'hérédité · tempérament · milieu' },
+	],
+	note: 'Trois focales, non une évolution linéaire : Musset n’est pas une étape « avant » Balzac et Zola, il propose une autre manière de représenter le comportement humain. Musset : le personnage agit depuis ses passions et ses croyances. Balzac : il agit dans un espace social mouvant. Zola : il est étudié à travers l’hérédité, le tempérament et le milieu.',
+};
+
 export const TIMELINE_START_YEAR = 1765;
 export const TIMELINE_END_YEAR = 1890;
 
@@ -348,14 +359,44 @@ export const timelineItems: TimelineItem[] = [
 		author: 'Alfred de Musset',
 		authorDates: '1810–1857',
 		tagLabel: 'Théâtre · proverbe dramatique',
-		description: "Proverbe dramatique où l'amour se heurte à l'orgueil, à la méfiance et au jeu de la séduction. Publié pour la première fois dans la Revue des Deux Mondes en 1834.",
+		description: "Proverbe dramatique où l'amour se heurte à l'orgueil, à la méfiance et au jeu de la séduction. Publié pour la première fois dans la Revue des Deux Mondes en 1834. Camille et Perdican y sont moins expliqués par des déterminismes sociaux ou scientifiques que par le conflit entre désir, peur de souffrir et représentations de l’amour.",
 		historicalContext: "Composée sous la Monarchie de Juillet après l’échec sentimental de Venise avec George Sand, la pièce traduit le désenchantement d’une jeunesse romantique née des cendres de l’Empire, privée d'idéal héroïque dans une société dominée par l’utilité et la raison bourgeoise.",
 		periodId: 'monarchie-juillet',
-		relatedTo: ['monarchie-juillet', 'revolution-juillet-1830', 'pere-goriot'],
+		relatedTo: ['monarchie-juillet', 'revolution-juillet-1830', 'pere-goriot', 'pot-bouille'],
+		relatedLinks: [
+			{ id: 'pere-goriot', label: 'Deux manières d’expliquer les comportements : Balzac, Le Père Goriot (1835)' },
+			{ id: 'pot-bouille', label: 'Trois modèles de compréhension du personnage : Zola, Pot-Bouille (1882)' },
+		],
 		quote: '« On est souvent trompé en amour, souvent blessé et souvent malheureux ; mais on aime, et quand on est sur le bord de sa tombe, on se retourne pour regarder en arrière, et on se dit : j’ai souffert souvent, je me suis trompé quelquefois, mais j’ai aimé. »',
 		importance: 'major',
 		image: literatureImages.onNeBadinePas,
 		secondaryImage: literatureImages.musset,
+		characterModel: {
+			author: 'Musset',
+			heading: 'Passions + croyances',
+			synthesis: 'Le personnage comme être passionnel, façonné par ses croyances et son éducation.',
+			question: 'Quel conflit oppose, chez ce personnage, le désir, l’orgueil, la peur de souffrir et les croyances qu’il a intériorisées ?',
+			factors: ['passions', 'orgueil', 'croyances'],
+			steps: ['conflit intérieur'],
+			outcome: 'comportement',
+			explanation: 'Musset explore le comportement de ses personnages à travers leurs passions, leur orgueil, leurs croyances et leurs blessures intérieures. La société et l’éducation ne sont pas absentes : elles façonnent ces dispositions, et Musset montre comment des croyances acquises deviennent des forces psychologiques. Il ne cherche pas pour autant à établir une loi générale du comportement humain : contrairement au naturalisme de Zola, son théâtre ne repose pas sur un modèle scientifique de l’hérédité et des milieux.',
+			source: {
+				label: 'On ne badine pas avec l’amour, acte II, scène 5 (Camille)',
+				quote: '« Je veux aimer, mais je ne veux pas souffrir ; je veux aimer d’un amour éternel, et faire des serments qui ne se violent pas. »',
+			},
+			example: {
+				title: 'Camille : désir + croyances acquises au couvent',
+				text: 'Son éducation au couvent lui a transmis une représentation méfiante et douloureuse de l’amour, nourrie des récits des religieuses trahies, qui entre en conflit avec son désir. Il ne s’agit pas d’un déterminisme au sens naturaliste, mais d’une formation psychologique et culturelle qui pèse sur ses décisions.',
+			},
+			context: [
+				'Jeunesse romantique et « mal du siècle »',
+				'Éducation religieuse des jeunes filles',
+				'Tradition moraliste de l’analyse des passions',
+				'Théâtre écrit pour la lecture plutôt que pour la scène',
+			],
+			nuance: 'Musset ne rejette pas la science : il ne fait simplement pas de l’explication scientifique du comportement le principe organisateur de son œuvre.',
+			comparison: { ...threeModelsComparison, targetId: 'pere-goriot' },
+		},
 	},
 
 	// 1835 - Le Père Goriot (Honoré de Balzac)
@@ -374,6 +415,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'monarchie-juillet',
 		relatedTo: ['monarchie-juillet', 'revolution-juillet-1830', 'on-ne-badine-pas', 'pot-bouille'],
 		relatedLinks: [
+			{ id: 'on-ne-badine-pas', label: 'Deux manières d’expliquer les comportements : Musset, On ne badine pas avec l’amour (1834)' },
 			{ id: 'pot-bouille', label: 'De la volonté et de la position sociale à l’hérédité et au milieu : Zola, Pot-Bouille (1882)' },
 		],
 		quote: '« À nous deux maintenant ! » — Défi final de Rastignac lancé à Paris du haut du Père-Lachaise.',
