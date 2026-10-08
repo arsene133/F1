@@ -22,6 +22,7 @@ const nodes = [
 			"Fait de Paris un théâtre social",
 		],
 		// Coordonnées relatives sur le canvas (x, y) dans l'espace 900 x 520
+		href: "#node-balzac",
 		x: 450,
 		y: 80,
 	},
@@ -39,6 +40,7 @@ const nodes = [
 			"S’adapte au système pour réussir",
 			"Incarnation de la conquête sociale",
 		],
+		href: "#node-rastignac",
 		x: 710,
 		y: 220,
 	},
@@ -55,6 +57,7 @@ const nodes = [
 			"Théorise la lutte des classes",
 			"Montre comment la richesse produit l’exploitation",
 		],
+		href: "#node-marx",
 		x: 190,
 		y: 220,
 	},
@@ -72,6 +75,7 @@ const nodes = [
 			"Expérimentation d’une autre société",
 			"Répression sanglante",
 		],
+		href: "#node-commune",
 		x: 630,
 		y: 440,
 	},
@@ -89,6 +93,7 @@ const nodes = [
 			"Transforme la révolte sociale en langage poétique",
 			"Refuse le monde et ses règles",
 		],
+		href: "#node-rimbaud",
 		x: 270,
 		y: 440,
 	},
@@ -261,12 +266,14 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 										);
 
 										return (
-											<li class="map-node-item">
-												<button
-													type="button"
+											<li class="map-node-item" id={node.id}>
+												<a
+													href={node.href}
+													id={`node-${node.id}`}
 													class={`map-node-btn node-${node.id}`}
 													aria-pressed="false"
 													data-node-id={node.id}
+													data-href={node.href}
 													data-label={node.label}
 													data-dates={node.dates}
 													data-role={node.role}
@@ -282,7 +289,7 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 														<strong class="node-title">{node.label}</strong>
 														<span class="node-meta">{node.dates} · {node.posture}</span>
 													</span>
-												</button>
+												</a>
 											</li>
 										);
 									})}
@@ -523,18 +530,32 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 				function clearSelection() {
 					const prev = selectedNode;
 					setSelectedNode(null);
+					if (window.location.hash) {
+						history.replaceState(null, '', window.location.pathname + window.location.search);
+					}
 					if (prev) {
 						prev.focus();
 					}
 				}
 
-				// Événements boutons
+				// Événements boutons / liens
 				for (const btn of nodeButtons) {
 					btn.addEventListener('click', function () {
 						if (selectedNode === btn) {
 							clearSelection();
 						} else {
 							setSelectedNode(btn);
+						}
+					});
+
+					btn.addEventListener('keydown', function (e) {
+						if (e.key === ' ' || e.key === 'Spacebar') {
+							e.preventDefault();
+							if (selectedNode === btn) {
+								clearSelection();
+							} else {
+								btn.click();
+							}
 						}
 					});
 
@@ -558,6 +579,22 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 				if (resetBtn) {
 					resetBtn.addEventListener('click', clearSelection);
 				}
+
+				// Synchronisation avec l'ancre URL
+				function syncFromHash() {
+					const hash = window.location.hash;
+					if (hash) {
+						const match = nodeButtons.find(
+							b => b.getAttribute('href') === hash || `#${b.id}` === hash || `#${b.dataset.nodeId}` === hash
+						);
+						if (match && match !== selectedNode) {
+							setSelectedNode(match);
+						}
+					}
+				}
+
+				syncFromHash();
+				window.addEventListener('hashchange', syncFromHash);
 
 				// Fermeture par Échap
 				mapEl.addEventListener('keydown', function (e) {
@@ -791,6 +828,7 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 		cursor: pointer;
 		font: inherit;
 		color: var(--map-ink);
+		text-decoration: none;
 		text-align: left;
 		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 		transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease;
@@ -801,6 +839,7 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 		transform: translate(-50%, -50%) translateY(-2px);
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 		border-color: var(--map-accent);
+		text-decoration: none;
 	}
 
 	.map-node-btn:focus-visible {
