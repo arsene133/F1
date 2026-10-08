@@ -164,6 +164,26 @@ export const paintingImages = {
 		},
 	},
 
+	monetMeule: {
+		src: `${DIR}/monet-meule-soleil-couchant-1891.jpg`,
+		srcset: `${DIR}/monet-meule-soleil-couchant-1891-480.webp 480w, ${DIR}/monet-meule-soleil-couchant-1891-960.webp 960w`,
+		width: 1600,
+		height: 1259,
+		fit: 'contain',
+		alt: 'Meule, soleil couchant par Claude Monet, 1891 : une meule de blé embrasée de rouge et d’orangé se détache sur un ciel jaune et rose au soleil couchant, au-dessus d’une campagne noyée de lumière',
+		caption: 'Claude Monet, Meule, soleil couchant (1891), Museum of Fine Arts, Boston',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Claude_Monet_-_Graystaks_I.JPG',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/d6/Claude_Monet_-_Graystaks_I.JPG',
+			author: 'Claude Monet',
+			license: 'Domaine public',
+			attributionRequired: false,
+			attribution: 'Claude Monet, Meule, soleil couchant, 1891',
+			description: 'Huile sur toile (Wildenstein 1289), Museum of Fine Arts, Boston, Juliana Cheney Edwards Collection. Série des Meules (1890–1891), postérieure à l’exposition de 1874 (PD-Art, PD-old).',
+		},
+	},
+
 	expositionImpressionniste: {
 		src: `${DIR}/premiere-exposition-impressionniste-1874.jpg`,
 		srcset: `${DIR}/premiere-exposition-impressionniste-1874-480.webp 480w, ${DIR}/premiere-exposition-impressionniste-1874-960.webp 960w`,

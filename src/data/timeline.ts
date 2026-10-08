@@ -1281,7 +1281,8 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'troisieme-republique',
 		relatedTo: ['painting-monet-impression', 'music-bizet-carmen', 'proclamation-troisieme-republique'],
 		importance: 'standard',
-		image: paintingImages.expositionImpressionniste,
+		image: paintingImages.monetMeule,
+		secondaryImage: paintingImages.expositionImpressionniste,
 	},
 
 	// --------------------------------------------------------------------------
