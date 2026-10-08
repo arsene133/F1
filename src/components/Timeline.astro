@@ -66,17 +66,38 @@ const majorSciencePointIds = new Set([
 	'james-clerk-maxwell',
 ]);
 
+// Identifier les jalons majeurs de peinture (visuellement proéminents)
+const majorPaintingPointIds = new Set([
+	'painting-delacroix-liberte',
+	'painting-gericault-radeau-meduse',
+	'painting-courbet-enterrement-ornans',
+	'painting-manet-dejeuner',
+	'painting-monet-impression',
+]);
+
+// Identifier les jalons majeurs de musique (visuellement proéminents)
+const majorMusicPointIds = new Set([
+	'music-beethoven-symphonie-9',
+	'music-berlioz-symphonie-fantastique',
+	'music-wagner-tristan',
+]);
+
 // Détermination de l'alternance gauche / droite pour le bureau
-// Les œuvres littéraires et les tournants majeurs s'alternent harmonieusement
+// Les œuvres et les tournants majeurs s'alternent harmonieusement
 let sideToggle = 0;
 const enrichedItems = sortedTimelineItems.map((item) => {
 	const isLiterature = item.type === 'literature';
 	const isIndustry = item.type === 'industry';
 	const isScience = item.type === 'science';
+	const isPainting = item.type === 'painting';
+	const isMusic = item.type === 'music';
+	const isArtisticEvent = item.id === 'painting-exposition-impressionniste-1874';
 	const isGalois = item.id === 'e-galois';
 	const isMajorTurningPoint = majorTurningPointIds.has(item.id);
 	const isMajorIndustryPoint = majorIndustryPointIds.has(item.id);
 	const isMajorSciencePoint = majorSciencePointIds.has(item.id);
+	const isMajorPaintingPoint = majorPaintingPointIds.has(item.id);
+	const isMajorMusicPoint = majorMusicPointIds.has(item.id);
 	const period = periodsMap.get(item.periodId);
 
 	// Alternance gauche/droite
@@ -89,10 +110,15 @@ const enrichedItems = sortedTimelineItems.map((item) => {
 		isLiterature,
 		isIndustry,
 		isScience,
+		isPainting,
+		isMusic,
+		isArtisticEvent,
 		isGalois,
 		isMajorTurningPoint,
 		isMajorIndustryPoint,
 		isMajorSciencePoint,
+		isMajorPaintingPoint,
+		isMajorMusicPoint,
 		periodTitle: period ? period.title : '',
 		periodDates: period ? period.displayDates : '',
 	};
@@ -175,7 +201,7 @@ const clientData = {
 							)}
 
 							<li
-								class={`timeline-step ${item.alignment} ${item.isLiterature ? 'is-literature' : ''} ${item.isIndustry ? 'is-industry' : ''} ${item.isScience ? 'is-science' : ''} ${item.isGalois ? 'is-galois featured' : ''} ${item.isMajorTurningPoint ? 'major-turning-point' : ''} ${item.isMajorIndustryPoint ? 'major-industry-point' : ''} ${item.isMajorSciencePoint ? 'major-science-point' : ''}`}
+								class={`timeline-step ${item.alignment} ${item.isLiterature ? 'is-literature' : ''} ${item.isIndustry ? 'is-industry' : ''} ${item.isScience ? 'is-science' : ''} ${item.isPainting ? 'is-painting' : ''} ${item.isMusic ? 'is-music' : ''} ${item.isArtisticEvent ? 'is-artistic-event' : ''} ${item.isGalois ? 'is-galois featured' : ''} ${item.isMajorTurningPoint ? 'major-turning-point' : ''} ${item.isMajorIndustryPoint ? 'major-industry-point' : ''} ${item.isMajorSciencePoint ? 'major-science-point' : ''} ${item.isMajorPaintingPoint ? 'major-painting-point' : ''} ${item.isMajorMusicPoint ? 'major-music-point' : ''}`}
 								id={`step-${item.id}`}
 								data-item-id={item.id}
 								data-item-type={item.type}
@@ -207,11 +233,11 @@ const clientData = {
 											{item.datePrecise ?? item.year}
 										</time>
 										<span class="entry-type-badge">
-											{item.isLiterature ? (item.tagLabel?.split('·')[0].trim() || 'Littérature') : item.type === 'science' ? 'Sciences' : item.type === 'industry' ? 'Industrie' : item.type === 'revolution' ? 'Révolution' : item.type === 'war' ? 'Guerre' : 'Histoire'}
+											{item.isLiterature ? (item.tagLabel?.split('·')[0].trim() || 'Littérature') : item.type === 'science' ? 'Sciences' : item.type === 'industry' ? 'Industrie' : item.type === 'painting' ? 'Peinture' : item.type === 'music' ? 'Musique' : item.type === 'revolution' ? 'Révolution' : item.type === 'war' ? 'Guerre' : 'Histoire'}
 										</span>
 									</div>
 
-									{item.isScience && item.image && (
+									{item.image && (item.isScience || item.isPainting || item.isMusic) && (
 										<span
 											class={`entry-thumb fit-${item.image.fit ?? 'cover'} ${item.image.width && item.image.height && item.image.height > item.image.width * 1.2 ? 'entry-thumb--portrait' : ''}`}
 											aria-hidden="true"
@@ -285,6 +311,14 @@ const clientData = {
 		<div class="legend-item">
 			<span class="legend-indicator dot" style="background: var(--tl-surface); border-color: var(--tl-sci-color); border-width: 2.5px;"></span>
 			<span>Jalon scientifique (physique, biologie, chimie, mathématiques)</span>
+		</div>
+		<div class="legend-item">
+			<span class="legend-indicator dot" style="background: var(--tl-surface); border-color: var(--tl-paint-color); border-width: 2.5px;"></span>
+			<span>Jalon de peinture (David, Géricault, Delacroix, Courbet, Manet, Monet)</span>
+		</div>
+		<div class="legend-item">
+			<span class="legend-indicator dot" style="background: var(--tl-surface); border-color: var(--tl-music-color); border-width: 2.5px;"></span>
+			<span>Jalon de musique (Beethoven, Berlioz, Chopin, Offenbach, Wagner, Bizet)</span>
 		</div>
 		<div class="legend-item">
 			<span class="legend-indicator dot" style="background: var(--tl-galois-bg); border-color: var(--tl-galois-accent); border-width: 3px;"></span>
@@ -407,8 +441,8 @@ const clientData = {
 
 				const period = periodsMap.get(item.periodId);
 				const periodTitle = period ? period.title : '';
-				const tagClass = item.id === 'e-galois' ? 'galois' : item.type === 'literature' ? 'lit' : item.type === 'science' ? 'sci' : item.type === 'industry' ? 'ind' : item.type === 'revolution' ? 'rev' : item.type === 'war' ? 'war' : 'hist';
-				const typeHumanLabel = item.id === 'e-galois' ? 'Sciences · Mathématiques d’exception' : item.type === 'literature' ? (item.tagLabel || 'Littérature') : item.type === 'science' ? (item.tagLabel || 'Sciences') : item.type === 'industry' ? (item.tagLabel || 'Industrie') : item.type === 'revolution' ? 'Révolution' : item.type === 'war' ? 'Guerre' : 'Régime politique';
+				const tagClass = item.id === 'e-galois' ? 'galois' : item.type === 'literature' ? 'lit' : item.type === 'science' ? 'sci' : item.type === 'industry' ? 'ind' : item.type === 'painting' ? 'paint' : item.type === 'music' ? 'music' : item.type === 'revolution' ? 'rev' : item.type === 'war' ? 'war' : 'hist';
+				const typeHumanLabel = item.id === 'e-galois' ? 'Sciences · Mathématiques d’exception' : item.type === 'literature' ? (item.tagLabel || 'Littérature') : item.type === 'science' ? (item.tagLabel || 'Sciences') : item.type === 'industry' ? (item.tagLabel || 'Industrie') : item.type === 'painting' ? (item.tagLabel || 'Peinture') : item.type === 'music' ? (item.tagLabel || 'Musique') : item.type === 'revolution' ? 'Révolution' : item.type === 'war' ? 'Guerre' : 'Régime politique';
 
 				// Repères et liens associés
 				const relatedButtons = item.relatedTo
@@ -548,11 +582,19 @@ const clientData = {
 					if (filterId === 'literature') {
 						visible = item.type === 'literature';
 					} else if (filterId === 'history') {
-						visible = item.type !== 'literature' && item.type !== 'industry' && item.type !== 'science';
+						visible = item.type !== 'literature' && item.type !== 'industry' && item.type !== 'science' && item.type !== 'painting' && item.type !== 'music';
+					} else if (filterId === 'regimes') {
+						visible = item.type === 'political-regime';
+					} else if (filterId === 'revolutions-wars') {
+						visible = item.type === 'revolution' || item.type === 'war';
 					} else if (filterId === 'industry') {
 						visible = item.type === 'industry';
 					} else if (filterId === 'science') {
 						visible = item.type === 'science';
+					} else if (filterId === 'painting') {
+						visible = item.type === 'painting';
+					} else if (filterId === 'music') {
+						visible = item.type === 'music';
 					}
 
 					stepEl.classList.toggle('timeline-step-dimmed', !visible);
@@ -563,7 +605,7 @@ const clientData = {
 					const banner = document.getElementById(`period-banner-${p.id}`);
 					if (!banner) return;
 					let visible = true;
-					if (filterId === 'literature' || filterId === 'industry' || filterId === 'science') {
+					if (filterId === 'literature' || filterId === 'industry' || filterId === 'science' || filterId === 'painting' || filterId === 'music' || filterId === 'revolutions-wars') {
 						visible = false;
 					}
 					banner.classList.toggle('timeline-step-dimmed', !visible);

@@ -42,6 +42,14 @@
 	--tl-sci-bg: rgba(59, 90, 128, 0.06);
 	--tl-sci-border: #a4bad2;
 
+	--tl-paint-color: #8c5327;      /* Ocre de Sienne / terre d'artiste */
+	--tl-paint-bg: rgba(140, 83, 39, 0.06);
+	--tl-paint-border: #d4b59b;
+
+	--tl-music-color: #5c3c75;      /* Violet pourpre lyrique / velours d'opéra */
+	--tl-music-bg: rgba(92, 60, 117, 0.06);
+	--tl-music-border: #baa0cc;
+
 	--tl-galois-accent: #694382;    /* Pourpre mathématique subtil pour Évariste Galois */
 	--tl-galois-bg: #faf7fc;
 	--tl-galois-border: #c8b6d8;
@@ -315,6 +323,38 @@
 	background: var(--tl-sci-bg);
 }
 
+.timeline-step.is-painting .spine-marker-dot {
+	width: 11px;
+	height: 11px;
+	border-width: 2.5px;
+	border-color: var(--tl-paint-color);
+	background: var(--tl-surface);
+}
+
+.timeline-step.is-painting.major-painting-point .spine-marker-dot {
+	width: 13px;
+	height: 13px;
+	border-width: 3px;
+	border-color: var(--tl-paint-color);
+	background: var(--tl-paint-bg);
+}
+
+.timeline-step.is-music .spine-marker-dot {
+	width: 11px;
+	height: 11px;
+	border-width: 2.5px;
+	border-color: var(--tl-music-color);
+	background: var(--tl-surface);
+}
+
+.timeline-step.is-music.major-music-point .spine-marker-dot {
+	width: 13px;
+	height: 13px;
+	border-width: 3px;
+	border-color: var(--tl-music-color);
+	background: var(--tl-music-bg);
+}
+
 .timeline-step.is-galois .spine-marker-dot {
 	width: 14px;
 	height: 14px;
@@ -535,7 +575,57 @@
 	font-weight: 700;
 }
 
-/* Vignette documentaire des jalons scientifiques (hauteur fixe : aucun décalage de mise en page) */
+/* HIERARCHIE PEINTURE : JALONS ARTISTIQUES */
+.timeline-step.is-painting .timeline-entry-button {
+	border-left: 3px solid var(--tl-paint-color);
+}
+
+.timeline-step.is-painting.major-painting-point .timeline-entry-button {
+	border-left: 4px solid var(--tl-paint-color);
+	background: #fdfbfa;
+	box-shadow: 0 2px 10px rgba(140, 83, 39, 0.08);
+}
+
+.timeline-step.is-painting .entry-type-badge {
+	background: var(--tl-paint-bg);
+	color: var(--tl-paint-color);
+	border: 1px solid rgba(140, 83, 39, 0.22);
+}
+
+.timeline-step.is-painting .entry-year-time {
+	color: var(--tl-paint-color);
+	font-weight: 700;
+}
+
+/* Cas particulier : Événement artistique (Première exposition impressionniste 1874) */
+.timeline-step.is-artistic-event .timeline-entry-button {
+	border-left-style: dashed;
+	background: #faf8f5;
+}
+
+/* HIERARCHIE MUSIQUE : JALONS MUSICAUX */
+.timeline-step.is-music .timeline-entry-button {
+	border-left: 3px solid var(--tl-music-color);
+}
+
+.timeline-step.is-music.major-music-point .timeline-entry-button {
+	border-left: 4px solid var(--tl-music-color);
+	background: #faf8fc;
+	box-shadow: 0 2px 10px rgba(92, 60, 117, 0.08);
+}
+
+.timeline-step.is-music .entry-type-badge {
+	background: var(--tl-music-bg);
+	color: var(--tl-music-color);
+	border: 1px solid rgba(92, 60, 117, 0.22);
+}
+
+.timeline-step.is-music .entry-year-time {
+	color: var(--tl-music-color);
+	font-weight: 700;
+}
+
+/* Vignette documentaire des jalons artistiques et scientifiques (hauteur fixe : aucun décalage de mise en page) */
 .entry-thumb {
 	display: block;
 	height: 104px;
@@ -710,6 +800,18 @@
 	background: var(--tl-sci-bg);
 	color: var(--tl-sci-color);
 	border: 1px solid var(--tl-sci-border);
+}
+
+.details-category-tag.paint {
+	background: var(--tl-paint-bg);
+	color: var(--tl-paint-color);
+	border: 1px solid var(--tl-paint-border);
+}
+
+.details-category-tag.music {
+	background: var(--tl-music-bg);
+	color: var(--tl-music-color);
+	border: 1px solid var(--tl-music-border);
 }
 
 .details-category-tag.galois {

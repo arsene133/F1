@@ -1,11 +1,15 @@
 import { scienceImages } from './science-images';
+import { paintingImages } from './painting-images';
+import { musicImages } from './music-images';
 
-export type TimelineItemType = 'history' | 'political-regime' | 'revolution' | 'war' | 'literature' | 'industry' | 'science';
+export type TimelineItemType = 'history' | 'political-regime' | 'revolution' | 'war' | 'literature' | 'industry' | 'science' | 'painting' | 'music';
 
 export type LiteratureCategory = 'novel' | 'theatre' | 'poetry';
 export type HistoryCategory = 'revolution' | 'regime' | 'war' | 'event' | 'uprising' | 'coup';
 export type IndustryCategory = 'energy' | 'railways' | 'industrial-culture' | 'steel' | 'electricity' | 'internal-combustion';
 export type ScienceCategory = 'physics' | 'biology' | 'thermodynamics' | 'electromagnetism' | 'mathematics' | 'chemistry';
+export type PaintingCategory = 'history-painting' | 'romanticism' | 'realism' | 'modernity' | 'impressionism' | 'artistic-movement';
+export type MusicCategory = 'symphony' | 'piano' | 'operetta' | 'opera' | 'musical-drama';
 
 export interface TimelinePeriod {
 	id: string;
@@ -48,12 +52,13 @@ export interface TimelineItem {
 	endYear?: number;
 	datePrecise?: string;
 	type: TimelineItemType;
-	category: LiteratureCategory | HistoryCategory | IndustryCategory | ScienceCategory;
+	category: LiteratureCategory | HistoryCategory | IndustryCategory | ScienceCategory | PaintingCategory | MusicCategory;
 	subCategory?: string;
 	title: string;
 	subtitle?: string;
 	author?: string;
 	authorDates?: string;
+	dateType?: 'premiere' | 'composition' | 'publication' | 'exhibition';
 	tagLabel?: string;
 	description: string;
 	historicalContext: string;
@@ -808,5 +813,387 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['michael-faraday'],
 		importance: 'major',
 		image: scienceImages.maxwell,
+	},
+
+	// --------------------------------------------------------------------------
+	// JALONS DE PEINTURE (Catégorie Peinture)
+	// --------------------------------------------------------------------------
+
+	// 1. 1789 — Jacques-Louis David : Le Serment du Jeu de paume
+	{
+		id: 'painting-david-serment-jeu-paume',
+		year: 1789,
+		datePrecise: '1789 (dessin 1791)',
+		type: 'painting',
+		category: 'history-painting',
+		subCategory: 'revolutionary-painting',
+		title: 'Le Serment du Jeu de paume',
+		subtitle: '1789 · Jacques-Louis David',
+		author: 'Jacques-Louis David',
+		authorDates: '1748–1825',
+		dateType: 'composition',
+		tagLabel: 'Peinture · Peinture d’histoire',
+		description: 'Le moment politique révolutionnaire entre dans la peinture d’histoire monumentale : David transforme l’événement politique contemporain en une puissante image civique et collective.',
+		historicalContext: 'Contexte historique : Révolution française. En représentant le serment du 20 juin 1789, David rompt avec l’hagiographie royale et invente une peinture d’histoire civique où la souveraineté émane de la nation assemblée.',
+		periodId: 'revolution-francaise-regime',
+		relatedTo: ['revolution-francaise', 'painting-david-mort-marat'],
+		importance: 'standard',
+		image: paintingImages.davidSerment,
+	},
+
+	// 2. 1793 — Jacques-Louis David : La Mort de Marat
+	{
+		id: 'painting-david-mort-marat',
+		year: 1793,
+		datePrecise: '1793',
+		type: 'painting',
+		category: 'history-painting',
+		subCategory: 'political-martyr',
+		title: 'La Mort de Marat',
+		subtitle: '1793 · Jacques-Louis David',
+		author: 'Jacques-Louis David',
+		authorDates: '1748–1825',
+		dateType: 'composition',
+		tagLabel: 'Peinture · Image politique',
+		description: 'L’une des images les plus saisissantes de la Révolution française : David métamorphose un chef de file révolutionnaire assassiné en martyr politique républicain.',
+		historicalContext: 'Contexte historique : violence politique révolutionnaire et Terreur (1793). David mobilise une composition sobre inspirée de la piéta chrétienne pour sacraliser l’engagement civique de la République jacobine.',
+		periodId: 'revolution-francaise-regime',
+		relatedTo: ['revolution-francaise', 'painting-david-serment-jeu-paume'],
+		importance: 'standard',
+		image: paintingImages.davidMarat,
+	},
+
+	// 3. 1819 — Théodore Géricault : Le Radeau de la Méduse
+	{
+		id: 'painting-gericault-radeau-meduse',
+		year: 1819,
+		datePrecise: '1819',
+		type: 'painting',
+		category: 'romanticism',
+		subCategory: 'romanticism',
+		title: 'Le Radeau de la Méduse',
+		subtitle: '1819 · Théodore Géricault',
+		author: 'Théodore Géricault',
+		authorDates: '1791–1824',
+		dateType: 'composition',
+		tagLabel: 'Peinture · Romantisme',
+		description: 'Traitement romantique monumental d’une tragédie maritime contemporaine. Géricault substitue aux héros classiques la souffrance collective, l’abandon politique et la réalité brute.',
+		historicalContext: 'Contexte historique : Restauration et France post-napoléonienne. Le naufrage de la frégate La Méduse en 1816, imputé à l’incompétence d’un capitaine royaliste d’Ancien Régime, devient un violent réquisitoire contre l’État restauré.',
+		periodId: 'restauration',
+		relatedTo: ['restauration-event', 'painting-delacroix-liberte', 'music-beethoven-symphonie-9'],
+		importance: 'major',
+		image: paintingImages.gericaultMeduse,
+	},
+
+	// 4. 1830 — Eugène Delacroix : La Liberté guidant le peuple
+	{
+		id: 'painting-delacroix-liberte',
+		year: 1830,
+		datePrecise: '1830',
+		type: 'painting',
+		category: 'romanticism',
+		subCategory: 'romanticism',
+		title: 'La Liberté guidant le peuple',
+		subtitle: '1830 · Eugène Delacroix',
+		author: 'Eugène Delacroix',
+		authorDates: '1798–1863',
+		dateType: 'composition',
+		tagLabel: 'Peinture · Romantisme politique',
+		description: 'La Révolution de Juillet devient une image emblématique de l’insurrection populaire et de la liberté politique, unissant le gamin de Paris, l’ouvrier et le jeune bourgeois dans un même élan.',
+		historicalContext: 'Contexte historique : Révolution de Juillet 1830 (Les Trois Glorieuses). Delacroix synthétise l’allégorie classique et le réalisme moderne des combats de rue, fixant pour l’Europe l’icône de la barricade républicaine.',
+		periodId: 'monarchie-juillet',
+		relatedTo: ['revolution-juillet-1830', 'painting-gericault-radeau-meduse', 'music-berlioz-symphonie-fantastique', 'e-galois'],
+		importance: 'major',
+		image: paintingImages.delacroixLiberte,
+	},
+
+	// 5. 1850 — Gustave Courbet : Un enterrement à Ornans
+	{
+		id: 'painting-courbet-enterrement-ornans',
+		year: 1850,
+		datePrecise: '1849–1850 (Salon de 1850)',
+		type: 'painting',
+		category: 'realism',
+		subCategory: 'realism',
+		title: 'Un enterrement à Ornans',
+		subtitle: '1850 · Gustave Courbet',
+		author: 'Gustave Courbet',
+		authorDates: '1819–1877',
+		dateType: 'composition',
+		tagLabel: 'Peinture · Réalisme',
+		description: 'Courbet confère à un enterrement provincial ordinaire l’échelle monumentale traditionnellement réservée aux sujets historiques ou héroïques : un jalon majeur du réalisme français.',
+		historicalContext: 'Contexte historique : Deuxième République et réalisme social au lendemain des journées de 1848. En refusant l’idéalisation académique et en exposant sans fard la société rurale, Courbet provoque un scandale esthétique et politique.',
+		periodId: 'deuxieme-republique',
+		relatedTo: ['revolution-1848', 'deuxieme-republique-event', 'painting-millet-glaneuses', 'painting-manet-dejeuner'],
+		importance: 'major',
+		image: paintingImages.courbetOrnans,
+	},
+
+	// 6. 1857 — Jean-François Millet : Des glaneuses
+	{
+		id: 'painting-millet-glaneuses',
+		year: 1857,
+		datePrecise: '1857',
+		type: 'painting',
+		category: 'realism',
+		subCategory: 'realism',
+		title: 'Des glaneuses',
+		subtitle: '1857 · Jean-François Millet',
+		author: 'Jean-François Millet',
+		authorDates: '1814–1875',
+		dateType: 'composition',
+		tagLabel: 'Peinture · Réalisme paysan',
+		description: 'Trois paysannes courbées ramassant les épis oubliés deviennent les figures monumentales du tableau. La dignité et la visibilité des travailleurs ordinaires deviennent des questions artistiques centrales.',
+		historicalContext: 'Contexte historique : industrialisation et transformations sociales du Second Empire. Tandis que les campagnes se vident vers les manufactures urbaines, Millet confère une grandeur biblique et universelle à la survie paysanne la plus humble.',
+		periodId: 'second-empire',
+		relatedTo: ['second-empire-event', 'procede-bessemer', 'painting-courbet-enterrement-ornans'],
+		importance: 'standard',
+		image: paintingImages.milletGlaneuses,
+	},
+
+	// 7. 1863 — Édouard Manet : Le Déjeuner sur l’herbe
+	{
+		id: 'painting-manet-dejeuner',
+		year: 1863,
+		datePrecise: '1863',
+		type: 'painting',
+		category: 'modernity',
+		subCategory: 'modernity',
+		title: 'Le Déjeuner sur l’herbe',
+		subtitle: '1863 · Édouard Manet',
+		author: 'Édouard Manet',
+		authorDates: '1832–1883',
+		dateType: 'composition',
+		tagLabel: 'Peinture · Rupture moderne',
+		description: 'Manet bouscule les conventions académiques du sujet, de la composition et de la touche picturale. Un jalon capital dans l’émergence de la peinture moderne exposé au Salon des refusés.',
+		historicalContext: 'Contexte historique : Second Empire et modernité parisienne haussmannienne. En transposant le nu classique dans un contexte contemporain sans prétexte mythologique, Manet démasque l’hypocrisie du regard bourgeois.',
+		periodId: 'second-empire',
+		relatedTo: ['second-empire-event', 'music-offenbach-orphee', 'music-wagner-tristan', 'painting-monet-impression'],
+		importance: 'major',
+		image: paintingImages.manetDejeuner,
+	},
+
+	// 8. 1872 — Claude Monet : Impression, soleil levant
+	{
+		id: 'painting-monet-impression',
+		year: 1872,
+		datePrecise: '1872',
+		type: 'painting',
+		category: 'impressionism',
+		subCategory: 'impressionism',
+		title: 'Impression, soleil levant',
+		subtitle: '1872 · Claude Monet',
+		author: 'Claude Monet',
+		authorDates: '1840–1926',
+		dateType: 'composition',
+		tagLabel: 'Peinture · Impressionnisme',
+		description: 'Une représentation radicalement atmosphérique du port moderne du Havre. La toile donne son nom à l’impressionnisme et consacre la primauté de la lumière, de la sensation et de l’instant fugitif.',
+		historicalContext: 'Contexte historique : débuts de la Troisième République et monde urbain et industriel en pleine expansion. La touche fragmentée de Monet saisit le dynamisme d’un port d’usines et de cheminées industrielles.',
+		periodId: 'troisieme-republique',
+		relatedTo: ['dynamo-gramme', 'painting-exposition-impressionniste-1874', 'proclamation-troisieme-republique'],
+		importance: 'major',
+		image: paintingImages.monetImpression,
+	},
+
+	// 9. 1874 — Première exposition impressionniste
+	{
+		id: 'painting-exposition-impressionniste-1874',
+		year: 1874,
+		datePrecise: '15 avril – 15 mai 1874',
+		type: 'painting',
+		category: 'artistic-movement',
+		subCategory: 'artistic-movement',
+		title: 'Première exposition impressionniste',
+		subtitle: '1874 · Société anonyme des artistes',
+		author: 'Monet, Renoir, Degas, Pissarro, Cézanne, Morisot',
+		authorDates: 'Atelier Nadar, Paris',
+		dateType: 'exhibition',
+		tagLabel: 'Peinture · Événement artistique',
+		description: 'Des artistes indépendants s’unissent pour exposer hors du Salon officiel de l’Académie, dans les ateliers du photographe Nadar. L’événement symbolise l’émergence d’un nouveau rapport entre artistes, critique et public.',
+		historicalContext: 'Contexte historique : Troisième République et modernité parisienne d’après-Commune. En fondant la « Société anonyme coopérative d’artistes peintres, sculpteurs, graveurs », le groupe crée la première grande dissidence institutionnelle de l’art moderne.',
+		periodId: 'troisieme-republique',
+		relatedTo: ['painting-monet-impression', 'music-bizet-carmen', 'proclamation-troisieme-republique'],
+		importance: 'standard',
+		image: paintingImages.expositionImpressionniste,
+	},
+
+	// --------------------------------------------------------------------------
+	// JALONS DE MUSIQUE (Catégorie Musique)
+	// --------------------------------------------------------------------------
+
+	// 1. 1800 — Ludwig van Beethoven : Symphonie n°1
+	{
+		id: 'music-beethoven-symphonie-1',
+		year: 1800,
+		datePrecise: '2 avril 1800 (création à Vienne)',
+		type: 'music',
+		category: 'symphony',
+		subCategory: 'classicism-romanticism',
+		title: 'Symphonie n°1 en do majeur',
+		subtitle: '1800 · Ludwig van Beethoven',
+		author: 'Ludwig van Beethoven',
+		authorDates: '1770–1827',
+		dateType: 'premiere',
+		tagLabel: 'Musique · Symphonie',
+		description: 'Beethoven s’empare de la tradition symphonique classique de Haydn et Mozart pour amorcer le langage dramatique, dynamique et expressif du romantisme.',
+		historicalContext: 'Contexte historique : Consulat et transition entre classicisme et premier romantisme européen. L’ouverture inattendue sur un accord de septième dissonant annonce l’audace formelle d’une nouvelle ère esthétique.',
+		periodId: 'consulat',
+		relatedTo: ['bonaparte-consulat', 'music-beethoven-symphonie-9', 'alessandro-volta'],
+		importance: 'standard',
+		image: musicImages.beethovenSymphonie1,
+	},
+
+	// 2. 1824 — Ludwig van Beethoven : Symphonie n°9
+	{
+		id: 'music-beethoven-symphonie-9',
+		year: 1824,
+		datePrecise: '7 mai 1824 (création à Vienne)',
+		type: 'music',
+		category: 'symphony',
+		subCategory: 'romanticism',
+		title: 'Symphonie n°9 avec chœur (« Hymne à la joie »)',
+		subtitle: '1824 · Ludwig van Beethoven',
+		author: 'Ludwig van Beethoven',
+		authorDates: '1770–1827',
+		dateType: 'premiere',
+		tagLabel: 'Musique · Romantisme monumental',
+		description: 'Synthèse monumentale de la musique symphonique et vocale : l’intégration de l’Ode à la joie de Schiller dans le finale confère à la symphonie une portée humaniste et fraternelle sans précédent.',
+		historicalContext: 'Contexte historique : Restauration et romantisme européen. Face à l’ordre conservateur de la Sainte-Alliance, l’affirmation symphonique de la fraternité universelle constitue un manifeste spirituel et politique majeur.',
+		periodId: 'restauration',
+		relatedTo: ['restauration-event', 'sadi-carnot', 'music-beethoven-symphonie-1', 'music-berlioz-symphonie-fantastique', 'painting-gericault-radeau-meduse'],
+		importance: 'major',
+		image: musicImages.beethovenSymphonie9,
+	},
+
+	// 3. 1830 — Hector Berlioz : Symphonie fantastique
+	{
+		id: 'music-berlioz-symphonie-fantastique',
+		year: 1830,
+		datePrecise: '5 décembre 1830 (création à Paris)',
+		type: 'music',
+		category: 'symphony',
+		subCategory: 'french-romanticism',
+		title: 'Symphonie fantastique',
+		subtitle: '1830 · Hector Berlioz',
+		author: 'Hector Berlioz',
+		authorDates: '1803–1869',
+		dateType: 'premiere',
+		tagLabel: 'Musique · Romantisme français',
+		description: 'Jalon décisif du romantisme français. Berlioz utilise un programme autobiographique, une idée fixe musicale récurrente et un orchestre élargi pour renouveler de fond en comble la forme symphonique.',
+		historicalContext: 'Contexte historique : Révolution de Juillet 1830 et éclosion du grand romantisme français. Composée au Conservatoire de Paris dans l’effervescence des Trois Glorieuses, la symphonie fait écho à la « bataille d’Hernani » dans le domaine orchestral.',
+		periodId: 'monarchie-juillet',
+		relatedTo: ['revolution-juillet-1830', 'painting-delacroix-liberte', 'music-chopin-oeuvres-piano', 'on-ne-badine-pas'],
+		importance: 'major',
+		image: musicImages.berliozSymphonieFantastique,
+	},
+
+	// 4. 1835 — Frédéric Chopin : Nocturnes, Ballades et œuvres pour piano
+	{
+		id: 'music-chopin-oeuvres-piano',
+		year: 1835,
+		datePrecise: 'Années 1830 (repère 1835)',
+		type: 'music',
+		category: 'piano',
+		subCategory: 'piano-expression',
+		title: 'Nocturnes, Ballades et œuvres pour piano',
+		subtitle: 'Années 1830 · Frédéric Chopin',
+		author: 'Frédéric Chopin',
+		authorDates: '1810–1849',
+		dateType: 'composition',
+		tagLabel: 'Musique · Poésie pianistique',
+		description: 'Chopin métamorphose le piano moderne en un instrument d’expression intime, poétique et hautement individuelle, alliant virtuosité transcendante et mélancolie romantique.',
+		historicalContext: 'Contexte historique : Monarchie de Juillet et exil parisien après l’insurrection polonaise de 1830. Dans les salons parisiens où se croisent Balzac, George Sand et Delacroix, Chopin crée un univers sonore singulier affranchi des formes académiques.',
+		periodId: 'monarchie-juillet',
+		relatedTo: ['pere-goriot', 'on-ne-badine-pas', 'music-berlioz-symphonie-fantastique', 'painting-delacroix-liberte'],
+		importance: 'standard',
+		image: musicImages.chopinOeuvresPiano,
+	},
+
+	// 5. 1858 — Jacques Offenbach : Orphée aux Enfers
+	{
+		id: 'music-offenbach-orphee',
+		year: 1858,
+		datePrecise: '21 octobre 1858 (création à Paris)',
+		type: 'music',
+		category: 'operetta',
+		subCategory: 'operetta',
+		title: 'Orphée aux Enfers',
+		subtitle: '1858 · Jacques Offenbach',
+		author: 'Jacques Offenbach',
+		authorDates: '1819–1880',
+		dateType: 'premiere',
+		tagLabel: 'Musique · Opéra-bouffe',
+		description: 'Offenbach détourne la mythologie classique en une satire brillante de la société bourgeoise et impériale. L’œuvre devient un emblème de l’opérette française et de la vie culturelle parisienne.',
+		historicalContext: 'Contexte historique : Second Empire et fête impériale parisienne. Avec son célèbre « Galop infernal », le Théâtre des Bouffes-Parisiens parodie avec insolence l’hypocrisie et les fastes de la cour de Napoléon III.',
+		periodId: 'second-empire',
+		relatedTo: ['second-empire-event', 'painting-manet-dejeuner', 'exposition-universelle-londres'],
+		importance: 'standard',
+		image: musicImages.offenbachOrphee,
+	},
+
+	// 6. 1865 — Richard Wagner : Tristan und Isolde
+	{
+		id: 'music-wagner-tristan',
+		year: 1865,
+		datePrecise: '10 juin 1865 (création à Munich)',
+		type: 'music',
+		category: 'musical-drama',
+		subCategory: 'chromatic-modernity',
+		title: 'Tristan und Isolde',
+		subtitle: '1865 · Richard Wagner',
+		author: 'Richard Wagner',
+		authorDates: '1813–1883',
+		dateType: 'premiere',
+		tagLabel: 'Musique · Drame musical',
+		description: 'Wagner pousse l’harmonie romantique, le chromatisme et la tension musicale vers des audaces inouïes (le célèbre « accord de Tristan »), posant un jalon fondamental vers la modernité musicale du XXe siècle.',
+		historicalContext: 'Contexte historique : romantisme européen tardif et émergence du drame musical total (Gesamtkunstwerk). Achevé en 1859 mais créé en 1865 à Munich sous l’égide de Louis II de Bavière, l’opéra dissout les résolutions tonales classiques.',
+		periodId: 'second-empire',
+		relatedTo: ['painting-manet-dejeuner', 'gregor-mendel', 'music-wagner-parsifal'],
+		importance: 'major',
+		image: musicImages.wagnerTristan,
+	},
+
+	// 7. 1875 — Georges Bizet : Carmen
+	{
+		id: 'music-bizet-carmen',
+		year: 1875,
+		datePrecise: '3 mars 1875 (création à l’Opéra-Comique)',
+		type: 'music',
+		category: 'opera',
+		subCategory: 'realist-opera',
+		title: 'Carmen',
+		subtitle: '1875 · Georges Bizet',
+		author: 'Georges Bizet',
+		authorDates: '1838–1875',
+		dateType: 'premiere',
+		tagLabel: 'Musique · Opéra réaliste',
+		description: 'Bizet introduit un monde populaire et contemporain sur la scène lyrique française, associant réalisme dramatique, formes musicales populaires et une tension tragique d’une force universelle.',
+		historicalContext: 'Contexte historique : débuts de la Troisième République (1875). D’abord accueillie avec tiédeur par le public bourgeois de l’Opéra-Comique pour son réalisme sans concession (cigarières, contrebandiers, meurtre passionnel), l’œuvre triomphe ensuite mondialement.',
+		periodId: 'troisieme-republique',
+		relatedTo: ['proclamation-troisieme-republique', 'painting-exposition-impressionniste-1874', 'moteur-explosion-otto'],
+		importance: 'standard',
+		image: musicImages.bizetCarmen,
+	},
+
+	// 8. 1882 — Richard Wagner : Parsifal
+	{
+		id: 'music-wagner-parsifal',
+		year: 1882,
+		datePrecise: '26 juillet 1882 (création à Bayreuth)',
+		type: 'music',
+		category: 'musical-drama',
+		subCategory: 'late-romanticism',
+		title: 'Parsifal',
+		subtitle: '1882 · Richard Wagner',
+		author: 'Richard Wagner',
+		authorDates: '1813–1883',
+		dateType: 'premiere',
+		tagLabel: 'Musique · Drame sacré',
+		description: '« Festival scénique sacré » marquant le point culminant du drame musical wagnérien et du romantisme fin-de-siècle, conçu spécifiquement pour l’acoustique mystique du Festspielhaus de Bayreuth.',
+		historicalContext: 'Contexte historique : romantisme européen tardif des années 1880. Créé quelques mois avant la mort de Wagner, Parsifal explore le renoncement, la rédemption et la transcendance orchestrale au moment où l’Europe bascule dans le naturalisme et la seconde industrialisation.',
+		periodId: 'troisieme-republique',
+		relatedTo: ['pot-bouille', 'music-wagner-tristan'],
+		importance: 'standard',
+		image: musicImages.wagnerParsifal,
 	},
 ];
