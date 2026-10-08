@@ -9,7 +9,7 @@ fichier de repli `<nom>.jpg` (≤ 1600 px).
 
 | Fichier | Rôle | Page Commons | Auteur | Licence |
 |---|---|---|---|---|
-| watt-steam-engine.jpg | principal | https://commons.wikimedia.org/wiki/File:SteamEngine_Boulton%26Watt_1784.png | Robert Henry Thurston (1878) | Domaine public |
+| watt-steam-engine.jpg | principal | https://assets.lls.fr/pages/6614408/SES.1re.2.VER.machine.a.vapeur-retouche.jpg (Lelivrescolaire.fr, hors Commons) | Inconnu | Droits réservés (à vérifier) |
 | stockton-darlington-opening.jpg | principal | https://commons.wikimedia.org/wiki/File:PSM_V12_D282_Opening_of_the_darlington_and_stockton_railroad_1825.jpg | Anonyme, Popular Science Monthly | Domaine public |
 | liverpool-manchester-opening.jpg | principal | https://commons.wikimedia.org/wiki/File:Isaac_Shaw_-_Opening_of_the_Liverpool_and_Manchester_Railway_-_B1981.25.2698_-_Yale_Center_for_British_Art.jpg | Isaac Shaw | CC0 |
 | paris-saint-germain-embarcadere.jpg | principal | https://commons.wikimedia.org/wiki/File:CFParisSaintGermainPointdeD%C3%A9partPlacedeEurope.jpg | Jean-Baptiste Arnout | Domaine public |
