@@ -4,6 +4,10 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import balzacPortrait from '../assets/honore-de-balzac-1842.jpg';
+import marxPortrait from '../assets/karl-marx.jpg';
+import goriotIllustration from '../assets/pere-goriot-illustration.jpg';
+import communePhoto from '../assets/commune-barricade-1871.jpg';
+import rimbaudPortrait from '../assets/arthur-rimbaud.jpg';
 
 const pageTitle = "Balzac, Rastignac, la Commune, Marx et Rimbaud";
 const pageDescription = "Carte interactive des relations intellectuelles et sociales au XIXe siècle : Balzac, Rastignac, la Commune, Marx et Rimbaud face à la société bourgeoise.";
@@ -23,6 +27,16 @@ const nodes = [
 			"Montre la puissance de l’argent et de la propriété",
 			"Fait de Paris un théâtre social",
 		],
+		image: {
+			asset: balzacPortrait,
+			alt: "Portrait photographique d'Honoré de Balzac en 1842, par Louis-Auguste Bisson.",
+			creditPrefix: "Honoré de Balzac, 1842 — Louis-Auguste Bisson, daguerréotype · ",
+			sourceLabel: "Wikimedia Commons",
+			sourceUrl: "https://commons.wikimedia.org/wiki/File:Honor%C3%A9_de_Balzac_(1842)_Detail.jpg",
+			creditSuffix: " · domaine public",
+			orientation: "portrait",
+			position: "50% 20%",
+		},
 		// Coordonnées relatives sur le canvas (x, y) dans l'espace 900 x 520
 		href: "#node-balzac",
 		x: 450,
@@ -42,6 +56,16 @@ const nodes = [
 			"S’adapte au système pour réussir",
 			"Incarnation de la conquête sociale",
 		],
+		image: {
+			asset: goriotIllustration,
+			alt: "Illustration de Le Père Goriot, œuvre de Honoré de Balzac.",
+			creditPrefix: "Illustration de Le Père Goriot — ",
+			sourceLabel: "Wikimedia Commons",
+			sourceUrl: "https://commons.wikimedia.org/wiki/File:BalzacOldGoriot02.jpg",
+			creditSuffix: " · domaine public",
+			orientation: "portrait",
+			position: "50% 30%",
+		},
 		href: "#node-rastignac",
 		x: 710,
 		y: 220,
@@ -59,6 +83,16 @@ const nodes = [
 			"Théorise la lutte des classes",
 			"Montre comment la richesse produit l’exploitation",
 		],
+		image: {
+			asset: marxPortrait,
+			alt: "Portrait photographique de Karl Marx.",
+			creditPrefix: "Karl Marx — ",
+			sourceLabel: "Image source fournie par l'auteur du site",
+			sourceUrl: null,
+			creditSuffix: "",
+			orientation: "portrait",
+			position: "50% 20%",
+		},
 		href: "#node-marx",
 		x: 190,
 		y: 220,
@@ -77,6 +111,16 @@ const nodes = [
 			"Expérimentation d’une autre société",
 			"Répression sanglante",
 		],
+		image: {
+			asset: communePhoto,
+			alt: "Barricade à l'angle des boulevards Voltaire et Richard-Lenoir pendant la Commune de Paris, 1871.",
+			creditPrefix: "Barricade à l'angle des boulevards Voltaire et Richard-Lenoir, 1871 — Bruno Braquehais · ",
+			sourceLabel: "Wikimedia Commons",
+			sourceUrl: "https://commons.wikimedia.org/wiki/File:Barricade_Voltaire_Lenoir_Commune_Paris_1871.jpg",
+			creditSuffix: " · domaine public",
+			orientation: "landscape",
+			position: "50% 50%",
+		},
 		href: "#node-commune",
 		x: 630,
 		y: 440,
@@ -95,6 +139,16 @@ const nodes = [
 			"Transforme la révolte sociale en langage poétique",
 			"Refuse le monde et ses règles",
 		],
+		image: {
+			asset: rimbaudPortrait,
+			alt: "Portrait d'Arthur Rimbaud jeune.",
+			creditPrefix: "Arthur Rimbaud — ",
+			sourceLabel: "Image source fournie par l'auteur du site",
+			sourceUrl: null,
+			creditSuffix: "",
+			orientation: "portrait",
+			position: "50% 25%",
+		},
 		href: "#node-rimbaud",
 		x: 270,
 		y: 440,
@@ -317,27 +371,40 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 						</div>
 
 						<div class="panel-detail" data-panel-detail hidden>
-							<div class="detail-portrait-wrapper" data-portrait-container hidden>
-								<figure class="detail-portrait-figure">
-									<Image
-										src={balzacPortrait}
-										alt="Portrait photographique d'Honoré de Balzac en 1842, par Louis-Auguste Bisson."
-										width={500}
-										height={455}
-										loading="lazy"
-										decoding="async"
-										class="detail-portrait-img"
-									/>
-									<figcaption class="detail-portrait-caption">
-										Honoré de Balzac, 1842 — Louis-Auguste Bisson, daguerréotype · <a
-											href="https://commons.wikimedia.org/wiki/File:Honor%C3%A9_de_Balzac_(1842)_Detail.jpg"
-											target="_blank"
-											rel="noopener noreferrer"
-											class="detail-portrait-link"
-										>Wikimedia Commons</a> · domaine public
-									</figcaption>
-								</figure>
-							</div>
+							<!-- Conteneurs d'images historiques / sources pour chaque figure (affiché selon la sélection) -->
+							{nodes.filter(n => n.image).map((node) => (
+								<div
+									class={`detail-portrait-wrapper detail-portrait-wrapper--${node.image.orientation}`}
+									data-node-image={node.id}
+									hidden
+								>
+									<figure class={`detail-portrait-figure detail-portrait-figure--${node.image.orientation}`}>
+										<Image
+											src={node.image.asset}
+											alt={node.image.alt}
+											width={node.image.orientation === 'landscape' ? 600 : 400}
+											loading="lazy"
+											decoding="async"
+											class={`detail-portrait-img detail-portrait-img--${node.image.orientation}`}
+											style={`object-position: ${node.image.position};`}
+										/>
+										<figcaption class="detail-portrait-caption">
+											{node.image.creditPrefix}
+											{node.image.sourceUrl ? (
+												<a
+													href={node.image.sourceUrl}
+													target="_blank"
+													rel="noopener noreferrer"
+													class="detail-portrait-link"
+												>{node.image.sourceLabel}</a>
+											) : (
+												<span>{node.image.sourceLabel}</span>
+											)}
+											{node.image.creditSuffix}
+										</figcaption>
+									</figure>
+								</div>
+							))}
 
 							<header class="detail-header">
 								<div>
@@ -377,24 +444,30 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 						<h2>Figures et analyses (mode lecture accessible)</h2>
 						{nodes.map((node) => (
 							<div class="noscript-node">
-								{node.id === "balzac" && (
-									<figure class="noscript-portrait-figure">
+								{node.image && (
+									<figure class={`noscript-portrait-figure noscript-portrait-figure--${node.image.orientation}`}>
 										<Image
-											src={balzacPortrait}
-											alt="Portrait photographique d'Honoré de Balzac en 1842, par Louis-Auguste Bisson."
-											width={500}
-											height={455}
+											src={node.image.asset}
+											alt={node.image.alt}
+											width={node.image.orientation === 'landscape' ? 600 : 400}
 											loading="lazy"
 											decoding="async"
-											class="detail-portrait-img"
+											class={`detail-portrait-img detail-portrait-img--${node.image.orientation}`}
+											style={`object-position: ${node.image.position};`}
 										/>
 										<figcaption class="detail-portrait-caption">
-											Honoré de Balzac, 1842 — Louis-Auguste Bisson, daguerréotype · <a
-												href="https://commons.wikimedia.org/wiki/File:Honor%C3%A9_de_Balzac_(1842)_Detail.jpg"
-												target="_blank"
-												rel="noopener noreferrer"
-												class="detail-portrait-link"
-											>Wikimedia Commons</a> · domaine public
+											{node.image.creditPrefix}
+											{node.image.sourceUrl ? (
+												<a
+													href={node.image.sourceUrl}
+													target="_blank"
+													rel="noopener noreferrer"
+													class="detail-portrait-link"
+												>{node.image.sourceLabel}</a>
+											) : (
+												<span>{node.image.sourceLabel}</span>
+											)}
+											{node.image.creditSuffix}
 										</figcaption>
 									</figure>
 								)}
@@ -473,7 +546,7 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 				const detailDesc = mapEl.querySelector('[data-detail-description]');
 				const detailPoints = mapEl.querySelector('[data-detail-points]');
 				const detailRelations = mapEl.querySelector('[data-detail-relations]');
-				const portraitContainer = mapEl.querySelector('[data-portrait-container]');
+				const imageContainers = [...mapEl.querySelectorAll('[data-node-image]')];
 
 				let selectedNode = null;
 
@@ -515,7 +588,9 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 					if (!btn) {
 						panelHint.hidden = false;
 						panelDetail.hidden = true;
-						if (portraitContainer) portraitContainer.hidden = true;
+						for (const imgEl of imageContainers) {
+							imgEl.hidden = true;
+						}
 						return;
 					}
 
@@ -525,8 +600,8 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 					const nodeId = btn.dataset.nodeId;
 					const data = nodeMap.get(nodeId);
 
-					if (portraitContainer) {
-						portraitContainer.hidden = nodeId !== 'balzac';
+					for (const imgEl of imageContainers) {
+						imgEl.hidden = imgEl.dataset.nodeImage !== nodeId;
 					}
 
 					detailTitle.textContent = data.label;
@@ -1041,7 +1116,7 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 	}
 
 	/* ==========================================================================
-	   PORTRAIT D'HONORÉ DE BALZAC (PANNEAU D'ANALYSE)
+	   DOCUMENTS HISTORIQUES & PORTRAITS (PANNEAU D'ANALYSE)
 	   ========================================================================== */
 	.detail-portrait-wrapper {
 		margin-bottom: 1.25rem;
@@ -1058,21 +1133,32 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		max-width: 200px;
+		max-width: 220px;
+	}
+
+	.detail-portrait-figure--landscape,
+	.noscript-portrait-figure--landscape {
+		max-width: 320px;
 	}
 
 	.detail-portrait-img {
 		width: 190px;
 		max-width: 100%;
+		max-height: 220px;
 		height: auto;
 		aspect-ratio: 4 / 5;
 		object-fit: cover;
-		object-position: 50% 20%;
 		border-radius: 6px;
 		border: 1px solid var(--map-border);
 		box-shadow: 0 2px 8px rgba(23, 43, 58, 0.06);
 		display: block;
 		background: var(--map-bg);
+	}
+
+	.detail-portrait-img--landscape {
+		width: 300px;
+		aspect-ratio: 16 / 10;
+		object-fit: cover;
 	}
 
 	.detail-portrait-caption {
@@ -1329,8 +1415,17 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 			max-width: 175px;
 		}
 
+		.detail-portrait-figure--landscape,
+		.noscript-portrait-figure--landscape {
+			max-width: 270px;
+		}
+
 		.detail-portrait-img {
 			width: 170px;
+		}
+
+		.detail-portrait-img--landscape {
+			width: 260px;
 		}
 
 		.detail-header {
@@ -1361,8 +1456,17 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 			max-width: 160px;
 		}
 
+		.detail-portrait-figure--landscape,
+		.noscript-portrait-figure--landscape {
+			max-width: 260px;
+		}
+
 		.detail-portrait-img {
 			width: 150px;
+		}
+
+		.detail-portrait-img--landscape {
+			width: 240px;
 		}
 
 		.detail-portrait-caption {
