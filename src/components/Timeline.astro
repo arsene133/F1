@@ -5,7 +5,7 @@ import {
 	timelinePeriods,
 	type TimelinePeriod,
 } from '../data/timeline';
-import { timelineFilters } from '../data/timeline-filters';
+import { compactEntryParts, timelineFilters } from '../data/timeline-filters';
 
 interface Props {
 	initialSelectedId?: string;
@@ -127,7 +127,26 @@ const enrichedItems = sortedTimelineItems.map((item) => {
 		isMinorCulturalPoint,
 		periodTitle: item.periodLabel ?? (period ? period.title : ''),
 		periodDates: period ? period.displayDates : '',
+		compact: compactEntryParts(item),
 	};
+});
+
+// Bandeaux de régime : un par suite d'événements d'une même période. Une période peut revenir
+// (Second Empire et IIIe République s'entrelacent en 1870) : la première occurrence garde
+// `period-banner-<période>`, les suivantes prennent un suffixe `-2`, `-3`… pour des ids uniques.
+// Chaque étape connaît l'id du bandeau qui ouvre son segment (data-banner-id).
+const bannerOccurrences = new Map<string, number>();
+let currentBannerId = '';
+const timelineRows = enrichedItems.map((item, index) => {
+	const prevItem = index > 0 ? enrichedItems[index - 1] : null;
+	const isNewPeriod = !prevItem || prevItem.periodId !== item.periodId;
+	const bannerPeriod = isNewPeriod ? periodsMap.get(item.periodId) : undefined;
+	if (bannerPeriod) {
+		const occurrence = (bannerOccurrences.get(bannerPeriod.id) ?? 0) + 1;
+		bannerOccurrences.set(bannerPeriod.id, occurrence);
+		currentBannerId = `period-banner-${bannerPeriod.id}${occurrence > 1 ? `-${occurrence}` : ''}`;
+	}
+	return { item, bannerPeriod, bannerId: currentBannerId };
 });
 
 // Données sérialisées pour le script client
@@ -176,6 +195,8 @@ const clientData = {
 		<span class="hint-touch">Touchez une œuvre ou un événement pour explorer son contexte historique</span>
 		<span class="hint-pointer">Cliquez sur une œuvre ou un événement pour explorer son contexte historique</span>
 	</p>
+	<!-- Mobile, filtre actif : ce que signifie la hiérarchie détaillé / en bref (rempli par le script) -->
+	<p class="timeline-filter-status" id="timeline-filter-status" aria-live="polite" hidden></p>
 
 	<!-- Disposition principale : Frise verticale + Panneau d'informations -->
 	<div class="timeline-main-layout">
@@ -188,18 +209,14 @@ const clientData = {
 
 			<!-- Liste ordonnée sémantique <ol> -->
 			<ol class="timeline-ordered-list">
-				{enrichedItems.map((item, index) => {
+				{timelineRows.map(({ item, bannerPeriod: currentPeriod, bannerId }) => {
 					// Bannière de régime politique contextuelle si nouvelle période
-					const prevItem = index > 0 ? enrichedItems[index - 1] : null;
-					const isNewPeriod = !prevItem || prevItem.periodId !== item.periodId;
-					const currentPeriod = periodsMap.get(item.periodId);
-
 					return (
 						<>
-							{isNewPeriod && currentPeriod && (
+							{currentPeriod && (
 								<li
 									class="regime-context-banner"
-									id={`period-banner-${currentPeriod.id}`}
+									id={bannerId}
 									data-period-id={currentPeriod.id}
 									aria-hidden="true"
 								>
@@ -214,6 +231,7 @@ const clientData = {
 								data-item-id={item.id}
 								data-item-type={item.type}
 								data-period-id={item.periodId}
+								data-banner-id={bannerId || undefined}
 								data-year={item.year}
 							>
 								<!-- Nœud d'axe sur la colonne vertébrale -->
@@ -236,6 +254,13 @@ const clientData = {
 									aria-pressed={item.id === initialSelectedId ? 'true' : 'false'}
 									aria-label={`${item.title}, ${item.datePrecise ?? item.year}${item.author ? `, par ${item.author}` : ''}`}
 								>
+									<!-- Ligne compacte (mobile, repère hors du filtre actif) : le nom accessible reste l'aria-label -->
+									<span class="entry-compact-line" aria-hidden="true">
+										<span class="entry-compact-date">{item.compact.date}</span>
+										<span class="entry-compact-title">{item.compact.title}</span>
+										{item.compact.detail && <span class="entry-compact-detail">{item.compact.detail}</span>}
+									</span>
+
 									<div class="entry-card-header">
 										<time class="entry-year-time" datetime={String(item.year)}>
 											{item.datePrecise ?? item.year}
@@ -352,6 +377,7 @@ const clientData = {
 		TimelineItemListenLink,
 	} from '../data/timeline';
 	import { renderMusicalAudio } from './MusicalAudio';
+	import { matchesTimelineFilter } from '../data/timeline-filters';
 
 	interface TimelineItem {
 		id: string;
@@ -409,7 +435,10 @@ const clientData = {
 			const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 			const panelHome = panel?.parentElement ?? null;
 			const isInline = () => !desktopQuery.matches;
+			const controls = app.querySelector('.timeline-controls');
+			const filterStatus = document.getElementById('timeline-filter-status');
 			let currentSelectedId: string | null = null;
+			let currentFilter = 'all';
 
 			// Image locale introuvable : on retire le cadre (pas de rectangle vide) sans toucher au texte,
 			// et on signale l'asset manquant en développement. Aucune image de substitution.
@@ -678,6 +707,12 @@ const clientData = {
 				});
 			}
 
+			// Bandeau de régime qui ouvre le segment de l'étape (une période peut avoir plusieurs bandeaux)
+			function bannerOf(itemId: string): HTMLElement | null {
+				const bannerId = document.getElementById(`step-${itemId}`)?.dataset.bannerId;
+				return bannerId ? document.getElementById(bannerId) : null;
+			}
+
 			function clearHighlights() {
 				document.querySelectorAll('.timeline-step, .timeline-entry-button, .regime-context-banner').forEach((el) => {
 					el.classList.remove('selected', 'context-highlight');
@@ -699,10 +734,7 @@ const clientData = {
 
 				if (selectedItem) {
 					// Mise en valeur de la période politique d'appartenance
-					if (selectedItem.periodId) {
-						const bannerEl = document.getElementById(`period-banner-${selectedItem.periodId}`);
-						bannerEl?.classList.add('context-highlight');
-					}
+					bannerOf(itemId)?.classList.add('context-highlight');
 
 					// Mise en valeur des éléments associés (contexte historique direct)
 					selectedItem.relatedTo.forEach((relId) => {
@@ -740,8 +772,25 @@ const clientData = {
 				}
 			}
 
+			// Premier repère (ou bandeau) visible sous la barre de filtres collante : la lecture reste calée dessus
+			// quand la densité de la frise change, au lieu de sauter de plusieurs écrans
+			function readingAnchor(): HTMLElement | null {
+				const top = controls?.getBoundingClientRect().bottom ?? 0;
+				for (const el of document.querySelectorAll<HTMLElement>('.timeline-ordered-list > li')) {
+					const rect = el.getBoundingClientRect();
+					if (rect.bottom > top) return rect.top < window.innerHeight ? el : null;
+				}
+				return null;
+			}
+
 			// Filtrage des éléments
-			function applyFilter(filterId: string) {
+			// Bureau : les repères hors filtre sont estompés et sortent de la tabulation (comportement d'origine).
+			// Mobile/tablette : rien n'est masqué ni estompé ; les repères hors filtre passent en ligne compacte
+			// (« DATE · TITRE »), toujours touchables, et la frise garde sa continuité.
+			function applyFilter(filterId: string, { keepPosition = false }: { keepPosition?: boolean } = {}) {
+				const inline = isInline();
+				currentFilter = filterId;
+
 				// Mise à jour de l'état des boutons de filtres
 				document.querySelectorAll('.timeline-filter-btn').forEach((btn) => {
 					const isActive = btn.getAttribute('data-filter') === filterId;
@@ -749,46 +798,46 @@ const clientData = {
 					btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
 				});
 
-				// Filtrage des étapes
-				items.forEach((item) => {
-					const stepEl = document.getElementById(`step-${item.id}`);
-					if (!stepEl) return;
-
-					let visible = true;
-					if (filterId === 'literature') {
-						visible = item.type === 'literature';
-					} else if (filterId === 'history') {
-						visible = item.type !== 'literature' && item.type !== 'industry' && item.type !== 'science' && item.type !== 'painting' && item.type !== 'music';
-					} else if (filterId === 'industry') {
-						visible = item.type === 'industry';
-					} else if (filterId === 'science') {
-						visible = item.type === 'science';
-					} else if (filterId === 'painting') {
-						visible = item.type === 'painting';
-					} else if (filterId === 'music') {
-						visible = item.type === 'music';
-					}
-
-					stepEl.classList.toggle('timeline-step-dimmed', !visible);
-					// Un repère estompé par le filtre sort aussi de l'ordre de tabulation
-					stepEl.inert = !visible;
-				});
-
-				// Le contexte déplié d'un repère désormais filtré se replie
-				if (isInline() && currentSelectedId && document.getElementById(`step-${currentSelectedId}`)?.inert) {
+				// Un contexte déplié ne reste jamais accroché à un repère qui passe en ligne compacte
+				const selected = currentSelectedId ? itemsMap.get(currentSelectedId) : undefined;
+				if (inline && selected && !matchesTimelineFilter(selected.type, filterId)) {
 					closeInlinePanel({ restoreFocus: false });
 				}
 
-				// Bannières de régime
-				periods.forEach((p) => {
-					const banner = document.getElementById(`period-banner-${p.id}`);
-					if (!banner) return;
-					let visible = true;
-					if (filterId === 'literature' || filterId === 'industry' || filterId === 'science' || filterId === 'painting' || filterId === 'music') {
-						visible = false;
-					}
-					banner.classList.toggle('timeline-step-dimmed', !visible);
+				const anchor = inline && keepPosition ? readingAnchor() : null;
+				const anchorTop = anchor?.getBoundingClientRect().top;
+
+				let matchCount = 0;
+				items.forEach((item) => {
+					const stepEl = document.getElementById(`step-${item.id}`);
+					if (!stepEl) return;
+					const matches = matchesTimelineFilter(item.type, filterId);
+					if (matches) matchCount++;
+
+					stepEl.classList.toggle('is-compact', inline && !matches);
+					stepEl.classList.toggle('timeline-step-dimmed', !inline && !matches);
+					// Un repère estompé par le filtre (bureau) sort aussi de l'ordre de tabulation
+					stepEl.inert = !inline && !matches;
 				});
+
+				// Bannières de régime : estompées sur bureau hors « Tout » / « Histoire », toujours présentes sur mobile
+				const hidesBanners = !inline && filterId !== 'all' && filterId !== 'history';
+				document.querySelectorAll('.regime-context-banner').forEach((banner) => {
+					banner.classList.toggle('timeline-step-dimmed', hidesBanners);
+				});
+
+				// Mobile : rappel discret de la hiérarchie (le texte est masqué sur bureau par la feuille de style)
+				if (filterStatus) {
+					const label = document.querySelector(`.timeline-filter-btn[data-filter="${filterId}"]`)?.textContent?.trim() ?? '';
+					filterStatus.hidden = filterId === 'all';
+					filterStatus.innerHTML = filterId === 'all'
+						? ''
+						: `<strong>${label} · ${matchCount} ${matchCount > 1 ? 'événements' : 'événement'}</strong> en détail ; les autres restent dans la chronologie, en bref.`;
+				}
+
+				if (anchor && anchorTop !== undefined) {
+					window.scrollBy(0, anchor.getBoundingClientRect().top - anchorTop);
+				}
 			}
 
 			// Un seul extrait à la fois
@@ -817,16 +866,14 @@ const clientData = {
 			document.querySelectorAll('.timeline-entry-button').forEach((btn) => {
 				btn.addEventListener('mouseenter', () => {
 					const id = btn.getAttribute('data-item-id');
-					const item = id ? itemsMap.get(id) : null;
-					if (item && item.periodId) {
-						document.getElementById(`period-banner-${item.periodId}`)?.classList.add('context-highlight');
-					}
+					if (id) bannerOf(id)?.classList.add('context-highlight');
 				});
 				btn.addEventListener('mouseleave', () => {
 					const id = btn.getAttribute('data-item-id');
-					const item = id ? itemsMap.get(id) : null;
-					if (item && item.periodId && (currentSelectedId ? itemsMap.get(currentSelectedId)?.periodId : null) !== item.periodId) {
-						document.getElementById(`period-banner-${item.periodId}`)?.classList.remove('context-highlight');
+					const banner = id ? bannerOf(id) : null;
+					// Le bandeau de l'événement sélectionné reste en valeur
+					if (banner && (!currentSelectedId || bannerOf(currentSelectedId) !== banner)) {
+						banner.classList.remove('context-highlight');
 					}
 				});
 			});
@@ -835,7 +882,7 @@ const clientData = {
 			document.querySelectorAll('.timeline-filter-btn').forEach((btn) => {
 				btn.addEventListener('click', () => {
 					const filterId = btn.getAttribute('data-filter');
-					if (filterId) applyFilter(filterId);
+					if (filterId) applyFilter(filterId, { keepPosition: true });
 				});
 			});
 
@@ -849,6 +896,7 @@ const clientData = {
 
 			// Passage d'un mode à l'autre (rotation, redimensionnement) : le panneau suit
 			desktopQuery.addEventListener('change', () => {
+				applyFilter(currentFilter);
 				if (!isInline() && !currentSelectedId) {
 					selectItem(initialSelectedId);
 				} else {
