@@ -1,0 +1,440 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import RelationshipMap from '../components/RelationshipMap.astro';
+import type { EdgeType, MapNode, MapRelationship } from '../components/relationship-map/types';
+
+const pageTitle = "On ne badine pas avec l'amour — les personnages";
+const pageDescription =
+	"Carte interactive des personnages d’On ne badine pas avec l’amour de Musset : Perdican, Camille, Rosette et ceux qui les entourent. Amour, orgueil, jalousie et manipulation.";
+
+// Personnages. Coordonnées : espace 900 × 500 (x, y) et 360 × 640 sur mobile (mx, my).
+const characters: MapNode[] = [
+	{
+		id: 'perdican',
+		label: 'Perdican',
+		caption: '21 ans · fils du Baron',
+		eyebrow: 'Aime Camille · se sert de Rosette',
+		meta: ['21 ans', 'fils du Baron', 'cousin de Camille'],
+		description:
+			"Il revient au château de son père, reçu docteur à Paris. Il aime sa cousine Camille depuis l’enfance. Blessé par son refus, il fait la cour à Rosette sous les yeux de Camille pour la rendre jalouse : son orgueil transforme un amour sincère en jeu cruel.",
+		points: [
+			'Retrouve avec émotion les lieux et les gens de son enfance',
+			'Refuse de s’avouer vaincu après le refus de Camille',
+			'Promet le mariage à Rosette pour piquer Camille',
+			'Défend l’amour malgré ses souffrances : « mais j’ai aimé »',
+		],
+		color: '#235284',
+		tier: 'major',
+		x: 270, y: 240, mx: 72, my: 165,
+	},
+	{
+		id: 'camille',
+		label: 'Camille',
+		caption: '18 ans · nièce du Baron',
+		eyebrow: 'Aime Perdican · se défend par l’orgueil',
+		meta: ['18 ans', 'nièce du Baron', 'cousine de Perdican'],
+		description:
+			"Elle sort du couvent où elle a été élevée. Elle aime Perdican, mais les récits des religieuses déçues par l’amour l’ont rendue méfiante : elle refuse le mariage et annonce son retour au couvent. Par fierté, elle met Perdican à l’épreuve, jusqu’à faire de Rosette le témoin caché de leur affrontement.",
+		points: [
+			'Formée par le couvent à se défier de l’amour humain',
+			'Repousse d’abord la main de Perdican',
+			'Veut mesurer son pouvoir sur lui',
+			'Cache Rosette pour qu’elle entende Perdican lui parler d’amour',
+		],
+		color: '#7a2f4f',
+		tier: 'major',
+		x: 630, y: 240, mx: 288, my: 165,
+	},
+	{
+		id: 'rosette',
+		label: 'Rosette',
+		caption: 'sœur de lait de Camille',
+		eyebrow: 'Aime sincèrement Perdican · victime du jeu',
+		meta: ['jeune paysanne', 'sœur de lait de Camille'],
+		description:
+			"Jeune paysanne du village, sœur de lait de Camille. Elle croit sincèrement à la cour que lui fait Perdican et à sa promesse de mariage. Prise dans le duel d’orgueil des deux cousins, elle en est la victime : à la fin de la pièce, elle surprend leurs aveux et en meurt.",
+		points: [
+			'Sincère là où les deux cousins calculent',
+			'Croit à la promesse de mariage de Perdican',
+			'Découvre qu’elle a servi d’instrument',
+			'Sa mort fait basculer la comédie dans le drame',
+		],
+		color: '#3f6b3a',
+		tier: 'major',
+		x: 450, y: 405, mx: 180, my: 315,
+	},
+	{
+		id: 'baron',
+		label: 'Le Baron',
+		caption: 'père de Perdican · oncle de Camille',
+		eyebrow: 'Veut marier Perdican et Camille',
+		meta: ['seigneur du château', 'père de Perdican', 'oncle de Camille'],
+		description:
+			"Il a préparé de longue date le mariage de son fils et de sa nièce, et l’organise comme une affaire réglée. Il ne comprend rien aux refus des deux jeunes gens et s’indigne de voir son fils courtiser une paysanne. Figure comique d’une autorité dépassée par les sentiments qu’elle prétend ordonner.",
+		color: '#8b572a',
+		tier: 'standard',
+		x: 450, y: 60, mx: 180, my: 40,
+	},
+	{
+		id: 'dame-pluche',
+		label: 'Dame Pluche',
+		caption: 'gouvernante de Camille',
+		eyebrow: 'Personnage comique · le monde du couvent',
+		meta: ['gouvernante de Camille'],
+		description:
+			"Gouvernante dévote et revêche qui accompagne Camille au sortir du couvent. Elle incarne la morale du couvent, presse Camille de repartir et sert d’intermédiaire, notamment en portant une lettre de Camille adressée au couvent.",
+		color: '#5b347b',
+		tier: 'minor',
+		x: 790, y: 105, mx: 282, my: 505,
+	},
+	{
+		id: 'blazius',
+		label: 'Maître Blazius',
+		caption: 'gouverneur de Perdican',
+		eyebrow: 'Personnage comique · ancienne génération',
+		meta: ['ancien gouverneur (précepteur) de Perdican'],
+		description:
+			"Ancien gouverneur de Perdican, il ramène au château son élève reçu docteur et vante ses succès. Bon vivant porté sur le vin, il se dispute avec le curé Bridaine la faveur du Baron. Il appartient, avec Bridaine et Dame Pluche, au trio grotesque de la pièce.",
+		color: '#6b5a3e',
+		tier: 'minor',
+		x: 110, y: 105, mx: 78, my: 505,
+	},
+	{
+		id: 'bridaine',
+		label: 'Maître Bridaine',
+		caption: 'curé du village',
+		eyebrow: 'Personnage comique · l’Église',
+		meta: ['curé du village'],
+		description:
+			"Curé gourmand, il jalouse Blazius, que le Baron fait asseoir à sa droite à table, et dénonce son ivrognerie. Leur querelle de préséance est un contrepoint comique à l’intrigue principale.",
+		color: '#4d5b66',
+		tier: 'minor',
+		x: 110, y: 405, mx: 78, my: 600,
+	},
+	{
+		id: 'choeur',
+		label: 'Le Chœur',
+		caption: 'les paysans du village',
+		eyebrow: 'Voix collective',
+		meta: ['les paysans du village'],
+		description:
+			"À la manière du chœur antique, la voix collective des paysans commente l’action. Il raille l’arrivée de Blazius et de Dame Pluche et accueille Perdican, qu’il a connu enfant. Il représente le monde du village auquel appartient Rosette.",
+		color: '#7a7366',
+		tier: 'minor',
+		x: 790, y: 405, mx: 180, my: 420,
+	},
+];
+
+// Types de relations : le trait distingue ce qui fait avancer l’intrigue
+// (amour, manipulation, projet de mariage) des liens familiaux, éducatifs et comiques.
+const edgeTypes: Record<string, EdgeType> = {
+	love: { legend: 'Amour contrarié', stroke: '#a2312b', activeStroke: '#8a1f1a', width: 3.5, activeWidth: 4.5 },
+	manipulation: { legend: 'Séduction / manipulation', stroke: '#4a5a68', activeStroke: '#172b3a', width: 2, activeWidth: 2.75, dash: '7 5', arrow: 'end' },
+	marriage: { legend: 'Projet de mariage', stroke: '#b07a3f', activeStroke: '#8b572a', width: 1.6, activeWidth: 2.4, dash: '2 4', arrow: 'end' },
+	family: { legend: 'Lien familial', stroke: '#a39886', activeStroke: '#4a5a68', width: 1.6, activeWidth: 2.4 },
+	education: { legend: 'Éducation', stroke: '#c4bbac', activeStroke: '#5e6d7a', width: 1.25, activeWidth: 2, arrow: 'end' },
+	influence: { legend: 'Influence', stroke: '#c4bbac', activeStroke: '#5e6d7a', width: 1.25, activeWidth: 2, dash: '5 3', arrow: 'end' },
+	rivalry: { legend: 'Rivalité comique', stroke: '#cfc6b6', activeStroke: '#7a7366', width: 1.25, activeWidth: 2, dash: '3 5' },
+	'collective-observation': { legend: 'Regard collectif', stroke: '#cfc6b6', activeStroke: '#7a7366', width: 1.25, activeWidth: 2, dash: '1 4' },
+};
+
+const relationships: MapRelationship[] = [
+	{
+		source: 'perdican',
+		target: 'camille',
+		type: 'love',
+		label: 's’aiment ↔ se repoussent',
+		description:
+			"Cousins élevés ensemble, ils s’aiment depuis l’enfance et le Baron veut les marier. Mais Camille refuse, et Perdican répond par l’orgueil. Chacun cache ou travestit ses sentiments : leur amour devient un affrontement verbal fait de défis, d’épreuves et de jalousie, qu’ils ne s’avouent qu’à la fin — trop tard.",
+		labelDy: 52,
+		mLabelDy: 48,
+		mobileLabel: true,
+	},
+	{
+		source: 'perdican',
+		target: 'rosette',
+		type: 'manipulation',
+		label: 'séduit → manipule',
+		description:
+			"Après le refus de Camille, Perdican courtise Rosette sous les yeux de sa cousine et lui promet le mariage. Il n’est pas insensible à la tendresse sincère de la jeune fille, mais il se sert d’elle pour provoquer la jalousie de Camille. Rosette, elle, y croit.",
+		labelDx: -58,
+		labelDy: 0,
+		mLabelT: 0.55,
+		mLabelDx: -32,
+		mLabelDy: 12,
+		mobileLabel: true,
+	},
+	{
+		source: 'camille',
+		target: 'rosette',
+		type: 'family',
+		label: 'sœurs de lait',
+		description:
+			"Un lien d’enfance, non de sang, qui unit la jeune fille du château et la paysanne. Cette proximité fait de Rosette l’instrument idéal — et la victime — du jeu entre les deux cousins : Perdican la courtise pour atteindre Camille, et Camille la cache pour qu’elle entende Perdican.",
+		labelDx: 48,
+		labelDy: 0,
+		mLabelT: 0.55,
+		mLabelDx: 30,
+		mLabelDy: 12,
+		mobileLabel: true,
+	},
+	{
+		source: 'baron',
+		target: ['perdican', 'camille'],
+		type: 'marriage',
+		label: 'veut les marier',
+		description:
+			"Le Baron a projeté depuis longtemps l’union de son fils et de sa nièce. C’est son projet, pas le leur : il l’annonce et l’organise, puis s’étonne de le voir échouer, sans comprendre ce qui se joue entre eux.",
+		labelT: 0.5,
+		labelDy: 0,
+		mLabelT: 0.5,
+		mLabelDy: 0,
+		mobileLabel: true,
+	},
+	{
+		source: 'baron',
+		target: 'perdican',
+		type: 'family',
+		label: 'père → fils',
+		description: "Le Baron est le père de Perdican, qu’il accueille fièrement à son retour de Paris.",
+		labelDx: -22,
+	},
+	{
+		source: 'baron',
+		target: 'camille',
+		type: 'family',
+		label: 'oncle → nièce',
+		description: "Le Baron est l’oncle de Camille, qui revient au château au sortir du couvent.",
+		labelDx: 26,
+	},
+	{
+		source: 'dame-pluche',
+		target: 'camille',
+		type: 'influence',
+		label: 'gouverne · influence',
+		description:
+			"Gouvernante de Camille, Dame Pluche porte la morale du couvent et l’encourage à se défier du monde et du mariage. Elle sert aussi d’intermédiaire, en portant sa lettre au couvent.",
+		labelDx: 52,
+		labelDy: 0,
+	},
+	{
+		source: 'blazius',
+		target: 'perdican',
+		type: 'education',
+		label: 'précepteur',
+		description:
+			"Ancien gouverneur de Perdican, Blazius l’a éduqué et revient avec lui. Lien d’éducation et de dépendance comique, sans influence réelle sur les choix amoureux de Perdican.",
+		labelDx: 34,
+		labelDy: -6,
+	},
+	{
+		source: 'blazius',
+		target: 'bridaine',
+		type: 'rivalry',
+		label: 'rivalité comique',
+		description:
+			"Le gouverneur et le curé se disputent la faveur du Baron et la meilleure place à sa table. Cette querelle grotesque fait contrepoint à l’intrigue principale, sans jamais l’influencer.",
+		labelDy: 0,
+	},
+	{
+		source: 'choeur',
+		target: 'rosette',
+		type: 'collective-observation',
+		label: 'le village',
+		description:
+			"Le chœur est la voix du village auquel appartient Rosette. Il observe et commente l’action sans y prendre part — rappel de l’écart social qui sépare la paysanne du château.",
+		labelDy: -10,
+	},
+];
+
+const mechanism = [
+	{ step: 'Amour', text: 'Perdican et Camille s’aiment depuis l’enfance.' },
+	{ step: 'Orgueil', text: 'Camille refuse ; aucun des deux ne veut céder.' },
+	{ step: 'Manipulation', text: 'Perdican courtise Rosette sous les yeux de Camille.' },
+	{ step: 'Jalousie', text: 'Camille riposte et fait de Rosette un témoin caché.' },
+	{ step: 'Catastrophe', text: 'Rosette surprend leurs aveux et en meurt.' },
+];
+
+const functions: Record<string, string> = {
+	perdican: 'Moteur de l’intrigue',
+	camille: 'Moteur de l’intrigue',
+	rosette: 'Victime de l’intrigue',
+	baron: 'Autorité · comique',
+	'dame-pluche': 'Comique · couvent',
+	blazius: 'Comique',
+	bridaine: 'Comique',
+	choeur: 'Commentaire',
+};
+---
+
+<!doctype html>
+<html lang="fr">
+	<head>
+		<BaseHead title={pageTitle} description={pageDescription} />
+	</head>
+	<body>
+		<Header />
+
+		<main class="page-container musset-page">
+			<article aria-labelledby="page-title">
+				<header class="map-intro">
+					<p class="intro-eyebrow">Alfred de Musset · 1834 · Proverbe en trois actes</p>
+					<h1 id="page-title"><cite>On ne badine pas avec l’amour</cite> — les personnages</h1>
+					<p class="intro-desc"><strong>Amour, orgueil, jalousie et manipulation</strong></p>
+					<p class="intro-instructions">
+						Sélectionnez un personnage ou une relation pour en afficher l’analyse ; les flèches du clavier parcourent les personnages, Échap réinitialise.
+					</p>
+				</header>
+
+				<ol class="mechanism" aria-label="Mécanisme de la pièce">
+					{mechanism.map((m) => (
+						<li>
+							<strong>{m.step}</strong>
+							<span>{m.text}</span>
+						</li>
+					))}
+				</ol>
+
+				<RelationshipMap
+					id="musset"
+					ariaLabel="Carte des relations entre les personnages d’On ne badine pas avec l’amour"
+					nodesLabel="Personnages"
+					nodes={characters}
+					relationships={relationships}
+					edgeTypes={edgeTypes}
+					layout={{ width: 900, height: 470 }}
+					mobileLayout={{ width: 360, height: 650 }}
+					hint="Cliquez ou appuyez sur un personnage pour afficher son rôle et ses relations, ou sur une étiquette pour expliquer une relation."
+					pointsLabel="Dans la pièce :"
+					relationsLabel="Relations :"
+					indexLabel="Toutes les relations, en texte"
+				/>
+
+				<footer class="map-synthesis" aria-labelledby="synthesis-title">
+					<h2 id="synthesis-title">Qui fait avancer l’intrigue ?</h2>
+					<div class="synthesis-table-wrapper">
+						<table class="synthesis-table">
+							<thead>
+								<tr>
+									<th scope="col">Personnage</th>
+									<th scope="col">Statut</th>
+									<th scope="col">Fonction</th>
+								</tr>
+							</thead>
+							<tbody>
+								{characters.map((c) => (
+									<tr>
+										<th scope="row">{c.label}</th>
+										<td>{c.meta?.join(' · ')}</td>
+										<td>{functions[c.id]}</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+
+					<div class="synthesis-axioms">
+						<blockquote>
+							« On est souvent trompé en amour, souvent blessé et souvent malheureux ; mais on aime […]. J’ai souffert souvent, je me suis trompé quelquefois, mais j’ai aimé. »
+							<cite>Perdican, acte II, scène 5</cite>
+						</blockquote>
+						<blockquote>
+							« Elle est morte. Adieu, Perdican ! »
+							<cite>Camille, acte III, scène 8 — dernière réplique</cite>
+						</blockquote>
+					</div>
+				</footer>
+			</article>
+		</main>
+
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.musset-page {
+		--intro-eyebrow-color: #8a1f1a;
+	}
+
+	.map-intro h1 cite {
+		font-style: italic;
+	}
+
+	/* Mécanisme : amour → orgueil → manipulation → jalousie → catastrophe */
+	.mechanism {
+		display: grid;
+		grid-template-columns: repeat(5, 1fr);
+		margin: -1rem 0 1.75rem;
+		padding: 0;
+		list-style: none;
+		counter-reset: step;
+	}
+
+	.mechanism li {
+		position: relative;
+		margin: 0;
+		padding: 0 0.85rem;
+		font-size: 0.8rem;
+		line-height: 1.35;
+		color: #5e6d7a;
+		text-align: center;
+	}
+
+	.mechanism li + li::before {
+		content: '→';
+		position: absolute;
+		left: -0.45rem;
+		top: 0;
+		font-family: Georgia, 'Times New Roman', serif;
+		color: #a2312b;
+	}
+
+	.mechanism strong {
+		display: block;
+		margin-bottom: 0.15rem;
+		font-family: Georgia, 'Times New Roman', serif;
+		font-size: 0.95rem;
+		font-style: italic;
+		color: #172b3a;
+	}
+
+	.mechanism li:last-child strong {
+		color: #8a1f1a;
+	}
+
+	/* La relation centrale domine aussi par son étiquette */
+	.musset-page :global(.rm-label.rm-label--love) {
+		font-size: 12.5px;
+		font-weight: bold;
+		color: #8a1f1a;
+	}
+
+	@media (max-width: 720px) {
+		.mechanism {
+			grid-template-columns: 1fr;
+			gap: 0.35rem;
+			margin-top: -1.25rem;
+		}
+
+		.mechanism li {
+			display: flex;
+			gap: 0.5rem;
+			align-items: baseline;
+			padding: 0 0 0 1.1rem;
+			text-align: left;
+		}
+
+		.mechanism li + li::before {
+			content: '↓';
+			left: 0;
+		}
+
+		.mechanism strong {
+			display: inline;
+			flex-shrink: 0;
+			min-width: 6.5rem;
+		}
+	}
+</style>
