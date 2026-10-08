@@ -17,7 +17,7 @@ fichier de repli au nom d'origine (≤ 1600 px, métadonnées d'origine conserv�
 | galois-portrait.jpg | secondaire (panneau) | https://commons.wikimedia.org/wiki/File:Galois-1848.jpg | Alfred Galois (1848) | Domaine public |
 | foucault-pendulum.jpg | principal | https://commons.wikimedia.org/wiki/File:Foucault_pendulum_at_Panth%C3%A9on_de_Paris,_August_2023.JPG | Benoît Prieur | CC0 |
 | darwin-tree.jpg | principal | https://commons.wikimedia.org/wiki/File:On_the_Origin_of_Species_diagram.PNG | Charles Darwin (1859) | Domaine public |
-| mendel-peas.png | secondaire (panneau) | https://commons.wikimedia.org/wiki/File:Mendels_peas.png | Mariana Ruiz (LadyofHats) | CC0 |
-| mendel-paper.jpg | principal | https://commons.wikimedia.org/wiki/File:Mendel_paper.jpg | Gregor Mendel (1865) | Domaine public |
+| mendel-peas.png | principal | https://commons.wikimedia.org/wiki/File:Mendels_peas.png | Mariana Ruiz (LadyofHats) | CC0 |
+| mendel-paper.jpg | secondaire (panneau) | https://commons.wikimedia.org/wiki/File:Mendel_paper.jpg | Gregor Mendel (1865) | Domaine public |
 | mendeleev-periodic-table.png | principal | https://commons.wikimedia.org/wiki/File:Mendeleev%27s_1869_periodic_table.png | Dmitri Mendeleïev (1869) | Domaine public |
 | maxwell-electromagnetic-fields.jpg | principal | https://commons.wikimedia.org/wiki/File:Treatise_on_Electricity_and_Magnetism_Fig_05.jpg | James Clerk Maxwell (1873) | Domaine public |

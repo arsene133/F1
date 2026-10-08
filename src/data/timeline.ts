@@ -1031,8 +1031,8 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'second-empire',
 		relatedTo: ['charles-darwin'],
 		importance: 'major',
-		image: scienceImages.mendelPaper,
-		secondaryImage: scienceImages.mendel,
+		image: scienceImages.mendel,
+		secondaryImage: scienceImages.mendelPaper,
 	},
 
 	// 9. 1869 — Dmitri Mendeleïev
