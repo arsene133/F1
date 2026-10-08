@@ -1,7 +1,8 @@
-export type TimelineItemType = 'history' | 'political-regime' | 'revolution' | 'war' | 'literature';
+export type TimelineItemType = 'history' | 'political-regime' | 'revolution' | 'war' | 'literature' | 'industry';
 
 export type LiteratureCategory = 'novel' | 'theatre' | 'poetry';
 export type HistoryCategory = 'revolution' | 'regime' | 'war' | 'event' | 'uprising' | 'coup';
+export type IndustryCategory = 'energy' | 'railways' | 'industrial-culture' | 'steel' | 'electricity' | 'internal-combustion';
 
 export interface TimelinePeriod {
 	id: string;
@@ -26,7 +27,8 @@ export interface TimelineItem {
 	endYear?: number;
 	datePrecise?: string;
 	type: TimelineItemType;
-	category: LiteratureCategory | HistoryCategory;
+	category: LiteratureCategory | HistoryCategory | IndustryCategory;
+	subCategory?: string;
 	title: string;
 	subtitle?: string;
 	author?: string;
@@ -37,11 +39,11 @@ export interface TimelineItem {
 	periodId: string;
 	relatedTo: string[];
 	quote?: string;
-	importance?: 'major' | 'standard';
+	importance?: 'major' | 'medium' | 'standard';
 	image?: TimelineItemImage;
 }
 
-export const TIMELINE_START_YEAR = 1785;
+export const TIMELINE_START_YEAR = 1765;
 export const TIMELINE_END_YEAR = 1890;
 
 export const timelinePeriods: TimelinePeriod[] = [
@@ -425,6 +427,154 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'troisieme-republique',
 		relatedTo: ['troisieme-republique', 'second-empire', 'pere-goriot'],
 		quote: '« C’est la cuisine de la bourgeoisie, le pot-bouille où tout mijote sans bruit derrière les portes d’acajou. »',
+		importance: 'major',
+	},
+
+	// --------------------------------------------------------------------------
+	// JALONS INDUSTRIELS (Catégorie Industrie)
+	// --------------------------------------------------------------------------
+
+	// 1. 1769 — Machine à vapeur de Watt
+	{
+		id: 'machine-vapeur-watt',
+		year: 1769,
+		datePrecise: '1769',
+		type: 'industry',
+		category: 'energy',
+		subCategory: 'energy',
+		title: 'Machine à vapeur de Watt',
+		subtitle: '1769 · James Watt',
+		tagLabel: 'Industrie · Énergie / Vapeur',
+		description: "James Watt perfectionne la machine à vapeur et dépose en 1769 un brevet pour son amélioration. La vapeur devient progressivement une source majeure d'énergie mécanique pour l'industrie.",
+		historicalContext: "Perfectionnement décisif des machines antérieures (Newcomen), la condensation séparée de Watt démultiplie l'efficacité énergétique et amorce la première révolution industrielle en affranchissant les manufactures des cours d'eau.",
+		periodId: 'revolution-francaise-regime',
+		relatedTo: ['chemin-de-fer-stockton', 'liverpool-manchester'],
+		importance: 'major',
+	},
+
+	// 2. 1825 — Premier chemin de fer public à vapeur
+	{
+		id: 'chemin-de-fer-stockton',
+		year: 1825,
+		datePrecise: '27 septembre 1825',
+		type: 'industry',
+		category: 'railways',
+		subCategory: 'railways',
+		title: 'Premier chemin de fer public à vapeur',
+		subtitle: '1825 · Stockton–Darlington',
+		tagLabel: 'Industrie · Chemin de fer',
+		description: "La ligne Stockton–Darlington ouvre un service ferroviaire public utilisant la traction à vapeur. Le chemin de fer devient progressivement une infrastructure majeure de l'industrialisation.",
+		historicalContext: "Conçue par George Stephenson, cette ligne démontre la viabilité du rail à vapeur pour le transport lourd de marchandises et ouvre l'ère de l'intégration des réseaux de transport.",
+		periodId: 'restauration',
+		relatedTo: ['machine-vapeur-watt', 'liverpool-manchester', 'paris-saint-germain'],
+		importance: 'major',
+	},
+
+	// 3. 1830 — Liverpool–Manchester
+	{
+		id: 'liverpool-manchester',
+		year: 1830,
+		datePrecise: '15 septembre 1830',
+		type: 'industry',
+		category: 'railways',
+		subCategory: 'railways',
+		title: 'Liverpool–Manchester',
+		subtitle: '1830 · Ligne interurbaine',
+		tagLabel: 'Industrie · Chemin de fer',
+		description: "L'ouverture de la ligne Liverpool–Manchester marque une étape majeure dans l'essor du chemin de fer à vapeur et dans la transformation des transports industriels.",
+		historicalContext: "Première ligne ferroviaire moderne reliant deux grands centres urbains avec horaires réguliers et double voie, elle accélère le transport du coton et des passagers en pleine expansion manufacturière.",
+		periodId: 'monarchie-juillet',
+		relatedTo: ['chemin-de-fer-stockton', 'paris-saint-germain', 'procede-bessemer'],
+		importance: 'major',
+	},
+
+	// 4. 1837 — Paris–Saint-Germain
+	{
+		id: 'paris-saint-germain',
+		year: 1837,
+		datePrecise: '26 août 1837',
+		type: 'industry',
+		category: 'railways',
+		subCategory: 'railways',
+		title: 'Paris–Saint-Germain',
+		subtitle: '1837 · Première ligne voyageurs en France',
+		tagLabel: 'Industrie · Chemin de fer',
+		description: "La première ligne française destinée au transport de voyageurs est inaugurée entre Paris et Saint-Germain-en-Laye. Le chemin de fer commence à transformer les mobilités et les échanges en France.",
+		historicalContext: "Soutenue par les frères Pereire sous la Monarchie de Juillet, cette ligne de démonstration déclenche l'engouement du public parisien et préfigure le réseau en étoile qui irriguera la France.",
+		periodId: 'monarchie-juillet',
+		relatedTo: ['liverpool-manchester', 'pere-goriot', 'on-ne-badine-pas'],
+		importance: 'medium',
+	},
+
+	// 5. 1851 — Exposition universelle de Londres
+	{
+		id: 'exposition-universelle-londres',
+		year: 1851,
+		datePrecise: 'Mai – Octobre 1851',
+		type: 'industry',
+		category: 'industrial-culture',
+		subCategory: 'industrial-culture',
+		title: 'Exposition universelle de Londres',
+		subtitle: '1851 · Le Crystal Palace',
+		tagLabel: 'Industrie · Culture industrielle',
+		description: "Le Crystal Palace accueille la première grande Exposition universelle. Machines, produits manufacturés, métallurgie et innovations deviennent les vitrines du progrès industriel.",
+		historicalContext: "Apothéose de l'hégémonie manufacturière britannique victorienne, l'Exposition réunit les nations autour du culte du machinisme et de l'architecture novatrice de fonte et de verre de Joseph Paxton.",
+		periodId: 'deuxieme-republique',
+		relatedTo: ['procede-bessemer', 'coup-etat-1851', 'second-empire-event'],
+		importance: 'major',
+	},
+
+	// 6. 1855 — Procédé Bessemer
+	{
+		id: 'procede-bessemer',
+		year: 1855,
+		datePrecise: '1855',
+		type: 'industry',
+		category: 'steel',
+		subCategory: 'steel',
+		title: 'Procédé Bessemer',
+		subtitle: '1855 · Henry Bessemer',
+		tagLabel: 'Industrie · Sidérurgie / Acier',
+		description: "Le convertisseur Bessemer permet de produire de grandes quantités d'acier à moindre coût. La sidérurgie devient un moteur essentiel de l'industrialisation et du développement ferroviaire.",
+		historicalContext: "En soufflant de l'air à travers la fonte en fusion pour décarburer le métal, Bessemer transforme l'acier, jusqu'alors rare et coûteux, en matériau roi des rails, ponts, coques de navires et poutrelles du Second Empire.",
+		periodId: 'second-empire',
+		relatedTo: ['exposition-universelle-londres', 'dynamo-gramme', 'second-empire-event'],
+		importance: 'major',
+	},
+
+	// 7. 1871 — Dynamo de Gramme
+	{
+		id: 'dynamo-gramme',
+		year: 1871,
+		datePrecise: '1871',
+		type: 'industry',
+		category: 'electricity',
+		subCategory: 'electricity',
+		title: 'Dynamo de Gramme',
+		subtitle: '1871 · Zénobe Gramme',
+		tagLabel: 'Industrie · Électricité',
+		description: "Zénobe Gramme met au point une dynamo capable de produire un courant électrique continu de manière efficace. L'électricité entre progressivement dans le domaine de la production industrielle.",
+		historicalContext: "Présentée à l'Académie des sciences, la machine magnéto-électrique de Gramme jette les bases de l'industrie électrique et annonce la seconde révolution industrielle en résolvant la production continue d'énergie.",
+		periodId: 'troisieme-republique',
+		relatedTo: ['moteur-explosion-otto', 'commune-paris'],
+		importance: 'major',
+	},
+
+	// 8. 1876 — Moteur à explosion
+	{
+		id: 'moteur-explosion-otto',
+		year: 1876,
+		datePrecise: '1876',
+		type: 'industry',
+		category: 'internal-combustion',
+		subCategory: 'internal-combustion',
+		title: 'Moteur à explosion',
+		subtitle: '1876 · Nikolaus Otto',
+		tagLabel: 'Industrie · Moteur thermique',
+		description: "Le moteur à quatre temps développé par Nikolaus Otto constitue un jalon majeur du moteur à combustion interne et prépare les transformations industrielles et automobiles de la fin du XIXe siècle.",
+		historicalContext: "Le cycle à quatre temps (admission, compression, combustion-détente, échappement) offre un rendement énergétique inédit, rendant possible les futures motorisations compactes et mobiles de l'ère industrielle contemporaine.",
+		periodId: 'troisieme-republique',
+		relatedTo: ['dynamo-gramme', 'pot-bouille'],
 		importance: 'major',
 	},
 ];

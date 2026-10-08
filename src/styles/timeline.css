@@ -34,6 +34,10 @@
 	--tl-war-color: #545b62;        /* Ardoise / guerre */
 	--tl-war-bg: rgba(84, 91, 98, 0.06);
 
+	--tl-ind-color: #2b6e62;        /* Vert-de-gris / cuivre patiné / acier industriel */
+	--tl-ind-bg: rgba(43, 110, 98, 0.06);
+	--tl-ind-border: #9ec1ba;
+
 	/* Périodes politiques discrètes */
 	--band-bg-subtle: rgba(23, 43, 58, 0.025);
 	--band-border-subtle: rgba(23, 43, 58, 0.1);
@@ -271,6 +275,22 @@
 	background: var(--tl-lit-bg);
 }
 
+.timeline-step.is-industry .spine-marker-dot {
+	width: 11px;
+	height: 11px;
+	border-width: 2.5px;
+	border-color: var(--tl-ind-color);
+	background: var(--tl-surface);
+}
+
+.timeline-step.is-industry.major-industry-point .spine-marker-dot {
+	width: 12px;
+	height: 12px;
+	border-width: 3px;
+	border-color: var(--tl-ind-color);
+	background: var(--tl-ind-bg);
+}
+
 .timeline-step.selected .spine-marker-dot,
 .timeline-step.context-highlight .spine-marker-dot {
 	border-color: var(--tl-accent);
@@ -440,6 +460,27 @@
 	font-weight: 800;
 }
 
+/* HIERARCHIE INDUSTRIE : JALONS TECHNIQUES ET PRODUCTIFS */
+.timeline-step.is-industry .timeline-entry-button {
+	border-left: 3px solid var(--tl-ind-color);
+}
+
+.timeline-step.is-industry.major-industry-point .timeline-entry-button {
+	border-left: 4px solid var(--tl-ind-color);
+	background: #fbfdfc;
+}
+
+.timeline-step.is-industry .entry-type-badge {
+	background: var(--tl-ind-bg);
+	color: var(--tl-ind-color);
+	border: 1px solid rgba(43, 110, 98, 0.2);
+}
+
+.timeline-step.is-industry .entry-year-time {
+	color: var(--tl-ind-color);
+	font-weight: 700;
+}
+
 /* PÉRIODES POLITIQUES CONTEXTUELLES DE FOND (Layer discret) */
 .regime-context-banner {
 	margin: 1.25rem 0 0.5rem;
@@ -532,6 +573,12 @@
 	background: var(--tl-war-bg);
 	color: var(--tl-war-color);
 	border: 1px solid var(--tl-border);
+}
+
+.details-category-tag.ind {
+	background: var(--tl-ind-bg);
+	color: var(--tl-ind-color);
+	border: 1px solid var(--tl-ind-border);
 }
 
 .details-title {

@@ -43,12 +43,25 @@ const majorTurningPointIds = new Set([
 	'commune-paris',
 ]);
 
+// Identifier les jalons industriels majeurs
+const majorIndustryPointIds = new Set([
+	'machine-vapeur-watt',
+	'chemin-de-fer-stockton',
+	'liverpool-manchester',
+	'exposition-universelle-londres',
+	'procede-bessemer',
+	'dynamo-gramme',
+	'moteur-explosion-otto',
+]);
+
 // Détermination de l'alternance gauche / droite pour le bureau
 // Les œuvres littéraires et les tournants majeurs s'alternent harmonieusement
 let sideToggle = 0;
 const enrichedItems = sortedTimelineItems.map((item) => {
 	const isLiterature = item.type === 'literature';
+	const isIndustry = item.type === 'industry';
 	const isMajorTurningPoint = majorTurningPointIds.has(item.id);
+	const isMajorIndustryPoint = majorIndustryPointIds.has(item.id);
 	const period = periodsMap.get(item.periodId);
 
 	// Alternance gauche/droite
@@ -59,7 +72,9 @@ const enrichedItems = sortedTimelineItems.map((item) => {
 		...item,
 		alignment,
 		isLiterature,
+		isIndustry,
 		isMajorTurningPoint,
+		isMajorIndustryPoint,
 		periodTitle: period ? period.title : '',
 		periodDates: period ? period.displayDates : '',
 	};
@@ -142,7 +157,7 @@ const clientData = {
 							)}
 
 							<li
-								class={`timeline-step ${item.alignment} ${item.isLiterature ? 'is-literature' : ''} ${item.isMajorTurningPoint ? 'major-turning-point' : ''}`}
+								class={`timeline-step ${item.alignment} ${item.isLiterature ? 'is-literature' : ''} ${item.isIndustry ? 'is-industry' : ''} ${item.isMajorTurningPoint ? 'major-turning-point' : ''} ${item.isMajorIndustryPoint ? 'major-industry-point' : ''}`}
 								id={`step-${item.id}`}
 								data-item-id={item.id}
 								data-item-type={item.type}
@@ -174,7 +189,7 @@ const clientData = {
 											{item.datePrecise ?? item.year}
 										</time>
 										<span class="entry-type-badge">
-											{item.isLiterature ? (item.tagLabel?.split('·')[0].trim() || 'Littérature') : item.type === 'revolution' ? 'Révolution' : item.type === 'war' ? 'Guerre' : 'Histoire'}
+											{item.isLiterature ? (item.tagLabel?.split('·')[0].trim() || 'Littérature') : item.type === 'industry' ? 'Industrie' : item.type === 'revolution' ? 'Révolution' : item.type === 'war' ? 'Guerre' : 'Histoire'}
 										</span>
 									</div>
 
@@ -222,6 +237,10 @@ const clientData = {
 		<div class="legend-item">
 			<span class="legend-indicator dot" style="background: var(--tl-surface); border-color: var(--tl-rev-color); border-width: 3px;"></span>
 			<span>Tournant historique majeur (1789, 1830, 1848, Sedan, Commune)</span>
+		</div>
+		<div class="legend-item">
+			<span class="legend-indicator dot" style="background: var(--tl-surface); border-color: var(--tl-ind-color); border-width: 2.5px;"></span>
+			<span>Jalon industriel (vapeur, rail, acier, électricité, moteur)</span>
 		</div>
 		<div class="legend-item">
 			<span class="legend-indicator dot" style="background: var(--tl-surface); border-color: var(--tl-muted);"></span>
@@ -293,8 +312,8 @@ const clientData = {
 
 				const period = periodsMap.get(item.periodId);
 				const periodTitle = period ? period.title : '';
-				const tagClass = item.type === 'literature' ? 'lit' : item.type === 'revolution' ? 'rev' : item.type === 'war' ? 'war' : 'hist';
-				const typeHumanLabel = item.type === 'literature' ? (item.tagLabel || 'Littérature') : item.type === 'revolution' ? 'Révolution' : item.type === 'war' ? 'Guerre' : 'Régime politique';
+				const tagClass = item.type === 'literature' ? 'lit' : item.type === 'industry' ? 'ind' : item.type === 'revolution' ? 'rev' : item.type === 'war' ? 'war' : 'hist';
+				const typeHumanLabel = item.type === 'literature' ? (item.tagLabel || 'Littérature') : item.type === 'industry' ? (item.tagLabel || 'Industrie') : item.type === 'revolution' ? 'Révolution' : item.type === 'war' ? 'Guerre' : 'Régime politique';
 
 				// Repères et liens associés
 				const relatedButtons = item.relatedTo
@@ -431,11 +450,13 @@ const clientData = {
 					if (filterId === 'literature') {
 						visible = item.type === 'literature';
 					} else if (filterId === 'history') {
-						visible = item.type !== 'literature';
+						visible = item.type !== 'literature' && item.type !== 'industry';
 					} else if (filterId === 'regimes') {
 						visible = item.type === 'political-regime';
 					} else if (filterId === 'revolutions-wars') {
 						visible = item.type === 'revolution' || item.type === 'war';
+					} else if (filterId === 'industry') {
+						visible = item.type === 'industry';
 					}
 
 					stepEl.classList.toggle('timeline-step-dimmed', !visible);
@@ -446,7 +467,7 @@ const clientData = {
 					const banner = document.getElementById(`period-banner-${p.id}`);
 					if (!banner) return;
 					let visible = true;
-					if (filterId === 'literature' || filterId === 'revolutions-wars') {
+					if (filterId === 'literature' || filterId === 'revolutions-wars' || filterId === 'industry') {
 						visible = false;
 					}
 					banner.classList.toggle('timeline-step-dimmed', !visible);

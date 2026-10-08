@@ -31,4 +31,9 @@ export const timelineFilters: FilterOption[] = [
 		label: 'Révolutions & guerres',
 		description: 'Les ruptures armées et populaires (1789, 1830, 1848, 1870, Sedan, 1871).',
 	},
+	{
+		id: 'industry',
+		label: 'Industrie',
+		description: 'Transformation du système productif : vapeur, chemin de fer, acier, électricité, moteur.',
+	},
 ];
