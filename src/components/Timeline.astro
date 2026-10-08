@@ -125,7 +125,7 @@ const enrichedItems = sortedTimelineItems.map((item) => {
 		isMajorPaintingPoint,
 		isMajorMusicPoint,
 		isMinorCulturalPoint,
-		periodTitle: period ? period.title : '',
+		periodTitle: item.periodLabel ?? (period ? period.title : ''),
 		periodDates: period ? period.displayDates : '',
 	};
 });
@@ -367,6 +367,7 @@ const clientData = {
 		historicalContext: string;
 		contextSectionTitle?: string;
 		periodId: string;
+		periodLabel?: string;
 		relatedTo: string[];
 		relatedLinks?: Array<{ id: string; label?: string; prefix?: string }>;
 		quote?: string;
@@ -520,7 +521,7 @@ const clientData = {
 				panel.querySelectorAll('audio').forEach((el) => el.pause());
 
 				const period = periodsMap.get(item.periodId);
-				const periodTitle = period ? period.title : '';
+				const periodTitle = item.periodLabel ?? (period ? period.title : '');
 				const tagClass = item.id === 'e-galois' ? 'galois' : item.type === 'literature' ? 'lit' : item.type === 'science' ? 'sci' : item.type === 'industry' ? 'ind' : item.type === 'painting' ? 'paint' : item.type === 'music' ? 'music' : item.type === 'revolution' ? 'rev' : item.type === 'war' ? 'war' : 'hist';
 				const typeHumanLabel = item.id === 'e-galois' ? 'Sciences · Mathématiques d’exception' : item.type === 'literature' ? (item.tagLabel || 'Littérature') : item.type === 'science' ? (item.tagLabel || 'Sciences') : item.type === 'industry' ? (item.tagLabel || 'Industrie') : item.type === 'painting' ? (item.tagLabel || 'Peinture') : item.type === 'music' ? (item.tagLabel || 'Musique') : item.type === 'revolution' ? 'Révolution' : item.type === 'war' ? 'Guerre' : 'Régime politique';
 

@@ -110,6 +110,8 @@ export interface TimelineItem {
 	historicalContext: string;
 	contextSectionTitle?: string;
 	periodId: string;
+	/** Libellé de période affiché à la place du titre de `periodId` (œuvre créée hors de France) */
+	periodLabel?: string;
 	relatedTo: string[];
 	/** Liens relationnels enrichis avec labels ou préfixes spécifiques */
 	relatedLinks?: Array<{ id: string; label?: string; prefix?: string }>;
@@ -1451,6 +1453,7 @@ export const timelineItems: TimelineItem[] = [
 		description: 'Wagner pousse l’harmonie romantique, le chromatisme et la tension musicale vers des audaces inouïes (le célèbre « accord de Tristan »), posant un jalon fondamental vers la modernité musicale du XXe siècle.',
 		historicalContext: 'Contexte historique : romantisme européen tardif et émergence du drame musical total (Gesamtkunstwerk). Achevé en 1859 mais créé en 1865 à Munich sous l’égide de Louis II de Bavière, l’opéra dissout les résolutions tonales classiques.',
 		periodId: 'second-empire',
+		periodLabel: 'Confédération germanique · Royaume de Bavière',
 		relatedTo: ['painting-manet-dejeuner', 'gregor-mendel', 'music-wagner-parsifal'],
 		importance: 'major',
 		image: musicImages.wagnerTristanSchnorr,
@@ -1498,6 +1501,7 @@ export const timelineItems: TimelineItem[] = [
 		description: '« Festival scénique sacré » marquant le point culminant du drame musical wagnérien et du romantisme fin-de-siècle, conçu spécifiquement pour l’acoustique mystique du Festspielhaus de Bayreuth.',
 		historicalContext: 'Contexte historique : romantisme européen tardif des années 1880. Créé quelques mois avant la mort de Wagner, Parsifal explore le renoncement, la rédemption et la transcendance orchestrale au moment où l’Europe bascule dans le naturalisme et la seconde industrialisation.',
 		periodId: 'troisieme-republique',
+		periodLabel: 'Empire allemand',
 		relatedTo: ['pot-bouille', 'music-wagner-tristan'],
 		importance: 'standard',
 		image: musicImages.wagnerParsifal,
