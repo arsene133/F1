@@ -1,0 +1,131 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import Timeline from '../components/Timeline.astro';
+
+const pageTitle = "Frise chronologique — littérature et histoire au XIXe siècle";
+const pageDescription = "Visualisation éditoriale interactive reliant les œuvres littéraires majeures (Balzac, Musset, Rimbaud, Zola) aux régimes politiques et bouleversements historiques du XIXe siècle.";
+---
+
+<!doctype html>
+<html lang="fr">
+	<head>
+		<BaseHead title={pageTitle} description={pageDescription} />
+		<style>
+			.timeline-page-main {
+				width: 100%;
+				max-width: 1180px;
+				margin: 0 auto;
+				padding: 2.5rem 1.25rem 5rem;
+				box-sizing: border-box;
+			}
+
+			.timeline-educational-notes {
+				margin-top: 4rem;
+				border-top: 1px solid var(--tl-border, #dcd6cb);
+				padding-top: 2.5rem;
+			}
+
+			.timeline-educational-notes h2 {
+				font-family: Georgia, 'Times New Roman', serif;
+				font-size: 1.6rem;
+				font-weight: normal;
+				color: var(--tl-ink, #172b3a);
+				margin-bottom: 1.5rem;
+				text-align: center;
+			}
+
+			.notes-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+				gap: 1.75rem;
+				margin-bottom: 2.5rem;
+			}
+
+			.note-card {
+				background: #ffffff;
+				border: 1px solid #ece7de;
+				border-radius: 8px;
+				padding: 1.4rem;
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+			}
+
+			.note-card h3 {
+				font-family: Georgia, 'Times New Roman', serif;
+				font-size: 1.15rem;
+				color: #172b3a;
+				margin: 0 0 0.6rem 0;
+			}
+
+			.note-card p {
+				font-size: 0.92rem;
+				line-height: 1.55;
+				color: #5e6d7a;
+				margin: 0;
+			}
+
+			.note-card strong {
+				color: #2d3e4d;
+			}
+
+			.navigation-back {
+				text-align: center;
+				margin-top: 3rem;
+				padding-top: 1.5rem;
+				border-top: 1px dashed #dcd6cb;
+			}
+
+			.navigation-back a {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.5rem;
+				font-size: 0.95rem;
+				font-weight: 600;
+				color: var(--accent, #2337ff);
+				text-decoration: none;
+			}
+
+			.navigation-back a:hover {
+				text-decoration: underline;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main class="timeline-page-main">
+			<Timeline initialSelectedId="pere-goriot" />
+
+			<section class="timeline-educational-notes" aria-label="Repères d'analyse littéraire et historique">
+				<h2>Repères d'analyse : comprendre la littérature dans son siècle</h2>
+				<div class="notes-grid">
+					<article class="note-card">
+						<h3>1. Le désenchantement romantique (1830–1835)</h3>
+						<p>
+							Sous la Monarchie de Juillet, la jeunesse orpheline des épopées napoléoniennes se heurte au règne de l’utilitarisme bourgeois. Musset (<em>On ne badine pas avec l’amour</em>) explore la tragédie de l’orgueil et du doute, tandis que Balzac (<em>Le Père Goriot</em>) met en scène la conversion impitoyable de Rastignac aux lois de l’argent.
+						</p>
+					</article>
+					<article class="note-card">
+						<h3>2. La rupture poétique de 1870</h3>
+						<p>
+							L’été et l’automne 1870 concentrent la guerre franco-prussienne, le désastre de Sedan et la fin abrupte du Second Empire. Dans les <em>Cahiers de Douai</em>, Rimbaud (15–16 ans) refuse l’ordre impérial et le conformisme patriarcal pour inventer une poésie libérée, juste avant l’insurrection de la Commune de Paris.
+						</p>
+					</article>
+					<article class="note-card">
+						<h3>3. L’anatomie naturaliste de la bourgeoisie (1882)</h3>
+						<p>
+							Avec <em>Pot-Bouille</em> sous la IIIe République, Zola ausculte les fondations intimes de la société bourgeoise façonnée par le Second Empire : derrière la respectabilité bourgeoise de l’immeuble moderne, l’hypocrisie et les calculs domestiques régissent le mariage et les fortunes.
+						</p>
+					</article>
+				</div>
+
+				<div class="navigation-back">
+					<a href="/balzac-rimbaud">
+						<span>←</span> Découvrir aussi la carte relationnelle : <em>Balzac, Rastignac, la Commune, Marx et Rimbaud</em>
+					</a>
+				</div>
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>
