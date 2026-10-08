@@ -38,6 +38,14 @@
 	--tl-ind-bg: rgba(43, 110, 98, 0.06);
 	--tl-ind-border: #9ec1ba;
 
+	--tl-sci-color: #3b5a80;        /* Bleu nuit savant / encre scientifique */
+	--tl-sci-bg: rgba(59, 90, 128, 0.06);
+	--tl-sci-border: #a4bad2;
+
+	--tl-galois-accent: #694382;    /* Pourpre mathématique subtil pour Évariste Galois */
+	--tl-galois-bg: #faf7fc;
+	--tl-galois-border: #c8b6d8;
+
 	/* Périodes politiques discrètes */
 	--band-bg-subtle: rgba(23, 43, 58, 0.025);
 	--band-border-subtle: rgba(23, 43, 58, 0.1);
@@ -291,6 +299,31 @@
 	background: var(--tl-ind-bg);
 }
 
+.timeline-step.is-science .spine-marker-dot {
+	width: 11px;
+	height: 11px;
+	border-width: 2.5px;
+	border-color: var(--tl-sci-color);
+	background: var(--tl-surface);
+}
+
+.timeline-step.is-science.major-science-point .spine-marker-dot {
+	width: 12px;
+	height: 12px;
+	border-width: 3px;
+	border-color: var(--tl-sci-color);
+	background: var(--tl-sci-bg);
+}
+
+.timeline-step.is-galois .spine-marker-dot {
+	width: 14px;
+	height: 14px;
+	border-width: 3px;
+	border-color: var(--tl-galois-accent);
+	background: #ffffff;
+	box-shadow: 0 0 0 3px rgba(105, 67, 130, 0.15);
+}
+
 .timeline-step.selected .spine-marker-dot,
 .timeline-step.context-highlight .spine-marker-dot {
 	border-color: var(--tl-accent);
@@ -481,6 +514,67 @@
 	font-weight: 700;
 }
 
+/* HIERARCHIE SCIENCES : JALONS SCIENTIFIQUES */
+.timeline-step.is-science .timeline-entry-button {
+	border-left: 3px solid var(--tl-sci-color);
+}
+
+.timeline-step.is-science.major-science-point .timeline-entry-button {
+	border-left: 4px solid var(--tl-sci-color);
+	background: #fbfcfe;
+}
+
+.timeline-step.is-science .entry-type-badge {
+	background: var(--tl-sci-bg);
+	color: var(--tl-sci-color);
+	border: 1px solid rgba(59, 90, 128, 0.2);
+}
+
+.timeline-step.is-science .entry-year-time {
+	color: var(--tl-sci-color);
+	font-weight: 700;
+}
+
+/* TRAITEMENT VISUEL D'EXCEPTION : ÉVARISTE GALOIS (1832) */
+.timeline-step.is-galois .timeline-entry-button {
+	border-left: 4px solid var(--tl-galois-accent);
+	background: var(--tl-galois-bg);
+	border-color: var(--tl-galois-border);
+	box-shadow: 0 3px 12px rgba(105, 67, 130, 0.08);
+	position: relative;
+}
+
+.timeline-step.is-galois .entry-card-header::after {
+	content: '{ G }';
+	font-family: var(--tl-serif);
+	font-size: 0.82rem;
+	font-weight: 700;
+	color: var(--tl-galois-accent);
+	letter-spacing: 0.08em;
+	background: rgba(105, 67, 130, 0.1);
+	padding: 0.1rem 0.45rem;
+	border-radius: 3px;
+	margin-left: auto;
+}
+
+.timeline-step.is-galois .entry-type-badge {
+	background: rgba(105, 67, 130, 0.12);
+	color: var(--tl-galois-accent);
+	border: 1px solid rgba(105, 67, 130, 0.25);
+	font-weight: 700;
+}
+
+.timeline-step.is-galois .entry-title {
+	font-size: 1.15rem;
+	color: var(--tl-ink);
+}
+
+.timeline-step.is-galois .entry-year-time {
+	color: var(--tl-galois-accent);
+	font-size: 0.94rem;
+	font-weight: 800;
+}
+
 /* PÉRIODES POLITIQUES CONTEXTUELLES DE FOND (Layer discret) */
 .regime-context-banner {
 	margin: 1.25rem 0 0.5rem;
@@ -579,6 +673,18 @@
 	background: var(--tl-ind-bg);
 	color: var(--tl-ind-color);
 	border: 1px solid var(--tl-ind-border);
+}
+
+.details-category-tag.sci {
+	background: var(--tl-sci-bg);
+	color: var(--tl-sci-color);
+	border: 1px solid var(--tl-sci-border);
+}
+
+.details-category-tag.galois {
+	background: rgba(105, 67, 130, 0.12);
+	color: var(--tl-galois-accent);
+	border: 1px solid var(--tl-galois-border);
 }
 
 .details-title {

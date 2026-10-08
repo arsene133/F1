@@ -54,14 +54,29 @@ const majorIndustryPointIds = new Set([
 	'moteur-explosion-otto',
 ]);
 
+// Identifier les jalons scientifiques majeurs
+const majorSciencePointIds = new Set([
+	'alessandro-volta',
+	'sadi-carnot',
+	'michael-faraday',
+	'leon-foucault',
+	'charles-darwin',
+	'gregor-mendel',
+	'dmitri-mendeleiev',
+	'james-clerk-maxwell',
+]);
+
 // Détermination de l'alternance gauche / droite pour le bureau
 // Les œuvres littéraires et les tournants majeurs s'alternent harmonieusement
 let sideToggle = 0;
 const enrichedItems = sortedTimelineItems.map((item) => {
 	const isLiterature = item.type === 'literature';
 	const isIndustry = item.type === 'industry';
+	const isScience = item.type === 'science';
+	const isGalois = item.id === 'e-galois';
 	const isMajorTurningPoint = majorTurningPointIds.has(item.id);
 	const isMajorIndustryPoint = majorIndustryPointIds.has(item.id);
+	const isMajorSciencePoint = majorSciencePointIds.has(item.id);
 	const period = periodsMap.get(item.periodId);
 
 	// Alternance gauche/droite
@@ -73,8 +88,11 @@ const enrichedItems = sortedTimelineItems.map((item) => {
 		alignment,
 		isLiterature,
 		isIndustry,
+		isScience,
+		isGalois,
 		isMajorTurningPoint,
 		isMajorIndustryPoint,
+		isMajorSciencePoint,
 		periodTitle: period ? period.title : '',
 		periodDates: period ? period.displayDates : '',
 	};
@@ -157,7 +175,7 @@ const clientData = {
 							)}
 
 							<li
-								class={`timeline-step ${item.alignment} ${item.isLiterature ? 'is-literature' : ''} ${item.isIndustry ? 'is-industry' : ''} ${item.isMajorTurningPoint ? 'major-turning-point' : ''} ${item.isMajorIndustryPoint ? 'major-industry-point' : ''}`}
+								class={`timeline-step ${item.alignment} ${item.isLiterature ? 'is-literature' : ''} ${item.isIndustry ? 'is-industry' : ''} ${item.isScience ? 'is-science' : ''} ${item.isGalois ? 'is-galois featured' : ''} ${item.isMajorTurningPoint ? 'major-turning-point' : ''} ${item.isMajorIndustryPoint ? 'major-industry-point' : ''} ${item.isMajorSciencePoint ? 'major-science-point' : ''}`}
 								id={`step-${item.id}`}
 								data-item-id={item.id}
 								data-item-type={item.type}
@@ -189,13 +207,16 @@ const clientData = {
 											{item.datePrecise ?? item.year}
 										</time>
 										<span class="entry-type-badge">
-											{item.isLiterature ? (item.tagLabel?.split('·')[0].trim() || 'Littérature') : item.type === 'industry' ? 'Industrie' : item.type === 'revolution' ? 'Révolution' : item.type === 'war' ? 'Guerre' : 'Histoire'}
+											{item.isLiterature ? (item.tagLabel?.split('·')[0].trim() || 'Littérature') : item.type === 'science' ? 'Sciences' : item.type === 'industry' ? 'Industrie' : item.type === 'revolution' ? 'Révolution' : item.type === 'war' ? 'Guerre' : 'Histoire'}
 										</span>
 									</div>
 
 									<h3 class="entry-title">{item.title}</h3>
 
-									{item.author && (
+									{item.subtitle && (
+										<div class="entry-author">{item.subtitle}</div>
+									)}
+									{item.author && !item.subtitle && (
 										<div class="entry-author">{item.author}</div>
 									)}
 
@@ -241,6 +262,14 @@ const clientData = {
 		<div class="legend-item">
 			<span class="legend-indicator dot" style="background: var(--tl-surface); border-color: var(--tl-ind-color); border-width: 2.5px;"></span>
 			<span>Jalon industriel (vapeur, rail, acier, électricité, moteur)</span>
+		</div>
+		<div class="legend-item">
+			<span class="legend-indicator dot" style="background: var(--tl-surface); border-color: var(--tl-sci-color); border-width: 2.5px;"></span>
+			<span>Jalon scientifique (physique, biologie, chimie, mathématiques)</span>
+		</div>
+		<div class="legend-item">
+			<span class="legend-indicator dot" style="background: var(--tl-galois-bg); border-color: var(--tl-galois-accent); border-width: 3px;"></span>
+			<span>Évariste Galois (mathématiques & époque révolutionnaire)</span>
 		</div>
 		<div class="legend-item">
 			<span class="legend-indicator dot" style="background: var(--tl-surface); border-color: var(--tl-muted);"></span>
@@ -312,8 +341,8 @@ const clientData = {
 
 				const period = periodsMap.get(item.periodId);
 				const periodTitle = period ? period.title : '';
-				const tagClass = item.type === 'literature' ? 'lit' : item.type === 'industry' ? 'ind' : item.type === 'revolution' ? 'rev' : item.type === 'war' ? 'war' : 'hist';
-				const typeHumanLabel = item.type === 'literature' ? (item.tagLabel || 'Littérature') : item.type === 'industry' ? (item.tagLabel || 'Industrie') : item.type === 'revolution' ? 'Révolution' : item.type === 'war' ? 'Guerre' : 'Régime politique';
+				const tagClass = item.id === 'e-galois' ? 'galois' : item.type === 'literature' ? 'lit' : item.type === 'science' ? 'sci' : item.type === 'industry' ? 'ind' : item.type === 'revolution' ? 'rev' : item.type === 'war' ? 'war' : 'hist';
+				const typeHumanLabel = item.id === 'e-galois' ? 'Sciences · Mathématiques d’exception' : item.type === 'literature' ? (item.tagLabel || 'Littérature') : item.type === 'science' ? (item.tagLabel || 'Sciences') : item.type === 'industry' ? (item.tagLabel || 'Industrie') : item.type === 'revolution' ? 'Révolution' : item.type === 'war' ? 'Guerre' : 'Régime politique';
 
 				// Repères et liens associés
 				const relatedButtons = item.relatedTo
@@ -321,7 +350,10 @@ const clientData = {
 						const relItem = itemsMap.get(relId);
 						const relPeriod = periodsMap.get(relId);
 						const label = relItem ? `${relItem.title} (${relItem.datePrecise || relItem.year})` : relPeriod ? `${relPeriod.title} (${relPeriod.displayDates})` : relId;
-						return `<button type="button" class="details-related-btn" data-target-id="${relId}">↳ ${label}</button>`;
+						const relationPrefix = (item.id === 'e-galois' && relId === 'revolution-juillet-1830') || (item.id === 'revolution-juillet-1830' && relId === 'e-galois')
+							? 'Contexte politique : '
+							: '↳ ';
+						return `<button type="button" class="details-related-btn" data-target-id="${relId}">${relationPrefix}${label}</button>`;
 					})
 					.join('');
 
@@ -335,12 +367,14 @@ const clientData = {
 					`
 					: '';
 
+				const contextHeading = item.contextSectionTitle || 'Contexte historique';
+
 				panel.innerHTML = `
 					<div class="details-panel-header">
 						<span class="details-category-tag ${tagClass}">${typeHumanLabel}</span>
 						<h3 class="details-title">${item.title}</h3>
 						<div class="details-meta">
-							${item.author ? `<strong>${item.author}</strong> (${item.authorDates || ''}) · ` : ''}
+							${item.authorDates ? `<strong>${item.authorDates}</strong> · ` : item.author ? `<strong>${item.author}</strong> · ` : ''}
 							<time datetime="${item.year}">${item.datePrecise || item.year}</time>
 							${periodTitle ? `<br /><span>Période : <em>${periodTitle}</em></span>` : ''}
 						</div>
@@ -355,7 +389,7 @@ const clientData = {
 					</div>
 
 					<div class="details-section details-context-box">
-						<h4>Contexte historique</h4>
+						<h4>${contextHeading}</h4>
 						<p>${item.historicalContext}</p>
 						${item.relatedTo.length > 0 ? `
 							<div style="margin-top: 0.85rem;">
@@ -450,13 +484,15 @@ const clientData = {
 					if (filterId === 'literature') {
 						visible = item.type === 'literature';
 					} else if (filterId === 'history') {
-						visible = item.type !== 'literature' && item.type !== 'industry';
+						visible = item.type !== 'literature' && item.type !== 'industry' && item.type !== 'science';
 					} else if (filterId === 'regimes') {
 						visible = item.type === 'political-regime';
 					} else if (filterId === 'revolutions-wars') {
 						visible = item.type === 'revolution' || item.type === 'war';
 					} else if (filterId === 'industry') {
 						visible = item.type === 'industry';
+					} else if (filterId === 'science') {
+						visible = item.type === 'science';
 					}
 
 					stepEl.classList.toggle('timeline-step-dimmed', !visible);
@@ -467,7 +503,7 @@ const clientData = {
 					const banner = document.getElementById(`period-banner-${p.id}`);
 					if (!banner) return;
 					let visible = true;
-					if (filterId === 'literature' || filterId === 'revolutions-wars' || filterId === 'industry') {
+					if (filterId === 'literature' || filterId === 'revolutions-wars' || filterId === 'industry' || filterId === 'science') {
 						visible = false;
 					}
 					banner.classList.toggle('timeline-step-dimmed', !visible);

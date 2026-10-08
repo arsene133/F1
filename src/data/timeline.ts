@@ -1,8 +1,9 @@
-export type TimelineItemType = 'history' | 'political-regime' | 'revolution' | 'war' | 'literature' | 'industry';
+export type TimelineItemType = 'history' | 'political-regime' | 'revolution' | 'war' | 'literature' | 'industry' | 'science';
 
 export type LiteratureCategory = 'novel' | 'theatre' | 'poetry';
 export type HistoryCategory = 'revolution' | 'regime' | 'war' | 'event' | 'uprising' | 'coup';
 export type IndustryCategory = 'energy' | 'railways' | 'industrial-culture' | 'steel' | 'electricity' | 'internal-combustion';
+export type ScienceCategory = 'physics' | 'biology' | 'thermodynamics' | 'electromagnetism' | 'mathematics' | 'chemistry';
 
 export interface TimelinePeriod {
 	id: string;
@@ -27,7 +28,7 @@ export interface TimelineItem {
 	endYear?: number;
 	datePrecise?: string;
 	type: TimelineItemType;
-	category: LiteratureCategory | HistoryCategory | IndustryCategory;
+	category: LiteratureCategory | HistoryCategory | IndustryCategory | ScienceCategory;
 	subCategory?: string;
 	title: string;
 	subtitle?: string;
@@ -36,11 +37,13 @@ export interface TimelineItem {
 	tagLabel?: string;
 	description: string;
 	historicalContext: string;
+	contextSectionTitle?: string;
 	periodId: string;
 	relatedTo: string[];
 	quote?: string;
-	importance?: 'major' | 'medium' | 'standard';
+	importance?: 'exceptional' | 'major' | 'medium' | 'standard';
 	image?: TimelineItemImage;
+	featured?: boolean;
 }
 
 export const TIMELINE_START_YEAR = 1765;
@@ -203,7 +206,7 @@ export const timelineItems: TimelineItem[] = [
 		description: 'Soulèvement du peuple de Paris contre les ordonnances liberticides de Charles X. Chute des Bourbons de la branche aînée et avènement de la Monarchie de Juillet.',
 		historicalContext: 'La révolution est confisquée au profit de la haute bourgeoisie financière : Louis-Philippe monte sur le trône sous l’étiquette de « roi des Français ».',
 		periodId: 'monarchie-juillet',
-		relatedTo: ['restauration-event', 'on-ne-badine-pas', 'pere-goriot'],
+		relatedTo: ['restauration-event', 'on-ne-badine-pas', 'pere-goriot', 'e-galois'],
 		importance: 'major',
 	},
 
@@ -575,6 +578,202 @@ export const timelineItems: TimelineItem[] = [
 		historicalContext: "Le cycle à quatre temps (admission, compression, combustion-détente, échappement) offre un rendement énergétique inédit, rendant possible les futures motorisations compactes et mobiles de l'ère industrielle contemporaine.",
 		periodId: 'troisieme-republique',
 		relatedTo: ['dynamo-gramme', 'pot-bouille'],
+		importance: 'major',
+	},
+
+	// --------------------------------------------------------------------------
+	// JALONS SCIENTIFIQUES (Catégorie Sciences)
+	// --------------------------------------------------------------------------
+
+	// 1. 1800 — Alessandro Volta
+	{
+		id: 'alessandro-volta',
+		year: 1800,
+		datePrecise: '1800',
+		type: 'science',
+		category: 'physics',
+		subCategory: 'physics',
+		title: 'Alessandro Volta',
+		subtitle: 'La pile électrique',
+		authorDates: '1745–1827',
+		tagLabel: 'Sciences · Physique / Électricité',
+		description: 'Volta constructs the first continuous source of electric current with his voltaic pile, opening a new era in experimental electricity.',
+		historicalContext: "En empilant disques de zinc, de cuivre et feutres imbibés d'eau salée, Volta crée la première source continue d'électricité, ouvrant la voie à l'électrochimie et aux découvertes ultérieures de l'électromagnétisme.",
+		periodId: 'consulat',
+		relatedTo: ['michael-faraday'],
+		importance: 'major',
+	},
+
+	// 2. 1809 — Jean-Baptiste Lamarck
+	{
+		id: 'jean-baptiste-lamarck',
+		year: 1809,
+		datePrecise: '1809',
+		type: 'science',
+		category: 'biology',
+		subCategory: 'biology',
+		title: 'Jean-Baptiste Lamarck',
+		subtitle: 'Une théorie de la transformation des espèces',
+		authorDates: '1744–1829',
+		tagLabel: 'Sciences · Biologie / Évolution',
+		description: 'Lamarck proposes an early systematic theory of the transformation of living species, an important precursor to nineteenth-century evolutionary thought.',
+		historicalContext: "Dans sa Philosophie zoologique (1809), Lamarck formule la première théorie cohérente du transformisme biologique, rompant avec le fixisme traditionnel et ouvrant la voie aux débats du siècle sur l'histoire du vivant.",
+		periodId: 'premier-empire',
+		relatedTo: ['charles-darwin'],
+		importance: 'medium',
+	},
+
+	// 3. 1824 — Sadi Carnot
+	{
+		id: 'sadi-carnot',
+		year: 1824,
+		datePrecise: '1824',
+		type: 'science',
+		category: 'thermodynamics',
+		subCategory: 'thermodynamics',
+		title: 'Sadi Carnot',
+		subtitle: 'Les fondements de la thermodynamique',
+		authorDates: '1796–1832',
+		tagLabel: 'Sciences · Thermodynamique',
+		description: 'In his study of steam engines, Carnot establishes fundamental ideas about heat, work and the efficiency of heat engines, laying foundations for thermodynamics.',
+		historicalContext: "Dans Réflexions sur la puissance motrice du feu (1824), Carnot théorise le rendement maximal des machines thermiques et le cycle idéal, fournissant l'armature conceptuelle indispensable au développement de la physique industrielle.",
+		periodId: 'restauration',
+		relatedTo: ['machine-vapeur-watt', 'chemin-de-fer-stockton'],
+		importance: 'major',
+	},
+
+	// 4. 1831 — Michael Faraday
+	{
+		id: 'michael-faraday',
+		year: 1831,
+		datePrecise: '1831',
+		type: 'science',
+		category: 'electromagnetism',
+		subCategory: 'electromagnetism',
+		title: 'Michael Faraday',
+		subtitle: 'Induction électromagnétique',
+		authorDates: '1791–1867',
+		tagLabel: 'Sciences · Électromagnétisme',
+		description: 'Faraday discovers electromagnetic induction, showing that a changing magnetic field can produce an electric current. The discovery becomes fundamental to electrical technology.',
+		historicalContext: "En montrant qu'un champ magnétique variable induit une tension électrique, Faraday unit magnétisme et électricité en laboratoire, posant le principe du générateur et du transformateur moderne.",
+		periodId: 'monarchie-juillet',
+		relatedTo: ['alessandro-volta', 'james-clerk-maxwell', 'dynamo-gramme'],
+		importance: 'major',
+	},
+
+	// 5. 1832 — Évariste Galois (Jalon scientifique d'exception)
+	{
+		id: 'e-galois',
+		year: 1832,
+		datePrecise: '1832',
+		type: 'science',
+		category: 'mathematics',
+		subCategory: 'mathematics',
+		title: 'Évariste Galois',
+		subtitle: 'Équations, groupes et algèbre moderne',
+		authorDates: '1811–1832',
+		tagLabel: 'Sciences · Mathématiques / Algèbre',
+		description: "À vingt ans, Galois développe une nouvelle manière d'étudier les équations algébriques à travers les structures de symétrie que l'on associera ensuite à la théorie des groupes. Ses travaux, dont plusieurs sont publiés après sa mort, deviennent fondamentaux pour l'algèbre moderne.",
+		historicalContext: "Galois grandit durant les secousses politiques de la Restauration et de la Révolution de 1830, s'engageant ardemment comme jeune républicain sous la Monarchie de Juillet. Ses recherches mathématiques d'avant-garde et sa trajectoire politique tumultueuse appartiennent à la même génération révoltée, sans qu'un lien de causalité direct ne réduise son œuvre à sa posture politique.",
+		contextSectionTitle: 'Un mathématicien dans une époque révolutionnaire',
+		periodId: 'monarchie-juillet',
+		relatedTo: ['revolution-juillet-1830', 'on-ne-badine-pas'],
+		importance: 'exceptional',
+		featured: true,
+	},
+
+	// 6. 1851 — Léon Foucault
+	{
+		id: 'leon-foucault',
+		year: 1851,
+		datePrecise: '1851',
+		type: 'science',
+		category: 'physics',
+		subCategory: 'physics',
+		title: 'Léon Foucault',
+		subtitle: 'Le pendule de Foucault',
+		authorDates: '1819–1868',
+		tagLabel: 'Sciences · Physique / Mécanique',
+		description: 'Foucault demonstrates the rotation of the Earth with a large pendulum whose plane of oscillation appears to rotate relative to the ground.',
+		historicalContext: "Suspendu à la coupole du Panthéon de Paris en 1851, le pendule de 67 mètres offre une preuve visuelle et spectaculaire de la rotation terrestre à l'ensemble du public contemporain.",
+		periodId: 'deuxieme-republique',
+		relatedTo: ['coup-etat-1851', 'exposition-universelle-londres'],
+		importance: 'major',
+	},
+
+	// 7. 1859 — Charles Darwin
+	{
+		id: 'charles-darwin',
+		year: 1859,
+		datePrecise: '24 novembre 1859',
+		type: 'science',
+		category: 'biology',
+		subCategory: 'biology',
+		title: 'Charles Darwin',
+		subtitle: "L'évolution par sélection naturelle",
+		authorDates: '1809–1882',
+		tagLabel: 'Sciences · Biologie / Évolution',
+		description: "Darwin publishes On the Origin of Species, presenting natural selection as a mechanism for the evolution and diversification of living organisms.",
+		historicalContext: "La publication de L'Origine des espèces en 1859 révolutionne les sciences naturelles en établissant la sélection naturelle comme moteur de la divergence des espèces, bouleversant la philosophie et l'histoire des idées au XIXe siècle.",
+		periodId: 'second-empire',
+		relatedTo: ['jean-baptiste-lamarck'],
+		importance: 'major',
+	},
+
+	// 8. 1865 — Gregor Mendel
+	{
+		id: 'gregor-mendel',
+		year: 1865,
+		datePrecise: '1865',
+		type: 'science',
+		category: 'biology',
+		subCategory: 'biology',
+		title: 'Gregor Mendel',
+		subtitle: "Les lois de l'hérédité",
+		authorDates: '1822–1884',
+		tagLabel: 'Sciences · Biologie / Hérédité',
+		description: 'Mendel presents experiments on pea plants that reveal regular patterns of inheritance, later recognized as foundational to genetics.',
+		historicalContext: "Dans ses communications à la Société des sciences naturelles de Brünn en 1865, Mendel démontre la transmission statistique de facteurs héréditaires discrets chez le pois. Ses travaux, largement ignorés à l'époque, ne seront redécouverts et reconnus comme fondateurs de la génétique qu'au début du XXe siècle.",
+		periodId: 'second-empire',
+		relatedTo: ['charles-darwin'],
+		importance: 'major',
+	},
+
+	// 9. 1869 — Dmitri Mendeleïev
+	{
+		id: 'dmitri-mendeleiev',
+		year: 1869,
+		datePrecise: 'Mars 1869',
+		type: 'science',
+		category: 'chemistry',
+		subCategory: 'chemistry',
+		title: 'Dmitri Mendeleïev',
+		subtitle: 'La classification périodique',
+		authorDates: '1834–1907',
+		tagLabel: 'Sciences · Chimie',
+		description: 'Mendeleïev organizes the chemical elements into a periodic system and leaves gaps for elements not yet discovered, turning the table into a predictive scientific tool.',
+		historicalContext: "En classant les 63 éléments chimiques connus par masse atomique croissante et propriétés périodiques, Mendeleïev prédit avec une remarquable exactitude l'existence et les propriétés d'éléments encore inconnus comme le gallium ou le germanium.",
+		periodId: 'second-empire',
+		relatedTo: ['second-empire-event'],
+		importance: 'major',
+	},
+
+	// 10. 1873 — James Clerk Maxwell
+	{
+		id: 'james-clerk-maxwell',
+		year: 1873,
+		datePrecise: '1873',
+		type: 'science',
+		category: 'physics',
+		subCategory: 'electromagnetism',
+		title: 'James Clerk Maxwell',
+		subtitle: 'La théorie électromagnétique',
+		authorDates: '1831–1879',
+		tagLabel: 'Sciences · Physique / Électromagnétisme',
+		description: 'Maxwell formulates a mathematical theory unifying electricity, magnetism and light within a common electromagnetic framework.',
+		historicalContext: "Dans son Traité d'électricité et de magnétisme (1873), Maxwell unifie l'électricité, le magnétisme et l'optique sous quatre équations fondamentales, révélant que la lumière est elle-même une onde électromagnétique.",
+		periodId: 'troisieme-republique',
+		relatedTo: ['michael-faraday'],
 		importance: 'major',
 	},
 ];

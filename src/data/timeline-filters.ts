@@ -32,6 +32,11 @@ export const timelineFilters: FilterOption[] = [
 		description: 'Les ruptures armées et populaires (1789, 1830, 1848, 1870, Sedan, 1871).',
 	},
 	{
+		id: 'science',
+		label: 'Sciences',
+		description: 'Découvertes et théories majeures : électricité, évolution, thermodynamique, algèbre, chimie.',
+	},
+	{
 		id: 'industry',
 		label: 'Industrie',
 		description: 'Transformation du système productif : vapeur, chemin de fer, acier, électricité, moteur.',
