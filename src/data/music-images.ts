@@ -71,6 +71,25 @@ export const musicImages = {
 		},
 	},
 
+	berliozCaricature: {
+		src: `${DIR}/berlioz-caricature-homme-orchestre.jpg`,
+		srcset: `${DIR}/berlioz-caricature-homme-orchestre-480.webp 312w`,
+		width: 312,
+		height: 368,
+		fit: 'contain',
+		alt: 'Caricature de Berlioz en homme-orchestre : coiffé d’un chapeau à clochettes, une grosse caisse à la ceinture, un ophicléide à l’épaule et une plume à la main, entouré de cymbales, cloches, flûtes, triangle et d’animaux qui hurlent',
+		caption: 'Berlioz en homme-orchestre, caricature contemporaine du compositeur (XIXe siècle)',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Berlioz_caricature.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/10/Berlioz_caricature.jpg',
+			author: 'Auteur inconnu',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Caricature contemporaine de Berlioz moquant le gigantisme de son orchestre (PD-old). Auteur et date non documentés sur Commons.',
+		},
+	},
+
 	berliozSymphonieFantastique: {
 		src: `${DIR}/berlioz-symphonie-fantastique-manuscrit.jpg`,
 		srcset: `${DIR}/berlioz-symphonie-fantastique-manuscrit-480.webp 480w, ${DIR}/berlioz-symphonie-fantastique-manuscrit-960.webp 960w`,
@@ -115,8 +134,7 @@ export const musicImages = {
 		srcset: `${DIR}/beethoven-portrait-stieler-480.webp 480w, ${DIR}/beethoven-portrait-stieler-960.webp 960w`,
 		width: 1285,
 		height: 1600,
-		fit: 'cover',
-		position: 'center 22%',
+		fit: 'contain',
 		alt: 'Portrait de Beethoven à cinquante ans, cheveux gris en désordre, écharpe rouge, crayon à la main au-dessus d’une partition',
 		caption: 'Joseph Karl Stieler, Beethoven avec le manuscrit de la Missa solemnis (1820)',
 		credit: {
@@ -243,6 +261,26 @@ export const musicImages = {
 			attributionRequired: false,
 			attribution: 'Prudent-Louis Leray, affiche de Carmen (1875) — BnF Gallica',
 			description: 'Lithographie pour la création de Carmen au Théâtre national de l’Opéra-Comique, Paris, mars 1875.',
+		},
+	},
+
+	parsifalVanDyckMaterna: {
+		src: `${DIR}/parsifal-van-dyck-materna-1889.jpg`,
+		srcset: `${DIR}/parsifal-van-dyck-materna-1889-480.webp 480w, ${DIR}/parsifal-van-dyck-materna-1889.jpg 550w`,
+		width: 550,
+		height: 396,
+		fit: 'contain',
+		alt: 'Photographie en noir et blanc : Kundry, en longue robe sombre et cheveux dénoués, agenouillée devant Parsifal vêtu de blanc et assis sur un tertre fleuri, à qui elle tend un flacon d’onguent',
+		caption: 'Ernest van Dyck (Parsifal) et Amalie Materna (Kundry), acte III de Parsifal, Festival de Bayreuth, 1889',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Van_Dyck_Materna.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/9/90/Van_Dyck_Materna.jpg',
+			author: 'Photographe inconnu',
+			license: 'Domaine public',
+			attributionRequired: false,
+			attribution: 'Ernest van Dyck et Amalie Materna dans Parsifal, Bayreuth, 1889',
+			description: 'Photographie de scène de l’acte III de Parsifal au Festival de Bayreuth en 1889 ; Amalie Materna avait créé le rôle de Kundry en 1882 (PD-old).',
 		},
 	},
 

@@ -169,6 +169,25 @@ export const literatureImages = {
 		},
 	},
 
+	fantinLatourCoinDeTable: {
+		src: `${DIR}/fantin-latour-coin-de-table-1872.jpg`,
+		srcset: `${DIR}/fantin-latour-coin-de-table-1872-480.webp 480w, ${DIR}/fantin-latour-coin-de-table-1872-960.webp 960w`,
+		width: 1600,
+		height: 1143,
+		fit: 'contain',
+		alt: 'Un coin de table par Henri Fantin-Latour, 1872 : huit poètes en habits sombres autour d’une table nappée de blanc ; assis à gauche, Paul Verlaine et le jeune Arthur Rimbaud, le menton dans la main',
+		caption: 'Henri Fantin-Latour, Un coin de table (1872), musée d’Orsay — Verlaine et Rimbaud assis à gauche',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Henri_Fantin-Latour_-_By_the_Table_-_Google_Art_Project.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/f/fe/Henri_Fantin-Latour_-_By_the_Table_-_Google_Art_Project.jpg',
+			author: 'Henri Fantin-Latour',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Huile sur toile, musée d’Orsay (Google Art Project). Assis, de gauche à droite : Paul Verlaine, Arthur Rimbaud, Léon Valade, Ernest d’Hervilly, Camille Pelletan ; debout : Pierre Elzéar, Émile Blémont, Jean Aicard. Peint en 1872, après l’écriture des Cahiers de Douai (PD-Art).',
+		},
+	},
+
 	cahiersDouai: {
 		src: `${DIR}/rimbaud-sensation-manuscrit.jpg`,
 		srcset: `${DIR}/rimbaud-sensation-manuscrit-480.webp 480w, ${DIR}/rimbaud-sensation-manuscrit.jpg 668w`,

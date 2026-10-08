@@ -566,8 +566,8 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['guerre-franco-prussienne', 'bataille-sedan', 'proclamation-troisieme-republique', 'second-empire', 'commune-paris'],
 		quote: '« Un soldat jeune, bouche ouverte, tête nue, / Et la nuque baignant dans le frais cresson bleu, / Dort ; il est étendu dans l’herbe, sous la nue... » — Le Dormeur du val (octobre 1870)',
 		importance: 'major',
-		image: literatureImages.cahiersDouai,
-		secondaryImage: literatureImages.rimbaud,
+		image: literatureImages.fantinLatourCoinDeTable,
+		secondaryImage: literatureImages.cahiersDouai,
 	},
 
 	// 1870 - Bataille de Sedan
@@ -1360,8 +1360,8 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'restauration',
 		relatedTo: ['restauration-event', 'sadi-carnot', 'music-beethoven-symphonie-1', 'music-berlioz-symphonie-fantastique', 'painting-gericault-radeau-meduse'],
 		importance: 'major',
-		image: musicImages.beethovenSymphonie9,
-		secondaryImage: musicImages.beethovenPortraitStieler,
+		image: musicImages.beethovenPortraitStieler,
+		secondaryImage: musicImages.beethovenSymphonie9,
 		audio: musicListenLinks.beethovenSymphonie9,
 		listenLink: musicListenLinks.beethovenSymphonie9,
 	},
@@ -1385,8 +1385,8 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'monarchie-juillet',
 		relatedTo: ['revolution-juillet-1830', 'painting-delacroix-liberte', 'music-chopin-oeuvres-piano', 'on-ne-badine-pas'],
 		importance: 'major',
-		image: musicImages.berliozSymphonieFantastique,
-		secondaryImage: musicImages.berliozPortrait,
+		image: musicImages.berliozCaricature,
+		secondaryImage: musicImages.berliozSymphonieFantastique,
 		audio: musicAudio.berliozSymphonieFantastique,
 	},
 
@@ -1509,7 +1509,8 @@ export const timelineItems: TimelineItem[] = [
 		periodLabel: 'Empire allemand',
 		relatedTo: ['pot-bouille', 'music-wagner-tristan'],
 		importance: 'standard',
-		image: musicImages.wagnerParsifal,
+		image: musicImages.parsifalVanDyckMaterna,
+		secondaryImage: musicImages.wagnerParsifal,
 		audio: musicAudio.wagnerParsifal,
 	},
 ];
