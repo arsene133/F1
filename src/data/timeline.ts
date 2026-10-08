@@ -101,8 +101,13 @@ export interface TimelineItem {
 	contextSectionTitle?: string;
 	periodId: string;
 	relatedTo: string[];
+	/** Liens relationnels enrichis avec labels ou préfixes spécifiques */
+	relatedLinks?: Array<{ id: string; label?: string; prefix?: string }>;
 	quote?: string;
 	importance?: 'exceptional' | 'major' | 'medium' | 'standard';
+	/** Mots-clés de contexte historique et commercial */
+	historicalContextTags?: string[];
+	contextualTags?: string[];
 	image?: TimelineItemImage;
 	secondaryImage?: TimelineItemImage;
 	audio?: TimelineItemAudio;
@@ -384,7 +389,12 @@ export const timelineItems: TimelineItem[] = [
 		description: 'Louis-Napoléon Bonaparte / Napoléon III · industrialisation · grands magasins · transformation de Paris par Haussmann · autoritarisme puis libéralisation.',
 		historicalContext: 'Prospérité économique sans précédent pour la grande bourgeoisie, spéculation immobilière et modernisation industrielle qui inspireront l’architecture des Rougon-Macquart de Zola.',
 		periodId: 'second-empire',
-		relatedTo: ['coup-etat-1851', 'guerre-franco-prussienne', 'cahiers-douai', 'pot-bouille'],
+		relatedTo: ['coup-etat-1851', 'guerre-franco-prussienne', 'cahiers-douai', 'pot-bouille', 'au-bonheur-des-dames'],
+		relatedLinks: [
+			{ id: 'au-bonheur-des-dames', label: 'Modernité urbaine et grands magasins : Au Bonheur des Dames (1883)' },
+			{ id: 'pot-bouille', label: 'Mœurs bourgeoises et commerce : Pot-Bouille (1882)' },
+			{ id: 'cahiers-douai', label: 'Poésie et chute de l’Empire : Cahiers de Douai (1870)' },
+		],
 		importance: 'major',
 		image: historyImages.secondEmpire,
 	},
@@ -483,20 +493,62 @@ export const timelineItems: TimelineItem[] = [
 	{
 		id: 'pot-bouille',
 		year: 1882,
+		datePrecise: '1882',
+		dateType: 'publication',
 		type: 'literature',
 		category: 'novel',
+		subCategory: 'novel',
 		title: 'Pot-Bouille',
 		subtitle: '1882 · Émile Zola',
 		author: 'Émile Zola',
 		authorDates: '1840–1902',
-		tagLabel: 'Roman · Les Rougon-Macquart (t. X)',
-		description: 'La bourgeoisie parisienne derrière les façades respectables : argent, mariage, adultère, ambition sociale et hypocrisie dans un immeuble de la rue de Choiseul.',
-		historicalContext: 'Bien que l’intrigue soit située sous le Second Empire (1862–1863), le roman paraît en 1882 sous la Troisième République triomphante. Zola offre une anatomie au scalpel des mœurs bourgeoises et de la respectabilité de façade qui perdure d’un régime à l’autre.',
+		tagLabel: 'Littérature · Les Rougon-Macquart (t. X)',
+		description: 'Zola place Octave Mouret au Bonheur des Dames, encore magasin de nouveautés relativement modeste. Le grand magasin y apparaît déjà comme une forme émergente du commerce moderne, mais demeure secondaire par rapport à la peinture centrale de la société bourgeoise.',
+		historicalContext: 'Le grand magasin avant le roman du grand magasin : le Bonheur des Dames est déjà présent dans Pot-Bouille, où Octave Mouret débute comme commis au coin de la rue Neuve-Saint-Augustin et de la rue de la Michodière avant d’y élargir sa place. Le magasin y constitue le point de départ embryonnaire à partir duquel s’édifiera le géant commercial de l’œuvre suivante, au cœur de la modernité urbaine parisienne.',
 		periodId: 'troisieme-republique',
-		relatedTo: ['troisieme-republique', 'second-empire', 'pere-goriot'],
+		relatedTo: ['au-bonheur-des-dames', 'second-empire-event', 'pere-goriot'],
+		relatedLinks: [
+			{ id: 'au-bonheur-des-dames', label: 'Du magasin de nouveautés au grand magasin : Au Bonheur des Dames (1883)' },
+			{ id: 'second-empire-event', label: 'Cadre historique : Second Empire (1852–1870)' },
+			{ id: 'pere-goriot', label: 'Sociologie romanesque : Le Père Goriot (1835)' },
+		],
+		contextualTags: ['Littérature', 'Commerce moderne', 'Modernité urbaine', 'Industrie', 'Grands magasins'],
+		historicalContextTags: ['Magasin de nouveautés', 'Rue Neuve-Saint-Augustin', 'Commerce parisien', 'Bourgeoisie'],
 		quote: '« C’est la cuisine de la bourgeoisie, le pot-bouille où tout mijote sans bruit derrière les portes d’acajou. »',
 		importance: 'major',
-		image: literatureImages.zola,
+		image: literatureImages.potBouille,
+		secondaryImage: literatureImages.zola,
+	},
+
+	// 1883 - Au Bonheur des Dames (Émile Zola)
+	{
+		id: 'au-bonheur-des-dames',
+		year: 1883,
+		datePrecise: '1883',
+		dateType: 'publication',
+		type: 'literature',
+		category: 'novel',
+		subCategory: 'novel',
+		title: 'Au Bonheur des Dames',
+		subtitle: '1883 · Émile Zola',
+		author: 'Émile Zola',
+		authorDates: '1840–1902',
+		tagLabel: 'Littérature · Les Rougon-Macquart (t. XI)',
+		description: 'Zola fait du grand magasin le sujet central du roman. L’essor du Bonheur des Dames devient le modèle du commerce moderne, bouleversant le commerce de détail parisien et menaçant la petite boutique traditionnelle.',
+		historicalContext: 'Le grand magasin comme nouveau système commercial : onzième volume des Rougon-Macquart publié en 1883, le roman érige le Bonheur des Dames en cathédrale du commerce moderne. En février-mars 1882, Zola mène une vaste enquête documentaire sur le terrain au Bon Marché et aux Grands Magasins du Louvre, disséquant leur architecture de fer et de verre, leurs rayons, leur personnel, leur politique de prix fixes et de publicité de masse. L’expansion du grand magasin prolonge les révolutions de l’industrie et de l’urbanisme haussmannien en écrasant le commerce boutiquier traditionnel.',
+		periodId: 'troisieme-republique',
+		relatedTo: ['pot-bouille', 'exposition-universelle-londres', 'second-empire-event'],
+		relatedLinks: [
+			{ id: 'pot-bouille', label: 'Origine embryonnaire : Pot-Bouille (1882)' },
+			{ id: 'exposition-universelle-londres', label: 'Commerce moderne et industrialisation : Exposition universelle de Londres (1851)' },
+			{ id: 'second-empire-event', label: 'Modernité urbaine parisienne : Second Empire et transformations haussmanniennes' },
+		],
+		contextualTags: ['Littérature', 'Commerce moderne', 'Modernité urbaine', 'Industrialisation', 'Grands magasins'],
+		historicalContextTags: ['Le Bon Marché', 'Grands Magasins du Louvre', 'Grands magasins parisiens', 'Commerce moderne'],
+		quote: '« C’était la cathédrale du commerce moderne, solide et légère, faite pour un peuple de clientes. »',
+		importance: 'major',
+		image: literatureImages.auBonheurDesDames,
+		secondaryImage: literatureImages.zola,
 	},
 
 	// --------------------------------------------------------------------------
@@ -593,7 +645,12 @@ export const timelineItems: TimelineItem[] = [
 		description: "Le Crystal Palace accueille la première grande Exposition universelle. Machines, produits manufacturés, métallurgie et innovations deviennent les vitrines du progrès industriel.",
 		historicalContext: "Apothéose de l'hégémonie manufacturière britannique victorienne, l'Exposition réunit les nations autour du culte du machinisme et de l'architecture novatrice de fonte et de verre de Joseph Paxton.",
 		periodId: 'deuxieme-republique',
-		relatedTo: ['procede-bessemer', 'coup-etat-1851', 'second-empire-event'],
+		relatedTo: ['procede-bessemer', 'coup-etat-1851', 'second-empire-event', 'au-bonheur-des-dames'],
+		relatedLinks: [
+			{ id: 'au-bonheur-des-dames', label: 'Commerce moderne et industrialisation : Au Bonheur des Dames (1883)' },
+			{ id: 'procede-bessemer', label: 'Révolution métallurgique : Procédé Bessemer (1855)' },
+			{ id: 'second-empire-event', label: 'Modernisation économique : Second Empire (1852–1870)' },
+		],
 		importance: 'major',
 		image: industryImages.crystalPalace,
 	},
@@ -651,7 +708,7 @@ export const timelineItems: TimelineItem[] = [
 		description: "Le moteur à quatre temps développé par Nikolaus Otto constitue un jalon majeur du moteur à combustion interne et prépare les transformations industrielles et automobiles de la fin du XIXe siècle.",
 		historicalContext: "Le cycle à quatre temps (admission, compression, combustion-détente, échappement) offre un rendement énergétique inédit, rendant possible les futures motorisations compactes et mobiles de l'ère industrielle contemporaine.",
 		periodId: 'troisieme-republique',
-		relatedTo: ['dynamo-gramme', 'pot-bouille'],
+		relatedTo: ['dynamo-gramme', 'pot-bouille', 'au-bonheur-des-dames'],
 		importance: 'major',
 		image: industryImages.otto,
 	},

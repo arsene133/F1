@@ -515,16 +515,32 @@ const clientData = {
 				const tagClass = item.id === 'e-galois' ? 'galois' : item.type === 'literature' ? 'lit' : item.type === 'science' ? 'sci' : item.type === 'industry' ? 'ind' : item.type === 'painting' ? 'paint' : item.type === 'music' ? 'music' : item.type === 'revolution' ? 'rev' : item.type === 'war' ? 'war' : 'hist';
 				const typeHumanLabel = item.id === 'e-galois' ? 'Sciences · Mathématiques d’exception' : item.type === 'literature' ? (item.tagLabel || 'Littérature') : item.type === 'science' ? (item.tagLabel || 'Sciences') : item.type === 'industry' ? (item.tagLabel || 'Industrie') : item.type === 'painting' ? (item.tagLabel || 'Peinture') : item.type === 'music' ? (item.tagLabel || 'Musique') : item.type === 'revolution' ? 'Révolution' : item.type === 'war' ? 'Guerre' : 'Régime politique';
 
-				// Repères et liens associés
+				// Repères et liens associés avec libellés contextuels
 				const relatedButtons = item.relatedTo
 					.map((relId) => {
 						const relItem = itemsMap.get(relId);
 						const relPeriod = periodsMap.get(relId);
-						const label = relItem ? `${relItem.title} (${relItem.datePrecise || relItem.year})` : relPeriod ? `${relPeriod.title} (${relPeriod.displayDates})` : relId;
-						const relationPrefix = (item.id === 'e-galois' && relId === 'revolution-juillet-1830') || (item.id === 'revolution-juillet-1830' && relId === 'e-galois')
-							? 'Contexte politique : '
-							: '↳ ';
-						return `<button type="button" class="details-related-btn" data-target-id="${relId}">${relationPrefix}${label}</button>`;
+						const customLink = item.relatedLinks?.find((l) => l.id === relId);
+
+						let labelText = '';
+						if (customLink?.label) {
+							labelText = customLink.label;
+						} else {
+							// Labels contextuels spécifiques si non définis
+							if ((item.id === 'pot-bouille' && relId === 'au-bonheur-des-dames') || (item.id === 'au-bonheur-des-dames' && relId === 'pot-bouille')) {
+								labelText = 'Du magasin de nouveautés au grand magasin : ' + (relItem ? `${relItem.title} (${relItem.datePrecise || relItem.year})` : relId);
+							} else if ((item.id === 'exposition-universelle-londres' && relId === 'au-bonheur-des-dames') || (item.id === 'au-bonheur-des-dames' && relId === 'exposition-universelle-londres')) {
+								labelText = 'Commerce moderne et industrialisation : ' + (relItem ? `${relItem.title} (${relItem.datePrecise || relItem.year})` : relId);
+							} else if ((item.id === 'second-empire-event' && relId === 'au-bonheur-des-dames') || (item.id === 'au-bonheur-des-dames' && relId === 'second-empire-event')) {
+								labelText = 'Modernité urbaine parisienne : ' + (relItem ? `${relItem.title} (${relItem.datePrecise || relItem.year})` : relPeriod ? `${relPeriod.title} (${relPeriod.displayDates})` : relId);
+							} else if ((item.id === 'e-galois' && relId === 'revolution-juillet-1830') || (item.id === 'revolution-juillet-1830' && relId === 'e-galois')) {
+								labelText = 'Contexte politique : ' + (relItem ? `${relItem.title} (${relItem.datePrecise || relItem.year})` : relId);
+							} else {
+								const defaultTitle = relItem ? `${relItem.title} (${relItem.datePrecise || relItem.year})` : relPeriod ? `${relPeriod.title} (${relPeriod.displayDates})` : relId;
+								labelText = `↳ ${defaultTitle}`;
+							}
+						}
+						return `<button type="button" class="details-related-btn" data-target-id="${relId}">${labelText}</button>`;
 					})
 					.join('');
 
@@ -537,6 +553,14 @@ const clientData = {
 					: '';
 
 				const contextHeading = item.contextSectionTitle || 'Contexte historique';
+
+				const contextualTagsHtml = item.contextualTags && item.contextualTags.length > 0
+					? `
+						<div class="details-context-tags" style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.75rem;">
+							${item.contextualTags.map((tag) => `<span style="display: inline-block; font-size: 0.72rem; padding: 0.15rem 0.45rem; border-radius: 3px; background: rgba(139, 87, 42, 0.08); color: #8b572a; border: 1px solid rgba(139, 87, 42, 0.2); font-weight: 500;">${tag}</span>`).join('')}
+						</div>
+					`
+					: '';
 
 				panel.innerHTML = `
 					<div class="details-panel-header">
@@ -560,6 +584,7 @@ const clientData = {
 
 					<div class="details-section details-context-box">
 						<h4>${contextHeading}</h4>
+						${contextualTagsHtml}
 						<p>${item.historicalContext}</p>
 						${item.relatedTo.length > 0 ? `
 							<div style="margin-top: 0.85rem;">
