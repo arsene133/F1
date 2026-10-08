@@ -33,6 +33,26 @@ export const musicImages = {
 		},
 	},
 
+	grosBonaparteArcole: {
+		src: `${DIR}/gros-bonaparte-pont-arcole.jpg`,
+		srcset: `${DIR}/gros-bonaparte-pont-arcole-480.webp 480w, ${DIR}/gros-bonaparte-pont-arcole-960.webp 960w`,
+		width: 1150,
+		height: 1600,
+		fit: 'contain',
+		alt: 'Bonaparte au pont d’Arcole d’après Antoine-Jean Gros : le jeune général, cheveux longs au vent, en uniforme bleu brodé d’or et écharpe tricolore, brandit un drapeau et tient son épée dans la fumée du combat',
+		caption: 'Bonaparte au pont d’Arcole, réplique d’après Antoine-Jean Gros (original de 1796), Napoleonmuseum Thurgau, Arenenberg',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Bonaparte_Gros_Napoleonmuseum_Thurgau.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/be/Bonaparte_Gros_Napoleonmuseum_Thurgau.jpg',
+			author: 'D’après Antoine-Jean Gros',
+			license: 'Domaine public',
+			attributionRequired: false,
+			attribution: 'D’après Antoine-Jean Gros, Bonaparte au pont d’Arcole',
+			description: 'Réplique du portrait peint par Gros en 1796, Napoleonmuseum Thurgau (château d’Arenenberg). L’image du jeune général républicain que Beethoven admirait avant le sacre (PD-Art).',
+		},
+	},
+
 	beethovenSymphonie3: {
 		src: `${DIR}/beethoven-eroica-titre-bonaparte.jpg`,
 		srcset: `${DIR}/beethoven-eroica-titre-bonaparte-480.webp 480w, ${DIR}/beethoven-eroica-titre-bonaparte-960.webp 960w`,

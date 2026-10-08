@@ -1337,7 +1337,8 @@ export const timelineItems: TimelineItem[] = [
 		],
 		quote: '« La symphonie est en réalité intitulée Bonaparte. » — Beethoven à son éditeur Breitkopf & Härtel, 26 août 1804',
 		importance: 'standard',
-		image: musicImages.beethovenSymphonie3,
+		image: musicImages.grosBonaparteArcole,
+		secondaryImage: musicImages.beethovenSymphonie3,
 		audio: musicAudio.beethovenSymphonie3,
 	},
 
