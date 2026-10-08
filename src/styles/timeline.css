@@ -625,7 +625,7 @@
 	font-weight: 700;
 }
 
-/* Vignette documentaire des jalons artistiques, scientifiques et industriels (hauteur fixe : aucun décalage de mise en page) */
+/* Vignette documentaire de chaque jalon illustré, toutes catégories confondues (hauteur fixe : aucun décalage de mise en page) */
 .entry-thumb {
 	display: block;
 	height: 104px;
@@ -649,6 +649,12 @@
 
 .entry-thumb.fit-contain img {
 	object-fit: contain;
+}
+
+/* Image locale en échec : le cadre disparaît, le texte du repère reste intact */
+.entry-thumb.is-broken,
+.details-thumbnail-figure.is-broken {
+	display: none;
 }
 
 .timeline-step.is-galois .entry-thumb {

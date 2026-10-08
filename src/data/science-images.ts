@@ -32,6 +32,27 @@ export const scienceImages = {
 	},
 
 	lamarck: {
+		src: `${DIR}/lamarck-philosophie-zoologique-1809.jpg`,
+		srcset: `${DIR}/lamarck-philosophie-zoologique-1809-480.webp 480w, ${DIR}/lamarck-philosophie-zoologique-1809-960.webp 960w`,
+		width: 997,
+		height: 1600,
+		fit: 'contain',
+		alt: 'Page de titre de la Philosophie zoologique de J.-B.-P.-A. Lamarck, tome premier, Paris, Dentu et chez l’auteur au Muséum d’histoire naturelle, 1809',
+		caption: 'Lamarck, Philosophie zoologique, tome I, page de titre de l’édition originale (Paris, 1809), Wellcome Collection',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Lamarck,_Philosophie_zoologique,_1809_Wellcome_L0015748.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Lamarck%2C_Philosophie_zoologique%2C_1809_Wellcome_L0015748.jpg',
+			author: 'Wellcome Collection',
+			license: 'CC BY 4.0',
+			licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+			attributionRequired: true,
+			attribution: 'Wellcome Collection',
+			description: 'Title page, Lamarck, Philosophie zoologique, Paris, 1809. Wellcome Images L0015748, Wellcome Collection (CC BY 4.0).',
+		},
+	},
+
+	lamarckPortrait: {
 		src: `${DIR}/lamarck.jpg`,
 		srcset: `${DIR}/lamarck-480.webp 480w, ${DIR}/lamarck-960.webp 856w`,
 		width: 856,

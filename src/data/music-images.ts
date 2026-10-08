@@ -5,7 +5,8 @@ import type { TimelineItemImage } from './timeline';
 // Fichiers servis localement depuis public/images/timeline/music/
 // (aucun lien distant vers Wikimedia Commons à l'exécution).
 // Licences vérifiées sur les pages sources le 2026-10-08.
-// Portraits des compositeurs ou iconographie théâtrale d'époque (affiches, décors), tous en Domaine public.
+// Documents de l'œuvre en priorité (manuscrits autographes, affiches, décors) ;
+// portraits des compositeurs en vignette secondaire ou, à défaut de document, en image principale.
 // --------------------------------------------------------------------------
 
 const DIR = '/images/timeline/music';
@@ -33,6 +34,63 @@ export const musicImages = {
 	},
 
 	beethovenSymphonie9: {
+		src: `${DIR}/beethoven-symphonie-9-autographe.jpg`,
+		srcset: `${DIR}/beethoven-symphonie-9-autographe-480.webp 480w, ${DIR}/beethoven-symphonie-9-autographe-960.webp 960w`,
+		width: 1600,
+		height: 1160,
+		fit: 'contain',
+		alt: 'Page de la partition autographe de la Neuvième Symphonie de Beethoven : portées d’orchestre couvertes d’une écriture rapide, ratures et taches d’encre',
+		caption: 'Passage du manuscrit autographe de la Symphonie n° 9 (Staatsbibliothek zu Berlin), photographie de 1927, Spaarnestad Photo',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Duitse_componist_Ludwig_van_Beethoven_(1770-1827)_foto_van_passage_uit_de_Negende_Symfonie_in,_SFA022000180.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/13/Duitse_componist_Ludwig_van_Beethoven_%281770-1827%29_foto_van_passage_uit_de_Negende_Symfonie_in%2C_SFA022000180.jpg',
+			author: 'Ludwig van Beethoven (photographie anonyme, 1927)',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Photographie (1927) d’un passage du manuscrit autographe de la Neuvième Symphonie conservé à la Staatsbibliothek de Berlin. Spaarnestad Photo, SFA022000180 (PD-anon-70-EU, PD-US).',
+		},
+	},
+
+	berliozSymphonieFantastique: {
+		src: `${DIR}/berlioz-symphonie-fantastique-manuscrit.jpg`,
+		srcset: `${DIR}/berlioz-symphonie-fantastique-manuscrit-480.webp 480w, ${DIR}/berlioz-symphonie-fantastique-manuscrit-960.webp 960w`,
+		width: 1176,
+		height: 1600,
+		fit: 'contain',
+		alt: 'Page de titre manuscrite de Berlioz : « Épisode de la vie d’un artiste, Symphonie fantastique en 5 parties », avec en marge des vers de Victor Hugo et la signature « par Hector Berlioz »',
+		caption: 'Hector Berlioz, page de titre de la partition autographe de la Symphonie fantastique (1830), BnF Gallica',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Symphonie_fantastique_Titre.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/ea/Symphonie_fantastique_Titre.jpg',
+			author: 'Hector Berlioz',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Page de titre de la partition manuscrite de la Symphonie fantastique, 1830. Source : Gallica btv1b55007824r, f. 19 (fonds Charles Malherbe).',
+		},
+	},
+
+	chopinOeuvresPiano: {
+		src: `${DIR}/chopin-prelude-op28-4-autographe.jpg`,
+		srcset: `${DIR}/chopin-prelude-op28-4-autographe-480.webp 480w, ${DIR}/chopin-prelude-op28-4-autographe-960.webp 960w`,
+		width: 1600,
+		height: 1236,
+		fit: 'contain',
+		alt: 'Manuscrit autographe de Chopin : page à l’encre brune où commence le Prélude en mi mineur op. 28 n° 4, indiqué « Largo », avec ses accords répétés à la main gauche',
+		caption: 'Frédéric Chopin, Prélude en mi mineur op. 28 n° 4, manuscrit autographe (1838–1839), Biblioteka Narodowa, Varsovie',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Chopin_%E2%80%93_Prelude_Op._28_No._4_(Autograph_Manuscript).png',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/a/ab/Chopin_%E2%80%93_Prelude_Op._28_No._4_%28Autograph_Manuscript%29.png',
+			author: 'Frédéric Chopin',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Preludium e-moll op. 28 nr 4 (autograf), Biblioteka Narodowa, Mus.93 Cim. Reproduction via IMSLP.',
+		},
+	},
+
+	beethovenPortraitStieler: {
 		src: `${DIR}/beethoven-portrait-stieler.jpg`,
 		srcset: `${DIR}/beethoven-portrait-stieler-480.webp 480w, ${DIR}/beethoven-portrait-stieler-960.webp 960w`,
 		width: 1285,
@@ -52,7 +110,7 @@ export const musicImages = {
 		},
 	},
 
-	berliozSymphonieFantastique: {
+	berliozPortrait: {
 		src: `${DIR}/berlioz-portrait-signol.jpg`,
 		srcset: `${DIR}/berlioz-portrait-signol-480.webp 430w`,
 		width: 430,
@@ -72,7 +130,7 @@ export const musicImages = {
 		},
 	},
 
-	chopinOeuvresPiano: {
+	chopinPortrait: {
 		src: `${DIR}/chopin-portrait-delacroix.jpg`,
 		srcset: `${DIR}/chopin-portrait-delacroix-480.webp 480w, ${DIR}/chopin-portrait-delacroix-960.webp 960w`,
 		width: 1197,

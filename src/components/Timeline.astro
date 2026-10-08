@@ -237,7 +237,7 @@ const clientData = {
 										</span>
 									</div>
 
-									{item.image && (item.isScience || item.isIndustry || item.isPainting || item.isMusic) && (
+									{item.image && (
 										<span
 											class={`entry-thumb fit-${item.image.fit ?? 'cover'} ${item.image.width && item.image.height && item.image.height > item.image.width * 1.2 ? 'entry-thumb--portrait' : ''}`}
 											aria-hidden="true"
@@ -431,6 +431,25 @@ const clientData = {
 			const periodsMap = new Map<string, TimelinePeriod>(periods.map((p) => [p.id, p]));
 			const panel = document.getElementById('timeline-panel');
 			let currentSelectedId: string = initialSelectedId;
+
+			// Image locale introuvable : on retire le cadre (pas de rectangle vide) sans toucher au texte,
+			// et on signale l'asset manquant en développement. Aucune image de substitution.
+			function handleBrokenImage(img: HTMLImageElement) {
+				const frame = img.closest('.entry-thumb, .details-thumbnail-figure');
+				if (!frame) return;
+				frame.classList.add('is-broken');
+				if (import.meta.env.DEV) console.warn(`[timeline] image introuvable : ${img.currentSrc || img.src}`);
+			}
+			document.addEventListener(
+				'error',
+				(event) => {
+					if (event.target instanceof HTMLImageElement) handleBrokenImage(event.target);
+				},
+				true,
+			);
+			document.querySelectorAll<HTMLImageElement>('.entry-thumb img').forEach((img) => {
+				if (img.complete && img.naturalWidth === 0) handleBrokenImage(img);
+			});
 
 			const PANEL_SIZES = '(max-width: 960px) calc(100vw - 5rem), 310px';
 			const SECONDARY_SIZES = '96px';

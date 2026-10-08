@@ -345,7 +345,8 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['monarchie-juillet', 'revolution-juillet-1830', 'pere-goriot'],
 		quote: '« On est souvent trompé en amour, souvent blessé et souvent malheureux ; mais on aime, et quand on est sur le bord de sa tombe, on se retourne pour regarder en arrière, et on se dit : j’ai souffert souvent, je me suis trompé quelquefois, mais j’ai aimé. »',
 		importance: 'major',
-		image: literatureImages.musset,
+		image: literatureImages.onNeBadinePas,
+		secondaryImage: literatureImages.musset,
 	},
 
 	// 1835 - Le Père Goriot (Honoré de Balzac)
@@ -368,7 +369,8 @@ export const timelineItems: TimelineItem[] = [
 		],
 		quote: '« À nous deux maintenant ! » — Défi final de Rastignac lancé à Paris du haut du Père-Lachaise.',
 		importance: 'major',
-		image: literatureImages.balzac,
+		image: literatureImages.pereGoriot,
+		secondaryImage: literatureImages.balzac,
 		characterModel: {
 			author: 'Balzac',
 			heading: 'Position sociale + volonté',
@@ -508,7 +510,8 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['guerre-franco-prussienne', 'bataille-sedan', 'proclamation-troisieme-republique', 'second-empire', 'commune-paris'],
 		quote: '« Un soldat jeune, bouche ouverte, tête nue, / Et la nuque baignant dans le frais cresson bleu, / Dort ; il est étendu dans l’herbe, sous la nue... » — Le Dormeur du val (octobre 1870)',
 		importance: 'major',
-		image: literatureImages.rimbaud,
+		image: literatureImages.cahiersDouai,
+		secondaryImage: literatureImages.rimbaud,
 	},
 
 	// 1870 - Bataille de Sedan
@@ -855,6 +858,7 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['charles-darwin'],
 		importance: 'medium',
 		image: scienceImages.lamarck,
+		secondaryImage: scienceImages.lamarckPortrait,
 	},
 
 	// 3. 1824 — Sadi Carnot
@@ -977,8 +981,8 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'second-empire',
 		relatedTo: ['charles-darwin'],
 		importance: 'major',
-		image: scienceImages.mendel,
-		secondaryImage: scienceImages.mendelPaper,
+		image: scienceImages.mendelPaper,
+		secondaryImage: scienceImages.mendel,
 	},
 
 	// 9. 1869 — Dmitri Mendeleïev
@@ -1270,6 +1274,7 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['restauration-event', 'sadi-carnot', 'music-beethoven-symphonie-1', 'music-berlioz-symphonie-fantastique', 'painting-gericault-radeau-meduse'],
 		importance: 'major',
 		image: musicImages.beethovenSymphonie9,
+		secondaryImage: musicImages.beethovenPortraitStieler,
 		listenLink: musicListenLinks.beethovenSymphonie9,
 	},
 
@@ -1293,6 +1298,7 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['revolution-juillet-1830', 'painting-delacroix-liberte', 'music-chopin-oeuvres-piano', 'on-ne-badine-pas'],
 		importance: 'major',
 		image: musicImages.berliozSymphonieFantastique,
+		secondaryImage: musicImages.berliozPortrait,
 		audio: musicAudio.berliozSymphonieFantastique,
 	},
 
@@ -1316,6 +1322,7 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['pere-goriot', 'on-ne-badine-pas', 'music-berlioz-symphonie-fantastique', 'painting-delacroix-liberte'],
 		importance: 'standard',
 		image: musicImages.chopinOeuvresPiano,
+		secondaryImage: musicImages.chopinPortrait,
 		audio: musicAudio.chopinOeuvresPiano,
 	},
 

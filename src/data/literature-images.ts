@@ -1,7 +1,8 @@
 import type { TimelineItemImage } from './timeline';
 
 // --------------------------------------------------------------------------
-// Portraits des auteurs des œuvres littéraires
+// Iconographie des œuvres littéraires : documents liés à l’œuvre en priorité
+// (édition, manuscrit, illustration), portraits des auteurs en vignette secondaire
 // Fichiers servis localement depuis public/images/timeline/literature/
 // (aucun lien direct vers Wikimedia Commons à l'exécution).
 // Licences vérifiées sur les pages Commons le 2026-10-08.
@@ -93,44 +94,97 @@ export const literatureImages = {
 	},
 
 	potBouille: {
-		src: `${DIR}/pot-bouille-bonheur-des-dames.jpg`,
-		srcset: `${DIR}/pot-bouille-bonheur-des-dames-480.webp 480w, ${DIR}/pot-bouille-bonheur-des-dames-960.webp 960w`,
-		width: 1335,
+		src: `${DIR}/pot-bouille-1882.jpg`,
+		srcset: `${DIR}/pot-bouille-1882-480.webp 480w, ${DIR}/pot-bouille-1882-960.webp 960w`,
+		width: 933,
 		height: 1600,
-		fit: 'cover',
-		position: 'center 35%',
-		alt: 'Photographie historique de la rue Neuve-Saint-Augustin vers la rue de Richelieu, quartier commercial du Bonheur des Dames dans Pot-Bouille',
-		caption: 'Charles Marville, Rue Neuve-Saint-Augustin (vers 1865), State Library Victoria',
+		fit: 'contain',
+		alt: 'Page de titre de la première édition de Pot-Bouille d’Émile Zola, « Les Rougon-Macquart », publiée à Paris chez G. Charpentier en 1882',
+		caption: 'Pot-Bouille, page de titre de la première édition (Paris, G. Charpentier, 1882)',
 		credit: {
 			source: COMMONS,
-			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Charles_Marville,_Rue_Neuve-Saint-Augustin,_de_la_rue_Richelieu,_ca._1853%E2%80%9370.jpg',
-			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/ec/Charles_Marville%2C_Rue_Neuve-Saint-Augustin%2C_de_la_rue_Richelieu%2C_ca._1853%E2%80%9370.jpg',
-			author: 'Charles Marville',
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Pot_Bouille.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/bf/Pot_Bouille.jpg',
+			author: 'Émile Zola / G. Charpentier (édition originale)',
 			license: 'Domaine public',
-			licenseUrl: 'https://creativecommons.org/publicdomain/mark/1.0/',
 			attributionRequired: false,
-			description: 'Rue Neuve-Saint-Augustin (de la rue Richelieu), photographie sur papier albuminé par Charles Marville vers 1853–1870. State Library Victoria, don du gouvernement français (1880).',
+			description: 'Page de titre de Pot-Bouille, Paris, G. Charpentier, 1882, décrite sur Commons comme celle de la première édition (scan Internet Archive, PD-scan / PD-old-100-1923).',
 		},
 	},
 
 	auBonheurDesDames: {
-		src: `${DIR}/au-bonheur-des-dames-grand-magasin.jpg`,
-		srcset: `${DIR}/au-bonheur-des-dames-grand-magasin-480.webp 480w, ${DIR}/au-bonheur-des-dames-grand-magasin-960.webp 960w`,
-		width: 1600,
-		height: 1459,
-		fit: 'cover',
-		position: 'center 40%',
-		alt: 'Gravure historique d’une vue générale à vol d’oiseau du grand magasin Au Bon Marché à Paris, modèle du Bonheur des Dames',
-		caption: 'Au Bon Marché, vue générale — gravure du XIXe siècle, Brown University Library',
+		src: `${DIR}/au-bonheur-des-dames-plan-zola.jpg`,
+		srcset: `${DIR}/au-bonheur-des-dames-plan-zola-480.webp 480w, ${DIR}/au-bonheur-des-dames-plan-zola.jpg 550w`,
+		width: 550,
+		height: 387,
+		fit: 'contain',
+		alt: 'Plan manuscrit d’Émile Zola : le quartier du Bonheur des Dames entre la rue Neuve-Saint-Augustin, la rue de Richelieu et l’avenue de l’Opéra, annoté « Le grand magasin tuera les commerces des rues » voisines',
+		caption: 'Émile Zola, plan manuscrit du quartier du Bonheur des Dames (vers 1882), dossier préparatoire, BnF',
 		credit: {
 			source: COMMONS,
-			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Au_Bon_March%C3%A9_-_General_view.jpg',
-			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/b5/Au_Bon_March%C3%A9_-_General_view.jpg',
-			author: 'Auteur inconnu (XIXe siècle)',
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Au_Bonheur_des_dames_-_plan.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/e3/Au_Bonheur_des_dames_-_plan.jpg',
+			author: 'Émile Zola',
 			license: 'Domaine public',
-			licenseUrl: 'https://creativecommons.org/publicdomain/mark/1.0/',
 			attributionRequired: false,
-			description: 'Vue générale à vol d’oiseau du grand magasin Le Bon Marché, gravure du XIXe siècle conservée à la bibliothèque de l’université Brown.',
+			description: 'Plan manuscrit d’Émile Zola pour Au Bonheur des Dames, vers 1882, dossier préparatoire (BnF, exposition virtuelle « Zola »). Note : « Le grand magasin tuera les commerces des rues Neuve-Saint-Augustin, Sainte-Anne, Choiseul, Grammont… ».',
+		},
+	},
+
+	pereGoriot: {
+		src: `${DIR}/pere-goriot-werdet-1835.jpg`,
+		srcset: `${DIR}/pere-goriot-werdet-1835-480.webp 480w, ${DIR}/pere-goriot-werdet-1835.jpg 862w`,
+		width: 862,
+		height: 1500,
+		fit: 'contain',
+		alt: 'Page de titre du Père Goriot « par M. de Balzac », avec l’épigraphe « All is true. Shakspeare », Librairie de Werdet, Paris, 1835',
+		caption: 'Le Père Goriot, page de titre (Paris, Librairie de Werdet, 1835, « quatrième édition, revue et corrigée »), BnF Gallica',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Pere_Goriot_1835_Werdet.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/13/Pere_Goriot_1835_Werdet.jpg',
+			author: 'Honoré de Balzac / Werdet',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Page de titre du Père Goriot, Werdet, 1835. La page porte la mention « quatrième édition, revue et corrigée » (la page Commons la présente à tort comme l’édition originale). Source : Gallica btv1b8625627c.',
+		},
+	},
+
+	onNeBadinePas: {
+		src: `${DIR}/on-ne-badine-pas-lami.jpg`,
+		srcset: `${DIR}/on-ne-badine-pas-lami-480.webp 480w, ${DIR}/on-ne-badine-pas-lami.jpg 591w`,
+		width: 591,
+		height: 639,
+		fit: 'contain',
+		alt: 'Gravure d’Eugène Lami pour On ne badine pas avec l’amour : un jeune homme en tricorne et habit du XVIIIe siècle face à une paysanne portant un panier, près d’une palissade',
+		caption: 'Eugène Lami (dessin) et Adolphe Lalauze (gravure), illustration pour On ne badine pas avec l’amour (1884), BnF Gallica',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Musset_-_On_ne_badine_pas_avec_l%27amour.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/30/Musset_-_On_ne_badine_pas_avec_l%27amour.jpg',
+			author: 'Eugène Lami, gravé par Adolphe Lalauze',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Illustration d’Eugène Lami pour On ne badine pas avec l’amour, 1884. Source : Gallica btv1b22002305, f. 38.',
+		},
+	},
+
+	cahiersDouai: {
+		src: `${DIR}/rimbaud-sensation-manuscrit.jpg`,
+		srcset: `${DIR}/rimbaud-sensation-manuscrit-480.webp 480w, ${DIR}/rimbaud-sensation-manuscrit.jpg 668w`,
+		width: 668,
+		height: 546,
+		fit: 'contain',
+		alt: 'Manuscrit autographe du poème « Sensation » d’Arthur Rimbaud, daté « Mars 1870 » et signé : « Par les soirs bleus d’été, j’irai dans les sentiers… »',
+		caption: 'Arthur Rimbaud, « Sensation », manuscrit autographe daté de mars 1870 — l’un des poèmes réunis dans le Cahier de Douai',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Rimbaud_sensation.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/de/Rimbaud_sensation.jpg',
+			author: 'Arthur Rimbaud',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Manuscrit autographe du poème Sensation (mars 1870), reproduit d’après Arthur Rimbaud, Œuvres complètes, t. IV, Fac-similés, éd. Steve Murphy, Honoré Champion, 2002.',
 		},
 	},
 } satisfies Record<string, TimelineItemImage>;
