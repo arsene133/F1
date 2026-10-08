@@ -3,212 +3,38 @@ import { Image } from 'astro:assets';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
-import balzacPortrait from '../assets/honore-de-balzac-1842.jpg';
-import marxPortrait from '../assets/karl-marx.jpg';
-import goriotIllustration from '../assets/pere-goriot-illustration.jpg';
-import communePhoto from '../assets/commune-barricade-1871.jpg';
-import rimbaudPortrait from '../assets/arthur-rimbaud.jpg';
+import {
+	mobileChain,
+	mobileChainOrder,
+	nodes,
+	relationships,
+	societyCenter,
+} from '../data/balzac-rimbaud';
 
 const pageTitle = "Balzac, Rastignac, la Commune, Marx et Rimbaud";
 const pageDescription = "Carte interactive des relations intellectuelles et sociales au XIXe siècle : Balzac, Rastignac, la Commune, Marx et Rimbaud face à la société bourgeoise.";
 
-// Modèle de données explicite des nœuds
-const nodes = [
-	{
-		id: "balzac",
-		label: "Honoré de Balzac",
-		dates: "1799–1850",
-		role: "Écrivain",
-		work: "La Comédie humaine",
-		posture: "Observe",
-		description: "Observe et décrit méticuleusement la société bourgeoise émergente, montrant la toute-puissance de l'argent et de la propriété, et faisant de Paris un vaste théâtre social.",
-		points: [
-			"Observe et décrit la société bourgeoise",
-			"Montre la puissance de l’argent et de la propriété",
-			"Fait de Paris un théâtre social",
-		],
-		image: {
-			asset: balzacPortrait,
-			alt: "Portrait photographique d'Honoré de Balzac en 1842, par Louis-Auguste Bisson.",
-			creditPrefix: "Honoré de Balzac, 1842 — Louis-Auguste Bisson, daguerréotype · ",
-			sourceLabel: "Wikimedia Commons",
-			sourceUrl: "https://commons.wikimedia.org/wiki/File:Honor%C3%A9_de_Balzac_(1842)_Detail.jpg",
-			creditSuffix: " · domaine public",
-			orientation: "portrait",
-			position: "50% 20%",
-		},
-		// Coordonnées relatives sur le canvas (x, y) dans l'espace 900 x 520
-		href: "#node-balzac",
-		x: 450,
-		y: 80,
-	},
-	{
-		id: "rastignac",
-		label: "Rastignac",
-		dates: "Personnage de Balzac",
-		role: "Personnage de fiction",
-		work: "Le Père Goriot",
-		posture: "S’adapte et conquiert",
-		description: "Jeune provincial ambitieux découvrant les codes cyniques du monde parisien ; il choisit d'accepter les règles du jeu pour conquérir le système social.",
-		points: [
-			"Jeune provincial ambitieux",
-			"Découvre les règles du monde parisien",
-			"S’adapte au système pour réussir",
-			"Incarnation de la conquête sociale",
-		],
-		image: {
-			asset: goriotIllustration,
-			alt: "Illustration de Le Père Goriot, œuvre de Honoré de Balzac.",
-			creditPrefix: "Illustration de Le Père Goriot — ",
-			sourceLabel: "Wikimedia Commons",
-			sourceUrl: "https://commons.wikimedia.org/wiki/File:BalzacOldGoriot02.jpg",
-			creditSuffix: " · domaine public",
-			orientation: "portrait",
-			position: "50% 30%",
-		},
-		href: "#node-rastignac",
-		x: 710,
-		y: 220,
-	},
-	{
-		id: "marx",
-		label: "Karl Marx",
-		dates: "1818–1883",
-		role: "Philosophe & économiste",
-		work: "Le Capital · Manifeste du parti communiste",
-		posture: "Analyse et théorise",
-		description: "Démonte scientifiquement les ressorts du capitalisme et théorise la lutte des classes comme moteur de l'histoire, montrant comment l'accumulation de la richesse produit l'exploitation.",
-		points: [
-			"Analyse le fonctionnement du capitalisme",
-			"Théorise la lutte des classes",
-			"Montre comment la richesse produit l’exploitation",
-		],
-		image: {
-			asset: marxPortrait,
-			alt: "Portrait photographique de Karl Marx.",
-			creditPrefix: "Karl Marx — ",
-			sourceLabel: "Image source fournie par l'auteur du site",
-			sourceUrl: null,
-			creditSuffix: "",
-			orientation: "portrait",
-			position: "50% 20%",
-		},
-		href: "#node-marx",
-		x: 190,
-		y: 220,
-	},
-	{
-		id: "commune",
-		label: "La Commune de Paris",
-		dates: "1871",
-		role: "Insurrection & expérience politique",
-		work: "Insurrection populaire",
-		posture: "Se révolte",
-		description: "Soulèvement révolutionnaire du peuple parisien refusant l'ordre bourgeois établi ; expérimentation fulgurante d'une démocratie populaire conclue par une répression sanglante.",
-		points: [
-			"Insurrection populaire",
-			"Refus de l’ordre bourgeois",
-			"Expérimentation d’une autre société",
-			"Répression sanglante",
-		],
-		image: {
-			asset: communePhoto,
-			alt: "Barricade à l'angle des boulevards Voltaire et Richard-Lenoir pendant la Commune de Paris, 1871.",
-			creditPrefix: "Barricade à l'angle des boulevards Voltaire et Richard-Lenoir, 1871 — Bruno Braquehais · ",
-			sourceLabel: "Wikimedia Commons",
-			sourceUrl: "https://commons.wikimedia.org/wiki/File:Barricade_Voltaire_Lenoir_Commune_Paris_1871.jpg",
-			creditSuffix: " · domaine public",
-			orientation: "landscape",
-			position: "50% 50%",
-		},
-		href: "#node-commune",
-		x: 630,
-		y: 440,
-	},
-	{
-		id: "rimbaud",
-		label: "Arthur Rimbaud",
-		dates: "1854–1891",
-		role: "Poète",
-		work: "Poèmes de 1871",
-		posture: "Refuse et transforme",
-		description: "Présent à Paris pendant les événements de la Commune, il refuse catégoriquement le monde bourgeois et transmue la révolte sociale en rupture poétique radicale.",
-		points: [
-			"Arrive à Paris pendant la Commune",
-			"Dénonce la bourgeoisie et la répression",
-			"Transforme la révolte sociale en langage poétique",
-			"Refuse le monde et ses règles",
-		],
-		image: {
-			asset: rimbaudPortrait,
-			alt: "Portrait d'Arthur Rimbaud jeune.",
-			creditPrefix: "Arthur Rimbaud — ",
-			sourceLabel: "Image source fournie par l'auteur du site",
-			sourceUrl: null,
-			creditSuffix: "",
-			orientation: "portrait",
-			position: "50% 25%",
-		},
-		href: "#node-rimbaud",
-		x: 270,
-		y: 440,
-	},
-];
+const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 
-// Nœud central conceptuel
-const societyCenter = {
-	x: 450,
-	y: 260,
-	label: "SOCIÉTÉ DU XIXe SIÈCLE",
-	sub: "Paris · argent · pouvoir · révolte",
+// Ordre unique des figures dans le DOM (et donc de tabulation) : celui de la
+// chaîne mobile, qui suit les relations de proche en proche.
+const orderedNodes = mobileChainOrder.map(id => nodesById[id]);
+
+// Position des libellés sur les arêtes du graphe bureau, en fraction du
+// segment depuis la source (0.5 = milieu). Les deux arêtes qui se croisent
+// au centre ont leurs libellés décalés pour ne pas se superposer.
+const desktopLabelAt: Record<string, number> = {
+	"commune-marx": 0.2,
+	"rastignac-rimbaud": 0.62,
 };
 
-// Relations conceptuelles et visuelles
-const relationships = [
-	{
-		id: "balzac-rastignac",
-		source: "balzac",
-		target: "rastignac",
-		label: "observe → s’adapte",
-		explanation: "Balzac observe la structure sociale ; Rastignac apprend à y circuler et cherche à la conquérir.",
-		type: "direct",
-	},
-	{
-		id: "balzac-marx",
-		source: "balzac",
-		target: "marx",
-		label: "décrire ↔ analyser",
-		explanation: "Balzac montre le monde social ; Marx cherche à en expliquer les mécanismes.",
-		type: "comparison",
-	},
-	{
-		id: "commune-marx",
-		source: "commune",
-		target: "marx",
-		label: "expérience révolutionnaire",
-		explanation: "Marx voit dans la Commune une expérience révolutionnaire et un moment de la lutte des classes.",
-		type: "direct",
-	},
-	{
-		id: "commune-rimbaud",
-		source: "commune",
-		target: "rimbaud",
-		label: "révolte → poésie",
-		explanation: "Rimbaud transforme la révolte sociale en langage poétique.",
-		type: "direct",
-	},
-	{
-		id: "rastignac-rimbaud",
-		source: "rastignac",
-		target: "rimbaud",
-		label: "accepter le jeu ↔ tout renverser",
-		explanation: "Rastignac accepte le jeu. Rimbaud représente une rupture radicale avec le monde que Rastignac accepte : là où Rastignac veut réussir, Rimbaud veut tout renverser.",
-		type: "contrast",
-	},
-];
+function relatedTo(nodeId: string) {
+	return relationships
+		.filter(r => r.source === nodeId || r.target === nodeId)
+		.map(r => ({ rel: r, other: nodesById[r.source === nodeId ? r.target : r.source] }));
+}
 
-// Préparation des données pour sérialisation sécurisée dans les data-attributs
-const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
+const arrowGlyph = { down: "↓", up: "↑" } as const;
 ---
 
 <!doctype html>
@@ -230,114 +56,98 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 						<strong>Paris, l’argent, le pouvoir, la révolte.</strong>
 					</p>
 					<p class="intro-instructions">
-						Explorez la carte des relations : survolez ou sélectionnez une figure pour révéler ses liens directs et ses concepts clés.
+						Sélectionnez une figure pour explorer ses relations et ses concepts clés.
 					</p>
 				</header>
 
-				<!-- Composant de carte interactive relationnelle -->
+				<!--
+					Carte relationnelle. Un seul jeu de nœuds (<button>) pour toutes les largeurs :
+					- mobile (par défaut) : chaîne verticale fermée, relations entre voisins + rambarde de bouclage ;
+					- bureau (≥ 54rem) : graphe spatial à positions relatives, connexions SVG.
+				-->
 				<section
 					class="relationship-map-wrapper"
 					aria-label="Carte des relations du XIXe siècle"
 					data-rel-map
 				>
 					<div class="map-frame">
-						<div class="map-viewport" data-map-viewport>
-							<div
-								class="map-canvas"
-								style="--canvas-w: 900; --canvas-h: 520; aspect-ratio: 900 / 520;"
-								data-map-canvas
+						<div class="map-canvas" data-map-canvas>
+							<p class="society-anchor" style={`--nx: ${societyCenter.x}; --ny: ${societyCenter.y};`}>
+								<span class="anchor-title">{societyCenter.label}</span>
+								<span class="anchor-sub">{societyCenter.sub}</span>
+							</p>
+
+							<!-- Connexions SVG (bureau) -->
+							<svg
+								class="map-lines-svg"
+								viewBox="0 0 900 520"
+								aria-hidden="true"
+								focusable="false"
 							>
-								<!-- Ancrage central éditorial (en arrière-plan du graphe) -->
-								<div
-									class="society-anchor"
-									style={`left: ${societyCenter.x}px; top: ${societyCenter.y}px;`}
-									aria-hidden="true"
-								>
-									<span class="anchor-title">{societyCenter.label}</span>
-									<span class="anchor-sub">{societyCenter.sub}</span>
-								</div>
+								<defs>
+									<marker
+										id="marker-arrow"
+										markerWidth="7"
+										markerHeight="7"
+										refX="6"
+										refY="3.5"
+										orient="auto"
+									>
+										<polygon points="0 0, 7 3.5, 0 7" class="marker-fill" />
+									</marker>
+								</defs>
 
-								<!-- SVG des connexions relationnelles -->
-								<svg
-									class="map-lines-svg"
-									viewBox="0 0 900 520"
-									aria-hidden="true"
-									focusable="false"
-								>
-									<defs>
-										<marker
-											id="marker-arrow"
-											markerWidth="7"
-											markerHeight="7"
-											refX="6"
-											refY="3.5"
-											orient="auto"
+								{relationships.map((rel) => {
+									const s = nodesById[rel.source];
+									const t = nodesById[rel.target];
+									const at = desktopLabelAt[rel.id] ?? 0.5;
+									const lx = s.x + (t.x - s.x) * at;
+									const ly = s.y + (t.y - s.y) * at;
+									return (
+										<g
+											class={`rel-edge edge-${rel.type}`}
+											data-edge-id={rel.id}
+											data-source={rel.source}
+											data-target={rel.target}
 										>
-											<polygon points="0 0, 7 3.5, 0 7" class="marker-fill" />
-										</marker>
-									</defs>
-
-									{relationships.map((rel) => {
-										const s = nodesById[rel.source];
-										const t = nodesById[rel.target];
-										const mx = (s.x + t.x) / 2;
-										const my = (s.y + t.y) / 2;
-										return (
-											<g
-												class={`rel-edge edge-${rel.type}`}
-												data-edge-id={rel.id}
-												data-source={rel.source}
-												data-target={rel.target}
+											<line
+												x1={s.x}
+												y1={s.y}
+												x2={t.x}
+												y2={t.y}
+												class="edge-line"
+												marker-end={rel.type === "direct" ? "url(#marker-arrow)" : undefined}
+											/>
+											<text
+												x={lx}
+												y={ly}
+												class="edge-text"
+												text-anchor="middle"
+												dy="-6"
 											>
-												<line
-													x1={s.x}
-													y1={s.y}
-													x2={t.x}
-													y2={t.y}
-													class="edge-line"
-													marker-end={rel.type === "direct" ? "url(#marker-arrow)" : undefined}
-												/>
-												<text
-													x={mx}
-													y={my}
-													class="edge-text"
-													text-anchor="middle"
-													dy="-6"
-												>
-													{rel.label}
-												</text>
-											</g>
-										);
-									})}
-								</svg>
+												{rel.label}
+											</text>
+										</g>
+									);
+								})}
+							</svg>
 
-								<!-- Nœuds interactifs du graphe -->
-								<ul class="map-nodes-list" aria-label="Figures et forces du XIXe siècle">
-									{nodes.map((node) => {
-										const relatedRels = relationships.filter(
-											r => r.source === node.id || r.target === node.id
-										);
-										const relatedNodeIds = relatedRels.map(
-											r => (r.source === node.id ? r.target : r.source)
-										);
-
-										return (
+							<!-- Nœuds interactifs ; les connecteurs de chaîne ne s'affichent que sur mobile -->
+							<ul class="map-nodes-list" aria-label="Figures et forces du XIXe siècle">
+								{orderedNodes.map((node, i) => {
+									const link = mobileChain.links[i];
+									const isLast = i === orderedNodes.length - 1;
+									const loop = isLast ? mobileChain.loop : null;
+									return (
+										<>
 											<li class="map-node-item" id={node.id}>
-												<a
-													href={node.href}
+												<button
+													type="button"
 													id={`node-${node.id}`}
 													class={`map-node-btn node-${node.id}`}
 													aria-pressed="false"
 													data-node-id={node.id}
 													data-href={node.href}
-													data-label={node.label}
-													data-dates={node.dates}
-													data-role={node.role}
-													data-work={node.work}
-													data-posture={node.posture}
-													data-description={node.description}
-													data-points={JSON.stringify(node.points)}
-													data-related={relatedNodeIds.join(" ")}
 													style={`--nx: ${node.x}; --ny: ${node.y};`}
 												>
 													<span class="node-bullet" aria-hidden="true" />
@@ -345,34 +155,61 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 														<strong class="node-title">{node.label}</strong>
 														<span class="node-meta">{node.dates} · {node.posture}</span>
 													</span>
-												</a>
+												</button>
 											</li>
-										);
-									})}
-								</ul>
-							</div>
+											{link && (
+												<li
+													class={`chain-link chain-link--${link.relationship.type}`}
+													aria-hidden="true"
+													data-edge-id={link.relationship.id}
+													data-source={link.relationship.source}
+													data-target={link.relationship.target}
+												>
+													<span class="chain-arrow">{link.arrow ? arrowGlyph[link.arrow] : ""}</span>
+													<span class="chain-label">{link.relationship.label}</span>
+												</li>
+											)}
+											{loop && (
+												<li
+													class={`chain-link chain-link--loop chain-link--${loop.relationship.type}`}
+													aria-hidden="true"
+													data-edge-id={loop.relationship.id}
+													data-source={loop.relationship.source}
+													data-target={loop.relationship.target}
+												>
+													<span class="chain-label">
+														{loop.relationship.label}
+														<span class="chain-ends">
+															{nodesById[mobileChainOrder[mobileChainOrder.length - 1]].label} · {nodesById[mobileChainOrder[0]].label}
+														</span>
+													</span>
+												</li>
+											)}
+										</>
+									);
+								})}
+							</ul>
 						</div>
-
-						<p class="map-scroll-hint" aria-hidden="true">
-							← Faites défiler horizontalement pour voir tout le graphe →
-						</p>
 					</div>
 
-					<!-- Panneau d'information dédié (hors du graphe) -->
+					<!-- Analyse de la figure sélectionnée : dans le flux, juste sous la carte -->
 					<aside
 						class="map-info-panel"
-						aria-live="polite"
+						aria-label="Analyse de la figure sélectionnée"
 						data-info-panel
 					>
+						<p class="sr-only" aria-live="polite" data-live></p>
 						<div class="panel-hint" data-panel-hint>
 							<p>
-								<em>Cliquez ou appuyez sur une figure de la carte pour afficher son analyse détaillée et l'ensemble de ses relations.</em>
+								Sélectionnez une figure de la carte pour afficher son analyse détaillée et l'ensemble de ses relations.
+							</p>
+							<p class="panel-hint-alt">
+								<a href="#lecture-accessible" data-reading-link>Lire les cinq analyses à la suite</a>
 							</p>
 						</div>
 
 						<div class="panel-detail" data-panel-detail hidden>
-							<!-- Conteneurs d'images historiques / sources pour chaque figure (affiché selon la sélection) -->
-							{nodes.filter(n => n.image).map((node) => (
+							{nodes.map((node) => (
 								<div
 									class={`detail-portrait-wrapper detail-portrait-wrapper--${node.image.orientation}`}
 									data-node-image={node.id}
@@ -386,7 +223,7 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 											loading="lazy"
 											decoding="async"
 											class={`detail-portrait-img detail-portrait-img--${node.image.orientation}`}
-											style={`object-position: ${node.image.position};`}
+											style={`--object-position: ${node.image.position};`}
 										/>
 										<figcaption class="detail-portrait-caption">
 											{node.image.creditPrefix}
@@ -408,80 +245,100 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 
 							<header class="detail-header">
 								<div>
+									<p class="detail-eyebrow">Figure sélectionnée</p>
 									<span class="detail-posture" data-detail-posture></span>
-									<h2 class="detail-title" data-detail-title></h2>
+									<h2 class="detail-title" id="detail-title" tabindex="-1" data-detail-title></h2>
 									<p class="detail-meta">
-										<span data-detail-dates></span> · <span data-detail-role></span> · <em data-detail-work></em>
+										<span class="detail-dates" data-detail-dates></span> · <span data-detail-role></span> · <em data-detail-work></em>
 									</p>
 								</div>
-								<button
-									type="button"
-									class="panel-reset-btn"
-									data-panel-reset
-								>
-									Tout afficher
-								</button>
+								<div class="detail-actions">
+									<button
+										type="button"
+										class="panel-reset-btn"
+										data-panel-reset
+									>
+										Tout afficher
+									</button>
+									<a href="#lecture-accessible" class="panel-reading-link" data-reading-link>
+										Toutes les analyses
+									</a>
+								</div>
 							</header>
 
 							<p class="detail-description" data-detail-description></p>
 
 							<div class="detail-points-wrapper">
-								<strong>Idées maîtresses :</strong>
+								<h3 class="detail-subtitle">Idées maîtresses :</h3>
 								<ul class="detail-points" data-detail-points></ul>
 							</div>
 
 							<div class="detail-relations-wrapper">
-								<strong>Relations actives dans le réseau :</strong>
+								<h3 class="detail-subtitle">Relations actives dans le réseau :</h3>
 								<ul class="detail-relations-list" data-detail-relations></ul>
 							</div>
 						</div>
 					</aside>
 				</section>
 
-				<!-- Version accessible / fallback statique pour indexation et JavaScript désactivé -->
-				<noscript>
-					<section class="noscript-section" aria-label="Contenu textuel complet">
-						<h2>Figures et analyses (mode lecture accessible)</h2>
+				<!--
+					Mode lecture accessible : contenu complet, toujours présent dans le HTML.
+					Déplié sans JavaScript ; le script le replie au chargement (la carte prend le relais).
+				-->
+				<section class="reading-mode" id="lecture-accessible" aria-labelledby="reading-mode-title">
+					<h2 id="reading-mode-title">Figures et analyses (mode lecture accessible)</h2>
+					<details class="reading-mode-details" open data-reading-mode>
+						<summary>
+							<span class="summary-closed">Afficher les cinq analyses</span>
+							<span class="summary-open">Masquer les cinq analyses</span>
+						</summary>
 						{nodes.map((node) => (
-							<div class="noscript-node">
-								{node.image && (
-									<figure class={`noscript-portrait-figure noscript-portrait-figure--${node.image.orientation}`}>
-										<Image
-											src={node.image.asset}
-											alt={node.image.alt}
-											width={node.image.orientation === 'landscape' ? 600 : 400}
-											loading="lazy"
-											decoding="async"
-											class={`detail-portrait-img detail-portrait-img--${node.image.orientation}`}
-											style={`object-position: ${node.image.position};`}
-										/>
-										<figcaption class="detail-portrait-caption">
-											{node.image.creditPrefix}
-											{node.image.sourceUrl ? (
-												<a
-													href={node.image.sourceUrl}
-													target="_blank"
-													rel="noopener noreferrer"
-													class="detail-portrait-link"
-												>{node.image.sourceLabel}</a>
-											) : (
-												<span>{node.image.sourceLabel}</span>
-											)}
-											{node.image.creditSuffix}
-										</figcaption>
-									</figure>
-								)}
-								<h3>{node.label} ({node.dates})</h3>
+							<section class="reading-node" aria-labelledby={`lecture-${node.id}`}>
+								<figure class={`reading-portrait-figure reading-portrait-figure--${node.image.orientation}`}>
+									<Image
+										src={node.image.asset}
+										alt={node.image.alt}
+										width={node.image.orientation === 'landscape' ? 600 : 400}
+										loading="lazy"
+										decoding="async"
+										class={`detail-portrait-img detail-portrait-img--${node.image.orientation}`}
+										style={`--object-position: ${node.image.position};`}
+									/>
+									<figcaption class="detail-portrait-caption">
+										{node.image.creditPrefix}
+										{node.image.sourceUrl ? (
+											<a
+												href={node.image.sourceUrl}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="detail-portrait-link"
+											>{node.image.sourceLabel}</a>
+										) : (
+											<span>{node.image.sourceLabel}</span>
+										)}
+										{node.image.creditSuffix}
+									</figcaption>
+								</figure>
+								<h3 id={`lecture-${node.id}`}>{node.label} ({node.dates})</h3>
 								<p><strong>Rôle :</strong> {node.role} — <em>{node.work}</em></p>
 								<p><strong>Posture :</strong> {node.posture}</p>
 								<p>{node.description}</p>
 								<ul>
 									{node.points.map(pt => <li>{pt}</li>)}
 								</ul>
-							</div>
+								<h4>Relations</h4>
+								<ul class="reading-relations">
+									{relatedTo(node.id).map(({ rel, other }) => (
+										<li>
+											<span class="rel-badge">{rel.label}</span>
+											<strong>{other.label}</strong> : {rel.explanation}
+										</li>
+									))}
+								</ul>
+							</section>
 						))}
-					</section>
-				</noscript>
+					</details>
+				</section>
 
 				<!-- Synthèse générale sous forme de tableau éditorial -->
 				<footer class="map-synthesis" aria-labelledby="synthesis-title">
@@ -500,9 +357,9 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 								{nodes.map(n => (
 									<tr>
 										<th scope="row"><strong>{n.label}</strong></th>
-										<td>{n.role}</td>
-										<td><span class="table-posture">{n.posture}</span></td>
-										<td><em>{n.work}</em></td>
+										<td data-label="Nature">{n.role}</td>
+										<td data-label="Posture"><span class="table-posture">{n.posture}</span></td>
+										<td data-label="Œuvre ou Événement"><em>{n.work}</em></td>
 									</tr>
 								))}
 							</tbody>
@@ -523,21 +380,25 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 
 		<Footer />
 
-		<!-- Script côté client minimal, robuste et accessible -->
-		<script is:inline define:vars={{ nodes, relationships }}>
+		<!-- Script côté client : sélection, mise en évidence des relations, panneau d'analyse -->
+		<script is:inline define:vars={{ nodes: nodes.map(({ image, ...n }) => n), relationships }}>
 			(function () {
 				const mapEl = document.querySelector('[data-rel-map]');
 				if (!mapEl) return;
 
-				const canvas = mapEl.querySelector('[data-map-canvas]');
-				const viewport = mapEl.querySelector('[data-map-viewport]');
+				// Même valeur que le breakpoint CSS de la carte spatiale
+				const desktopQuery = window.matchMedia('(min-width: 54rem)');
+				const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
 				const nodeButtons = [...mapEl.querySelectorAll('.map-node-btn')];
-				const edgeElements = [...mapEl.querySelectorAll('.rel-edge')];
+				const edgeElements = [...mapEl.querySelectorAll('[data-edge-id]')];
+				const panel = mapEl.querySelector('[data-info-panel]');
 				const panelHint = mapEl.querySelector('[data-panel-hint]');
 				const panelDetail = mapEl.querySelector('[data-panel-detail]');
 				const resetBtn = mapEl.querySelector('[data-panel-reset]');
+				const readingMode = document.querySelector('[data-reading-mode]');
+				const liveRegion = mapEl.querySelector('[data-live]');
 
-				// Éléments du panneau
 				const detailTitle = mapEl.querySelector('[data-detail-title]');
 				const detailDates = mapEl.querySelector('[data-detail-dates]');
 				const detailRole = mapEl.querySelector('[data-detail-role]');
@@ -548,12 +409,18 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 				const detailRelations = mapEl.querySelector('[data-detail-relations]');
 				const imageContainers = [...mapEl.querySelectorAll('[data-node-image]')];
 
+				const nodeMap = new Map(nodes.map(n => [n.id, n]));
+				const buttonById = new Map(nodeButtons.map(b => [b.dataset.nodeId, b]));
+
 				let selectedNode = null;
 
-				// Construction d'une table d'accès rapide
-				const nodeMap = new Map(nodes.map(n => [n.id, n]));
+				// La carte remplace la lecture linéaire : on replie le mode lecture,
+				// sauf si l'URL y mène directement.
+				if (readingMode && window.location.hash !== '#lecture-accessible') {
+					readingMode.open = false;
+				}
 
-				function getRelatedNodeIds(nodeId) {
+				function getRelated(nodeId) {
 					const related = [];
 					for (const rel of relationships) {
 						if (rel.source === nodeId) related.push({ targetId: rel.target, rel });
@@ -565,21 +432,16 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 				function updateHighlights(activeNode) {
 					mapEl.toggleAttribute('data-active', !!activeNode);
 
-					const relatedData = activeNode ? getRelatedNodeIds(activeNode.dataset.nodeId) : [];
-					const relatedIds = new Set(relatedData.map(r => r.targetId));
+					const activeId = activeNode ? activeNode.dataset.nodeId : null;
+					const relatedIds = new Set(activeId ? getRelated(activeId).map(r => r.targetId) : []);
 
-					// Gestion des nœuds
 					for (const btn of nodeButtons) {
-						const isSelf = activeNode && btn === activeNode;
-						const isRelated = activeNode && relatedIds.has(btn.dataset.nodeId);
-						btn.classList.toggle('is-active', isSelf);
-						btn.classList.toggle('is-related', isRelated);
+						btn.classList.toggle('is-active', btn === activeNode);
+						btn.classList.toggle('is-related', relatedIds.has(btn.dataset.nodeId));
 					}
 
-					// Gestion des connexions SVG
-					const activeId = activeNode ? activeNode.dataset.nodeId : null;
 					for (const edge of edgeElements) {
-						const isConn = activeId && (edge.dataset.source === activeId || edge.dataset.target === activeId);
+						const isConn = !!activeId && (edge.dataset.source === activeId || edge.dataset.target === activeId);
 						edge.classList.toggle('is-related', isConn);
 					}
 				}
@@ -588,9 +450,7 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 					if (!btn) {
 						panelHint.hidden = false;
 						panelDetail.hidden = true;
-						for (const imgEl of imageContainers) {
-							imgEl.hidden = true;
-						}
+						for (const imgEl of imageContainers) imgEl.hidden = true;
 						return;
 					}
 
@@ -611,129 +471,139 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 					detailPosture.textContent = `Posture : ${data.posture}`;
 					detailDesc.textContent = data.description;
 
-					// Points clés
-					detailPoints.innerHTML = '';
-					for (const pt of data.points) {
+					detailPoints.replaceChildren(...data.points.map(pt => {
 						const li = document.createElement('li');
 						li.textContent = pt;
-						detailPoints.appendChild(li);
-					}
+						return li;
+					}));
 
-					// Relations
-					detailRelations.innerHTML = '';
-					const related = getRelatedNodeIds(nodeId);
-					for (const item of related) {
+					// Relations actives : chaque figure liée est un bouton qui la sélectionne
+					detailRelations.replaceChildren(...getRelated(nodeId).map(item => {
 						const other = nodeMap.get(item.targetId);
 						const li = document.createElement('li');
+						li.className = `rel-item rel-item--${item.rel.type}`;
+
 						const badge = document.createElement('span');
 						badge.className = 'rel-badge';
 						badge.textContent = item.rel.label;
 
-						const text = document.createElement('span');
-						text.innerHTML = ` <strong>${other.label}</strong> : ${item.rel.explanation}`;
+						const go = document.createElement('button');
+						go.type = 'button';
+						go.className = 'rel-go';
+						go.dataset.goto = other.id;
+						go.textContent = other.label;
 
-						li.appendChild(badge);
-						li.appendChild(text);
-						detailRelations.appendChild(li);
-					}
+						const text = document.createElement('span');
+						text.className = 'rel-text';
+						text.textContent = item.rel.explanation;
+
+						li.append(badge, go, text);
+						return li;
+					}));
 				}
 
 				function setSelectedNode(btn) {
-					if (selectedNode) {
-						selectedNode.setAttribute('aria-pressed', 'false');
-					}
-
+					if (selectedNode) selectedNode.setAttribute('aria-pressed', 'false');
 					selectedNode = btn;
-
-					if (selectedNode) {
-						selectedNode.setAttribute('aria-pressed', 'true');
-					}
+					if (selectedNode) selectedNode.setAttribute('aria-pressed', 'true');
 
 					updateHighlights(selectedNode);
 					populatePanel(selectedNode);
+					liveRegion.textContent = selectedNode
+						? `${nodeMap.get(selectedNode.dataset.nodeId).label} : analyse et relations affichées.`
+						: 'Aucune figure sélectionnée : toutes les relations sont affichées.';
+
+					const url = window.location.pathname + window.location.search;
+					history.replaceState(null, '', selectedNode ? url + selectedNode.dataset.href : url);
 				}
 
 				function clearSelection() {
 					const prev = selectedNode;
 					setSelectedNode(null);
-					if (window.location.hash) {
-						history.replaceState(null, '', window.location.pathname + window.location.search);
-					}
-					if (prev) {
-						prev.focus();
-					}
+					if (prev) prev.focus();
 				}
 
-				// Événements boutons / liens
+				// Sur mobile, l'analyse suit la carte : on la fait apparaître si elle est
+				// hors champ, sans saut quand elle est déjà visible.
+				function revealPanel(force) {
+					if (desktopQuery.matches && !force) return;
+					const rect = panel.getBoundingClientRect();
+					const vh = window.innerHeight;
+					const offscreen = rect.top > vh * 0.75 || rect.top < 0;
+					if (!offscreen) return;
+					panel.scrollIntoView({
+						block: 'start',
+						behavior: reducedMotion.matches ? 'auto' : 'smooth',
+					});
+				}
+
 				for (const btn of nodeButtons) {
 					btn.addEventListener('click', function () {
 						if (selectedNode === btn) {
 							clearSelection();
 						} else {
 							setSelectedNode(btn);
+							revealPanel(false);
 						}
 					});
 
-					btn.addEventListener('keydown', function (e) {
-						if (e.key === ' ' || e.key === 'Spacebar') {
-							e.preventDefault();
-							if (selectedNode === btn) {
-								clearSelection();
-							} else {
-								btn.click();
-							}
-						}
+					// Aperçu au survol : souris uniquement, jamais indispensable
+					btn.addEventListener('pointerenter', function (e) {
+						if (e.pointerType === 'mouse') updateHighlights(btn);
 					});
-
-					btn.addEventListener('pointerenter', function () {
-						updateHighlights(btn);
+					btn.addEventListener('pointerleave', function (e) {
+						if (e.pointerType === 'mouse') updateHighlights(selectedNode);
 					});
-
-					btn.addEventListener('pointerleave', function () {
-						updateHighlights(selectedNode);
-					});
-
 					btn.addEventListener('focus', function () {
 						updateHighlights(btn);
 					});
-
 					btn.addEventListener('blur', function () {
 						updateHighlights(selectedNode);
 					});
 				}
 
-				if (resetBtn) {
-					resetBtn.addEventListener('click', clearSelection);
+				// Navigation de proche en proche depuis le panneau
+				detailRelations.addEventListener('click', function (e) {
+					const go = e.target.closest('[data-goto]');
+					if (!go) return;
+					const target = buttonById.get(go.dataset.goto);
+					if (!target) return;
+					setSelectedNode(target);
+					detailTitle.focus({ preventScroll: true });
+					if (panel.getBoundingClientRect().top < 0) revealPanel(true);
+				});
+
+				if (resetBtn) resetBtn.addEventListener('click', clearSelection);
+
+				// Liens vers le mode lecture : le déplier avant que l'ancre ne défile
+				for (const link of document.querySelectorAll('[data-reading-link]')) {
+					link.addEventListener('click', function () {
+						if (readingMode) readingMode.open = true;
+					});
 				}
 
-				// Synchronisation avec l'ancre URL
 				function syncFromHash() {
 					const hash = window.location.hash;
-					if (hash) {
-						const match = nodeButtons.find(
-							b => b.getAttribute('href') === hash || `#${b.id}` === hash || `#${b.dataset.nodeId}` === hash
-						);
-						if (match && match !== selectedNode) {
-							setSelectedNode(match);
-						}
+					if (!hash) return;
+					if (hash === '#lecture-accessible') {
+						if (readingMode) readingMode.open = true;
+						return;
 					}
+					const match = nodeButtons.find(
+						b => b.dataset.href === hash || `#${b.id}` === hash || `#${b.dataset.nodeId}` === hash
+					);
+					if (match && match !== selectedNode) setSelectedNode(match);
 				}
 
 				syncFromHash();
 				window.addEventListener('hashchange', syncFromHash);
 
-				// Fermeture par Échap
 				mapEl.addEventListener('keydown', function (e) {
 					if (e.key === 'Escape' && selectedNode) {
 						e.preventDefault();
 						clearSelection();
 					}
 				});
-
-				// Centrage initial doux du viewport sur mobile
-				if (viewport && viewport.scrollWidth > viewport.clientWidth) {
-					viewport.scrollLeft = (viewport.scrollWidth - viewport.clientWidth) / 2;
-				}
 			})();
 		</script>
 	</body>
@@ -742,6 +612,9 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 <style>
 	/* ==========================================================================
 	   VARIABLES ÉDITORIALES & SYSTÈME TYPOGRAPHIQUE
+	   Mobile d'abord ; la carte spatiale s'active à partir de 54rem (≈ 864 px),
+	   largeur à laquelle le canevas 900 × 520 garde nœuds et libellés lisibles
+	   sans chevauchement.
 	   ========================================================================== */
 	:root {
 		--map-bg: #fdfcf9;
@@ -753,6 +626,8 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 		--map-border-soft: #ece7de;
 		--map-accent: #2337ff;
 		--map-accent-soft: rgba(35, 55, 255, 0.08);
+		--map-selected-bg: #eef0ff;
+		--map-serif: Georgia, "Times New Roman", serif;
 
 		--node-ochre: #8b572a;
 		--node-blue: #235284;
@@ -765,7 +640,7 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 		width: 100%;
 		max-width: 1040px;
 		margin: 0 auto;
-		padding: 2.5rem 1.25rem 5rem;
+		padding: 1.5rem 1rem 3.5rem;
 		box-sizing: border-box;
 	}
 
@@ -775,30 +650,32 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 	.map-intro {
 		text-align: center;
 		max-width: 820px;
-		margin: 0 auto 2.5rem;
+		margin: 0 auto 1.75rem;
 	}
 
 	.intro-eyebrow {
 		margin: 0 0 0.5rem;
-		font-size: 0.78rem;
+		font-size: 0.8125rem;
 		font-weight: 700;
 		text-transform: uppercase;
-		letter-spacing: 0.14em;
+		letter-spacing: 0.12em;
+		line-height: 1.4;
 		color: var(--node-ochre);
 	}
 
 	.map-intro h1 {
 		margin: 0 0 0.85rem;
-		font-family: Georgia, "Times New Roman", serif;
-		font-size: clamp(2rem, 4vw, 3rem);
+		font-family: var(--map-serif);
+		font-size: clamp(1.75rem, 1.2rem + 2.6vw, 3rem);
 		font-weight: normal;
 		line-height: 1.18;
 		color: var(--map-ink);
+		text-wrap: balance;
 	}
 
 	.intro-desc {
 		margin: 0 0 0.6rem;
-		font-size: 1.15rem;
+		font-size: clamp(1.0625rem, 1rem + 0.4vw, 1.15rem);
 		line-height: 1.5;
 		color: var(--map-muted);
 	}
@@ -809,16 +686,17 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 
 	.intro-instructions {
 		margin: 0;
-		font-size: 0.9rem;
+		font-size: 1rem;
+		line-height: 1.5;
 		color: var(--map-muted);
 		font-style: italic;
 	}
 
 	/* ==========================================================================
-	   CADRE DU GRAPHE & CANVAS
+	   CADRE DE LA CARTE (MOBILE : CHAÎNE VERTICALE FERMÉE)
 	   ========================================================================== */
 	.relationship-map-wrapper {
-		margin-bottom: 3.5rem;
+		margin-bottom: 3rem;
 	}
 
 	.map-frame {
@@ -826,158 +704,213 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 		border-radius: 12px;
 		background: var(--map-bg);
 		box-shadow: 0 4px 20px rgba(23, 43, 58, 0.04);
-		overflow: hidden;
 		position: relative;
-	}
-
-	.map-viewport {
-		max-width: 100%;
-		overflow-x: auto;
-		-webkit-overflow-scrolling: touch;
+		padding: 1rem 0.875rem 1.25rem;
 	}
 
 	.map-canvas {
-		--u: calc(100cqw / var(--canvas-w));
-		width: 100%;
-		min-width: 760px;
 		position: relative;
-		container-type: inline-size;
-		user-select: none;
+		max-width: 34rem;
+		margin-inline: auto;
+		/* Abscisse du connecteur, alignée sur la pastille des nœuds */
+		--cx: 1.475rem;
+		/* Gouttière gauche réservée à la rambarde de bouclage */
+		--gutter: 1.5rem;
+		--rail-color: var(--map-border);
+		--link-color: var(--map-border);
 	}
 
-	/* Nœud central "SOCIÉTÉ DU XIXe SIÈCLE" */
+	/* Ancrage « SOCIÉTÉ DU XIXe SIÈCLE » : titre de la carte sur mobile */
 	.society-anchor {
-		position: absolute;
-		transform: translate(-50%, -50%);
+		margin: 0 0 1rem;
+		padding: 0.6rem 0.75rem;
 		text-align: center;
-		pointer-events: none;
-		z-index: 1;
-		padding: 0.8rem 1.4rem;
-		background: rgba(253, 252, 249, 0.85);
 		border: 1px dashed var(--map-border);
 		border-radius: 8px;
+		background: rgba(253, 252, 249, 0.85);
+		transition: opacity 0.2s ease;
 	}
 
 	.anchor-title {
 		display: block;
-		font-family: Georgia, "Times New Roman", serif;
-		font-size: 0.95rem;
+		font-family: var(--map-serif);
+		font-size: 0.9375rem;
 		font-weight: bold;
-		letter-spacing: 0.1em;
+		letter-spacing: 0.08em;
+		line-height: 1.35;
 		color: var(--map-ink);
 	}
 
 	.anchor-sub {
 		display: block;
-		font-size: 0.78rem;
+		font-size: 0.9375rem;
 		font-style: italic;
+		line-height: 1.4;
 		color: var(--map-muted);
 		margin-top: 0.2rem;
 	}
 
-	/* ==========================================================================
-	   CONNEXIONS VECTORIELLES SVG
-	   ========================================================================== */
 	.map-lines-svg {
-		position: absolute;
-		inset: 0;
-		width: 100%;
-		height: 100%;
-		pointer-events: none;
-		z-index: 2;
+		display: none;
 	}
 
-	.edge-line {
-		stroke: var(--map-border);
-		stroke-width: 1.75;
-		stroke-linecap: round;
-		transition: stroke 0.2s ease, stroke-width 0.2s ease, opacity 0.2s ease;
-	}
-
-	.marker-fill {
-		fill: var(--map-border);
-		transition: fill 0.2s ease;
-	}
-
-	.edge-text {
-		font-family: Georgia, "Times New Roman", serif;
-		font-size: 11px;
-		font-style: italic;
-		fill: var(--map-muted);
-		paint-order: stroke;
-		stroke: var(--map-bg);
-		stroke-width: 4px;
-		stroke-linecap: round;
-		stroke-linejoin: round;
-		transition: fill 0.2s ease, font-weight 0.2s ease, opacity 0.2s ease;
-	}
-
-	.edge-comparison .edge-line {
-		stroke-dasharray: 5 4;
-	}
-
-	.edge-contrast .edge-line {
-		stroke-dasharray: 6 5;
-	}
-
-	/* ==========================================================================
-	   NŒUDS COMPACTS
-	   ========================================================================== */
 	.map-nodes-list {
 		margin: 0;
-		padding: 0;
+		padding: 0 0 0 var(--gutter);
 		list-style: none;
-		position: absolute;
-		inset: 0;
-		z-index: 3;
-		pointer-events: none;
+		position: relative;
 	}
 
-	.map-node-item {
+	.map-nodes-list > li {
+		position: relative;
 		margin: 0;
-		padding: 0;
 	}
+
+	/* Rambarde de bouclage : de la première figure (Balzac) jusqu'au dernier
+	   connecteur, sous la dernière figure (Marx). Tracée par morceaux pour suivre
+	   la hauteur réelle de chaque élément. */
+	.map-nodes-list > li::before {
+		content: "";
+		position: absolute;
+		left: calc(0.5rem - var(--gutter));
+		top: 0;
+		bottom: 0;
+		border-left: 2px dashed var(--rail-color);
+		pointer-events: none;
+		transition: border-color 0.2s ease;
+	}
+
+	.map-nodes-list > li:first-child::before {
+		top: 50%;
+		width: calc(var(--gutter) - 0.5rem);
+		border-top: 2px dashed var(--rail-color);
+		border-top-left-radius: 8px;
+	}
+
+	.map-nodes-list > li.chain-link--loop::before {
+		bottom: auto;
+		height: 50%;
+		width: calc(var(--gutter) - 0.5rem + var(--cx));
+		border-bottom: 2px dashed var(--rail-color);
+		border-bottom-left-radius: 8px;
+	}
+
+	/* Connecteurs entre figures voisines */
+	.chain-link {
+		display: flex;
+		align-items: center;
+		min-height: 2.75rem;
+		padding: 0.35rem 0 0.35rem calc(var(--cx) + 1.1rem);
+		box-sizing: border-box;
+		transition: opacity 0.2s ease;
+	}
+
+	.chain-link::after {
+		content: "";
+		position: absolute;
+		left: calc(var(--cx) - 1px);
+		top: 0;
+		bottom: 0;
+		border-left: 2px solid var(--link-color);
+		transition: border-color 0.2s ease;
+	}
+
+	.chain-link--comparison::after {
+		border-left-style: dashed;
+	}
+
+	.chain-link--contrast::after {
+		border-left-style: dotted;
+		border-left-width: 3px;
+		left: calc(var(--cx) - 1.5px);
+	}
+
+	.chain-link--loop::after {
+		bottom: 50%;
+	}
+
+	.chain-arrow {
+		position: absolute;
+		left: var(--cx);
+		top: 50%;
+		transform: translate(-50%, -50%);
+		z-index: 1;
+		padding: 0.1rem 0;
+		background: var(--map-bg);
+		font-size: 1.125rem;
+		font-weight: bold;
+		line-height: 1;
+		color: var(--map-muted);
+		transition: color 0.2s ease;
+	}
+
+	.chain-arrow:empty {
+		display: none;
+	}
+
+	.chain-label {
+		font-family: var(--map-serif);
+		font-size: 0.9375rem;
+		font-style: italic;
+		line-height: 1.35;
+		color: var(--map-muted);
+		transition: color 0.2s ease;
+	}
+
+	.chain-ends {
+		display: block;
+		font-family: var(--font-atkinson), sans-serif;
+		font-size: 0.8125rem;
+		font-style: normal;
+	}
+
+	/* ==========================================================================
+	   NŒUDS (BOUTONS)
+	   ========================================================================== */
+	.node-balzac { --node-color: var(--node-ochre); }
+	.node-rastignac { --node-color: var(--node-blue); }
+	.node-marx { --node-color: var(--node-green); }
+	.node-commune { --node-color: var(--node-red); }
+	.node-rimbaud { --node-color: var(--node-purple); }
 
 	.map-node-btn {
-		pointer-events: auto;
-		position: absolute;
-		left: calc(var(--nx) * 1px);
-		top: calc(var(--ny) * 1px);
-		transform: translate(-50%, -50%);
-		display: inline-flex;
+		display: flex;
 		align-items: center;
-		gap: 0.65rem;
-		padding: 0.55rem 0.9rem;
+		gap: 0.75rem;
+		width: 100%;
+		min-height: 3.25rem;
+		margin: 0;
+		padding: 0.6rem 0.85rem;
+		box-sizing: border-box;
 		background: var(--map-surface);
 		border: 1px solid var(--map-border);
-		border-radius: 8px;
-		cursor: pointer;
+		border-left: 4px solid var(--node-color);
+		border-radius: 10px;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 		font: inherit;
 		color: var(--map-ink);
-		text-decoration: none;
 		text-align: left;
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-		transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease;
-		max-width: 230px;
+		cursor: pointer;
+		touch-action: manipulation;
+		-webkit-tap-highlight-color: transparent;
+		transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, opacity 0.2s ease;
 	}
 
-	.map-node-btn:hover {
-		transform: translate(-50%, -50%) translateY(-2px);
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-		border-color: var(--map-accent);
-		text-decoration: none;
+	.map-node-btn:active {
+		transform: scale(0.98);
 	}
 
 	.map-node-btn:focus-visible {
-		outline: 2px solid var(--map-accent);
-		outline-offset: 2px;
+		outline: 3px solid var(--map-accent);
+		outline-offset: 3px;
 	}
 
 	.node-bullet {
-		width: 10px;
-		height: 10px;
+		width: 12px;
+		height: 12px;
+		box-sizing: border-box;
 		border-radius: 50%;
-		border: 2px solid var(--map-muted);
+		border: 2px solid var(--node-color);
 		background: var(--map-surface);
 		flex-shrink: 0;
 		transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
@@ -986,50 +919,47 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 	.node-content {
 		display: flex;
 		flex-direction: column;
-		line-height: 1.25;
+		min-width: 0;
+		line-height: 1.3;
 	}
 
 	.node-title {
-		font-family: Georgia, "Times New Roman", serif;
-		font-size: 0.92rem;
+		font-family: var(--map-serif);
+		font-size: 1.0625rem;
 		font-weight: bold;
 		color: var(--map-ink);
-		white-space: nowrap;
 	}
 
 	.node-meta {
-		font-size: 0.72rem;
+		margin-top: 0.1rem;
+		font-size: 0.875rem;
 		color: var(--map-muted);
-		white-space: nowrap;
 	}
 
-	/* Différenciation subtile par bordure supérieure */
-	.node-balzac { border-top: 3px solid var(--node-ochre); }
-	.node-balzac .node-bullet { border-color: var(--node-ochre); }
-
-	.node-rastignac { border-top: 3px solid var(--node-blue); }
-	.node-rastignac .node-bullet { border-color: var(--node-blue); }
-
-	.node-marx { border-top: 3px solid var(--node-green); }
-	.node-marx .node-bullet { border-color: var(--node-green); }
-
-	.node-commune { border-top: 3px solid var(--node-red); }
-	.node-commune .node-bullet { border-color: var(--node-red); }
-
-	.node-rimbaud { border-top: 3px solid var(--node-purple); }
-	.node-rimbaud .node-bullet { border-color: var(--node-purple); }
-
 	/* ==========================================================================
-	   INTERACTIONS DYNAMIQUES & ÉTATS ACTIFS (MODÈLE TOPICS MAP)
+	   ÉTATS : SÉLECTION, APERÇU, RELATIONS ACTIVES
+	   La sélection l'emporte toujours sur la couleur de catégorie : bordure
+	   complète à l'accent (y compris le liseré coloré), anneau et fond teinté.
 	   ========================================================================== */
-	/* Nœud sélectionné */
-	.map-node-btn[aria-pressed="true"],
 	.map-node-btn.is-active {
 		border-color: var(--map-accent);
-		background: var(--map-surface);
-		box-shadow: 0 0 0 1px var(--map-accent), 0 6px 16px rgba(35, 55, 255, 0.15);
-		transform: translate(-50%, -50%) scale(1.04);
-		z-index: 5;
+	}
+
+	.map-node-btn.is-related {
+		border-color: var(--map-ink);
+		border-left-color: var(--node-color);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	}
+
+	.map-node-btn.is-related .node-bullet {
+		background: var(--map-ink);
+		border-color: var(--map-ink);
+	}
+
+	.map-node-btn[aria-pressed="true"] {
+		border-color: var(--map-accent);
+		background: var(--map-selected-bg);
+		box-shadow: 0 0 0 2px var(--map-accent), 0 6px 16px rgba(35, 55, 255, 0.18);
 	}
 
 	.map-node-btn[aria-pressed="true"] .node-bullet,
@@ -1039,226 +969,454 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 		transform: scale(1.2);
 	}
 
-	/* Nœuds liés */
-	.map-node-btn.is-related {
-		border-color: var(--map-ink);
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-		z-index: 4;
+	.map-node-btn[aria-pressed="true"] .node-title {
+		color: #0f1c8f;
 	}
 
-	.map-node-btn.is-related .node-bullet {
-		background: var(--map-ink);
-	}
-
-	/* Connexions liées actives */
-	.rel-edge.is-related .edge-line {
-		stroke: var(--map-accent);
-		stroke-width: 2.75;
-		opacity: 1;
-	}
-
-	.rel-edge.is-related .marker-fill {
-		fill: var(--map-accent);
-	}
-
-	.rel-edge.is-related .edge-text {
-		fill: var(--map-ink);
-		font-weight: bold;
-		opacity: 1;
-	}
-
-	/* Atténuation des éléments non liés quand un nœud est actif */
 	.relationship-map-wrapper[data-active] .map-node-btn:not(.is-active, .is-related) {
-		opacity: 0.42;
-	}
-
-	.relationship-map-wrapper[data-active] .rel-edge:not(.is-related) .edge-line {
-		opacity: 0.15;
-	}
-
-	.relationship-map-wrapper[data-active] .rel-edge:not(.is-related) .edge-text {
-		opacity: 0.2;
-	}
-
-	.relationship-map-wrapper[data-active] .society-anchor {
 		opacity: 0.5;
 	}
 
-	.map-scroll-hint {
-		display: none;
-		margin: 0;
-		padding: 0.4rem 0.8rem;
-		font-size: 0.75rem;
-		text-align: center;
-		color: var(--map-muted);
-		border-top: 1px solid var(--map-border-soft);
-		background: var(--map-bg);
+	.relationship-map-wrapper[data-active] .society-anchor {
+		opacity: 0.6;
+	}
+
+	/* Connecteurs mobiles */
+	.chain-link.is-related {
+		--link-color: var(--map-accent);
+	}
+
+	.chain-link.is-related .chain-arrow {
+		color: var(--map-accent);
+	}
+
+	.chain-link.is-related .chain-label {
+		color: var(--map-ink);
+		font-weight: bold;
+	}
+
+	/* Seuls libellé, flèche et trait s'atténuent : la rambarde, tracée sur les
+	   mêmes éléments, garde son propre état. */
+	.relationship-map-wrapper[data-active] .chain-link:not(.is-related) {
+		--link-color: var(--map-border-soft);
+	}
+
+	.relationship-map-wrapper[data-active] .chain-link:not(.is-related) > span {
+		opacity: 0.5;
+	}
+
+	.map-nodes-list:has(> .chain-link--loop.is-related) {
+		--rail-color: var(--map-accent);
+	}
+
+	.relationship-map-wrapper[data-active] .map-nodes-list:not(:has(> .chain-link--loop.is-related)) {
+		--rail-color: var(--map-border-soft);
+	}
+
+	@media (hover: hover) {
+		.map-node-btn:not([aria-pressed="true"]):hover {
+			border-color: var(--map-accent);
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+		}
 	}
 
 	/* ==========================================================================
-	   PANNEAU D'INFORMATION DÉDIÉ (HORS DU GRAPHE)
+	   CARTE SPATIALE (BUREAU)
+	   ========================================================================== */
+	@media (min-width: 54rem) {
+		.page-container {
+			padding: 2.5rem 1.25rem 5rem;
+		}
+
+		.map-intro {
+			margin-bottom: 2.5rem;
+		}
+
+		.intro-instructions {
+			font-size: 0.95rem;
+		}
+
+		.relationship-map-wrapper {
+			margin-bottom: 3.5rem;
+		}
+
+		.map-frame {
+			padding: 0;
+			overflow: hidden;
+		}
+
+		/* Toutes les positions sont exprimées dans l'espace 900 × 520 puis mises
+		   à l'échelle de la largeur réelle du canevas (100cqw) : nœuds, ancrage et
+		   connexions SVG restent alignés à toute largeur. */
+		.map-canvas {
+			width: 100%;
+			max-width: none;
+			aspect-ratio: 900 / 520;
+			container-type: inline-size;
+			user-select: none;
+		}
+
+		.society-anchor {
+			position: absolute;
+			left: calc(var(--nx) * 100cqw / 900);
+			top: calc(var(--ny) * 100cqw / 900);
+			transform: translate(-50%, -50%);
+			z-index: 1;
+			margin: 0;
+			padding: 0.55rem 0.9rem;
+			pointer-events: none;
+		}
+
+		.anchor-title {
+			font-size: 0.875rem;
+		}
+
+		.anchor-sub {
+			font-size: 0.8125rem;
+		}
+
+		.map-lines-svg {
+			display: block;
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			pointer-events: none;
+			z-index: 2;
+		}
+
+		.map-nodes-list {
+			position: absolute;
+			inset: 0;
+			z-index: 3;
+			padding: 0;
+			pointer-events: none;
+		}
+
+		.map-nodes-list > li {
+			position: static;
+		}
+
+		.map-nodes-list > li::before,
+		.chain-link {
+			display: none;
+		}
+
+		.map-node-btn {
+			pointer-events: auto;
+			position: absolute;
+			left: calc(var(--nx) * 100cqw / 900);
+			top: calc(var(--ny) * 100cqw / 900);
+			transform: translate(-50%, -50%);
+			width: max-content;
+			max-width: 13.5rem;
+			min-height: 2.75rem;
+			gap: 0.65rem;
+			padding: 0.55rem 0.9rem;
+			border: 1px solid var(--map-border);
+			border-top: 3px solid var(--node-color);
+			border-radius: 8px;
+		}
+
+		.map-node-btn:active {
+			transform: translate(-50%, -50%) scale(0.98);
+		}
+
+		.node-bullet {
+			width: 10px;
+			height: 10px;
+		}
+
+		.node-title {
+			font-size: 0.95rem;
+			white-space: nowrap;
+		}
+
+		.node-meta {
+			margin-top: 0;
+			font-size: 0.8125rem;
+			line-height: 1.3;
+		}
+
+		.map-node-btn.is-related {
+			border-top-color: var(--node-color);
+			z-index: 4;
+		}
+
+		.map-node-btn.is-active {
+			z-index: 5;
+		}
+
+		.map-node-btn[aria-pressed="true"],
+		.map-node-btn[aria-pressed="true"].is-related {
+			border-color: var(--map-accent);
+			transform: translate(-50%, -50%) scale(1.04);
+			z-index: 5;
+		}
+
+		/* Connexions SVG */
+		.edge-line {
+			stroke: var(--map-border);
+			stroke-width: 1.75;
+			stroke-linecap: round;
+			transition: stroke 0.2s ease, stroke-width 0.2s ease, opacity 0.2s ease;
+		}
+
+		.marker-fill {
+			fill: var(--map-border);
+			transition: fill 0.2s ease;
+		}
+
+		.edge-text {
+			font-family: var(--map-serif);
+			font-size: 13.5px;
+			font-style: italic;
+			fill: var(--map-muted);
+			paint-order: stroke;
+			stroke: var(--map-bg);
+			stroke-width: 4px;
+			stroke-linecap: round;
+			stroke-linejoin: round;
+			transition: fill 0.2s ease, opacity 0.2s ease;
+		}
+
+		.edge-comparison .edge-line {
+			stroke-dasharray: 5 4;
+		}
+
+		.edge-contrast .edge-line {
+			stroke-dasharray: 6 5;
+		}
+
+		.rel-edge.is-related .edge-line {
+			stroke: var(--map-accent);
+			stroke-width: 2.75;
+			opacity: 1;
+		}
+
+		.rel-edge.is-related .marker-fill {
+			fill: var(--map-accent);
+		}
+
+		.rel-edge.is-related .edge-text {
+			fill: var(--map-ink);
+			font-weight: bold;
+			opacity: 1;
+		}
+
+		.relationship-map-wrapper[data-active] .map-node-btn:not(.is-active, .is-related) {
+			opacity: 0.42;
+		}
+
+		.relationship-map-wrapper[data-active] .rel-edge:not(.is-related) .edge-line {
+			opacity: 0.15;
+		}
+
+		.relationship-map-wrapper[data-active] .rel-edge:not(.is-related) .edge-text {
+			opacity: 0.2;
+		}
+
+		.relationship-map-wrapper[data-active] .society-anchor {
+			opacity: 0.5;
+		}
+	}
+
+	@media (min-width: 54rem) and (hover: hover) {
+		.map-node-btn:hover {
+			transform: translate(-50%, -50%) translateY(-2px);
+		}
+
+		.map-node-btn[aria-pressed="true"]:hover {
+			transform: translate(-50%, -50%) scale(1.04);
+		}
+	}
+
+	/* ==========================================================================
+	   PANNEAU D'ANALYSE (DANS LE FLUX, SOUS LA CARTE)
 	   ========================================================================== */
 	.map-info-panel {
-		margin-top: 1.25rem;
+		margin-top: 1rem;
 		background: var(--map-surface);
 		border: 1px solid var(--map-border);
 		border-radius: 10px;
-		padding: 1.5rem 1.75rem;
-		min-height: 5.5rem;
+		padding: 1.25rem 1rem;
 		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+		scroll-margin-top: 0.75rem;
 	}
 
 	.panel-hint {
 		text-align: center;
 		color: var(--map-muted);
-		font-size: 0.95rem;
-		margin: 0.5rem 0;
-	}
-
-	/* ==========================================================================
-	   DOCUMENTS HISTORIQUES & PORTRAITS (PANNEAU D'ANALYSE)
-	   ========================================================================== */
-	.detail-portrait-wrapper {
-		margin-bottom: 1.25rem;
-	}
-
-	.detail-portrait-wrapper[hidden] {
-		display: none;
-	}
-
-	.detail-portrait-figure,
-	.noscript-portrait-figure {
-		margin: 0;
-		padding: 0;
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		max-width: 220px;
-	}
-
-	.detail-portrait-figure--landscape,
-	.noscript-portrait-figure--landscape {
-		max-width: 320px;
-	}
-
-	.detail-portrait-img {
-		width: 190px;
-		max-width: 100%;
-		max-height: 220px;
-		height: auto;
-		aspect-ratio: 4 / 5;
-		object-fit: cover;
-		border-radius: 6px;
-		border: 1px solid var(--map-border);
-		box-shadow: 0 2px 8px rgba(23, 43, 58, 0.06);
-		display: block;
-		background: var(--map-bg);
-	}
-
-	.detail-portrait-img--landscape {
-		width: 300px;
-		aspect-ratio: 16 / 10;
-		object-fit: cover;
-	}
-
-	.detail-portrait-caption {
-		margin-top: 0.45rem;
-		font-size: 0.74rem;
-		line-height: 1.35;
-		color: var(--map-muted);
+		font-size: 1rem;
+		line-height: 1.5;
 		font-style: italic;
 	}
 
-	.detail-portrait-link {
-		color: var(--map-muted);
-		text-decoration: underline;
-		text-underline-offset: 2px;
-		transition: color 0.15s ease;
+	.panel-hint p {
+		margin: 0.25rem 0;
 	}
 
-	.detail-portrait-link:hover {
+	.panel-hint-alt {
+		font-style: normal;
+	}
+
+	.panel-hint-alt a {
+		display: inline-flex;
+		align-items: center;
+		min-height: 2.75rem;
 		color: var(--map-accent);
+		text-underline-offset: 3px;
 	}
 
-	.detail-portrait-link:focus-visible {
-		outline: 2px solid var(--map-accent);
-		outline-offset: 2px;
-		border-radius: 2px;
-	}
-
-	.noscript-portrait-figure {
-		margin-bottom: 1rem;
-	}
-
-	.detail-header {
+	.panel-detail {
 		display: flex;
-		justify-content: space-between;
-		align-items: flex-start;
-		gap: 1rem;
+		flex-direction: column;
+	}
+
+	.panel-detail[hidden] {
+		display: none;
+	}
+
+	/* Mobile : identité de la figure d'abord, document ensuite */
+	.detail-header {
+		order: -1;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
 		border-bottom: 1px solid var(--map-border-soft);
 		padding-bottom: 0.85rem;
 		margin-bottom: 1rem;
 	}
 
-	.detail-posture {
-		display: inline-block;
-		font-size: 0.75rem;
+	.detail-eyebrow {
+		margin: 0 0 0.35rem;
+		font-size: 0.8125rem;
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.1em;
+		line-height: 1.3;
+		color: var(--map-muted);
+	}
+
+	.detail-posture {
+		display: inline-block;
+		font-size: 0.8125rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		line-height: 1.4;
 		color: var(--node-ochre);
 		margin-bottom: 0.25rem;
 	}
 
 	.detail-title {
 		margin: 0 0 0.25rem;
-		font-family: Georgia, "Times New Roman", serif;
-		font-size: 1.55rem;
+		font-family: var(--map-serif);
+		font-size: clamp(1.4rem, 1.2rem + 1vw, 1.55rem);
 		font-weight: bold;
+		line-height: 1.2;
 		color: var(--map-ink);
+		scroll-margin-top: 1rem;
+	}
+
+	.detail-title:focus {
+		outline: none;
+	}
+
+	.detail-title:focus-visible {
+		outline: 2px solid var(--map-accent);
+		outline-offset: 3px;
 	}
 
 	.detail-meta {
 		margin: 0;
-		font-size: 0.88rem;
+		font-size: 0.9375rem;
+		line-height: 1.45;
 		color: var(--map-muted);
+	}
+
+	.detail-dates {
+		font-weight: 700;
+		color: var(--map-ink);
+	}
+
+	.detail-actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem 0.75rem;
+	}
+
+	.panel-reset-btn,
+	.panel-reading-link {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 2.75rem;
+		box-sizing: border-box;
+		padding: 0.4rem 0.9rem;
+		border-radius: 6px;
+		font: inherit;
+		font-size: 0.9375rem;
+		font-weight: 600;
+		line-height: 1.2;
+		white-space: nowrap;
+		cursor: pointer;
+		touch-action: manipulation;
+		transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
 	}
 
 	.panel-reset-btn {
-		background: 0 0;
+		background: var(--map-surface);
 		border: 1px solid var(--map-border);
-		border-radius: 6px;
-		padding: 0.4rem 0.85rem;
-		font: inherit;
-		font-size: 0.82rem;
-		font-weight: 600;
-		color: var(--map-muted);
-		cursor: pointer;
-		white-space: nowrap;
-		transition: color 0.15s ease, border-color 0.15s ease;
+		color: var(--map-ink-soft);
 	}
 
-	.panel-reset-btn:hover {
-		color: var(--map-ink);
-		border-color: var(--map-ink);
+	.panel-reset-btn:active {
+		background: var(--map-bg);
 	}
 
-	.panel-reset-btn:focus-visible {
-		outline: 2px solid var(--map-accent);
+	.panel-reading-link {
+		color: var(--map-accent);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		padding-inline: 0.25rem;
+	}
+
+	.panel-reset-btn:focus-visible,
+	.panel-reading-link:focus-visible,
+	.panel-hint-alt a:focus-visible {
+		outline: 3px solid var(--map-accent);
 		outline-offset: 2px;
+	}
+
+	@media (hover: hover) {
+		.panel-reset-btn:hover {
+			color: var(--map-ink);
+			border-color: var(--map-ink);
+		}
 	}
 
 	.detail-description {
 		margin: 0 0 1rem;
-		font-size: 0.96rem;
-		line-height: 1.55;
+		font-size: 1.0625rem;
+		line-height: 1.6;
 		color: var(--map-ink);
 	}
 
 	.detail-points-wrapper,
 	.detail-relations-wrapper {
 		margin-top: 1rem;
-		font-size: 0.9rem;
+		font-size: 1rem;
+	}
+
+	.detail-subtitle {
+		margin: 0;
+		font-family: inherit;
+		font-size: 1rem;
+		font-weight: 700;
+		line-height: 1.4;
+		color: var(--map-ink);
 	}
 
 	.detail-points {
@@ -1268,7 +1426,7 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 		color: var(--map-ink-soft);
 	}
 
-	.detail-points li + li {
+	.detail-points :global(li + li) {
 		margin-top: 0.25rem;
 	}
 
@@ -1281,86 +1439,456 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 		gap: 0.5rem;
 	}
 
-	.detail-relations-list li {
-		padding: 0.4rem 0.65rem;
+	.detail-relations-list :global(li) {
+		padding: 0.5rem 0.75rem 0.6rem;
 		background: var(--map-bg);
 		border-radius: 6px;
 		border-left: 3px solid var(--map-accent);
-		font-size: 0.86rem;
-		line-height: 1.4;
+		font-size: 1rem;
+		line-height: 1.5;
 	}
 
-	.rel-badge {
-		font-family: Georgia, "Times New Roman", serif;
+	.detail-relations-list :global(.rel-badge),
+	.reading-relations .rel-badge {
+		font-family: var(--map-serif);
 		font-style: italic;
-		font-size: 0.8rem;
+		font-size: 0.9375rem;
 		color: var(--map-muted);
 		display: block;
-		margin-bottom: 0.15rem;
+	}
+
+	.detail-relations-list :global(.rel-go) {
+		display: inline-flex;
+		align-items: center;
+		min-height: 2.75rem;
+		margin: 0 0.15rem 0 -0.25rem;
+		padding: 0 0.25rem;
+		background: none;
+		border: 0;
+		border-radius: 4px;
+		font: inherit;
+		font-weight: 700;
+		color: var(--map-accent);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		cursor: pointer;
+		touch-action: manipulation;
+	}
+
+	.detail-relations-list :global(.rel-go::after) {
+		content: " :";
+		color: var(--map-ink);
+		text-decoration: none;
+		white-space: pre;
+	}
+
+	.detail-relations-list :global(.rel-go:focus-visible) {
+		outline: 3px solid var(--map-accent);
+		outline-offset: 1px;
+	}
+
+	.detail-relations-list :global(.rel-text) {
+		color: var(--map-ink);
+	}
+
+	@media (min-width: 54rem) {
+		.map-info-panel {
+			margin-top: 1.25rem;
+			padding: 1.5rem 1.75rem;
+			min-height: 5.5rem;
+		}
+
+		.panel-detail {
+			display: block;
+		}
+
+		.detail-header {
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: flex-start;
+			gap: 1rem;
+		}
+
+		.detail-eyebrow {
+			display: none;
+		}
+
+		.detail-actions {
+			flex-direction: column;
+			align-items: flex-end;
+			gap: 0.25rem;
+		}
+
+		.detail-description {
+			font-size: 1rem;
+			line-height: 1.55;
+		}
+
+		.detail-points-wrapper,
+		.detail-relations-wrapper,
+		.detail-relations-list :global(li) {
+			font-size: 0.9375rem;
+		}
+
+		.detail-subtitle {
+			font-size: 0.9375rem;
+		}
+
+		.detail-relations-list :global(.rel-go) {
+			min-height: 2rem;
+		}
 	}
 
 	/* ==========================================================================
-	   SYNTHÈSE EN TABLEAU ÉDITORIAL
+	   DOCUMENTS HISTORIQUES & PORTRAITS
+	   Mobile : image entière (aucun rognage). Bureau : vignette cadrée.
+	   ========================================================================== */
+	.detail-portrait-wrapper {
+		margin-bottom: 1.25rem;
+	}
+
+	.detail-portrait-wrapper[hidden] {
+		display: none;
+	}
+
+	.detail-portrait-figure,
+	.reading-portrait-figure {
+		margin: 0 auto;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		max-width: 12rem;
+	}
+
+	.detail-portrait-figure--landscape,
+	.reading-portrait-figure--landscape {
+		max-width: 26rem;
+	}
+
+	.detail-portrait-img {
+		display: block;
+		width: 100%;
+		height: auto;
+		border-radius: 6px;
+		border: 1px solid var(--map-border);
+		box-shadow: 0 2px 8px rgba(23, 43, 58, 0.06);
+		background: var(--map-bg);
+	}
+
+	.detail-portrait-caption {
+		margin-top: 0.45rem;
+		font-size: 0.8125rem;
+		line-height: 1.4;
+		color: var(--map-muted);
+		font-style: italic;
+	}
+
+	.detail-portrait-link {
+		color: var(--map-muted);
+		text-decoration: underline;
+		text-underline-offset: 2px;
+		transition: color 0.15s ease;
+	}
+
+	.detail-portrait-link:focus-visible {
+		outline: 2px solid var(--map-accent);
+		outline-offset: 2px;
+		border-radius: 2px;
+	}
+
+	@media (hover: hover) {
+		.detail-portrait-link:hover {
+			color: var(--map-accent);
+		}
+	}
+
+	@media (min-width: 54rem) {
+		.detail-portrait-figure,
+		.reading-portrait-figure {
+			margin: 0;
+			align-items: flex-start;
+			text-align: left;
+			max-width: 220px;
+		}
+
+		.detail-portrait-figure--landscape,
+		.reading-portrait-figure--landscape {
+			max-width: 320px;
+		}
+
+		.detail-portrait-img {
+			width: 190px;
+			max-width: 100%;
+			max-height: 220px;
+			aspect-ratio: 4 / 5;
+			object-fit: cover;
+			object-position: var(--object-position, 50% 50%);
+		}
+
+		.detail-portrait-img--landscape {
+			width: 300px;
+			aspect-ratio: 16 / 10;
+		}
+	}
+
+	/* ==========================================================================
+	   MODE LECTURE ACCESSIBLE
+	   ========================================================================== */
+	.reading-mode {
+		margin: 0 0 2.5rem;
+		scroll-margin-top: 1rem;
+	}
+
+	.reading-mode h2 {
+		margin: 0 0 0.75rem;
+		font-family: var(--map-serif);
+		font-size: clamp(1.25rem, 1.1rem + 0.8vw, 1.35rem);
+		font-weight: normal;
+		line-height: 1.3;
+		color: var(--map-ink);
+	}
+
+	.reading-mode-details {
+		background: var(--map-surface);
+		border: 1px solid var(--map-border);
+		border-radius: 10px;
+	}
+
+	.reading-mode-details > summary {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		min-height: 2.75rem;
+		padding: 0.5rem 1rem;
+		box-sizing: border-box;
+		font-size: 1rem;
+		font-weight: 600;
+		color: var(--map-accent);
+		cursor: pointer;
+		touch-action: manipulation;
+	}
+
+	.reading-mode-details > summary:focus-visible {
+		outline: 3px solid var(--map-accent);
+		outline-offset: 2px;
+		border-radius: 10px;
+	}
+
+	.reading-mode-details[open] .summary-closed,
+	.reading-mode-details:not([open]) .summary-open {
+		display: none;
+	}
+
+	.reading-node {
+		margin: 0 1rem;
+		padding: 1.25rem 0;
+		border-top: 1px dashed var(--map-border);
+		font-size: 1rem;
+		line-height: 1.6;
+		color: var(--map-ink);
+	}
+
+	.reading-node .reading-portrait-figure {
+		margin-bottom: 1rem;
+	}
+
+	.reading-node h3 {
+		margin: 0 0 0.5rem;
+		font-family: var(--map-serif);
+		font-size: 1.25rem;
+		line-height: 1.3;
+		color: var(--map-ink);
+	}
+
+	.reading-node h4 {
+		margin: 1rem 0 0.4rem;
+		font-family: inherit;
+		font-size: 1rem;
+		color: var(--map-ink);
+	}
+
+	.reading-node p {
+		margin: 0 0 0.6rem;
+	}
+
+	.reading-node ul {
+		margin: 0;
+		padding-left: 1.25rem;
+	}
+
+	.reading-relations li + li {
+		margin-top: 0.4rem;
+	}
+
+	@media (min-width: 54rem) {
+		.reading-node {
+			margin: 0 1.5rem;
+		}
+	}
+
+	/* ==========================================================================
+	   SYNTHÈSE (CARTES SUR MOBILE, TABLEAU À PARTIR DE 40rem)
 	   ========================================================================== */
 	.map-synthesis {
-		margin-top: 4rem;
+		margin-top: 3rem;
 		border-top: 1px solid var(--map-border);
-		padding-top: 2.5rem;
+		padding-top: 2rem;
 	}
 
 	.map-synthesis h2 {
 		margin: 0 0 1.25rem;
-		font-family: Georgia, "Times New Roman", serif;
-		font-size: 1.35rem;
+		font-family: var(--map-serif);
+		font-size: clamp(1.25rem, 1.1rem + 0.8vw, 1.35rem);
 		font-weight: normal;
+		line-height: 1.3;
 		color: var(--map-ink);
 		text-align: center;
 	}
 
 	.synthesis-table-wrapper {
-		overflow-x: auto;
 		margin-bottom: 2rem;
 	}
 
 	.synthesis-table {
 		width: 100%;
 		border-collapse: collapse;
-		font-size: 0.9rem;
 		text-align: left;
+	}
+
+	.synthesis-table thead {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+
+	.synthesis-table tbody,
+	.synthesis-table tr,
+	.synthesis-table th,
+	.synthesis-table td {
+		display: block;
+	}
+
+	.synthesis-table tr {
+		margin-bottom: 0.75rem;
+		padding: 0.85rem 1rem;
 		background: var(--map-surface);
 		border: 1px solid var(--map-border);
 		border-radius: 8px;
 	}
 
-	.synthesis-table th,
-	.synthesis-table td {
-		padding: 0.85rem 1rem;
-		border-bottom: 1px solid var(--map-border-soft);
+	.synthesis-table th[scope="row"] {
+		margin-bottom: 0.35rem;
+		font-family: var(--map-serif);
+		font-size: 1.0625rem;
+		color: var(--map-ink);
 	}
 
-	.synthesis-table thead th {
-		background: var(--map-bg);
+	.synthesis-table td {
+		display: grid;
+		grid-template-columns: minmax(6.5rem, 38%) 1fr;
+		gap: 0.75rem;
+		padding: 0.3rem 0;
+		font-size: 1rem;
+		line-height: 1.45;
+		border-top: 1px solid var(--map-border-soft);
+	}
+
+	.synthesis-table td::before {
+		content: attr(data-label);
+		font-size: 0.8125rem;
 		font-weight: 600;
-		color: var(--map-muted);
-		font-size: 0.82rem;
 		text-transform: uppercase;
-		letter-spacing: 0.05em;
+		letter-spacing: 0.04em;
+		line-height: 1.6;
+		color: var(--map-muted);
 	}
 
 	.table-posture {
+		justify-self: start;
 		display: inline-block;
 		padding: 0.15rem 0.5rem;
 		background: var(--map-bg);
 		border: 1px solid var(--map-border-soft);
 		border-radius: 4px;
-		font-size: 0.82rem;
+		font-size: 0.9375rem;
 		font-weight: 500;
+	}
+
+	@media (min-width: 40rem) {
+		.synthesis-table-wrapper {
+			overflow-x: auto;
+		}
+
+		.synthesis-table {
+			display: table;
+			font-size: 0.9rem;
+			background: var(--map-surface);
+			border: 1px solid var(--map-border);
+			border-radius: 8px;
+		}
+
+		.synthesis-table thead {
+			position: static;
+			width: auto;
+			height: auto;
+			overflow: visible;
+			clip-path: none;
+			white-space: normal;
+			display: table-header-group;
+		}
+
+		.synthesis-table tbody {
+			display: table-row-group;
+		}
+
+		.synthesis-table tr {
+			display: table-row;
+			margin: 0;
+			padding: 0;
+			border: 0;
+			border-radius: 0;
+			background: none;
+		}
+
+		.synthesis-table th,
+		.synthesis-table td,
+		.synthesis-table th[scope="row"] {
+			display: table-cell;
+			margin: 0;
+			padding: 0.85rem 1rem;
+			font-family: inherit;
+			font-size: 0.9rem;
+			border-top: 0;
+			border-bottom: 1px solid var(--map-border-soft);
+		}
+
+		.synthesis-table td::before {
+			content: none;
+		}
+
+		.synthesis-table thead th {
+			background: var(--map-bg);
+			font-weight: 600;
+			color: var(--map-muted);
+			font-size: 0.82rem;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+		}
+
+		.table-posture {
+			font-size: 0.82rem;
+		}
 	}
 
 	.synthesis-axioms {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 1.5rem;
+		grid-template-columns: 1fr;
+		gap: 1rem;
 		margin-top: 1.5rem;
 	}
 
@@ -1371,106 +1899,24 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 		border-left: 3px solid var(--node-ochre);
 		border-radius: 0 6px 6px 0;
 		font-style: italic;
-		font-size: 0.92rem;
-		line-height: 1.5;
+		font-size: 1rem;
+		line-height: 1.55;
 		color: var(--map-ink);
 	}
 
-	/* ==========================================================================
-	   FALLBACK SANS JAVASCRIPT (NOSCRIPT)
-	   ========================================================================== */
-	.noscript-section {
-		margin: 2rem 0;
-		padding: 1.5rem;
-		background: var(--map-surface);
-		border: 1px solid var(--map-border);
-		border-radius: 8px;
-	}
-
-	.noscript-node {
-		margin-bottom: 1.5rem;
-		padding-bottom: 1rem;
-		border-bottom: 1px dashed var(--map-border-soft);
-	}
-
-	/* ==========================================================================
-	   RESPONSIVE (MOBILE & TABLETTE)
-	   ========================================================================== */
-	@media (max-width: 820px) {
-		.page-container {
-			padding: 1.75rem 0.85rem 3.5rem;
-		}
-
-		.map-scroll-hint {
-			display: block;
+	@media (min-width: 54rem) {
+		.map-synthesis {
+			margin-top: 4rem;
+			padding-top: 2.5rem;
 		}
 
 		.synthesis-axioms {
-			grid-template-columns: 1fr;
-			gap: 1rem;
+			grid-template-columns: 1fr 1fr;
+			gap: 1.5rem;
 		}
 
-		.detail-portrait-figure,
-		.noscript-portrait-figure {
-			max-width: 175px;
-		}
-
-		.detail-portrait-figure--landscape,
-		.noscript-portrait-figure--landscape {
-			max-width: 270px;
-		}
-
-		.detail-portrait-img {
-			width: 170px;
-		}
-
-		.detail-portrait-img--landscape {
-			width: 260px;
-		}
-
-		.detail-header {
-			flex-direction: column;
-			align-items: stretch;
-		}
-
-		.panel-reset-btn {
-			align-self: flex-start;
-		}
-	}
-
-	@media (max-width: 480px) {
-		.map-intro h1 {
-			font-size: 1.8rem;
-		}
-
-		.map-info-panel {
-			padding: 1.2rem 1rem;
-		}
-
-		.detail-portrait-figure,
-		.noscript-portrait-figure {
-			margin-left: auto;
-			margin-right: auto;
-			align-items: center;
-			text-align: center;
-			max-width: 160px;
-		}
-
-		.detail-portrait-figure--landscape,
-		.noscript-portrait-figure--landscape {
-			max-width: 260px;
-		}
-
-		.detail-portrait-img {
-			width: 150px;
-		}
-
-		.detail-portrait-img--landscape {
-			width: 240px;
-		}
-
-		.detail-portrait-caption {
-			text-align: center;
+		.synthesis-axioms blockquote {
+			font-size: 0.95rem;
 		}
 	}
 
