@@ -1,45 +1,19 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import '../styles/global.css';
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Balzac, Rastignac, la Commune, Marx et Rimbaud</title>
 	</head>
 	<body>
-		<Header />
 		<main>
-			<h1>Ode aux Arsène</h1>
-			<p>
-				Ô Arsène, nom porté comme un étendard,<br />
-				héritage d'un vieux saint au regard clair,<br />
-				tu traverses le temps avec un art<br />
-				de vivre léger, de sourire à l'air.
-			</p>
-			<p>
-				Il y a dans ce prénom quelque chose d'ancien,<br />
-				une noblesse tranquille, un feu discret,<br />
-				celui qui sait garder ses mains dans les tiennes<br />
-				et brûler doucement, sans jamais paraître.
-			</p>
-			<p>
-				Arsène, l'ingénieux, le rusé, le curieux,<br />
-				qui ouvre les portes sans forcer les serrures,<br />
-				qui trouve dans le monde des chemins lumineux<br />
-				là où d'autres ne voient que clôtures.
-			</p>
-			<p>
-				Alors voici ces mots, maladroits et sincères,<br />
-				posés ici comme une petite flamme :<br />
-				à tous les Arsène du monde entier,<br />
-				porteurs discrets d'une immense âme.
-			</p>
-			<img src="/arsene.png" alt="Voici Arsène, 15 ans, 100% original" style="max-width: 100%; height: auto; margin: 2rem auto; display: block;" />
+			<a href="/balzac-rimbaud">
+				Balzac, Rastignac, la Commune, Marx et Rimbaud
+			</a>
 		</main>
-		<Footer />
 	</body>
 </html>
