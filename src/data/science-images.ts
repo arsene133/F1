@@ -150,6 +150,25 @@ export const scienceImages = {
 		},
 	},
 
+	darwinHornet: {
+		src: `${DIR}/darwin-hornet-1871.jpg`,
+		srcset: `${DIR}/darwin-hornet-1871-480.webp 480w, ${DIR}/darwin-hornet-1871-960.webp 960w`,
+		width: 1189,
+		height: 1600,
+		fit: 'contain',
+		alt: 'Caricature de Charles Darwin, tête de vieillard à longue barbe blanche posée sur un corps de singe, accroupi sur une branche devant un feuillage',
+		caption: '« A Venerable Orang-outang », caricature de Darwin parue dans The Hornet (22 mars 1871)',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Editorial_cartoon_depicting_Charles_Darwin_as_an_ape_(1871).jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/6/6f/Editorial_cartoon_depicting_Charles_Darwin_as_an_ape_%281871%29.jpg',
+			author: 'Anonyme (The Hornet)',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: '« A Venerable Orang-outang », caricature de Charles Darwin en singe publiée dans le magazine satirique The Hornet, 22 mars 1871 (University College London Digital Collections).',
+		},
+	},
+
 	darwin: {
 		src: `${DIR}/darwin-tree.jpg`,
 		srcset: `${DIR}/darwin-tree-480.webp 480w, ${DIR}/darwin-tree-960.webp 960w`,

@@ -1014,7 +1014,8 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'second-empire',
 		relatedTo: ['jean-baptiste-lamarck'],
 		importance: 'major',
-		image: scienceImages.darwin,
+		image: scienceImages.darwinHornet,
+		secondaryImage: scienceImages.darwin,
 	},
 
 	// 8. 1865 — Gregor Mendel

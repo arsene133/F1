@@ -16,7 +16,8 @@ fichier de repli au nom d'origine (≤ 1600 px, métadonnées d'origine conserv�
 | rubik-cube.jpg | principal | https://commons.wikimedia.org/wiki/File:Rubik%27s_cube.svg (rendu PNG 960 px) | Booyabazooka (2006) | CC BY-SA 3.0 — attribution « Booyabazooka » |
 | galois-portrait.jpg | secondaire (panneau) | https://commons.wikimedia.org/wiki/File:Galois-1848.jpg | Alfred Galois (1848) | Domaine public |
 | foucault-pendulum.jpg | principal | https://commons.wikimedia.org/wiki/File:Foucault_pendulum_at_Panth%C3%A9on_de_Paris,_August_2023.JPG | Benoît Prieur | CC0 |
-| darwin-tree.jpg | principal | https://commons.wikimedia.org/wiki/File:On_the_Origin_of_Species_diagram.PNG | Charles Darwin (1859) | Domaine public |
+| darwin-hornet-1871.jpg | principal | https://commons.wikimedia.org/wiki/File:Editorial_cartoon_depicting_Charles_Darwin_as_an_ape_(1871).jpg | Anonyme, The Hornet (22 mars 1871) | Domaine public |
+| darwin-tree.jpg | secondaire (panneau) | https://commons.wikimedia.org/wiki/File:On_the_Origin_of_Species_diagram.PNG | Charles Darwin (1859) | Domaine public |
 | mendel-peas.png | principal | https://commons.wikimedia.org/wiki/File:Mendels_peas.png | Mariana Ruiz (LadyofHats) | CC0 |
 | mendel-paper.jpg | secondaire (panneau) | https://commons.wikimedia.org/wiki/File:Mendel_paper.jpg | Gregor Mendel (1865) | Domaine public |
 | periodic-table-fr.png | principal | https://commons.wikimedia.org/wiki/File:Tableau_p%C3%A9riodique_des_%C3%A9l%C3%A9ments.svg (rendu PNG 1600 px) | Scaler, Michka B | CC BY-SA 3.0 — attribution « Scaler, Michka B » |
