@@ -207,6 +207,25 @@ export const scienceImages = {
 		},
 	},
 
+	mendeleevTableauModerne: {
+		src: `${DIR}/periodic-table-fr.png`,
+		srcset: `${DIR}/periodic-table-fr-480.webp 480w, ${DIR}/periodic-table-fr-960.webp 960w`,
+		width: 1600,
+		height: 1024,
+		fit: 'contain',
+		alt: 'Tableau périodique moderne en français : les 118 éléments répartis en 18 groupes et 7 périodes, colorés par famille (alcalins, métaux de transition, halogènes, gaz nobles…), lanthanides et actinides sous le tableau',
+		caption: 'Le tableau périodique des éléments aujourd’hui : 118 éléments, héritiers de la classification de Mendeleïev',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Tableau_p%C3%A9riodique_des_%C3%A9l%C3%A9ments.svg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/9/91/Tableau_p%C3%A9riodique_des_%C3%A9l%C3%A9ments.svg',
+			author: 'Scaler, Michka B',
+			license: 'CC BY-SA 3.0',
+			attributionRequired: true,
+			description: 'Tableau périodique des éléments (avec liens vers Wikipédia en français).',
+		},
+	},
+
 	mendeleev: {
 		// PNG palette (32 Ko en pleine résolution) : plus léger que toute variante WebP
 		src: `${DIR}/mendeleev-periodic-table.png`,

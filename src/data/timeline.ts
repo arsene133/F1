@@ -1052,7 +1052,8 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'second-empire',
 		relatedTo: ['second-empire-event'],
 		importance: 'major',
-		image: scienceImages.mendeleev,
+		image: scienceImages.mendeleevTableauModerne,
+		secondaryImage: scienceImages.mendeleev,
 	},
 
 	// 10. 1873 — James Clerk Maxwell
