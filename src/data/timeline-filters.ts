@@ -19,17 +19,7 @@ export const timelineFilters: FilterOption[] = [
 	{
 		id: 'history',
 		label: 'Histoire',
-		description: 'Événements politiques, ruptures et contextes historiques.',
-	},
-	{
-		id: 'regimes',
-		label: 'Régimes politiques',
-		description: 'Succession des monarchies, empires et républiques au XIXe siècle.',
-	},
-	{
-		id: 'revolutions-wars',
-		label: 'Révolutions & guerres',
-		description: 'Les ruptures armées et populaires (1789, 1830, 1848, 1870, Sedan, 1871).',
+		description: 'Régimes politiques, révolutions, guerres et contextes historiques du XIXe siècle.',
 	},
 	{
 		id: 'science',

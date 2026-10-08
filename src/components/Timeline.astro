@@ -549,10 +549,6 @@ const clientData = {
 						visible = item.type === 'literature';
 					} else if (filterId === 'history') {
 						visible = item.type !== 'literature' && item.type !== 'industry' && item.type !== 'science';
-					} else if (filterId === 'regimes') {
-						visible = item.type === 'political-regime';
-					} else if (filterId === 'revolutions-wars') {
-						visible = item.type === 'revolution' || item.type === 'war';
 					} else if (filterId === 'industry') {
 						visible = item.type === 'industry';
 					} else if (filterId === 'science') {
@@ -567,7 +563,7 @@ const clientData = {
 					const banner = document.getElementById(`period-banner-${p.id}`);
 					if (!banner) return;
 					let visible = true;
-					if (filterId === 'literature' || filterId === 'revolutions-wars' || filterId === 'industry' || filterId === 'science') {
+					if (filterId === 'literature' || filterId === 'industry' || filterId === 'science') {
 						visible = false;
 					}
 					banner.classList.toggle('timeline-step-dimmed', !visible);
