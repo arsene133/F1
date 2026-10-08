@@ -57,18 +57,26 @@
 	/* Périodes politiques discrètes */
 	--band-bg-subtle: rgba(23, 43, 58, 0.025);
 	--band-border-subtle: rgba(23, 43, 58, 0.1);
+
+	/* Géométrie mobile-first : axe à gauche, contenu à droite (redéfinie à partir de 60rem) */
+	--tl-spine-x: 9px;
+	--tl-step-indent: 1.75rem;
+	--tl-gap: clamp(1rem, 0.6rem + 1.5vw, 1.75rem);
+	--tl-sticky-offset: 4.75rem; /* hauteur de la barre de filtres collante + marge */
+	--tl-touch: 2.75rem; /* cible tactile ≈ 44 px */
+	--tl-gutter: clamp(1rem, 4vw, 1.25rem); /* marge latérale de la page, partagée avec /chronologie */
 }
 
 .timeline-wrapper {
 	width: 100%;
 	position: relative;
-	margin: 1.5rem 0 3rem;
+	margin: clamp(0.5rem, 2vw, 1.5rem) 0 clamp(2rem, 6vw, 3rem);
 }
 
 /* En-tête éditorial */
 .timeline-editorial-header {
 	max-width: 820px;
-	margin: 0 auto 2.5rem;
+	margin: 0 auto clamp(1.5rem, 4vw, 2.5rem);
 	text-align: center;
 }
 
@@ -83,14 +91,16 @@
 
 .timeline-editorial-header h1 {
 	font-family: var(--tl-serif);
-	font-size: clamp(2rem, 3.8vw, 2.9rem);
-	line-height: 1.2;
+	font-size: clamp(1.75rem, 1.2rem + 2.6vw, 2.9rem);
+	line-height: 1.15;
+	text-wrap: balance;
 	color: var(--tl-ink);
 	margin-bottom: 0.75rem;
 }
 
 .timeline-editorial-header .timeline-subtitle {
-	font-size: 1.15rem;
+	font-size: clamp(1.05rem, 1rem + 0.3vw, 1.15rem);
+	text-wrap: balance;
 	line-height: 1.45;
 	color: var(--tl-ink-soft);
 	margin-bottom: 1.25rem;
@@ -100,7 +110,7 @@
 	background: var(--tl-surface-subtle);
 	border: 1px solid var(--tl-border-soft);
 	border-left: 4px solid #8b572a;
-	padding: 1rem 1.25rem;
+	padding: clamp(0.85rem, 2vw, 1rem) clamp(1rem, 3vw, 1.25rem);
 	text-align: left;
 	border-radius: 0 6px 6px 0;
 	margin-top: 1.25rem;
@@ -108,7 +118,7 @@
 
 .timeline-editorial-header .pedagogical-statement p {
 	margin: 0;
-	font-size: 0.98rem;
+	font-size: 1rem;
 	line-height: 1.5;
 	color: var(--tl-ink);
 }
@@ -119,51 +129,89 @@
 	font-size: 1.05rem;
 }
 
-/* Filtres de la frise */
+/* Filtres de la frise
+   Mobile : barre collante en haut d'écran, une seule rangée défilable au doigt (aucune catégorie masquée).
+   Bureau : bloc statique, boutons sur une ligne avec retour possible. */
 .timeline-controls {
+	position: sticky;
+	top: 0;
+	z-index: 20;
 	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
 	align-items: center;
-	gap: 1rem;
-	margin-bottom: 2rem;
-	padding: 0.75rem 1rem;
+	gap: 0.5rem;
+	margin: 0 calc(-1 * var(--tl-gutter)) 0.75rem;
+	padding: 0.5rem 0 0.5rem var(--tl-gutter);
 	background: var(--tl-surface);
-	border: 1px solid var(--tl-border-soft);
-	border-radius: 8px;
+	border-bottom: 1px solid var(--tl-border-soft);
+	box-shadow: 0 6px 12px -10px rgba(23, 43, 58, 0.25);
 }
 
 .timeline-filters-group {
 	display: flex;
-	flex-wrap: wrap;
+	flex: 1;
+	min-width: 0;
 	gap: 0.4rem;
 	align-items: center;
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scroll-snap-type: x proximity;
+	scroll-padding-inline: 0.25rem;
+	scrollbar-width: none;
+	/* Fondu à droite : signale qu'il reste des filtres, sans masquer le dernier une fois défilé */
+	padding: 0.15rem var(--tl-gutter) 0.15rem 0.15rem;
+	-webkit-mask-image: linear-gradient(to right, #000 calc(100% - 1.75rem), transparent);
+	mask-image: linear-gradient(to right, #000 calc(100% - 1.75rem), transparent);
 }
 
+.timeline-filters-group::-webkit-scrollbar {
+	display: none;
+}
+
+/* Mobile : libellé réservé aux lecteurs d'écran (le groupe reste nommé), toute la largeur va aux filtres */
 .timeline-filters-label {
-	font-size: 0.8rem;
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+	flex: none;
+	font-size: 0.75rem;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.06em;
 	color: var(--tl-muted);
-	margin-right: 0.25rem;
 }
 
 .timeline-filter-btn {
+	flex: none;
+	scroll-snap-align: start;
+	min-height: var(--tl-touch);
+	display: inline-flex;
+	align-items: center;
 	background: transparent;
 	border: 1px solid var(--tl-border);
-	border-radius: 20px;
-	padding: 0.35rem 0.85rem;
-	font-size: 0.84rem;
+	border-radius: 999px;
+	padding: 0 1rem;
+	font-size: 0.95rem;
+	line-height: 1.2;
+	white-space: nowrap;
 	color: var(--tl-ink-soft);
 	cursor: pointer;
-	transition: all 0.2s ease;
+	transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 	font-family: inherit;
+	-webkit-tap-highlight-color: transparent;
 }
 
-.timeline-filter-btn:hover {
+@media (hover: hover) {
+	.timeline-filter-btn:hover {
+		background: var(--tl-surface-subtle);
+		border-color: var(--tl-muted);
+	}
+}
+
+.timeline-filter-btn:active {
 	background: var(--tl-surface-subtle);
-	border-color: var(--tl-muted);
 }
 
 .timeline-filter-btn:focus-visible {
@@ -175,20 +223,40 @@
 	background: var(--tl-ink);
 	color: #fff;
 	border-color: var(--tl-ink);
+	font-weight: 600;
 	box-shadow: 0 2px 5px rgba(23, 43, 58, 0.2);
 }
 
 .timeline-instructions {
-	font-size: 0.84rem;
+	display: flex;
+	gap: 0.4rem;
+	margin: 0 0 1.25rem;
+	font-size: 0.9rem;
+	line-height: 1.4;
 	color: var(--tl-muted);
 	font-style: italic;
 }
 
-/* Grille principale : Frise verticale + Panneau latéral (Desktop) */
+/* La consigne suit le mode de saisie réel : « Touchez » au doigt, « Cliquez » à la souris */
+.timeline-instructions .hint-pointer {
+	display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.timeline-instructions .hint-touch {
+		display: none;
+	}
+
+	.timeline-instructions .hint-pointer {
+		display: inline;
+	}
+}
+
+/* Grille principale : une colonne (mobile/tablette), frise + panneau latéral à partir de 60rem */
 .timeline-main-layout {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) 360px;
-	gap: 2.5rem;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 2rem;
 	align-items: start;
 	position: relative;
 }
@@ -198,14 +266,17 @@
    -------------------------------------------------------------------------- */
 .vertical-timeline-container {
 	position: relative;
-	padding: 1.5rem 0 3rem;
+	width: 100%;
+	max-width: 46rem; /* tablette : pas de lignes interminables */
+	margin: 0 auto;
+	padding: 0.5rem 0 3rem;
 }
 
 .vertical-spine-line {
 	position: absolute;
 	top: 0;
 	bottom: 0;
-	left: 50%;
+	left: var(--tl-spine-x);
 	width: 2px;
 	background: var(--tl-border);
 	transform: translateX(-50%);
@@ -215,7 +286,7 @@
 .timeline-flow-arrow {
 	position: absolute;
 	bottom: -14px;
-	left: 50%;
+	left: var(--tl-spine-x);
 	transform: translateX(-50%);
 	font-size: 0.85rem;
 	color: var(--tl-muted);
@@ -230,34 +301,27 @@
 	z-index: 2;
 	display: flex;
 	flex-direction: column;
-	gap: 1.75rem;
+	gap: var(--tl-gap);
 }
 
-/* ITEM DE LA FRISE */
+/* ITEM DE LA FRISE — mobile : contenu à droite de l'axe, sur toute la largeur restante */
 .timeline-step {
 	position: relative;
 	display: flex;
-	align-items: center;
+	flex-direction: column;
+	align-items: stretch;
 	width: 100%;
 	box-sizing: border-box;
+	padding-left: var(--tl-step-indent);
+	/* Ancres et renvois : l'événement ne passe pas sous la barre de filtres collante */
+	scroll-margin-top: var(--tl-sticky-offset);
 }
 
-/* Alternance gauche / droite sur Desktop */
-.timeline-step.align-left {
-	justify-content: flex-start;
-	padding-right: calc(50% + 24px);
-}
-
-.timeline-step.align-right {
-	justify-content: flex-end;
-	padding-left: calc(50% + 24px);
-}
-
-/* Noeuds centraux sur la colonne vertébrale */
+/* Noeuds sur la colonne vertébrale (mobile : à hauteur de la date) */
 .step-spine-node {
 	position: absolute;
-	left: 50%;
-	top: 50%;
+	left: var(--tl-spine-x);
+	top: 1.35rem;
 	transform: translate(-50%, -50%);
 	z-index: 3;
 	display: flex;
@@ -272,7 +336,7 @@
 	border-radius: 50%;
 	background: var(--tl-surface);
 	border: 2px solid var(--tl-muted);
-	transition: all 0.25s ease;
+	transition: transform 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .timeline-step.major-turning-point .spine-marker-dot {
@@ -372,8 +436,9 @@
 	box-shadow: 0 0 0 4px var(--tl-accent-soft);
 }
 
-/* Connecteur horizontal reliant la carte à la colonne centrale */
+/* Connecteur horizontal reliant la carte à la colonne centrale (bureau uniquement) */
 .step-branch-connector {
+	display: none;
 	position: absolute;
 	top: 50%;
 	height: 1px;
@@ -381,36 +446,38 @@
 	z-index: 1;
 }
 
-.timeline-step.align-left .step-branch-connector {
-	right: 50%;
-	width: 24px;
-}
-
-.timeline-step.align-right .step-branch-connector {
-	left: 50%;
-	width: 24px;
-}
-
 /* Boutons / Cartes interactives */
 .timeline-entry-button {
+	display: block;
 	background: var(--tl-surface);
 	border: 1px solid var(--tl-border);
 	border-radius: 6px;
-	padding: 0.75rem 1rem;
+	padding: 0.8rem 0.9rem;
 	width: 100%;
-	max-width: 380px;
+	max-width: 100%;
 	cursor: pointer;
 	text-align: left;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+	color: inherit;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+	transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 	position: relative;
 	font-family: inherit;
+	-webkit-tap-highlight-color: transparent;
 }
 
-.timeline-entry-button:hover {
-	transform: translateY(-2px);
+/* Survol réservé aux pointeurs qui survolent réellement (évite l'état « collé » après un toucher) */
+@media (hover: hover) {
+	.timeline-entry-button:hover {
+		transform: translateY(-2px);
+		border-color: var(--tl-ink-soft);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	}
+}
+
+/* Retour tactile immédiat */
+.timeline-entry-button:active {
 	border-color: var(--tl-ink-soft);
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	background-color: var(--tl-surface-subtle);
 }
 
 .timeline-entry-button:focus-visible {
@@ -425,6 +492,11 @@
 	transform: translateY(-2px);
 }
 
+/* La sélection prime sur les bordures de catégorie (littérature, sciences…) */
+.timeline-step.selected .timeline-entry-button.selected {
+	border-color: var(--tl-accent);
+}
+
 .timeline-entry-button.context-highlight {
 	border-color: var(--tl-accent);
 	background: var(--tl-accent-soft);
@@ -434,20 +506,23 @@
 /* Entête de carte */
 .entry-card-header {
 	display: flex;
+	flex-wrap: wrap;
 	justify-content: space-between;
 	align-items: baseline;
-	gap: 0.5rem;
-	margin-bottom: 0.25rem;
+	gap: 0.15rem 0.5rem;
+	margin-bottom: 0.3rem;
 }
 
 .entry-year-time {
-	font-size: 0.84rem;
+	font-size: 0.95rem;
 	font-weight: 700;
+	line-height: 1.3;
 	color: var(--tl-muted);
 }
 
 .entry-type-badge {
-	font-size: 0.68rem;
+	margin-left: auto;
+	font-size: 0.7rem;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
@@ -459,7 +534,7 @@
 
 .entry-title {
 	font-family: var(--tl-serif);
-	font-size: 1.05rem;
+	font-size: 1.125rem;
 	font-weight: 700;
 	line-height: 1.25;
 	color: var(--tl-ink);
@@ -467,19 +542,20 @@
 }
 
 .entry-author {
-	font-size: 0.86rem;
+	font-size: 0.95rem;
 	font-style: italic;
 	color: var(--tl-ink-soft);
 	margin-bottom: 0.35rem;
 }
 
 .entry-short-desc {
-	font-size: 0.82rem;
-	line-height: 1.4;
+	font-size: 1rem;
+	line-height: 1.5;
 	color: var(--tl-muted);
 	margin: 0;
 	display: -webkit-box;
-	-webkit-line-clamp: 2;
+	/* Aperçu : le texte complet figure dans le contexte déplié */
+	-webkit-line-clamp: 3;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 }
@@ -487,8 +563,8 @@
 /* Contextual badge */
 .entry-regime-context-tag {
 	display: inline-block;
-	margin-top: 0.45rem;
-	font-size: 0.72rem;
+	margin-top: 0.5rem;
+	font-size: 0.78rem;
 	color: var(--tl-muted);
 	background: var(--tl-surface-subtle);
 	padding: 0.15rem 0.5rem;
@@ -500,12 +576,12 @@
 .timeline-step.is-literature .timeline-entry-button {
 	background: var(--tl-lit-bg);
 	border: 1.5px solid var(--tl-lit-border);
-	padding: 0.95rem 1.15rem;
+	padding: 0.95rem 1rem;
 	box-shadow: 0 4px 14px rgba(139, 58, 30, 0.07);
 }
 
 .timeline-step.is-literature .entry-year-time {
-	font-size: 0.95rem;
+	font-size: 1rem;
 	font-weight: 800;
 	color: var(--tl-lit-color);
 }
@@ -517,7 +593,7 @@
 }
 
 .timeline-step.is-literature .entry-title {
-	font-size: 1.2rem;
+	font-size: 1.25rem;
 	color: var(--tl-ink);
 	letter-spacing: 0.01em;
 }
@@ -528,7 +604,7 @@
 }
 
 .timeline-step.major-turning-point .entry-year-time {
-	font-size: 0.92rem;
+	font-size: 1rem;
 	color: var(--tl-rev-color);
 	font-weight: 800;
 }
@@ -634,37 +710,37 @@
 
 .timeline-step.minor-cultural-point .timeline-entry-button {
 	border-left-width: 2px;
-	max-width: 340px;
 }
 
 .timeline-step.minor-cultural-point .entry-title {
-	font-size: 0.95rem;
+	font-size: 1.05rem;
 }
 
-/* Vignette documentaire de chaque jalon illustré, toutes catégories confondues (hauteur fixe : aucun décalage de mise en page) */
+/* Vignette documentaire de chaque jalon illustré, toutes catégories confondues.
+   Mobile : image entière à ses proportions (width/height réservent la place, aucun recadrage),
+   plafonnée pour ne jamais occuper tout l'écran. Bureau : vignette à hauteur fixe (voir 60rem). */
 .entry-thumb {
 	display: block;
-	height: 104px;
-	margin: 0.15rem 0 0.55rem;
+	margin: 0.15rem 0 0.6rem;
 	border: 1px solid var(--tl-border-soft);
 	border-radius: 4px;
 	overflow: hidden;
 	background: #fff;
 }
 
-.entry-thumb--portrait {
-	height: 140px;
-}
-
 .entry-thumb img {
 	display: block;
 	width: 100%;
-	height: 100%;
-	object-fit: cover;
+	height: auto; /* proportions réservées par width/height : pas de saut au chargement différé */
+	max-height: min(15rem, 45vh);
+	object-fit: contain; /* plafonnée sans rognage : marges blanches plutôt que recadrage */
+	border-radius: 0;
 }
 
-.entry-thumb.fit-contain img {
-	object-fit: contain;
+.timeline-step.is-industry .entry-thumb img,
+.timeline-step.is-science .entry-thumb img {
+	/* Schémas et machines : assez grands pour rester lisibles */
+	max-height: min(17rem, 50vh);
 }
 
 /* Image locale en échec : le cadre disparaît, le texte du repère reste intact */
@@ -674,7 +750,6 @@
 }
 
 .timeline-step.is-galois .entry-thumb {
-	height: 168px;
 	border-color: var(--tl-galois-border);
 }
 
@@ -708,31 +783,33 @@
 }
 
 .timeline-step.is-galois .entry-title {
-	font-size: 1.15rem;
+	font-size: 1.2rem;
 	color: var(--tl-ink);
 }
 
 .timeline-step.is-galois .entry-year-time {
 	color: var(--tl-galois-accent);
-	font-size: 0.94rem;
+	font-size: 1rem;
 	font-weight: 800;
 }
 
 /* PÉRIODES POLITIQUES CONTEXTUELLES DE FOND (Layer discret) */
 .regime-context-banner {
-	margin: 1.25rem 0 0.5rem;
-	padding: 0.5rem 0.85rem;
-	background: var(--band-bg-subtle);
+	margin: 1rem 0 0 var(--tl-step-indent);
+	padding: 0.5rem 0.75rem;
+	/* Fond opaque : l'axe ne traverse pas le libellé du régime */
+	background: linear-gradient(var(--band-bg-subtle), var(--band-bg-subtle)), var(--tl-surface);
 	border-top: 1px solid var(--band-border-subtle);
 	border-bottom: 1px solid var(--band-border-subtle);
-	text-align: center;
+	text-align: left;
 	position: relative;
 	z-index: 2;
 }
 
 .regime-banner-title {
 	font-family: var(--tl-serif);
-	font-size: 0.76rem;
+	font-size: 0.8rem;
+	line-height: 1.35;
 	font-weight: 700;
 	text-transform: uppercase;
 	letter-spacing: 0.12em;
@@ -741,34 +818,105 @@
 }
 
 .regime-banner-dates {
-	font-size: 0.68rem;
+	font-size: 0.78rem;
 	color: var(--tl-muted);
 }
 
 /* Dimming filtré */
 .timeline-step-dimmed {
-	opacity: 0.18 !important;
+	opacity: 0.25 !important;
 	filter: grayscale(0.85);
 	pointer-events: none !important;
 }
 
 /* --------------------------------------------------------------------------
-   PANNEAU D'INFORMATIONS LATÉRAL (Sticky sur Desktop)
+   PANNEAU D'INFORMATIONS
+   Mobile/tablette : déplié dans la frise, sous l'événement sélectionné (flux normal, pas de calque).
+   Bureau (60rem+) : colonne latérale collante.
    -------------------------------------------------------------------------- */
 .timeline-sticky-panel-wrapper {
-	position: sticky;
-	top: 2rem;
-	z-index: 10;
+	display: none;
 }
 
 .timeline-details-panel {
+	position: relative;
 	background: var(--tl-surface);
 	border: 1px solid var(--tl-border);
-	border-radius: 8px;
-	padding: 1.5rem;
-	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-	max-height: calc(100vh - 4rem);
-	overflow-y: auto;
+	border-top: 3px solid var(--tl-accent);
+	border-radius: 6px;
+	padding: 1rem clamp(0.9rem, 3vw, 1.25rem) 0.75rem;
+	margin-top: 0.6rem;
+	overflow-wrap: anywhere;
+}
+
+/* Dans le mode déplié, le titre et la catégorie répètent la carte juste au-dessus */
+.timeline-step .details-category-tag,
+.timeline-step .details-title {
+	display: none;
+}
+
+/* …de même que l'illustration principale, déjà affichée en tête de carte : seule sa légende (et son crédit) reste */
+.timeline-step .details-thumbnail-figure:not(.details-secondary-figure) > img {
+	display: none;
+}
+
+.timeline-step .details-panel-header {
+	padding-right: 3rem; /* place du bouton de fermeture */
+	min-height: 2.25rem;
+}
+
+.details-close-btn {
+	position: absolute;
+	top: 0.35rem;
+	right: 0.35rem;
+	width: var(--tl-touch);
+	height: var(--tl-touch);
+	display: grid;
+	place-items: center;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: transparent;
+	color: var(--tl-ink-soft);
+	font-size: 1.6rem;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.details-collapse-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.4rem;
+	width: 100%;
+	min-height: var(--tl-touch);
+	margin-top: 0.75rem;
+	border: 1px solid var(--tl-border);
+	border-radius: 6px;
+	background: var(--tl-surface-subtle);
+	color: var(--tl-ink-soft);
+	font: inherit;
+	font-size: 0.95rem;
+	cursor: pointer;
+}
+
+.details-close-btn:active,
+.details-collapse-btn:active {
+	background: var(--tl-border-soft);
+}
+
+@media (hover: hover) {
+	.details-close-btn:hover,
+	.details-collapse-btn:hover {
+		background: var(--tl-border-soft);
+	}
+}
+
+.details-close-btn:focus-visible,
+.details-collapse-btn:focus-visible,
+.details-related-btn:focus-visible {
+	outline: 2px solid var(--tl-accent);
+	outline-offset: 2px;
 }
 
 .details-panel-header {
@@ -844,14 +992,15 @@
 
 .details-title {
 	font-family: var(--tl-serif);
-	font-size: 1.4rem;
+	font-size: clamp(1.3rem, 1.2rem + 0.4vw, 1.4rem);
 	color: var(--tl-ink);
 	margin: 0.2rem 0 0.3rem;
 	line-height: 1.25;
 }
 
 .details-meta {
-	font-size: 0.88rem;
+	font-size: 0.95rem;
+	line-height: 1.5;
 	color: var(--tl-muted);
 }
 
@@ -859,7 +1008,8 @@
 	color: var(--tl-ink-soft);
 }
 
-/* Image miniature dans le panneau d'information */
+/* Image miniature dans le panneau d'information
+   Mobile : image entière à ses proportions, plafonnée à la hauteur d'écran. Bureau : recadrages d'origine. */
 .details-thumbnail-figure {
 	margin: 1rem 0;
 	border: 1px solid var(--tl-border-soft);
@@ -869,15 +1019,17 @@
 }
 
 .details-thumbnail-figure img {
-	width: 100%;
-	height: 160px;
-	object-fit: cover;
 	display: block;
+	width: 100%;
+	height: auto;
+	max-height: min(26rem, 65vh);
+	object-fit: contain;
+	border-radius: 0;
 }
 
 .details-thumbnail-figure figcaption {
-	padding: 0.4rem 0.6rem;
-	font-size: 0.72rem;
+	padding: 0.45rem 0.65rem;
+	font-size: 0.8rem;
 	color: var(--tl-muted);
 	font-style: italic;
 	line-height: 1.3;
@@ -885,16 +1037,7 @@
 
 /* Documents scientifiques (diagrammes, manuscrits, tableaux) : jamais rognés */
 .details-thumbnail-figure.fit-contain img {
-	height: auto;
-	max-height: 320px;
-	object-fit: contain;
 	background: #fff;
-}
-
-/* Portraits et photographies */
-.details-thumbnail-figure.fit-cover img {
-	height: 210px;
-	object-position: center 30%;
 }
 
 /* Document secondaire (portrait de Galois, mémoire de Mendel) : vignette en regard de sa légende */
@@ -918,7 +1061,7 @@
 	display: block;
 	margin-top: 0.25rem;
 	font-style: normal;
-	font-size: 0.68rem;
+	font-size: 0.75rem;
 	letter-spacing: 0.01em;
 }
 
@@ -944,8 +1087,8 @@
 }
 
 .details-section p {
-	font-size: 0.88rem;
-	line-height: 1.55;
+	font-size: 1rem;
+	line-height: 1.6;
 	color: var(--tl-ink-soft);
 	margin: 0 0 0.75rem;
 }
@@ -956,8 +1099,8 @@
 	padding: 0.65rem 0.9rem;
 	margin: 0.75rem 0;
 	font-style: italic;
-	font-size: 0.85rem;
-	line-height: 1.45;
+	font-size: 0.95rem;
+	line-height: 1.5;
 	color: var(--tl-ink);
 	border-radius: 0 4px 4px 0;
 }
@@ -1056,7 +1199,7 @@
 	background: var(--tl-surface-subtle);
 	border: 1px solid var(--tl-border-soft);
 	border-radius: 6px;
-	padding: 0.85rem 1rem;
+	padding: 0.85rem clamp(0.75rem, 2.5vw, 1rem);
 	margin-top: 1rem;
 }
 
@@ -1073,21 +1216,32 @@
 }
 
 .details-related-btn {
+	min-height: var(--tl-touch);
 	background: var(--tl-surface);
 	border: 1px solid var(--tl-border);
 	border-radius: 4px;
-	padding: 0.25rem 0.55rem;
-	font-size: 0.76rem;
+	padding: 0.4rem 0.7rem;
+	font: inherit;
+	font-size: 0.9rem;
+	line-height: 1.35;
 	color: var(--tl-ink);
 	cursor: pointer;
-	transition: all 0.2s ease;
+	transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 	text-align: left;
+	-webkit-tap-highlight-color: transparent;
 }
 
-.details-related-btn:hover {
+.details-related-btn:active {
 	border-color: var(--tl-accent);
-	color: var(--tl-accent);
 	background: var(--tl-accent-soft);
+}
+
+@media (hover: hover) {
+	.details-related-btn:hover {
+		border-color: var(--tl-accent);
+		color: var(--tl-accent);
+		background: var(--tl-accent-soft);
+	}
 }
 
 /* Schéma secondaire : modèle explicatif des personnages (Balzac, Zola) */
@@ -1130,7 +1284,7 @@
 	border: 1px solid var(--tl-lit-border);
 	border-radius: 4px;
 	background: var(--tl-surface);
-	font-size: 0.78rem;
+	font-size: 0.85rem;
 	line-height: 1.3;
 	color: var(--tl-ink);
 	text-align: center;
@@ -1188,7 +1342,10 @@
 
 .details-model-more summary {
 	cursor: pointer;
-	font-size: 0.8rem;
+	display: flex;
+	align-items: center;
+	min-height: var(--tl-touch);
+	font-size: 0.9rem;
 	font-weight: 600;
 	color: var(--tl-lit-color);
 	margin-bottom: 0.5rem;
@@ -1266,26 +1423,27 @@
 	margin: 0.5rem 0 0;
 }
 
-/* Légende en bas */
+/* Légende en bas (mobile : liste alignée à gauche, plus lisible qu'un nuage centré) */
 .timeline-legend {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 1.5rem;
-	margin-top: 2.5rem;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+	gap: 0.6rem 1.5rem;
+	margin-top: clamp(1.75rem, 5vw, 2.5rem);
 	padding-top: 1.25rem;
 	border-top: 1px solid var(--tl-border-soft);
-	font-size: 0.82rem;
+	font-size: 0.875rem;
+	line-height: 1.4;
 	color: var(--tl-muted);
-	justify-content: center;
 }
 
 .legend-item {
 	display: flex;
 	align-items: center;
-	gap: 0.45rem;
+	gap: 0.5rem;
 }
 
 .legend-indicator {
+	flex: none;
 	width: 12px;
 	height: 12px;
 	border-radius: 3px;
@@ -1297,57 +1455,294 @@
 }
 
 /* --------------------------------------------------------------------------
-   RESPONSIVE DESIGN (Tablette & Mobile)
+   BUREAU (60rem ≈ 960px) : frise centrale à alternance gauche/droite + panneau latéral collant
    -------------------------------------------------------------------------- */
-@media (max-width: 960px) {
-	.timeline-main-layout {
-		grid-template-columns: 1fr;
-		gap: 2rem;
-	}
-
-	.timeline-sticky-panel-wrapper {
-		position: static;
-		order: 2; /* S'affiche sous la frise sur tablette/mobile */
-	}
-}
-
-@media (max-width: 720px) {
-	/* Passage strict à 1 colonne : colonne vertébrale à gauche */
-	.vertical-spine-line {
-		left: 18px;
-		transform: none;
-	}
-
-	.timeline-flow-arrow {
-		left: 18px;
-		transform: translateX(-50%);
-	}
-
-	.timeline-ordered-list {
-		gap: 1.25rem;
-	}
-
-	.timeline-step {
-		padding: 0 0 0 46px !important;
-		justify-content: flex-start !important;
-	}
-
-	.step-spine-node {
-		left: 18px;
-		transform: translate(-50%, -50%);
-	}
-
-	.step-branch-connector {
-		display: none; /* Inutile en 1 colonne compacte */
-	}
-
-	.timeline-entry-button {
-		max-width: 100%;
+@media (min-width: 60rem) {
+	:root {
+		--tl-sticky-offset: 2rem;
 	}
 
 	.timeline-controls {
-		flex-direction: column;
-		align-items: flex-start;
+		position: static;
+		flex-wrap: wrap;
+		gap: 0.5rem 0.75rem;
+		margin: 0 0 0.6rem;
+		padding: 0.75rem 1rem;
+		border: 1px solid var(--tl-border-soft);
+		border-radius: 8px;
+		box-shadow: none;
+	}
+
+	.timeline-filters-group {
+		flex-wrap: wrap;
+		overflow: visible;
+		padding: 0;
+		-webkit-mask-image: none;
+		mask-image: none;
+	}
+
+	.timeline-filters-label {
+		position: static;
+		width: auto;
+		height: auto;
+		overflow: visible;
+		clip-path: none;
+		font-size: 0.8rem;
+	}
+
+	.timeline-filter-btn {
+		min-height: 2.25rem;
+		padding: 0 0.95rem;
+		font-size: 0.875rem;
+	}
+
+	.timeline-instructions {
+		margin: 0 0 2rem 1rem;
+		font-size: 0.875rem;
+	}
+
+	.timeline-main-layout {
+		grid-template-columns: minmax(0, 1fr) clamp(19rem, 28vw, 22.5rem);
+		gap: clamp(1.75rem, 3vw, 2.5rem);
+	}
+
+	.vertical-timeline-container {
+		max-width: none;
+		padding-top: 1.5rem;
+	}
+
+	.vertical-spine-line,
+	.timeline-flow-arrow {
+		left: 50%;
+	}
+
+	.timeline-step {
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.timeline-step.align-left {
+		justify-content: flex-start;
+		padding: 0 calc(50% + 24px) 0 0;
+	}
+
+	.timeline-step.align-right {
+		justify-content: flex-end;
+		padding: 0 0 0 calc(50% + 24px);
+	}
+
+	.step-spine-node {
+		left: 50%;
+		top: 50%;
+	}
+
+	.step-branch-connector {
+		display: block;
+	}
+
+	.timeline-step.align-left .step-branch-connector {
+		right: 50%;
+		width: 24px;
+	}
+
+	.timeline-step.align-right .step-branch-connector {
+		left: 50%;
+		width: 24px;
+	}
+
+	.timeline-entry-button {
+		max-width: 380px;
+		padding: 0.75rem 1rem;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+	}
+
+	.timeline-step.is-literature .timeline-entry-button {
+		padding: 0.95rem 1.15rem;
+		box-shadow: 0 4px 14px rgba(139, 58, 30, 0.07);
+	}
+
+	.timeline-step.minor-cultural-point .timeline-entry-button {
+		max-width: 340px;
+	}
+
+	.entry-year-time {
+		font-size: 0.875rem;
+	}
+
+	.timeline-step.is-literature .entry-year-time,
+	.timeline-step.major-turning-point .entry-year-time,
+	.timeline-step.is-galois .entry-year-time {
+		font-size: 0.95rem;
+	}
+
+	.entry-title {
+		font-size: 1.05rem;
+	}
+
+	.timeline-step.is-literature .entry-title {
+		font-size: 1.2rem;
+	}
+
+	.timeline-step.is-galois .entry-title {
+		font-size: 1.15rem;
+	}
+
+	.timeline-step.minor-cultural-point .entry-title {
+		font-size: 0.95rem;
+	}
+
+	.entry-author {
+		font-size: 0.875rem;
+	}
+
+	.entry-short-desc {
+		font-size: 0.875rem;
+		line-height: 1.45;
+		-webkit-line-clamp: 2;
+	}
+
+	.entry-regime-context-tag {
+		font-size: 0.75rem;
+	}
+
+	/* Vignettes à hauteur fixe : rythme régulier de la frise sur grand écran */
+	.entry-thumb {
+		display: block;
+		height: 104px;
+	}
+
+	.entry-thumb--portrait {
+		height: 140px;
+	}
+
+	.timeline-step.is-galois .entry-thumb {
+		height: 168px;
+	}
+
+	.entry-thumb img,
+	.timeline-step.is-industry .entry-thumb img,
+	.timeline-step.is-science .entry-thumb img {
+		width: 100%;
+		height: 100%;
+		max-height: none;
+		object-fit: cover;
+	}
+
+	.entry-thumb.fit-contain img {
+		object-fit: contain;
+	}
+
+	.regime-context-banner {
+		margin: 1.25rem 0 0.5rem;
+		padding: 0.5rem 0.85rem;
+		text-align: center;
+	}
+
+	.regime-banner-title {
+		font-size: 0.76rem;
+	}
+
+	.regime-banner-dates {
+		font-size: 0.72rem;
+	}
+
+	.timeline-sticky-panel-wrapper {
+		display: block;
+		position: sticky;
+		top: 2rem;
+		z-index: 10;
+	}
+
+	.timeline-details-panel {
+		margin-top: 0;
+		padding: 1.5rem;
+		border-top-width: 1px;
+		border-top-color: var(--tl-border);
+		border-radius: 8px;
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+		max-height: calc(100vh - 4rem);
+		max-height: calc(100dvh - 4rem);
+		overflow-y: auto;
+		overscroll-behavior: contain;
+	}
+
+	/* Le panneau latéral reflète toujours une sélection : rien à replier */
+	.details-close-btn,
+	.details-collapse-btn {
+		display: none;
+	}
+
+	.details-meta {
+		font-size: 0.88rem;
+	}
+
+	.details-section p {
+		font-size: 0.9rem;
+		line-height: 1.55;
+	}
+
+	.details-quote {
+		font-size: 0.875rem;
+	}
+
+	.details-thumbnail-figure figcaption {
+		font-size: 0.75rem;
+	}
+
+	.details-image-credit {
+		font-size: 0.7rem;
+	}
+
+	.details-thumbnail-figure img {
+		width: 100%;
+		height: 160px;
+		max-height: none;
+		object-fit: cover;
+	}
+
+	/* Documents scientifiques (diagrammes, manuscrits, tableaux) : jamais rognés */
+	.details-thumbnail-figure.fit-contain img {
+		height: auto;
+		max-height: 320px;
+		object-fit: contain;
+	}
+
+	/* Portraits et photographies */
+	.details-thumbnail-figure.fit-cover img {
+		height: 210px;
+		object-position: center 30%;
+	}
+
+	.details-related-btn {
+		min-height: 2rem;
+		padding: 0.3rem 0.6rem;
+		font-size: 0.8rem;
+	}
+
+	.details-model-more summary {
+		min-height: 2rem;
+		font-size: 0.82rem;
+	}
+
+	.model-node {
+		font-size: 0.78rem;
+	}
+
+	.timeline-legend {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 1rem 1.5rem;
+		font-size: 0.82rem;
+	}
+}
+
+/* Écran tactile large (tablette en paysage) : les cibles restent confortables au doigt */
+@media (min-width: 60rem) and (pointer: coarse) {
+	.timeline-filter-btn,
+	.details-related-btn,
+	.details-model-more summary {
+		min-height: var(--tl-touch);
 	}
 }
 
@@ -1358,6 +1753,11 @@
 	.spine-marker-dot,
 	.details-related-btn {
 		transition: none !important;
+	}
+
+	.timeline-entry-button,
+	.timeline-entry-button:hover,
+	.timeline-entry-button.selected {
 		transform: none !important;
 	}
 }

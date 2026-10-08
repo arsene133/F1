@@ -154,10 +154,10 @@ const clientData = {
 		</div>
 	</header>
 
-	<!-- Commandes de filtrage -->
-	<div class="timeline-controls" role="toolbar" aria-label="Filtres de la frise chronologique">
+	<!-- Commandes de filtrage : rangée défilante au doigt sur mobile, collante pendant la lecture de la frise -->
+	<div class="timeline-controls" role="group" aria-labelledby="timeline-filters-label">
+		<span class="timeline-filters-label" id="timeline-filters-label">Filtrer par :</span>
 		<div class="timeline-filters-group">
-			<span class="timeline-filters-label">Filtrer par :</span>
 			{timelineFilters.map((filter) => (
 				<button
 					type="button"
@@ -170,10 +170,12 @@ const clientData = {
 				</button>
 			))}
 		</div>
-		<div class="timeline-instructions">
-			<span>💡 Cliquez sur une œuvre ou un événement pour explorer son contexte historique</span>
-		</div>
 	</div>
+	<p class="timeline-instructions">
+		<span aria-hidden="true">💡</span>
+		<span class="hint-touch">Touchez une œuvre ou un événement pour explorer son contexte historique</span>
+		<span class="hint-pointer">Cliquez sur une œuvre ou un événement pour explorer son contexte historique</span>
+	</p>
 
 	<!-- Disposition principale : Frise verticale + Panneau d'informations -->
 	<div class="timeline-main-layout">
@@ -251,7 +253,7 @@ const clientData = {
 											<img
 												src={item.image.src}
 												srcset={item.image.srcset}
-												sizes="(max-width: 720px) calc(100vw - 6rem), 350px"
+												sizes="(max-width: 959px) min(calc(100vw - 4.5rem), 44rem), 350px"
 												width={item.image.width}
 												height={item.image.height}
 												alt=""
@@ -402,7 +404,12 @@ const clientData = {
 			const itemsMap = new Map<string, TimelineItem>(items.map((it) => [it.id, it]));
 			const periodsMap = new Map<string, TimelinePeriod>(periods.map((p) => [p.id, p]));
 			const panel = document.getElementById('timeline-panel');
-			let currentSelectedId: string = initialSelectedId;
+			// Sous 60rem (une seule colonne), le panneau se déplie dans la frise, juste sous l'événement choisi
+			const desktopQuery = window.matchMedia('(min-width: 60rem)');
+			const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+			const panelHome = panel?.parentElement ?? null;
+			const isInline = () => !desktopQuery.matches;
+			let currentSelectedId: string | null = null;
 
 			// Image locale introuvable : on retire le cadre (pas de rectangle vide) sans toucher au texte,
 			// et on signale l'asset manquant en développement. Aucune image de substitution.
@@ -573,6 +580,9 @@ const clientData = {
 					: '';
 
 				panel.innerHTML = `
+					<button type="button" class="details-close-btn" data-panel-close aria-label="Replier le contexte : ${escapeAttr(item.title)}">
+						<span aria-hidden="true">×</span>
+					</button>
 					<div class="details-panel-header">
 						<span class="details-category-tag ${tagClass}">${typeHumanLabel}</span>
 						<h3 class="details-title">${item.title}</h3>
@@ -607,52 +617,85 @@ const clientData = {
 							</div>
 						` : ''}
 					</div>
+
+					<button type="button" class="details-collapse-btn" data-panel-close>Replier le contexte <span aria-hidden="true">↑</span></button>
 				`;
 
 				// Écouteurs sur les boutons de renvoi vers d'autres événements
 				panel.querySelectorAll('.details-related-btn').forEach((btn) => {
 					btn.addEventListener('click', () => {
 						const targetId = btn.getAttribute('data-target-id');
-						if (targetId) {
-							selectItem(targetId);
-							scrollToItem(targetId);
-						}
+						if (targetId) selectItem(targetId, { reveal: true });
 					});
+				});
+
+				panel.querySelectorAll('[data-panel-close]').forEach((btn) => {
+					btn.addEventListener('click', () => closeInlinePanel());
 				});
 			}
 
-			// Scroll fluide vers l'élément sélectionné
+			// Scroll vers l'élément sélectionné (instantané si l'utilisateur réduit les animations)
 			function scrollToItem(itemId: string) {
 				const stepEl = document.getElementById(`step-${itemId}`);
 				if (!stepEl) return;
-				stepEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+				stepEl.scrollIntoView({
+					behavior: reducedMotion.matches ? 'auto' : 'smooth',
+					block: isInline() ? 'start' : 'center',
+				});
+			}
+
+			// Bureau : panneau latéral collant. Mobile/tablette : panneau inséré dans l'étape sélectionnée, ou masqué.
+			function placePanel() {
+				if (!panel || !panelHome) return;
+				const host = isInline()
+					? currentSelectedId ? document.getElementById(`step-${currentSelectedId}`) : null
+					: panelHome;
+				if (host) {
+					if (panel.parentElement !== host) host.append(panel);
+					panel.hidden = false;
+				} else {
+					panel.querySelectorAll('audio').forEach((el) => el.pause());
+					if (panel.parentElement !== panelHome) panelHome.append(panel);
+					panel.hidden = true;
+				}
+			}
+
+			// États ARIA : bouton bascule (aria-pressed) à côté du panneau, divulgation (aria-expanded) quand il se déplie en place
+			function syncEntryButtons() {
+				const inline = isInline();
+				document.querySelectorAll('.timeline-entry-button').forEach((el) => {
+					const isSelected = el.getAttribute('data-item-id') === currentSelectedId;
+					el.classList.toggle('selected', isSelected);
+					if (inline) {
+						el.removeAttribute('aria-pressed');
+						el.setAttribute('aria-controls', 'timeline-panel');
+						el.setAttribute('aria-expanded', isSelected ? 'true' : 'false');
+					} else {
+						el.removeAttribute('aria-controls');
+						el.removeAttribute('aria-expanded');
+						el.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+					}
+				});
+			}
+
+			function clearHighlights() {
+				document.querySelectorAll('.timeline-step, .timeline-entry-button, .regime-context-banner').forEach((el) => {
+					el.classList.remove('selected', 'context-highlight');
+				});
 			}
 
 			// Sélection d'un élément
-			function selectItem(itemId: string) {
-				currentSelectedId = itemId;
+			function selectItem(itemId: string, { reveal = false }: { reveal?: boolean } = {}) {
 				const selectedItem = itemsMap.get(itemId);
+				const activeBtn = document.getElementById(`item-${itemId}`);
+				// En mode déplié, l'élément touché ne doit pas sauter quand le panneau quitte une étape située au-dessus
+				const anchorTop = isInline() && !reveal ? activeBtn?.getBoundingClientRect().top : undefined;
 
-				// Retrait des classes précédentes
-				document.querySelectorAll('.timeline-step').forEach((el) => {
-					el.classList.remove('selected', 'context-highlight');
-				});
-				document.querySelectorAll('.timeline-entry-button').forEach((el) => {
-					el.classList.remove('selected', 'context-highlight');
-					el.setAttribute('aria-pressed', 'false');
-				});
-				document.querySelectorAll('.regime-context-banner').forEach((el) => {
-					el.classList.remove('context-highlight');
-				});
+				currentSelectedId = itemId;
+				clearHighlights();
 
 				// Mise en valeur de l'élément sélectionné
-				const activeStep = document.getElementById(`step-${itemId}`);
-				const activeBtn = document.getElementById(`item-${itemId}`);
-				if (activeStep) activeStep.classList.add('selected');
-				if (activeBtn) {
-					activeBtn.classList.add('selected');
-					activeBtn.setAttribute('aria-pressed', 'true');
-				}
+				document.getElementById(`step-${itemId}`)?.classList.add('selected');
 
 				if (selectedItem) {
 					// Mise en valeur de la période politique d'appartenance
@@ -670,7 +713,31 @@ const clientData = {
 					});
 				}
 
+				syncEntryButtons();
 				renderPanel(itemId);
+				placePanel();
+
+				if (anchorTop !== undefined && activeBtn) {
+					window.scrollBy(0, activeBtn.getBoundingClientRect().top - anchorTop);
+				}
+				if (reveal) {
+					activeBtn?.focus({ preventScroll: true });
+					scrollToItem(itemId);
+				}
+			}
+
+			// Mode déplié : refermer le contexte et rendre la main à l'événement d'origine
+			function closeInlinePanel({ restoreFocus = true }: { restoreFocus?: boolean } = {}) {
+				if (!isInline() || !currentSelectedId) return;
+				const btn = document.getElementById(`item-${currentSelectedId}`);
+				currentSelectedId = null;
+				clearHighlights();
+				syncEntryButtons();
+				placePanel();
+				if (restoreFocus && btn) {
+					btn.focus({ preventScroll: true });
+					if (btn.getBoundingClientRect().top < 0) scrollToItem(btn.getAttribute('data-item-id') ?? '');
+				}
 			}
 
 			// Filtrage des éléments
@@ -703,7 +770,14 @@ const clientData = {
 					}
 
 					stepEl.classList.toggle('timeline-step-dimmed', !visible);
+					// Un repère estompé par le filtre sort aussi de l'ordre de tabulation
+					stepEl.inert = !visible;
 				});
+
+				// Le contexte déplié d'un repère désormais filtré se replie
+				if (isInline() && currentSelectedId && document.getElementById(`step-${currentSelectedId}`)?.inert) {
+					closeInlinePanel({ restoreFocus: false });
+				}
 
 				// Bannières de régime
 				periods.forEach((p) => {
@@ -732,7 +806,10 @@ const clientData = {
 			document.querySelectorAll('.timeline-entry-button').forEach((btn) => {
 				btn.addEventListener('click', () => {
 					const id = btn.getAttribute('data-item-id');
-					if (id) selectItem(id);
+					if (!id) return;
+					// En mode déplié, toucher à nouveau l'événement ouvert le replie
+					if (isInline() && id === currentSelectedId) closeInlinePanel({ restoreFocus: false });
+					else selectItem(id);
 				});
 			});
 
@@ -748,7 +825,7 @@ const clientData = {
 				btn.addEventListener('mouseleave', () => {
 					const id = btn.getAttribute('data-item-id');
 					const item = id ? itemsMap.get(id) : null;
-					if (item && item.periodId && itemsMap.get(currentSelectedId)?.periodId !== item.periodId) {
+					if (item && item.periodId && (currentSelectedId ? itemsMap.get(currentSelectedId)?.periodId : null) !== item.periodId) {
 						document.getElementById(`period-banner-${item.periodId}`)?.classList.remove('context-highlight');
 					}
 				});
@@ -762,8 +839,32 @@ const clientData = {
 				});
 			});
 
-			// Initialisation au démarrage
-			selectItem(initialSelectedId);
+			// Échap replie le contexte déplié lorsque le focus s'y trouve (ou sur l'événement d'origine)
+			document.addEventListener('keydown', (event) => {
+				if (event.key !== 'Escape' || !isInline() || !currentSelectedId) return;
+				const step = document.getElementById(`step-${currentSelectedId}`);
+				const active = document.activeElement;
+				if (active === document.body || (active && step?.contains(active))) closeInlinePanel();
+			});
+
+			// Passage d'un mode à l'autre (rotation, redimensionnement) : le panneau suit
+			desktopQuery.addEventListener('change', () => {
+				if (!isInline() && !currentSelectedId) {
+					selectItem(initialSelectedId);
+				} else {
+					syncEntryButtons();
+					placePanel();
+				}
+			});
+
+			// Initialisation : sur bureau, une œuvre est présélectionnée dans le panneau latéral ;
+			// sur mobile, la frise s'ouvre repliée et le lecteur choisit ce qu'il déplie.
+			if (isInline()) {
+				syncEntryButtons();
+				placePanel();
+			} else {
+				selectItem(initialSelectedId);
+			}
 		}
 	}
 </script>
