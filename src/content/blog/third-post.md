@@ -1,6 +1,6 @@
 ---
 title: 'Késkejéfé?'
-description: 'Lorem ipsum dolor sit amet'
+description: 'Apprentissage de la génération d’un site web avec Astro'
 pubDate: 'Jun 19 2026'
 heroImage: '../../assets/blog-placeholder-2.jpg'
 ---
