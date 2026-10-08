@@ -9,6 +9,8 @@ import HeaderLink from './HeaderLink.astro';
 		<div class="internal-links">
 			<HeaderLink href="/">Accueil</HeaderLink>
 			<HeaderLink href="/chronologie">Chronologie</HeaderLink>
+			<HeaderLink href="/balzac-rimbaud">Balzac · Marx · Rimbaud</HeaderLink>
+			<HeaderLink href="/on-ne-badine-pas-avec-l-amour">Musset · les personnages</HeaderLink>
 			<HeaderLink href="/blog">Blog</HeaderLink>
 			<HeaderLink href="/about">À propos</HeaderLink>
 		</div>
@@ -74,11 +76,16 @@ import HeaderLink from './HeaderLink.astro';
 		text-decoration: none;
 		border-bottom-color: var(--accent);
 	}
+	.internal-links {
+		display: flex;
+		white-space: nowrap;
+	}
 	.social-links,
 	.social-links a {
 		display: flex;
 	}
-	@media (max-width: 940px) {
+	/* Sous 1280px, les six liens ne tiennent plus sur une rangée à côté du titre */
+	@media (max-width: 1279px) {
 		.social-links {
 			display: none;
 		}
