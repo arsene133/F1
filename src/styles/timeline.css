@@ -1059,6 +1059,182 @@
 	background: var(--tl-accent-soft);
 }
 
+/* Schéma secondaire : modèle explicatif des personnages (Balzac, Zola) */
+.details-model {
+	border-top: 1px solid var(--tl-border-soft);
+	margin-top: 1rem;
+	padding-top: 0.25rem;
+}
+
+.details-model h5 {
+	font-family: var(--tl-serif);
+	font-size: 0.82rem;
+	font-weight: 600;
+	color: var(--tl-lit-color);
+	margin: 0.85rem 0 0.35rem;
+}
+
+.details-section .details-model-synthesis {
+	font-family: var(--tl-serif);
+	font-size: 0.92rem;
+	font-style: italic;
+	color: var(--tl-ink);
+}
+
+.details-model-diagram {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.2rem;
+	margin: 0.5rem 0 0.85rem;
+	padding: 0.75rem 0.5rem;
+	background: var(--tl-lit-bg);
+	border: 1px solid var(--tl-lit-border);
+	border-radius: 6px;
+}
+
+.model-node {
+	display: inline-block;
+	padding: 0.2rem 0.55rem;
+	border: 1px solid var(--tl-lit-border);
+	border-radius: 4px;
+	background: var(--tl-surface);
+	font-size: 0.78rem;
+	line-height: 1.3;
+	color: var(--tl-ink);
+	text-align: center;
+}
+
+.model-node.model-author {
+	font-family: var(--tl-serif);
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	border-color: var(--tl-lit-color);
+	color: var(--tl-lit-color);
+}
+
+.model-node.model-outcome {
+	font-weight: 600;
+	background: var(--tl-lit-color);
+	border-color: var(--tl-lit-color);
+	color: #fff;
+}
+
+/* Accolade ┌─┴─┐ reliant l'auteur aux facteurs combinés */
+.model-fork {
+	width: 55%;
+	height: 0.55rem;
+	border: 1px solid var(--tl-lit-border-active);
+	border-bottom: none;
+	border-radius: 3px 3px 0 0;
+	margin-top: 0.2rem;
+}
+
+.model-factors {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	gap: 0.4rem;
+}
+
+.model-plus,
+.model-arrow {
+	font-size: 0.85rem;
+	line-height: 1;
+	color: var(--tl-lit-color);
+}
+
+.details-section .details-model-question {
+	font-size: 0.84rem;
+}
+
+.details-model-more {
+	margin: 0.25rem 0 0.75rem;
+	font-size: 0.84rem;
+}
+
+.details-model-more summary {
+	cursor: pointer;
+	font-size: 0.8rem;
+	font-weight: 600;
+	color: var(--tl-lit-color);
+	margin-bottom: 0.5rem;
+}
+
+.details-model-more summary:focus-visible {
+	outline: 2px solid var(--tl-lit-color);
+	outline-offset: 2px;
+}
+
+.details-model-source cite {
+	display: block;
+	margin-top: 0.35rem;
+	font-size: 0.72rem;
+	font-style: normal;
+	color: var(--tl-muted);
+}
+
+.details-model-example {
+	border-left: 3px solid var(--tl-lit-border);
+	padding-left: 0.75rem;
+}
+
+.details-model-context {
+	margin: 0 0 0.4rem;
+	padding-left: 1.1rem;
+	font-size: 0.82rem;
+	line-height: 1.5;
+	color: var(--tl-ink-soft);
+}
+
+.details-section .details-model-caveat {
+	font-size: 0.74rem;
+	font-style: italic;
+	color: var(--tl-muted);
+}
+
+.details-section .details-model-nuance {
+	font-size: 0.82rem;
+}
+
+.details-model-comparison {
+	background: var(--tl-surface-subtle);
+	border: 1px solid var(--tl-border-soft);
+	border-radius: 6px;
+	padding: 0.25rem 0.85rem 0.6rem;
+}
+
+.details-model-comparison dl {
+	margin: 0 0 0.6rem;
+	font-size: 0.82rem;
+}
+
+.details-model-comparison dl div {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem;
+}
+
+.details-model-comparison dt {
+	font-weight: 600;
+	color: var(--tl-ink);
+}
+
+.details-model-comparison dt::after {
+	content: ' :';
+}
+
+.details-model-comparison dd {
+	margin: 0;
+	color: var(--tl-ink-soft);
+}
+
+.details-model-comparison .details-model-caveat {
+	margin: 0.5rem 0 0;
+}
+
 /* Légende en bas */
 .timeline-legend {
 	display: flex;

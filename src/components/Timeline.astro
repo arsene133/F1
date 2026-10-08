@@ -336,6 +336,8 @@ const clientData = {
 </div>
 
 <script>
+	import type { TimelineCharacterModel } from '../data/timeline';
+
 	interface TimelineImageCredit {
 		source: string;
 		sourceUrl: string;
@@ -392,14 +394,18 @@ const clientData = {
 		tagLabel?: string;
 		description: string;
 		historicalContext: string;
+		contextSectionTitle?: string;
 		periodId: string;
 		relatedTo: string[];
+		relatedLinks?: Array<{ id: string; label?: string; prefix?: string }>;
 		quote?: string;
 		importance?: string;
+		contextualTags?: string[];
 		image?: TimelineItemImage;
 		secondaryImage?: TimelineItemImage;
 		audio?: TimelineItemAudio;
 		listenLink?: TimelineItemListenLink;
+		characterModel?: TimelineCharacterModel;
 	}
 
 	interface TimelinePeriod {
@@ -502,6 +508,59 @@ const clientData = {
 				return '';
 			}
 
+			// Schéma secondaire : comment l'œuvre explique le comportement des personnages
+			function renderCharacterModel(model?: TimelineCharacterModel): string {
+				if (!model) return '';
+				const steps = model.steps ?? [];
+				const diagramLabel = `Schéma ${model.author} : ${model.factors.join(' et ')}${steps.map((s) => `, puis ${s}`).join('')}, produisent le ${model.outcome}.`;
+				const comparison = model.comparison;
+				const otherAuthor = comparison?.lines.find((l) => l.author !== model.author)?.author;
+				return `
+					<div class="details-section details-model">
+						<h4>Expliquer les personnages · ${model.heading}</h4>
+						<p class="details-model-synthesis">${model.synthesis}</p>
+						<figure class="details-model-diagram" role="img" aria-label="${escapeAttr(diagramLabel)}">
+							<span class="model-node model-author">${model.author}</span>
+							<span class="model-fork"></span>
+							<span class="model-factors">
+								${model.factors.map((f) => `<span class="model-node">${f}</span>`).join('<span class="model-plus">+</span>')}
+							</span>
+							<span class="model-arrow">↓</span>
+							${steps.map((s) => `<span class="model-node">${s}</span><span class="model-arrow">↓</span>`).join('')}
+							<span class="model-node model-outcome">${model.outcome}</span>
+						</figure>
+						<p class="details-model-question"><strong>${model.author} demande :</strong> ${model.question}</p>
+						<details class="details-model-more">
+							<summary>Approfondir le modèle</summary>
+							<p>${model.explanation}</p>
+							<blockquote class="details-quote details-model-source">${model.source.quote}<cite>${model.source.label}</cite></blockquote>
+							${model.example ? `
+								<div class="details-model-example">
+									<h5>${model.example.title}</h5>
+									<p>${model.example.text}</p>
+								</div>
+							` : ''}
+							<h5>Repères intellectuels</h5>
+							<ul class="details-model-context">
+								${model.context.map((c) => `<li>${c}</li>`).join('')}
+							</ul>
+							<p class="details-model-caveat">Des transformations entremêlées, sans cause unique.</p>
+							<p class="details-model-nuance">${model.nuance}</p>
+						</details>
+						${comparison ? `
+							<div class="details-model-comparison">
+								<h5>${comparison.heading}</h5>
+								<dl>
+									${comparison.lines.map((l) => `<div><dt>${l.author}</dt><dd>${l.formula}</dd></div>`).join('')}
+								</dl>
+								<button type="button" class="details-related-btn" data-target-id="${comparison.targetId}">${comparison.relationLabel}${otherAuthor ? ` · voir ${otherAuthor}` : ''}</button>
+								<p class="details-model-caveat">${comparison.note}</p>
+							</div>
+						` : ''}
+					</div>
+				`;
+			}
+
 			// Rendu du panneau d'information contextuel
 			function renderPanel(itemId: string) {
 				const item = itemsMap.get(itemId);
@@ -581,6 +640,8 @@ const clientData = {
 						${item.quote ? `<blockquote class="details-quote">${item.quote}</blockquote>` : ''}
 						${renderListening(item)}
 					</div>
+
+					${renderCharacterModel(item.characterModel)}
 
 					<div class="details-section details-context-box">
 						<h4>${contextHeading}</h4>

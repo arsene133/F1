@@ -112,8 +112,51 @@ export interface TimelineItem {
 	secondaryImage?: TimelineItemImage;
 	audio?: TimelineItemAudio;
 	listenLink?: TimelineItemListenLink;
+	/** Schéma secondaire : manière dont l'œuvre explique le comportement des personnages */
+	characterModel?: TimelineCharacterModel;
 	featured?: boolean;
 }
+
+/** Relation conceptuelle entre deux modèles explicatifs, affichée de part et d'autre */
+export interface TimelineModelComparison {
+	heading: string;
+	relationLabel: string;
+	lines: Array<{ author: string; formula: string }>;
+	note: string;
+}
+
+export interface TimelineCharacterModel {
+	/** Nom court affiché en tête du schéma (ex. « Balzac ») */
+	author: string;
+	heading: string;
+	/** Phrase synthétique */
+	synthesis: string;
+	/** Question que l'auteur pose à ses personnages */
+	question: string;
+	/** Facteurs combinés, première ligne du schéma */
+	factors: string[];
+	/** Étapes intermédiaires entre les facteurs et le comportement */
+	steps?: string[];
+	outcome: string;
+	explanation: string;
+	source: { label: string; quote: string };
+	example?: { title: string; text: string };
+	/** Repères intellectuels, sans relation causale unique */
+	context: string[];
+	/** Garde-fou contre la réduction du modèle à un seul facteur */
+	nuance: string;
+	comparison?: TimelineModelComparison & { targetId: string };
+}
+
+const balzacZolaComparison: TimelineModelComparison = {
+	heading: 'Deux manières d’expliquer les comportements humains',
+	relationLabel: 'De la volonté et de la position sociale à l’hérédité et au milieu',
+	lines: [
+		{ author: 'Balzac', formula: 'position sociale + volonté' },
+		{ author: 'Zola', formula: 'hérédité + tempérament + milieu' },
+	],
+	note: 'Une évolution des modèles explicatifs du personnage, non une filiation scientifique : Zola revendique une démarche nouvelle, plus physiologique et naturaliste, tout en héritant d’une tradition d’observation sociale dont Balzac constitue une figure majeure.',
+};
 
 export const TIMELINE_START_YEAR = 1765;
 export const TIMELINE_END_YEAR = 1890;
@@ -319,9 +362,38 @@ export const timelineItems: TimelineItem[] = [
 		historicalContext: 'Le Père Goriot paraît en pleine Monarchie de Juillet, période dans laquelle Balzac observe les mécanismes de l’ascension sociale, de l’argent et du pouvoir à Paris.',
 		periodId: 'monarchie-juillet',
 		relatedTo: ['monarchie-juillet', 'revolution-juillet-1830', 'on-ne-badine-pas', 'pot-bouille'],
+		relatedLinks: [
+			{ id: 'pot-bouille', label: 'De la volonté et de la position sociale à l’hérédité et au milieu : Zola, Pot-Bouille (1882)' },
+		],
 		quote: '« À nous deux maintenant ! » — Défi final de Rastignac lancé à Paris du haut du Père-Lachaise.',
 		importance: 'major',
 		image: literatureImages.balzac,
+		characterModel: {
+			author: 'Balzac',
+			heading: 'Position sociale + volonté',
+			synthesis: 'Les individus sont pris entre leur position dans une société en recomposition et la force de leur volonté.',
+			question: 'Où cet individu se situe-t-il dans la société, et quelle énergie met-il en œuvre pour y agir ?',
+			factors: ['position sociale', 'volonté'],
+			outcome: 'comportement',
+			explanation: 'Balzac observe des individus pris dans un édifice social devenu mouvant : après la rupture de l’ancien ordre aristocratique, les positions se recomposent et chacun doit trouver sa place dans une société où les hiérarchies, les fortunes et les pouvoirs circulent. L’individu agit avec une énergie propre — Balzac pense la volonté comme un « fluide » —, mais cette énergie rencontre un espace social structuré par les positions, les intérêts, les hiérarchies et leurs transformations.',
+			source: {
+				label: 'Louis Lambert, « Pensées », II',
+				quote: '« La Volonté est un fluide, attribut de tout être doué de mouvement. » — « Ses instincts sont le produit des nécessités que lui imposent les milieux où il se développe. »',
+			},
+			example: {
+				title: 'Rastignac : volonté + lecture de l’espace social + adaptation stratégique',
+				text: 'Il ne suffit pas qu’il veuille réussir : il doit comprendre les règles du monde parisien, identifier les positions accessibles, les relations utiles et les mécanismes du pouvoir. Balzac observe la structure sociale ; Rastignac apprend à y circuler et cherche à la conquérir.',
+			},
+			context: [
+				'Société post-révolutionnaire',
+				'Fin de l’ancien ordre comme cadre stable',
+				'Mobilité des positions',
+				'Concurrence des ambitions',
+				'Observation des comportements',
+			],
+			nuance: 'Balzac n’est pas un simple sociologue : son système associe volonté, pensée, énergie vitale, passions, milieu, position sociale, physiognomonie et rapports de pouvoir.',
+			comparison: { ...balzacZolaComparison, targetId: 'pot-bouille' },
+		},
 	},
 
 	// 1848 - Révolution de 1848
@@ -510,7 +582,7 @@ export const timelineItems: TimelineItem[] = [
 		relatedLinks: [
 			{ id: 'au-bonheur-des-dames', label: 'Du magasin de nouveautés au grand magasin : Au Bonheur des Dames (1883)' },
 			{ id: 'second-empire-event', label: 'Cadre historique : Second Empire (1852–1870)' },
-			{ id: 'pere-goriot', label: 'Sociologie romanesque : Le Père Goriot (1835)' },
+			{ id: 'pere-goriot', label: 'Héritage et déplacement : Balzac, Le Père Goriot (1835) — de la volonté et de la position sociale à l’hérédité et au milieu' },
 		],
 		contextualTags: ['Littérature', 'Commerce moderne', 'Modernité urbaine', 'Industrie', 'Grands magasins'],
 		historicalContextTags: ['Magasin de nouveautés', 'Rue Neuve-Saint-Augustin', 'Commerce parisien', 'Bourgeoisie'],
@@ -518,6 +590,33 @@ export const timelineItems: TimelineItem[] = [
 		importance: 'major',
 		image: literatureImages.potBouille,
 		secondaryImage: literatureImages.zola,
+		characterModel: {
+			author: 'Zola',
+			heading: 'Hérédité + tempérament + milieu',
+			synthesis: 'Les individus portent une histoire héréditaire dont les effets se combinent aux milieux où ils vivent.',
+			question: 'Quelle histoire héréditaire porte cet individu, quel tempérament en résulte, et comment le milieu le transforme-t-il ?',
+			factors: ['hérédité', 'tempérament'],
+			steps: ['milieu'],
+			outcome: 'comportement',
+			explanation: 'Dans la préface de La Fortune des Rougon (1871), Zola annonce vouloir suivre les liens qui unissent les individus d’une même famille. L’hérédité n’y est pas une simple métaphore psychologique : elle constitue l’hypothèse explicative de toute la série des Rougon-Macquart. Le comportement des personnages est étudié comme le résultat d’une histoire familiale et physiologique, dont les effets se combinent avec les milieux sociaux — la « double question des tempéraments et des milieux ».',
+			source: {
+				label: 'La Fortune des Rougon, préface (1871)',
+				quote: '« L’hérédité a ses lois, comme la pesanteur. »',
+			},
+			example: {
+				title: 'Octave Mouret : un héritier observé dans des milieux successifs',
+				text: 'Fils de François Mouret et de Marthe Rougon, Octave réunit deux branches de la famille dont la série suit les ramifications. Pot-Bouille le place dans le milieu d’un immeuble bourgeois parisien, Au Bonheur des Dames dans celui du grand commerce.',
+			},
+			context: [
+				'Essor des sciences naturelles et de la physiologie',
+				'Ambition d’une littérature expérimentale',
+				'Hérédité et tempéraments',
+				'Interaction avec les milieux',
+				'Étude systématique d’une famille sous le Second Empire',
+			],
+			nuance: 'Zola n’explique pas tout par l’hérédité : il articule hérédité, tempéraments et milieux, et la question du milieu reste centrale dans ses romans.',
+			comparison: { ...balzacZolaComparison, targetId: 'pere-goriot' },
+		},
 	},
 
 	// 1883 - Au Bonheur des Dames (Émile Zola)
