@@ -1453,7 +1453,8 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'second-empire',
 		relatedTo: ['painting-manet-dejeuner', 'gregor-mendel', 'music-wagner-parsifal'],
 		importance: 'major',
-		image: musicImages.wagnerTristan,
+		image: musicImages.wagnerTristanSchnorr,
+		secondaryImage: musicImages.wagnerTristan,
 		audio: musicAudio.wagnerTristan,
 	},
 

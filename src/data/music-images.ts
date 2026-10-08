@@ -189,6 +189,25 @@ export const musicImages = {
 		},
 	},
 
+	wagnerTristanSchnorr: {
+		src: `${DIR}/wagner-tristan-schnorr-1865.jpg`,
+		srcset: `${DIR}/wagner-tristan-schnorr-1865-480.webp 480w, ${DIR}/wagner-tristan-schnorr-1865-960.webp 960w`,
+		width: 1600,
+		height: 1220,
+		fit: 'contain',
+		alt: 'Photographie ancienne : Tristan, barbu en armure et cape, assis sur un canapé, enlace Isolde agenouillée contre lui en longue robe claire, cheveux dénoués',
+		caption: 'Ludwig et Malwine Schnorr von Carolsfeld, créateurs des rôles de Tristan et d’Isolde à Munich (1865), photographie de Joseph Albert',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Joseph_Albert_-_Ludwig_und_Malwine_Schnorr_von_Carolsfeld_-_Tristan_und_Isolde,_1865f.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/c/c5/Joseph_Albert_-_Ludwig_und_Malwine_Schnorr_von_Carolsfeld_-_Tristan_und_Isolde%2C_1865f.jpg',
+			author: 'Joseph Albert',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Ludwig et Malwine Schnorr von Carolsfeld dans les rôles-titres de la création de Tristan und Isolde (Munich, 1865). Staatliche Verwaltung der Schlösser, Munich (via zeno.org).',
+		},
+	},
+
 	wagnerTristan: {
 		src: `${DIR}/wagner-tristan-und-isolde.jpg`,
 		srcset: `${DIR}/wagner-tristan-und-isolde-480.webp 480w, ${DIR}/wagner-tristan-und-isolde-960.webp 960w`,
