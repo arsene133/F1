@@ -308,7 +308,10 @@ export const timelineItems: TimelineItem[] = [
 		description: 'Proclamation de l’Empire et sacre de Napoléon Ier en 1804. Épopée militaire à travers l’Europe, blocus continental et effondrement à Waterloo en 1815.',
 		historicalContext: 'L’épopée napoléonienne laisse dans la jeunesse romantique (le « mal du siècle » décrit par Musset) la nostalgie d’une gloire héroïque impossible dans le siècle marchand.',
 		periodId: 'premier-empire',
-		relatedTo: ['bonaparte-consulat', 'restauration', 'on-ne-badine-pas'],
+		relatedTo: ['bonaparte-consulat', 'restauration', 'on-ne-badine-pas', 'music-beethoven-symphonie-3'],
+		relatedLinks: [
+			{ id: 'music-beethoven-symphonie-3', label: 'De l’admiration républicaine à la désillusion impériale : Beethoven, Symphonie n° 3 « Héroïque » (1804)' },
+		],
 		importance: 'major',
 		image: historyImages.premierEmpire,
 	},
@@ -1303,6 +1306,35 @@ export const timelineItems: TimelineItem[] = [
 		importance: 'standard',
 		image: musicImages.beethovenSymphonie1,
 		audio: musicAudio.beethovenSymphonie1,
+	},
+
+	// 1 bis. 1804 — Ludwig van Beethoven : Symphonie n°3 « Héroïque »
+	// Écho culturel secondaire du Premier Empire (hiérarchie visuelle inférieure au jalon politique)
+	{
+		id: 'music-beethoven-symphonie-3',
+		year: 1804,
+		datePrecise: '1804',
+		type: 'music',
+		category: 'symphony',
+		subCategory: 'classicism-romanticism',
+		title: 'Symphonie n° 3 « Héroïque »',
+		subtitle: '1804 · Ludwig van Beethoven',
+		author: 'Ludwig van Beethoven',
+		authorDates: '1770–1827',
+		dateType: 'composition',
+		tagLabel: 'Musique · Symphonie',
+		description: 'Beethoven avait d’abord envisagé de donner à sa troisième symphonie le nom de « Bonaparte ». Lorsque Bonaparte se proclame empereur en 1804, le compositeur fait raturer violemment cette mention sur la page de titre. L’œuvre devient la « Symphonie héroïque » et sera publiée en 1806 avec une dédicace au prince Lobkowitz.',
+		historicalContext: 'Le manuscrit conservé à Vienne montre effectivement l’effacement de « intitolata Bonaparte », mais l’histoire de la dédicace est plus complexe : Beethoven continue encore en août 1804 à désigner la symphonie comme « Bonaparte », tandis que l’édition de 1806 est dédiée au prince Lobkowitz. La symphonie était déjà largement composée lorsque Napoléon devient empereur : 1804 ne marque pas seulement la naissance de l’Empire, le changement de statut de Bonaparte modifie aussi son image auprès de certains artistes européens.',
+		contextSectionTitle: 'Contexte historique et nuance',
+		periodId: 'premier-empire',
+		relatedTo: ['premier-empire-event', 'bonaparte-consulat', 'music-beethoven-symphonie-1', 'music-beethoven-symphonie-9'],
+		relatedLinks: [
+			{ id: 'premier-empire-event', label: 'De l’admiration républicaine à la désillusion impériale : Premier Empire (1804–1815)' },
+		],
+		quote: '« La symphonie est en réalité intitulée Bonaparte. » — Beethoven à son éditeur Breitkopf & Härtel, 26 août 1804',
+		importance: 'standard',
+		image: musicImages.beethovenSymphonie3,
+		audio: musicAudio.beethovenSymphonie3,
 	},
 
 	// 2. 1824 — Ludwig van Beethoven : Symphonie n°9

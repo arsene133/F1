@@ -33,6 +33,25 @@ export const musicImages = {
 		},
 	},
 
+	beethovenSymphonie3: {
+		src: `${DIR}/beethoven-eroica-titre-bonaparte.jpg`,
+		srcset: `${DIR}/beethoven-eroica-titre-bonaparte-480.webp 480w, ${DIR}/beethoven-eroica-titre-bonaparte-960.webp 960w`,
+		width: 1024,
+		height: 680,
+		fit: 'contain',
+		alt: 'Page de titre d’une copie manuscrite de la Symphonie n° 3 de Beethoven, avec la mention « Bonaparte » fortement raturée',
+		caption: 'Symphonie n° 3, page de titre de la copie révisée par Beethoven (« Sinfonia grande / intitolata Bonaparte / 804 im August ») : la mention « intitolata Bonaparte » est grattée jusqu’à trouer le papier. Gesellschaft der Musikfreunde, Vienne',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Eroica_Beethoven_title.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/09/Eroica_Beethoven_title.jpg',
+			author: 'Ludwig van Beethoven (copie annotée)',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Titelseite zu Beethovens 3. Sinfonie in Es-Dur, Op. 55, « Eroica » : le titre « intitolata Bonaparte » a été gratté ; « Geschrieben auf Bonaparte » ajouté au crayon (PD-Art, PD-old-auto-expired).',
+		},
+	},
+
 	beethovenSymphonie9: {
 		src: `${DIR}/beethoven-symphonie-9-autographe.jpg`,
 		srcset: `${DIR}/beethoven-symphonie-9-autographe-480.webp 480w, ${DIR}/beethoven-symphonie-9-autographe-960.webp 960w`,

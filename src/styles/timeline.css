@@ -625,6 +625,22 @@
 	font-weight: 700;
 }
 
+/* Écho culturel secondaire d'un régime (ex. Symphonie « Héroïque » dans le Premier Empire) : en retrait du jalon politique */
+.timeline-step.minor-cultural-point .spine-marker-dot {
+	width: 9px;
+	height: 9px;
+	border-width: 2px;
+}
+
+.timeline-step.minor-cultural-point .timeline-entry-button {
+	border-left-width: 2px;
+	max-width: 340px;
+}
+
+.timeline-step.minor-cultural-point .entry-title {
+	font-size: 0.95rem;
+}
+
 /* Vignette documentaire de chaque jalon illustré, toutes catégories confondues (hauteur fixe : aucun décalage de mise en page) */
 .entry-thumb {
 	display: block;

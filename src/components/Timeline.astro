@@ -81,6 +81,11 @@ const majorMusicPointIds = new Set([
 	'music-wagner-tristan',
 ]);
 
+// Échos culturels secondaires d'un régime (hiérarchie visuelle inférieure au jalon politique)
+const minorCulturalPointIds = new Set([
+	'music-beethoven-symphonie-3',
+]);
+
 // Détermination de l'alternance gauche / droite pour le bureau
 // Les œuvres et les tournants majeurs s'alternent harmonieusement
 let sideToggle = 0;
@@ -97,6 +102,7 @@ const enrichedItems = sortedTimelineItems.map((item) => {
 	const isMajorSciencePoint = majorSciencePointIds.has(item.id);
 	const isMajorPaintingPoint = majorPaintingPointIds.has(item.id);
 	const isMajorMusicPoint = majorMusicPointIds.has(item.id);
+	const isMinorCulturalPoint = minorCulturalPointIds.has(item.id);
 	const period = periodsMap.get(item.periodId);
 
 	// Alternance gauche/droite
@@ -118,6 +124,7 @@ const enrichedItems = sortedTimelineItems.map((item) => {
 		isMajorSciencePoint,
 		isMajorPaintingPoint,
 		isMajorMusicPoint,
+		isMinorCulturalPoint,
 		periodTitle: period ? period.title : '',
 		periodDates: period ? period.displayDates : '',
 	};
@@ -200,7 +207,7 @@ const clientData = {
 							)}
 
 							<li
-								class={`timeline-step ${item.alignment} ${item.isLiterature ? 'is-literature' : ''} ${item.isIndustry ? 'is-industry' : ''} ${item.isScience ? 'is-science' : ''} ${item.isPainting ? 'is-painting' : ''} ${item.isMusic ? 'is-music' : ''} ${item.isArtisticEvent ? 'is-artistic-event' : ''} ${item.isGalois ? 'is-galois featured' : ''} ${item.isMajorTurningPoint ? 'major-turning-point' : ''} ${item.isMajorIndustryPoint ? 'major-industry-point' : ''} ${item.isMajorSciencePoint ? 'major-science-point' : ''} ${item.isMajorPaintingPoint ? 'major-painting-point' : ''} ${item.isMajorMusicPoint ? 'major-music-point' : ''}`}
+								class={`timeline-step ${item.alignment} ${item.isLiterature ? 'is-literature' : ''} ${item.isIndustry ? 'is-industry' : ''} ${item.isScience ? 'is-science' : ''} ${item.isPainting ? 'is-painting' : ''} ${item.isMusic ? 'is-music' : ''} ${item.isArtisticEvent ? 'is-artistic-event' : ''} ${item.isGalois ? 'is-galois featured' : ''} ${item.isMajorTurningPoint ? 'major-turning-point' : ''} ${item.isMajorIndustryPoint ? 'major-industry-point' : ''} ${item.isMajorSciencePoint ? 'major-science-point' : ''} ${item.isMajorPaintingPoint ? 'major-painting-point' : ''} ${item.isMajorMusicPoint ? 'major-music-point' : ''} ${item.isMinorCulturalPoint ? 'minor-cultural-point' : ''}`}
 								id={`step-${item.id}`}
 								data-item-id={item.id}
 								data-item-type={item.type}

@@ -155,7 +155,7 @@ describe('MusicalAudio - Rendu des ressources musicales', () => {
 
 	test('10. Audit exhaustif de tous les jalons de type music de la timeline', () => {
 		const musicItems = timelineItems.filter((item) => item.type === 'music');
-		expect(musicItems.length).toBe(8);
+		expect(musicItems.length).toBe(9);
 
 		for (const item of musicItems) {
 			const html = renderMusicalAudio(item);

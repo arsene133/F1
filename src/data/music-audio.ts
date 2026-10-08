@@ -33,6 +33,23 @@ export const musicAudio = {
 		rightsNote: 'Interprétation et enregistrement par une formation militaire fédérale américaine : œuvre du gouvernement des États-Unis (PD-USGov-Military-Marines).',
 	},
 
+	beethovenSymphonie3: {
+		type: 'embedded',
+		title: 'Ier mouvement — Allegro con brio',
+		excerpt: 'Ier mouvement (deux accords de mi bémol majeur en ouverture)',
+		url: 'https://upload.wikimedia.org/wikipedia/commons/transcoded/9/99/Beethoven_-_Symphony_No._3_in_E_flat_major%2C_Op._55_%27Eroica%27_-_I._Allegro_con_brio_%28Musopen_Symphony%29.flac/Beethoven_-_Symphony_No._3_in_E_flat_major%2C_Op._55_%27Eroica%27_-_I._Allegro_con_brio_%28Musopen_Symphony%29.flac.mp3',
+		mimeType: 'audio/mpeg',
+		fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/9/99/Beethoven_-_Symphony_No._3_in_E_flat_major%2C_Op._55_%27Eroica%27_-_I._Allegro_con_brio_%28Musopen_Symphony%29.flac',
+		source: COMMONS,
+		sourceUrl: "https://commons.wikimedia.org/wiki/File:Beethoven_-_Symphony_No._3_in_E_flat_major,_Op._55_'Eroica'_-_I._Allegro_con_brio_(Musopen_Symphony).flac",
+		license: 'Domaine public',
+		performer: 'Orchestre symphonique national tchèque (« Musopen Symphony »)',
+		recordingDate: '2012',
+		duration: '15:11',
+		attributionRequired: false,
+		rightsNote: 'Enregistrement placé dans le domaine public par Musopen (PD-author).',
+	},
+
 	berliozSymphonieFantastique: {
 		type: 'embedded',
 		title: 'IIe mouvement, « Un bal » (extrait)',
