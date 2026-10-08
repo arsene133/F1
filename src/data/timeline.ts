@@ -1,3 +1,5 @@
+import { scienceImages } from './science-images';
+
 export type TimelineItemType = 'history' | 'political-regime' | 'revolution' | 'war' | 'literature' | 'industry' | 'science';
 
 export type LiteratureCategory = 'novel' | 'theatre' | 'poetry';
@@ -16,10 +18,28 @@ export interface TimelinePeriod {
 	fadeEnd?: boolean;
 }
 
+export interface TimelineImageCredit {
+	source: string;
+	sourceUrl: string;
+	fileUrl?: string;
+	author?: string;
+	license: string;
+	attributionRequired: boolean;
+	attribution?: string;
+	description?: string;
+}
+
 export interface TimelineItemImage {
 	src: string;
 	alt: string;
 	caption?: string;
+	srcset?: string;
+	width?: number;
+	height?: number;
+	fit?: 'contain' | 'cover';
+	/** Point focal (object-position) pour les recadrages en mode cover */
+	position?: string;
+	credit?: TimelineImageCredit;
 }
 
 export interface TimelineItem {
@@ -43,6 +63,7 @@ export interface TimelineItem {
 	quote?: string;
 	importance?: 'exceptional' | 'major' | 'medium' | 'standard';
 	image?: TimelineItemImage;
+	secondaryImage?: TimelineItemImage;
 	featured?: boolean;
 }
 
@@ -602,6 +623,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'consulat',
 		relatedTo: ['michael-faraday'],
 		importance: 'major',
+		image: scienceImages.volta,
 	},
 
 	// 2. 1809 — Jean-Baptiste Lamarck
@@ -621,6 +643,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'premier-empire',
 		relatedTo: ['charles-darwin'],
 		importance: 'medium',
+		image: scienceImages.lamarck,
 	},
 
 	// 3. 1824 — Sadi Carnot
@@ -640,6 +663,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'restauration',
 		relatedTo: ['machine-vapeur-watt', 'chemin-de-fer-stockton'],
 		importance: 'major',
+		image: scienceImages.carnot,
 	},
 
 	// 4. 1831 — Michael Faraday
@@ -659,6 +683,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'monarchie-juillet',
 		relatedTo: ['alessandro-volta', 'james-clerk-maxwell', 'dynamo-gramme'],
 		importance: 'major',
+		image: scienceImages.faraday,
 	},
 
 	// 5. 1832 — Évariste Galois (Jalon scientifique d'exception)
@@ -680,6 +705,8 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['revolution-juillet-1830', 'on-ne-badine-pas'],
 		importance: 'exceptional',
 		featured: true,
+		image: scienceImages.galois,
+		secondaryImage: scienceImages.galoisPortrait,
 	},
 
 	// 6. 1851 — Léon Foucault
@@ -699,6 +726,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'deuxieme-republique',
 		relatedTo: ['coup-etat-1851', 'exposition-universelle-londres'],
 		importance: 'major',
+		image: scienceImages.foucault,
 	},
 
 	// 7. 1859 — Charles Darwin
@@ -718,6 +746,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'second-empire',
 		relatedTo: ['jean-baptiste-lamarck'],
 		importance: 'major',
+		image: scienceImages.darwin,
 	},
 
 	// 8. 1865 — Gregor Mendel
@@ -737,6 +766,8 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'second-empire',
 		relatedTo: ['charles-darwin'],
 		importance: 'major',
+		image: scienceImages.mendel,
+		secondaryImage: scienceImages.mendelPaper,
 	},
 
 	// 9. 1869 — Dmitri Mendeleïev
@@ -756,6 +787,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'second-empire',
 		relatedTo: ['second-empire-event'],
 		importance: 'major',
+		image: scienceImages.mendeleev,
 	},
 
 	// 10. 1873 — James Clerk Maxwell
@@ -775,5 +807,6 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'troisieme-republique',
 		relatedTo: ['michael-faraday'],
 		importance: 'major',
+		image: scienceImages.maxwell,
 	},
 ];

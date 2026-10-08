@@ -211,6 +211,25 @@ const clientData = {
 										</span>
 									</div>
 
+									{item.isScience && item.image && (
+										<span
+											class={`entry-thumb fit-${item.image.fit ?? 'cover'} ${item.image.width && item.image.height && item.image.height > item.image.width * 1.2 ? 'entry-thumb--portrait' : ''}`}
+											aria-hidden="true"
+										>
+											<img
+												src={item.image.src}
+												srcset={item.image.srcset}
+												sizes="(max-width: 720px) calc(100vw - 6rem), 350px"
+												width={item.image.width}
+												height={item.image.height}
+												alt=""
+												style={item.image.position ? `object-position: ${item.image.position}` : undefined}
+												loading="lazy"
+												decoding="async"
+											/>
+										</span>
+									)}
+
 									<h3 class="entry-title">{item.title}</h3>
 
 									{item.subtitle && (
@@ -283,10 +302,25 @@ const clientData = {
 </div>
 
 <script>
+	interface TimelineImageCredit {
+		source: string;
+		sourceUrl: string;
+		author?: string;
+		license: string;
+		attributionRequired: boolean;
+		attribution?: string;
+	}
+
 	interface TimelineItemImage {
 		src: string;
 		alt: string;
 		caption?: string;
+		srcset?: string;
+		width?: number;
+		height?: number;
+		fit?: 'contain' | 'cover';
+		position?: string;
+		credit?: TimelineImageCredit;
 	}
 
 	interface TimelineItem {
@@ -308,6 +342,7 @@ const clientData = {
 		quote?: string;
 		importance?: string;
 		image?: TimelineItemImage;
+		secondaryImage?: TimelineItemImage;
 	}
 
 	interface TimelinePeriod {
@@ -334,6 +369,37 @@ const clientData = {
 			const panel = document.getElementById('timeline-panel');
 			let currentSelectedId: string = initialSelectedId;
 
+			const PANEL_SIZES = '(max-width: 960px) calc(100vw - 5rem), 310px';
+			const SECONDARY_SIZES = '96px';
+
+			function escapeAttr(value: string): string {
+				return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+			}
+
+			// Crédit compact : « Source : Wikimedia Commons · Domaine public » (auteur ajouté si attribution requise)
+			function renderCredit(credit?: TimelineImageCredit): string {
+				if (!credit) return '';
+				const parts = [
+					`Source : <a href="${escapeAttr(credit.sourceUrl)}" target="_blank" rel="noopener noreferrer">${credit.source}</a>`,
+				];
+				if (credit.attributionRequired) parts.push(credit.attribution || credit.author || '');
+				parts.push(credit.license);
+				return `<small class="details-image-credit">${parts.filter(Boolean).join(' · ')}</small>`;
+			}
+
+			function renderFigure(image: TimelineItemImage, className: string, sizes: string): string {
+				const fitClass = image.fit ? ` fit-${image.fit}` : '';
+				const srcset = image.srcset ? ` srcset="${escapeAttr(image.srcset)}" sizes="${sizes}"` : '';
+				const dims = image.width && image.height ? ` width="${image.width}" height="${image.height}"` : '';
+				const position = image.position ? ` style="object-position: ${escapeAttr(image.position)}"` : '';
+				return `
+					<figure class="${className}${fitClass}">
+						<img src="${escapeAttr(image.src)}"${srcset}${dims}${position} alt="${escapeAttr(image.alt)}" decoding="async" />
+						${image.caption || image.credit ? `<figcaption>${image.caption ?? ''}${renderCredit(image.credit)}</figcaption>` : ''}
+					</figure>
+				`;
+			}
+
 			// Rendu du panneau d'information contextuel
 			function renderPanel(itemId: string) {
 				const item = itemsMap.get(itemId);
@@ -359,12 +425,10 @@ const clientData = {
 
 				// Affichage optionnel d'une vignette historique si disponible
 				const imageBlock = item.image
-					? `
-						<figure class="details-thumbnail-figure">
-							<img src="${item.image.src}" alt="${item.image.alt}" loading="lazy" />
-							${item.image.caption ? `<figcaption>${item.image.caption}</figcaption>` : ''}
-						</figure>
-					`
+					? renderFigure(item.image, 'details-thumbnail-figure', PANEL_SIZES) +
+						(item.secondaryImage
+							? renderFigure(item.secondaryImage, 'details-thumbnail-figure details-secondary-figure', SECONDARY_SIZES)
+							: '')
 					: '';
 
 				const contextHeading = item.contextSectionTitle || 'Contexte historique';

@@ -535,6 +535,37 @@
 	font-weight: 700;
 }
 
+/* Vignette documentaire des jalons scientifiques (hauteur fixe : aucun décalage de mise en page) */
+.entry-thumb {
+	display: block;
+	height: 104px;
+	margin: 0.15rem 0 0.55rem;
+	border: 1px solid var(--tl-border-soft);
+	border-radius: 4px;
+	overflow: hidden;
+	background: #fff;
+}
+
+.entry-thumb--portrait {
+	height: 140px;
+}
+
+.entry-thumb img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.entry-thumb.fit-contain img {
+	object-fit: contain;
+}
+
+.timeline-step.is-galois .entry-thumb {
+	height: 168px;
+	border-color: var(--tl-galois-border);
+}
+
 /* TRAITEMENT VISUEL D'EXCEPTION : ÉVARISTE GALOIS (1832) */
 .timeline-step.is-galois .timeline-entry-button {
 	border-left: 4px solid var(--tl-galois-accent);
@@ -726,6 +757,56 @@
 	color: var(--tl-muted);
 	font-style: italic;
 	line-height: 1.3;
+}
+
+/* Documents scientifiques (diagrammes, manuscrits, tableaux) : jamais rognés */
+.details-thumbnail-figure.fit-contain img {
+	height: auto;
+	max-height: 320px;
+	object-fit: contain;
+	background: #fff;
+}
+
+/* Portraits et photographies */
+.details-thumbnail-figure.fit-cover img {
+	height: 210px;
+	object-position: center 30%;
+}
+
+/* Document secondaire (portrait de Galois, mémoire de Mendel) : vignette en regard de sa légende */
+.details-secondary-figure {
+	display: flex;
+	align-items: flex-start;
+	margin-top: -0.5rem;
+}
+
+.details-secondary-figure img,
+.details-secondary-figure.fit-cover img,
+.details-secondary-figure.fit-contain img {
+	flex: 0 0 96px;
+	width: 96px;
+	height: 128px;
+	max-height: none;
+	border-right: 1px solid var(--tl-border-soft);
+}
+
+.details-image-credit {
+	display: block;
+	margin-top: 0.25rem;
+	font-style: normal;
+	font-size: 0.68rem;
+	letter-spacing: 0.01em;
+}
+
+.details-image-credit a {
+	color: inherit;
+	text-decoration: underline;
+	text-decoration-color: var(--tl-border);
+	text-underline-offset: 2px;
+}
+
+.details-image-credit a:hover {
+	color: var(--tl-ink-soft);
 }
 
 .details-section h4 {
