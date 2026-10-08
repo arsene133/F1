@@ -1,0 +1,1203 @@
+---
+// Carte relationnelle interactive : nœuds compacts, arêtes typées, sélection
+// au clic/tap/clavier, survol, panneau contextuel. Le graphe est rendu à partir
+// des seules données (nœuds, relations, types d'arêtes).
+import '../styles/editorial-map.css';
+import { edgeGeometry, targetsOf } from './relationship-map/geometry';
+import type { EdgeType, MapLayout, MapNode, MapRelationship } from './relationship-map/types';
+
+interface Props {
+	/** Préfixe unique (identifiants SVG, ARIA). */
+	id: string;
+	ariaLabel: string;
+	nodesLabel: string;
+	nodes: MapNode[];
+	relationships: MapRelationship[];
+	edgeTypes: Record<string, EdgeType>;
+	layout: MapLayout;
+	/** Disposition verticale pour petits écrans ; sinon défilement horizontal. */
+	mobileLayout?: MapLayout;
+	anchor?: { x: number; y: number; label: string; sub?: string };
+	hint: string;
+	pointsLabel?: string;
+	relationsLabel?: string;
+	resetLabel?: string;
+	scrollHint?: string;
+	/** Liste textuelle de toutes les relations (repliable). */
+	indexLabel?: string;
+}
+
+const {
+	id,
+	ariaLabel,
+	nodesLabel,
+	nodes,
+	relationships,
+	edgeTypes,
+	layout,
+	mobileLayout,
+	anchor,
+	hint,
+	pointsLabel = 'Points clés :',
+	relationsLabel = 'Relations :',
+	resetLabel = 'Tout afficher',
+	scrollHint = '← Faites défiler horizontalement pour voir tout le graphe →',
+	indexLabel,
+} = Astro.props;
+
+const nodesById = new Map(nodes.map((n) => [n.id, n]));
+const rels = relationships.map((r, i) => ({ ...r, id: r.id ?? `${r.source}-${i}`, targets: targetsOf(r) }));
+
+const markerId = (type: string, active: boolean) => `${id}-arrow-${type}${active ? '-on' : ''}`;
+const typeStyle = (type: string) => {
+	const t = edgeTypes[type] ?? {};
+	const styles = [
+		`--stroke: ${t.stroke ?? 'var(--map-border)'}`,
+		`--stroke-on: ${t.activeStroke ?? 'var(--map-accent)'}`,
+		`--w: ${t.width ?? 1.75}`,
+		`--w-on: ${t.activeWidth ?? (t.width ?? 1.75) + 1}`,
+		`--dash: ${t.dash ?? 'none'}`,
+	];
+	if (t.arrow) {
+		styles.push(`--m-end: url(#${markerId(type, false)})`, `--m-end-on: url(#${markerId(type, true)})`);
+		if (t.arrow === 'both') {
+			styles.push(`--m-start: url(#${markerId(type, false)})`, `--m-start-on: url(#${markerId(type, true)})`);
+		}
+	}
+	return styles.join('; ');
+};
+
+const nameOf = (nid: string) => nodesById.get(nid)!.label;
+const relTitle = (r: (typeof rels)[number]) =>
+	`${nameOf(r.source)} ${edgeTypes[r.type]?.arrow === 'end' ? '→' : '↔'} ${r.targets.map(nameOf).join(' et ')}`;
+
+const layouts = [{ key: 'desktop', mobile: false, size: layout }];
+if (mobileLayout) layouts.push({ key: 'mobile', mobile: true, size: mobileLayout });
+
+const geometry = Object.fromEntries(
+	rels.map((r) => [r.id, { d: edgeGeometry(r, nodesById, false), m: mobileLayout ? edgeGeometry(r, nodesById, true) : null }]),
+);
+
+const usedTypes = [...new Set(rels.map((r) => r.type))].filter((t) => edgeTypes[t]?.legend);
+
+const clientData = {
+	nodes: nodes.map(({ id, label, caption, eyebrow, meta, description, points }) => ({
+		id, label, caption, eyebrow, meta, description, points,
+	})),
+	relationships: rels.map((r) => ({
+		id: r.id, source: r.source, targets: r.targets, label: r.label, description: r.description,
+		typeLabel: edgeTypes[r.type]?.legend ?? '', title: relTitle(r),
+	})),
+};
+
+const canvasStyle = [
+	`--dcw: ${layout.width}`,
+	`--dch: ${layout.height}`,
+	mobileLayout && `--mcw: ${mobileLayout.width}`,
+	mobileLayout && `--mch: ${mobileLayout.height}`,
+].filter(Boolean).join('; ');
+---
+
+<section
+	class="relationship-map"
+	aria-label={ariaLabel}
+	data-rel-map
+	data-has-mobile={mobileLayout ? '' : undefined}
+>
+	<script type="application/json" data-map-data set:html={JSON.stringify(clientData)} />
+
+	<div class="rm-frame">
+		<div class="rm-viewport" data-map-viewport>
+			<div class="rm-canvas" style={canvasStyle} data-map-canvas>
+				{anchor && (
+					<div class="rm-anchor rm-pos" style={`--x: ${anchor.x}; --y: ${anchor.y};`} aria-hidden="true">
+						<span class="rm-anchor-title">{anchor.label}</span>
+						{anchor.sub && <span class="rm-anchor-sub">{anchor.sub}</span>}
+					</div>
+				)}
+
+				<!-- Définitions des flèches (une paire repos / actif par type) -->
+				<svg class="rm-defs" aria-hidden="true" focusable="false" width="0" height="0">
+					<defs>
+						{Object.entries(edgeTypes).filter(([, t]) => t.arrow).flatMap(([type, t]) =>
+							[false, true].map((active) => (
+								<marker
+									id={markerId(type, active)}
+									viewBox="0 0 10 10"
+									markerWidth="9"
+									markerHeight="9"
+									markerUnits="userSpaceOnUse"
+									refX="9"
+									refY="5"
+									orient="auto-start-reverse"
+								>
+									<path
+										d="M0 0 L10 5 L0 10 z"
+										style={`fill: ${active ? t.activeStroke ?? 'var(--map-accent)' : t.stroke ?? 'var(--map-border)'}`}
+									/>
+								</marker>
+							)),
+						)}
+					</defs>
+				</svg>
+
+				{layouts.map(({ key, mobile, size }) => (
+					<svg
+						class={`rm-lines rm-lines--${key}`}
+						viewBox={`0 0 ${size.width} ${size.height}`}
+						preserveAspectRatio="none"
+						aria-hidden="true"
+						focusable="false"
+					>
+						{rels.map((r) => {
+							const g = mobile ? geometry[r.id].m! : geometry[r.id].d;
+							return (
+								<g
+									class={`rm-edge rm-edge--${r.type}`}
+									style={typeStyle(r.type)}
+									data-edge-id={r.id}
+									data-ends={[r.source, ...r.targets].join(' ')}
+								>
+									<line x1={g.x1} y1={g.y1} x2={g.x2} y2={g.y2} class="rm-edge-line" />
+								</g>
+							);
+						})}
+					</svg>
+				))}
+
+				<!-- Étiquettes des relations (cliquables) -->
+				<ul class="rm-labels" aria-label="Relations">
+					{rels.map((r) => {
+						const { d, m } = geometry[r.id];
+						return (
+							<li>
+								<button
+									type="button"
+									class={`rm-label rm-pos rm-label--${r.type}`}
+									data-mobile-label={r.mobileLabel ? '' : undefined}
+									data-edge-id={r.id}
+									data-ends={[r.source, ...r.targets].join(' ')}
+									aria-pressed="false"
+									aria-label={`Relation ${relTitle(r)} : ${r.label}`}
+									style={`--x: ${d.lx}; --y: ${d.ly};${m ? ` --mx: ${m.lx}; --my: ${m.ly};` : ''}`}
+								>
+									{r.label}
+								</button>
+							</li>
+						);
+					})}
+				</ul>
+
+				<!-- Nœuds -->
+				<ul class="rm-nodes" aria-label={nodesLabel}>
+					{nodes.map((node) => (
+						<li>
+							<button
+								type="button"
+								class={`rm-node rm-pos rm-node--${node.tier ?? 'standard'}`}
+								aria-pressed="false"
+								aria-controls={`${id}-panel`}
+								data-node-id={node.id}
+								style={[
+									`--x: ${node.x}`,
+									`--y: ${node.y}`,
+									node.mx !== undefined && `--mx: ${node.mx}`,
+									node.my !== undefined && `--my: ${node.my}`,
+									node.color && `--node-color: ${node.color}`,
+								].filter(Boolean).join('; ')}
+							>
+								<span class="rm-node-bullet" aria-hidden="true" />
+								<span class="rm-node-content">
+									<strong class="rm-node-title">{node.label}</strong>
+									<span class="rm-node-caption">{node.caption}</span>
+								</span>
+							</button>
+						</li>
+					))}
+				</ul>
+			</div>
+		</div>
+
+		{usedTypes.length > 0 && (
+			<ul class="rm-legend" aria-label="Légende des relations">
+				{usedTypes.map((type) => (
+					<li style={typeStyle(type)}>
+						<svg viewBox="0 0 40 10" width="40" height="10" aria-hidden="true" focusable="false">
+							<line x1="2" y1="5" x2={edgeTypes[type].arrow ? 36 : 38} y2="5" class="rm-edge-line" />
+						</svg>
+						{edgeTypes[type].legend}
+					</li>
+				))}
+			</ul>
+		)}
+
+		{!mobileLayout && <p class="rm-scroll-hint" aria-hidden="true">{scrollHint}</p>}
+	</div>
+
+	<!-- Panneau d'information (hors du graphe) -->
+	<aside class="rm-panel" id={`${id}-panel`} aria-live="polite" data-panel>
+		<div class="rm-panel-hint" data-panel-hint>
+			<p><em>{hint}</em></p>
+		</div>
+
+		<div class="rm-panel-detail" data-panel-detail hidden>
+			<header class="rm-detail-header">
+				<div>
+					<span class="rm-detail-eyebrow" data-detail-eyebrow></span>
+					<h2 class="rm-detail-title" data-detail-title tabindex="-1"></h2>
+					<p class="rm-detail-meta" data-detail-meta></p>
+				</div>
+				<button type="button" class="rm-reset" data-panel-reset>{resetLabel}</button>
+			</header>
+
+			<p class="rm-detail-description" data-detail-description></p>
+
+			<div class="rm-detail-block" data-detail-points-wrap>
+				<strong>{pointsLabel}</strong>
+				<ul class="rm-detail-points" data-detail-points></ul>
+			</div>
+
+			<div class="rm-detail-block" data-detail-relations-wrap>
+				<strong>{relationsLabel}</strong>
+				<ul class="rm-detail-relations" data-detail-relations></ul>
+			</div>
+		</div>
+	</aside>
+
+	{indexLabel && (
+		<details class="rm-index">
+			<summary>{indexLabel}</summary>
+			<ul>
+				{rels.map((r) => (
+					<li>
+						<strong>{relTitle(r)}</strong> — <em>{r.label}</em>
+						{edgeTypes[r.type]?.legend && <span class="rm-index-type"> ({edgeTypes[r.type].legend.toLowerCase()})</span>}
+						<br />
+						{r.description}
+					</li>
+				))}
+			</ul>
+		</details>
+	)}
+</section>
+
+<script>
+	import { segment, type Box } from './relationship-map/geometry';
+
+	type MetaItem = string | { text: string; italic?: boolean };
+	interface NodeData {
+		id: string;
+		label: string;
+		caption: string;
+		eyebrow?: string;
+		meta?: MetaItem[];
+		description: string;
+		points?: string[];
+	}
+	interface RelData {
+		id: string;
+		source: string;
+		targets: string[];
+		label: string;
+		description: string;
+		typeLabel: string;
+		title: string;
+	}
+
+	function initMap(mapEl: HTMLElement) {
+		const data = JSON.parse(mapEl.querySelector('[data-map-data]')!.textContent!) as {
+			nodes: NodeData[];
+			relationships: RelData[];
+		};
+		const q = <T extends Element = HTMLElement>(sel: string) => mapEl.querySelector<T>(sel)!;
+
+		const canvas = q('[data-map-canvas]');
+		const viewport = q('[data-map-viewport]');
+		const nodeButtons = [...mapEl.querySelectorAll<HTMLButtonElement>('.rm-node')];
+		const labelButtons = [...mapEl.querySelectorAll<HTMLButtonElement>('.rm-label')];
+		const edges = [...mapEl.querySelectorAll<SVGGElement>('.rm-edge')];
+		const panelHint = q('[data-panel-hint]');
+		const panelDetail = q('[data-panel-detail]');
+		const detailEyebrow = q('[data-detail-eyebrow]');
+		const detailTitle = q('[data-detail-title]');
+		const detailMeta = q('[data-detail-meta]');
+		const detailDesc = q('[data-detail-description]');
+		const pointsWrap = q('[data-detail-points-wrap]');
+		const pointsList = q('[data-detail-points]');
+		const relsWrap = q('[data-detail-relations-wrap]');
+		const relsList = q('[data-detail-relations]');
+
+		const nodeMap = new Map(data.nodes.map((n) => [n.id, n]));
+		const relMap = new Map(data.relationships.map((r) => [r.id, r]));
+		const nodeBtnById = new Map(nodeButtons.map((b) => [b.dataset.nodeId!, b]));
+
+		type Selection = { kind: 'node' | 'edge'; id: string } | null;
+		let selected: Selection = null;
+
+		const endsOf = (r: RelData) => [r.source, ...r.targets];
+		const relsOfNode = (nodeId: string) => data.relationships.filter((r) => endsOf(r).includes(nodeId));
+
+		function highlight(sel: Selection) {
+			mapEl.toggleAttribute('data-active', !!sel);
+			let activeNodes = new Set<string>();
+			let relatedNodes = new Set<string>();
+			let activeEdges = new Set<string>();
+
+			if (sel?.kind === 'node') {
+				activeNodes.add(sel.id);
+				for (const r of relsOfNode(sel.id)) {
+					activeEdges.add(r.id);
+					endsOf(r).forEach((n) => n !== sel.id && relatedNodes.add(n));
+				}
+			} else if (sel?.kind === 'edge') {
+				const r = relMap.get(sel.id)!;
+				activeEdges.add(r.id);
+				relatedNodes = new Set(endsOf(r));
+			}
+
+			for (const btn of nodeButtons) {
+				btn.classList.toggle('is-active', activeNodes.has(btn.dataset.nodeId!));
+				btn.classList.toggle('is-related', relatedNodes.has(btn.dataset.nodeId!));
+			}
+			for (const el of [...edges, ...labelButtons]) {
+				el.classList.toggle('is-related', activeEdges.has(el.dataset.edgeId!));
+			}
+		}
+
+		function setMeta(items: MetaItem[]) {
+			detailMeta.replaceChildren();
+			items.forEach((item, i) => {
+				if (i > 0) detailMeta.append(' · ');
+				const text = typeof item === 'string' ? item : item.text;
+				const el = document.createElement(typeof item !== 'string' && item.italic ? 'em' : 'span');
+				el.textContent = text;
+				detailMeta.append(el);
+			});
+			detailMeta.hidden = items.length === 0;
+		}
+
+		function relationItem(r: RelData, selfId: string) {
+			const li = document.createElement('li');
+			const badge = document.createElement('span');
+			badge.className = 'rm-rel-badge';
+			badge.textContent = r.typeLabel ? `${r.label} · ${r.typeLabel.toLowerCase()}` : r.label;
+			li.append(badge);
+
+			const others = endsOf(r).filter((n) => n !== selfId);
+			others.forEach((otherId, i) => {
+				if (i > 0) li.append(' et ');
+				const link = document.createElement('button');
+				link.type = 'button';
+				link.className = 'rm-rel-link';
+				link.textContent = nodeMap.get(otherId)!.label;
+				link.addEventListener('click', () => {
+					select({ kind: 'node', id: otherId });
+					nodeBtnById.get(otherId)?.focus({ preventScroll: true });
+				});
+				li.append(link);
+			});
+			li.append(` : ${r.description}`);
+			return li;
+		}
+
+		function populate(sel: Selection) {
+			panelHint.hidden = !!sel;
+			panelDetail.hidden = !sel;
+			if (!sel) return;
+
+			pointsList.replaceChildren();
+			relsList.replaceChildren();
+
+			if (sel.kind === 'node') {
+				const n = nodeMap.get(sel.id)!;
+				detailEyebrow.textContent = n.eyebrow ?? '';
+				detailTitle.textContent = n.label;
+				setMeta(n.meta ?? []);
+				detailDesc.textContent = n.description;
+				for (const pt of n.points ?? []) {
+					const li = document.createElement('li');
+					li.textContent = pt;
+					pointsList.append(li);
+				}
+				pointsWrap.hidden = !n.points?.length;
+				const related = relsOfNode(n.id);
+				related.forEach((r) => relsList.append(relationItem(r, n.id)));
+				relsWrap.hidden = related.length === 0;
+			} else {
+				const r = relMap.get(sel.id)!;
+				detailEyebrow.textContent = r.typeLabel ? `Relation · ${r.typeLabel}` : 'Relation';
+				detailTitle.textContent = r.title;
+				setMeta([{ text: `« ${r.label} »`, italic: true }]);
+				detailDesc.textContent = r.description;
+				pointsWrap.hidden = true;
+				relsWrap.hidden = true;
+			}
+		}
+
+		function select(sel: Selection) {
+			selected = sel;
+			for (const btn of nodeButtons) {
+				btn.setAttribute('aria-pressed', String(sel?.kind === 'node' && btn.dataset.nodeId === sel.id));
+			}
+			for (const btn of labelButtons) {
+				btn.setAttribute('aria-pressed', String(sel?.kind === 'edge' && btn.dataset.edgeId === sel.id));
+			}
+			highlight(sel);
+			populate(sel);
+		}
+
+		function clear() {
+			const prev = selected;
+			select(null);
+			if (prev?.kind === 'node') nodeBtnById.get(prev.id)?.focus({ preventScroll: true });
+			if (prev?.kind === 'edge') labelButtons.find((b) => b.dataset.edgeId === prev.id)?.focus({ preventScroll: true });
+		}
+
+		const isSame = (a: Selection, b: Selection) => !!a && !!b && a.kind === b.kind && a.id === b.id;
+
+		function bind(btn: HTMLButtonElement, sel: Selection) {
+			btn.addEventListener('click', () => (isSame(selected, sel) ? clear() : select(sel)));
+			// Survol : souris uniquement (le tap déclenche le clic).
+			btn.addEventListener('pointerenter', (e) => e.pointerType === 'mouse' && highlight(sel));
+			btn.addEventListener('pointerleave', (e) => e.pointerType === 'mouse' && highlight(selected));
+			btn.addEventListener('focus', () => highlight(sel));
+			btn.addEventListener('blur', () => highlight(selected));
+		}
+
+		nodeButtons.forEach((btn) => bind(btn, { kind: 'node', id: btn.dataset.nodeId! }));
+		labelButtons.forEach((btn) => bind(btn, { kind: 'edge', id: btn.dataset.edgeId! }));
+
+		// Navigation fléchée entre les nœuds.
+		nodeButtons.forEach((btn, i) => {
+			btn.addEventListener('keydown', (e) => {
+				const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+				if (e.key === 'Home' || e.key === 'End') {
+					e.preventDefault();
+					nodeButtons[e.key === 'Home' ? 0 : nodeButtons.length - 1].focus();
+				} else if (step) {
+					e.preventDefault();
+					nodeButtons[(i + step + nodeButtons.length) % nodeButtons.length].focus();
+				}
+			});
+		});
+
+		q('[data-panel-reset]').addEventListener('click', clear);
+
+		mapEl.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape' && selected) {
+				e.preventDefault();
+				clear();
+			}
+		});
+
+		// Clic dans le vide du graphe : réinitialise.
+		canvas.addEventListener('click', (e) => {
+			if (selected && !(e.target as Element).closest('button')) select(null);
+		});
+
+		// Ajuste les extrémités des arêtes aux nœuds réellement rendus
+		// (la taille des nœuds en px ne suit pas l'échelle du canevas).
+		function fitEdges() {
+			for (const svg of mapEl.querySelectorAll<SVGSVGElement>('.rm-lines')) {
+				const frame = svg.getBoundingClientRect();
+				if (!frame.width) continue;
+				const k = svg.viewBox.baseVal.width / frame.width;
+				const box = (nodeId: string): Box => {
+					// left/top et offset* ignorent les transformations (survol, sélection).
+					const btn = nodeBtnById.get(nodeId)!;
+					const style = getComputedStyle(btn);
+					return {
+						x: parseFloat(style.left) * k,
+						y: parseFloat(style.top) * k,
+						hw: (btn.offsetWidth / 2) * k,
+						hh: (btn.offsetHeight / 2) * k,
+					};
+				};
+				for (const g of svg.querySelectorAll<SVGGElement>('.rm-edge')) {
+					const [source, ...targets] = g.dataset.ends!.split(' ');
+					const { start, end } = segment(box(source), targets.map(box));
+					const line = g.querySelector('line')!;
+					line.setAttribute('x1', start.x.toFixed(1));
+					line.setAttribute('y1', start.y.toFixed(1));
+					line.setAttribute('x2', end.x.toFixed(1));
+					line.setAttribute('y2', end.y.toFixed(1));
+				}
+			}
+		}
+
+		new ResizeObserver(fitEdges).observe(canvas);
+		document.fonts?.ready.then(fitEdges);
+
+		// Centrage initial du viewport s'il défile horizontalement.
+		if (viewport.scrollWidth > viewport.clientWidth) {
+			viewport.scrollLeft = (viewport.scrollWidth - viewport.clientWidth) / 2;
+		}
+	}
+
+	document.querySelectorAll<HTMLElement>('[data-rel-map]').forEach(initMap);
+</script>
+
+<style>
+	.relationship-map {
+		margin-bottom: 3.5rem;
+	}
+
+	/* ==========================================================================
+	   CADRE & CANEVAS
+	   ========================================================================== */
+	.rm-frame {
+		border: 1px solid var(--map-border);
+		border-radius: 12px;
+		background: var(--map-bg);
+		box-shadow: 0 4px 20px rgba(23, 43, 58, 0.04);
+		overflow: hidden;
+		position: relative;
+	}
+
+	.rm-viewport {
+		max-width: 100%;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.rm-canvas {
+		--cw: var(--dcw);
+		--ch: var(--dch);
+		width: 100%;
+		min-width: 760px;
+		aspect-ratio: var(--cw) / var(--ch);
+		position: relative;
+		user-select: none;
+	}
+
+	[data-has-mobile] .rm-canvas {
+		min-width: 0;
+	}
+
+	/* Positionnement proportionnel dans l'espace du layout courant */
+	.rm-pos {
+		--px: var(--x);
+		--py: var(--y);
+		position: absolute;
+		left: calc(var(--px) * 100% / var(--cw));
+		top: calc(var(--py) * 100% / var(--ch));
+		transform: translate(-50%, -50%);
+	}
+
+	.rm-anchor {
+		text-align: center;
+		pointer-events: none;
+		z-index: 1;
+		padding: 0.8rem 1.4rem;
+		background: rgba(253, 252, 249, 0.85);
+		border: 1px dashed var(--map-border);
+		border-radius: 8px;
+	}
+
+	.rm-anchor-title {
+		display: block;
+		font-family: var(--map-serif);
+		font-size: 0.95rem;
+		font-weight: bold;
+		letter-spacing: 0.1em;
+		color: var(--map-ink);
+		white-space: nowrap;
+	}
+
+	.rm-anchor-sub {
+		display: block;
+		font-size: 0.78rem;
+		font-style: italic;
+		color: var(--map-muted);
+		margin-top: 0.2rem;
+	}
+
+	/* ==========================================================================
+	   ARÊTES
+	   ========================================================================== */
+	.rm-defs {
+		position: absolute;
+		width: 0;
+		height: 0;
+		overflow: hidden;
+	}
+
+	.rm-lines {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+		z-index: 2;
+		overflow: visible;
+	}
+
+	.rm-lines--mobile {
+		display: none;
+	}
+
+	.rm-edge-line {
+		stroke: var(--stroke);
+		stroke-width: var(--w);
+		stroke-dasharray: var(--dash);
+		stroke-linecap: round;
+		marker-end: var(--m-end, none);
+		marker-start: var(--m-start, none);
+		vector-effect: non-scaling-stroke;
+		transition: stroke 0.2s ease, stroke-width 0.2s ease, opacity 0.2s ease;
+	}
+
+	.rm-edge.is-related .rm-edge-line {
+		stroke: var(--stroke-on);
+		stroke-width: var(--w-on);
+		marker-end: var(--m-end-on, none);
+		marker-start: var(--m-start-on, none);
+	}
+
+	/* Étiquettes */
+	.rm-labels,
+	.rm-nodes {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+	}
+
+	.rm-labels {
+		z-index: 3;
+	}
+
+	.rm-nodes {
+		z-index: 4;
+	}
+
+	.rm-labels li,
+	.rm-nodes li {
+		margin: 0;
+		padding: 0;
+	}
+
+	.rm-label {
+		pointer-events: auto;
+		padding: 0.05rem 0.35rem;
+		border: 1px solid transparent;
+		border-radius: 4px;
+		background: color-mix(in srgb, var(--map-bg) 88%, transparent);
+		font-family: var(--map-serif);
+		font-size: 11px;
+		font-style: italic;
+		line-height: 1.35;
+		color: var(--map-muted);
+		white-space: nowrap;
+		cursor: pointer;
+		transition: color 0.2s ease, opacity 0.2s ease, border-color 0.2s ease;
+	}
+
+	.rm-label:hover {
+		color: var(--map-ink);
+		border-color: var(--map-border);
+	}
+
+	.rm-label:focus-visible {
+		outline: 2px solid var(--map-accent);
+		outline-offset: 1px;
+	}
+
+	.rm-label.is-related {
+		color: var(--map-ink);
+		font-weight: bold;
+	}
+
+	.rm-label[aria-pressed='true'] {
+		border-color: var(--map-ink);
+		background: var(--map-surface);
+	}
+
+	/* ==========================================================================
+	   NŒUDS
+	   ========================================================================== */
+	.rm-node {
+		--node-color: var(--map-muted);
+		pointer-events: auto;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.65rem;
+		padding: 0.55rem 0.9rem;
+		background: var(--map-surface);
+		border: 1px solid var(--map-border);
+		border-top: 3px solid var(--node-color);
+		border-radius: 8px;
+		cursor: pointer;
+		font: inherit;
+		color: var(--map-ink);
+		text-align: left;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+		transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease;
+		/* Largeur intrinsèque : évite le rétrécissement près du bord droit. */
+		width: max-content;
+		max-width: 260px;
+	}
+
+	.rm-node:hover {
+		transform: translate(-50%, -50%) translateY(-2px);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+		border-color: var(--map-accent);
+		border-top-color: var(--node-color);
+	}
+
+	.rm-node:focus-visible {
+		outline: 2px solid var(--map-accent);
+		outline-offset: 2px;
+	}
+
+	.rm-node-bullet {
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		border: 2px solid var(--node-color);
+		background: var(--map-surface);
+		flex-shrink: 0;
+		transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+	}
+
+	.rm-node-content {
+		display: flex;
+		flex-direction: column;
+		line-height: 1.25;
+	}
+
+	.rm-node-title {
+		font-family: var(--map-serif);
+		font-size: 0.92rem;
+		font-weight: bold;
+		color: var(--map-ink);
+		white-space: nowrap;
+	}
+
+	.rm-node-caption {
+		font-size: 0.72rem;
+		color: var(--map-muted);
+		white-space: nowrap;
+	}
+
+	/* Niveaux */
+	.rm-node--major {
+		padding: 0.7rem 1.1rem;
+		border-top-width: 4px;
+		box-shadow: 0 3px 10px rgba(23, 43, 58, 0.08);
+	}
+
+	.rm-node--major .rm-node-title {
+		font-size: 1.08rem;
+		letter-spacing: 0.01em;
+	}
+
+	.rm-node--major .rm-node-caption {
+		font-size: 0.76rem;
+	}
+
+	.rm-node--minor {
+		gap: 0.5rem;
+		padding: 0.4rem 0.7rem;
+		background: #fbfaf6;
+		border-top-width: 2px;
+		box-shadow: none;
+	}
+
+	.rm-node--minor .rm-node-bullet {
+		width: 8px;
+		height: 8px;
+	}
+
+	.rm-node--minor .rm-node-title {
+		font-size: 0.82rem;
+		color: var(--map-ink-soft);
+	}
+
+	.rm-node--minor .rm-node-caption {
+		font-size: 0.68rem;
+	}
+
+	/* ==========================================================================
+	   ÉTATS ACTIFS
+	   ========================================================================== */
+	.rm-node.is-active {
+		border-color: var(--map-accent);
+		border-top-color: var(--node-color);
+		background: var(--map-surface);
+		box-shadow: 0 0 0 1px var(--map-accent), 0 6px 16px rgba(35, 55, 255, 0.15);
+		transform: translate(-50%, -50%) scale(1.04);
+		z-index: 5;
+	}
+
+	.rm-node.is-active .rm-node-bullet {
+		background: var(--map-accent);
+		border-color: var(--map-accent);
+		transform: scale(1.2);
+	}
+
+	.rm-node.is-related {
+		border-color: var(--map-ink);
+		border-top-color: var(--node-color);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+		z-index: 4;
+	}
+
+	.rm-node.is-related .rm-node-bullet {
+		background: var(--node-color);
+	}
+
+	[data-active] .rm-node:not(.is-active, .is-related) {
+		opacity: 0.42;
+	}
+
+	[data-active] .rm-edge:not(.is-related) .rm-edge-line {
+		opacity: 0.15;
+	}
+
+	[data-active] .rm-label:not(.is-related) {
+		opacity: 0.25;
+	}
+
+	[data-active] .rm-anchor {
+		opacity: 0.5;
+	}
+
+	/* ==========================================================================
+	   LÉGENDE & AIDE
+	   ========================================================================== */
+	.rm-legend {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.35rem 1.25rem;
+		margin: 0;
+		padding: 0.7rem 1rem;
+		list-style: none;
+		border-top: 1px solid var(--map-border-soft);
+		font-size: 0.76rem;
+		color: var(--map-muted);
+	}
+
+	.rm-legend li {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		margin: 0;
+	}
+
+	.rm-legend svg {
+		overflow: visible;
+	}
+
+	.rm-legend .rm-edge-line {
+		stroke: var(--stroke-on);
+		marker-end: var(--m-end-on, none);
+		marker-start: var(--m-start-on, none);
+		vector-effect: none;
+	}
+
+	.rm-scroll-hint {
+		display: none;
+		margin: 0;
+		padding: 0.4rem 0.8rem;
+		font-size: 0.75rem;
+		text-align: center;
+		color: var(--map-muted);
+		border-top: 1px solid var(--map-border-soft);
+		background: var(--map-bg);
+	}
+
+	/* ==========================================================================
+	   PANNEAU
+	   ========================================================================== */
+	.rm-panel {
+		margin-top: 1.25rem;
+		background: var(--map-surface);
+		border: 1px solid var(--map-border);
+		border-radius: 10px;
+		padding: 1.5rem 1.75rem;
+		min-height: 5.5rem;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+	}
+
+	.rm-panel-hint {
+		text-align: center;
+		color: var(--map-muted);
+		font-size: 0.95rem;
+		margin: 0.5rem 0;
+	}
+
+	.rm-detail-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 1rem;
+		border-bottom: 1px solid var(--map-border-soft);
+		padding-bottom: 0.85rem;
+		margin-bottom: 1rem;
+	}
+
+	.rm-detail-eyebrow {
+		display: inline-block;
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: var(--intro-eyebrow-color, #8b572a);
+		margin-bottom: 0.25rem;
+	}
+
+	.rm-detail-title {
+		margin: 0 0 0.25rem;
+		font-family: var(--map-serif);
+		font-size: 1.55rem;
+		font-weight: bold;
+		color: var(--map-ink);
+	}
+
+	.rm-detail-title:focus {
+		outline: none;
+	}
+
+	.rm-detail-meta {
+		margin: 0;
+		font-size: 0.88rem;
+		color: var(--map-muted);
+	}
+
+	.rm-reset {
+		background: 0 0;
+		border: 1px solid var(--map-border);
+		border-radius: 6px;
+		padding: 0.4rem 0.85rem;
+		font: inherit;
+		font-size: 0.82rem;
+		font-weight: 600;
+		color: var(--map-muted);
+		cursor: pointer;
+		white-space: nowrap;
+		transition: color 0.15s ease, border-color 0.15s ease;
+	}
+
+	.rm-reset:hover {
+		color: var(--map-ink);
+		border-color: var(--map-ink);
+	}
+
+	.rm-reset:focus-visible,
+	.rm-rel-link:focus-visible {
+		outline: 2px solid var(--map-accent);
+		outline-offset: 2px;
+	}
+
+	.rm-detail-description {
+		margin: 0 0 1rem;
+		font-size: 0.96rem;
+		line-height: 1.55;
+		color: var(--map-ink);
+	}
+
+	.rm-detail-block {
+		margin-top: 1rem;
+		font-size: 0.9rem;
+	}
+
+	.rm-detail-points {
+		margin: 0.4rem 0 0;
+		padding-left: 1.25rem;
+		line-height: 1.5;
+		color: var(--map-ink-soft);
+	}
+
+	.rm-detail-points li + li {
+		margin-top: 0.25rem;
+	}
+
+	.rm-detail-relations {
+		margin: 0.5rem 0 0;
+		padding: 0;
+		list-style: none;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.rm-detail-relations li {
+		margin: 0;
+		padding: 0.4rem 0.65rem;
+		background: var(--map-bg);
+		border-radius: 6px;
+		border-left: 3px solid var(--map-accent);
+		font-size: 0.86rem;
+		line-height: 1.4;
+	}
+
+	.rm-detail-relations :global(.rm-rel-badge) {
+		font-family: var(--map-serif);
+		font-style: italic;
+		font-size: 0.8rem;
+		color: var(--map-muted);
+		display: block;
+		margin-bottom: 0.15rem;
+	}
+
+	.rm-detail-relations :global(.rm-rel-link) {
+		padding: 0;
+		border: 0;
+		background: none;
+		font: inherit;
+		font-weight: bold;
+		color: var(--map-ink);
+		text-decoration: underline;
+		text-decoration-color: var(--map-border);
+		text-underline-offset: 2px;
+		cursor: pointer;
+	}
+
+	.rm-detail-relations :global(.rm-rel-link:hover) {
+		text-decoration-color: var(--map-accent);
+	}
+
+	/* Index textuel des relations */
+	.rm-index {
+		margin-top: 1rem;
+		font-size: 0.88rem;
+		color: var(--map-ink-soft);
+	}
+
+	.rm-index summary {
+		cursor: pointer;
+		color: var(--map-muted);
+		font-size: 0.85rem;
+	}
+
+	.rm-index summary:focus-visible {
+		outline: 2px solid var(--map-accent);
+		outline-offset: 2px;
+	}
+
+	.rm-index ul {
+		margin: 0.75rem 0 0;
+		padding-left: 1.1rem;
+		line-height: 1.5;
+	}
+
+	.rm-index li + li {
+		margin-top: 0.6rem;
+	}
+
+	.rm-index-type {
+		color: var(--map-muted);
+	}
+
+	/* ==========================================================================
+	   RESPONSIVE
+	   ========================================================================== */
+	@media (max-width: 900px) {
+		[data-has-mobile] .rm-node {
+			gap: 0.5rem;
+			padding: 0.45rem 0.7rem;
+		}
+
+		[data-has-mobile] .rm-node--major .rm-node-title {
+			font-size: 0.98rem;
+		}
+
+		[data-has-mobile] .rm-node--minor .rm-node-title {
+			font-size: 0.78rem;
+		}
+
+		[data-has-mobile] .rm-node--minor .rm-node-caption {
+			font-size: 0.64rem;
+		}
+	}
+
+	@media (max-width: 820px) {
+		.rm-scroll-hint {
+			display: block;
+		}
+
+		.rm-detail-header {
+			flex-direction: column;
+			align-items: stretch;
+		}
+
+		.rm-reset {
+			align-self: flex-start;
+		}
+	}
+
+	@media (max-width: 640px) {
+		[data-has-mobile] .rm-canvas {
+			--cw: var(--mcw);
+			--ch: var(--mch);
+		}
+
+		[data-has-mobile] .rm-pos {
+			--px: var(--mx, var(--x));
+			--py: var(--my, var(--y));
+		}
+
+		[data-has-mobile] .rm-lines--desktop {
+			display: none;
+		}
+
+		[data-has-mobile] .rm-lines--mobile {
+			display: block;
+		}
+
+		[data-has-mobile] .rm-label:not([data-mobile-label]) {
+			display: none;
+		}
+
+		[data-has-mobile] .rm-label {
+			font-size: 10.5px;
+		}
+
+		[data-has-mobile] .rm-node {
+			gap: 0.4rem;
+			padding: 0.4rem 0.55rem;
+			max-width: 42vw;
+		}
+
+		[data-has-mobile] .rm-node-bullet {
+			display: none;
+		}
+
+		[data-has-mobile] .rm-node--major .rm-node-title {
+			font-size: 0.92rem;
+		}
+
+		[data-has-mobile] .rm-node-caption {
+			font-size: 0.64rem;
+			white-space: normal;
+		}
+
+		[data-has-mobile] .rm-node--minor .rm-node-caption {
+			font-size: 0.6rem;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.rm-panel {
+			padding: 1.2rem 1rem;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.relationship-map *,
+		.relationship-map *::before,
+		.relationship-map *::after {
+			transition: none !important;
+			animation: none !important;
+		}
+
+		.rm-node:hover,
+		.rm-node.is-active {
+			transform: translate(-50%, -50%);
+		}
+	}
+</style>

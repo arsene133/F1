@@ -1,7 +1,9 @@
 ---
+import { Image } from 'astro:assets';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
+import balzacPortrait from '../assets/honore-de-balzac-1842.jpg';
 
 const pageTitle = "Balzac, Rastignac, la Commune, Marx et Rimbaud";
 const pageDescription = "Carte interactive des relations intellectuelles et sociales au XIXe siècle : Balzac, Rastignac, la Commune, Marx et Rimbaud face à la société bourgeoise.";
@@ -315,6 +317,28 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 						</div>
 
 						<div class="panel-detail" data-panel-detail hidden>
+							<div class="detail-portrait-wrapper" data-portrait-container hidden>
+								<figure class="detail-portrait-figure">
+									<Image
+										src={balzacPortrait}
+										alt="Portrait photographique d'Honoré de Balzac en 1842, par Louis-Auguste Bisson."
+										width={500}
+										height={455}
+										loading="lazy"
+										decoding="async"
+										class="detail-portrait-img"
+									/>
+									<figcaption class="detail-portrait-caption">
+										Honoré de Balzac, 1842 — Louis-Auguste Bisson, daguerréotype · <a
+											href="https://commons.wikimedia.org/wiki/File:Honor%C3%A9_de_Balzac_(1842)_Detail.jpg"
+											target="_blank"
+											rel="noopener noreferrer"
+											class="detail-portrait-link"
+										>Wikimedia Commons</a> · domaine public
+									</figcaption>
+								</figure>
+							</div>
+
 							<header class="detail-header">
 								<div>
 									<span class="detail-posture" data-detail-posture></span>
@@ -353,6 +377,27 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 						<h2>Figures et analyses (mode lecture accessible)</h2>
 						{nodes.map((node) => (
 							<div class="noscript-node">
+								{node.id === "balzac" && (
+									<figure class="noscript-portrait-figure">
+										<Image
+											src={balzacPortrait}
+											alt="Portrait photographique d'Honoré de Balzac en 1842, par Louis-Auguste Bisson."
+											width={500}
+											height={455}
+											loading="lazy"
+											decoding="async"
+											class="detail-portrait-img"
+										/>
+										<figcaption class="detail-portrait-caption">
+											Honoré de Balzac, 1842 — Louis-Auguste Bisson, daguerréotype · <a
+												href="https://commons.wikimedia.org/wiki/File:Honor%C3%A9_de_Balzac_(1842)_Detail.jpg"
+												target="_blank"
+												rel="noopener noreferrer"
+												class="detail-portrait-link"
+											>Wikimedia Commons</a> · domaine public
+										</figcaption>
+									</figure>
+								)}
 								<h3>{node.label} ({node.dates})</h3>
 								<p><strong>Rôle :</strong> {node.role} — <em>{node.work}</em></p>
 								<p><strong>Posture :</strong> {node.posture}</p>
@@ -428,6 +473,7 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 				const detailDesc = mapEl.querySelector('[data-detail-description]');
 				const detailPoints = mapEl.querySelector('[data-detail-points]');
 				const detailRelations = mapEl.querySelector('[data-detail-relations]');
+				const portraitContainer = mapEl.querySelector('[data-portrait-container]');
 
 				let selectedNode = null;
 
@@ -469,6 +515,7 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 					if (!btn) {
 						panelHint.hidden = false;
 						panelDetail.hidden = true;
+						if (portraitContainer) portraitContainer.hidden = true;
 						return;
 					}
 
@@ -477,6 +524,10 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 
 					const nodeId = btn.dataset.nodeId;
 					const data = nodeMap.get(nodeId);
+
+					if (portraitContainer) {
+						portraitContainer.hidden = nodeId !== 'balzac';
+					}
 
 					detailTitle.textContent = data.label;
 					detailDates.textContent = data.dates;
@@ -989,6 +1040,70 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 		margin: 0.5rem 0;
 	}
 
+	/* ==========================================================================
+	   PORTRAIT D'HONORÉ DE BALZAC (PANNEAU D'ANALYSE)
+	   ========================================================================== */
+	.detail-portrait-wrapper {
+		margin-bottom: 1.25rem;
+	}
+
+	.detail-portrait-wrapper[hidden] {
+		display: none;
+	}
+
+	.detail-portrait-figure,
+	.noscript-portrait-figure {
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		max-width: 200px;
+	}
+
+	.detail-portrait-img {
+		width: 190px;
+		max-width: 100%;
+		height: auto;
+		aspect-ratio: 4 / 5;
+		object-fit: cover;
+		object-position: 50% 20%;
+		border-radius: 6px;
+		border: 1px solid var(--map-border);
+		box-shadow: 0 2px 8px rgba(23, 43, 58, 0.06);
+		display: block;
+		background: var(--map-bg);
+	}
+
+	.detail-portrait-caption {
+		margin-top: 0.45rem;
+		font-size: 0.74rem;
+		line-height: 1.35;
+		color: var(--map-muted);
+		font-style: italic;
+	}
+
+	.detail-portrait-link {
+		color: var(--map-muted);
+		text-decoration: underline;
+		text-underline-offset: 2px;
+		transition: color 0.15s ease;
+	}
+
+	.detail-portrait-link:hover {
+		color: var(--map-accent);
+	}
+
+	.detail-portrait-link:focus-visible {
+		outline: 2px solid var(--map-accent);
+		outline-offset: 2px;
+		border-radius: 2px;
+	}
+
+	.noscript-portrait-figure {
+		margin-bottom: 1rem;
+	}
+
 	.detail-header {
 		display: flex;
 		justify-content: space-between;
@@ -1209,6 +1324,15 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 			gap: 1rem;
 		}
 
+		.detail-portrait-figure,
+		.noscript-portrait-figure {
+			max-width: 175px;
+		}
+
+		.detail-portrait-img {
+			width: 170px;
+		}
+
 		.detail-header {
 			flex-direction: column;
 			align-items: stretch;
@@ -1226,6 +1350,23 @@ const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 
 		.map-info-panel {
 			padding: 1.2rem 1rem;
+		}
+
+		.detail-portrait-figure,
+		.noscript-portrait-figure {
+			margin-left: auto;
+			margin-right: auto;
+			align-items: center;
+			text-align: center;
+			max-width: 160px;
+		}
+
+		.detail-portrait-img {
+			width: 150px;
+		}
+
+		.detail-portrait-caption {
+			text-align: center;
 		}
 	}
 
