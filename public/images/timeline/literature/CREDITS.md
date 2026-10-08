@@ -16,7 +16,7 @@ fichier de repli `<nom>.jpg` (≤ 1600 px).
 | on-ne-badine-pas-lami.jpg | principal | https://commons.wikimedia.org/wiki/File:Musset_-_On_ne_badine_pas_avec_l%27amour.jpg | Eugène Lami (dessin), Adolphe Lalauze (gravure), 1884 — Gallica btv1b22002305 | Domaine public |
 | pere-goriot-werdet-1835.jpg | principal | https://commons.wikimedia.org/wiki/File:Pere_Goriot_1835_Werdet.jpg | Werdet, 1835 (« quatrième édition », et non l'originale comme l'indique Commons) — Gallica btv1b8625627c | Domaine public |
 | rimbaud-sensation-manuscrit.jpg | principal | https://commons.wikimedia.org/wiki/File:Rimbaud_sensation.jpg | Arthur Rimbaud, manuscrit de « Sensation », mars 1870 | Domaine public |
-| pot-bouille-1882.jpg | principal | https://commons.wikimedia.org/wiki/File:Pot_Bouille.jpg | Émile Zola / G. Charpentier, 1882 (première édition, scan Internet Archive) | Domaine public (PD-scan, PD-old-100-1923) |
+| pot-bouille-gill-nouvelle-lune.jpg | principal | https://commons.wikimedia.org/wiki/File:La_nouvelle_lune._Troisi%C3%A8me_ann%C3%A9e._N%C2%B017._Le_pot-bouille_%C3%A0_Zola,_par_Andr%C3%A9_Gill,_Paris_Mus%C3%A9es_20231008200529.jpg | André Gill, La Nouvelle Lune, 23 avril 1882 (musée Carnavalet, Paris Musées) | CC0 |
 | au-bonheur-des-dames-plan-zola.jpg | principal | https://commons.wikimedia.org/wiki/File:Au_Bonheur_des_dames_-_plan.jpg | Émile Zola, plan manuscrit, vers 1882 (BnF) | Domaine public (PD-old-100) |
 
 Les fichiers dont l'original fait moins de 960 px de large ne sont fournis qu'en
