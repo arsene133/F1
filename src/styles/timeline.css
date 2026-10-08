@@ -1327,6 +1327,47 @@
 	color: var(--tl-ink);
 }
 
+/* Aucune source n'a répondu : renvoi vers la page de l'enregistrement (révélé par la frise) */
+.details-section .details-listen-unavailable,
+.details-listen-unavailable {
+	margin: 0.45rem 0 0;
+	font-size: 0.8rem;
+	line-height: 1.4;
+	color: var(--tl-ink-soft);
+}
+
+.details-listen-unavailable a {
+	color: var(--tl-music-color);
+	font-weight: 600;
+	text-underline-offset: 2px;
+}
+
+/* Sous ~250 px, le lecteur natif sacrifie sa barre de progression : mobile/tablette, et bureau tant que
+   le panneau latéral n'a pas atteint sa largeur maximale (19rem à 1024 px). Le lecteur prend alors toute
+   la largeur du cadre d'écoute (le texte garde sa marge) et une hauteur tactile. */
+@media not all and (min-width: 80rem) {
+	.details-listen.is-embedded {
+		padding-inline: 0;
+	}
+
+	.details-listen.is-embedded > :not(audio) {
+		padding-inline: 0.8rem;
+	}
+
+	.details-listen audio {
+		height: var(--tl-touch);
+	}
+}
+
+@media not all and (min-width: 60rem) {
+	.details-listen-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3em;
+		min-height: var(--tl-touch);
+	}
+}
+
 .details-context-box {
 	background: var(--tl-surface-subtle);
 	border: 1px solid var(--tl-border-soft);

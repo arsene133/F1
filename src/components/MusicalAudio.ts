@@ -31,7 +31,8 @@ export function escapeAttr(value: string): string {
 
 /**
  * Composant MusicalAudio unifié :
- * - Mode 'embedded' : lecteur audio HTML5 natif (preload="none", aucun autoplay, métadonnées complètes)
+ * - Mode 'embedded' : lecteur audio HTML5 natif (preload="none", playsinline, aucun autoplay, métadonnées complètes),
+ *   message de repli (masqué) révélé par la frise si aucune source ne répond
  * - Mode 'external' : lien externe accessible (target="_blank", rel="noopener noreferrer", sans balise <audio>)
  * - Aucun média : chaîne vide
  */
@@ -48,6 +49,11 @@ export function renderMusicalAudio(props: MusicalAudioProps): string {
 			: '';
 		const ariaLabel = `${props.title}${props.author ? `, ${props.author}` : ''} — ${embedded.title}`;
 		const workLine = `${escapeHtml(props.title)}${props.author ? `, ${escapeHtml(props.author)}` : ''}${embedded.excerpt ? ` — ${escapeHtml(embedded.excerpt)}` : ''}`;
+
+		// Source principale puis encodages de secours : le navigateur passe au suivant si l'un échoue
+		const sources = [{ url: embedded.url, mimeType: embedded.mimeType }, ...(embedded.fallbackSources ?? [])]
+			.map((s) => `<source src="${escapeAttr(s.url)}" type="${escapeAttr(s.mimeType)}" />`)
+			.join('\n\t\t');
 
 		const creditParts: string[] = [];
 		if (embedded.performer) {
@@ -70,10 +76,13 @@ export function renderMusicalAudio(props: MusicalAudioProps): string {
 	<p class="details-listen-label">
 		<span aria-hidden="true">▶</span> ${label}${durationHtml}
 	</p>
-	<audio controls preload="none" aria-label="${escapeAttr(ariaLabel)}">
-		<source src="${escapeAttr(embedded.url)}" type="${escapeAttr(embedded.mimeType)}" />
+	<audio controls preload="none" playsinline aria-label="${escapeAttr(ariaLabel)}">
+		${sources}
 		<a href="${escapeAttr(embedded.sourceUrl)}" target="_blank" rel="noopener noreferrer">Écouter l’extrait sur ${escapeHtml(embedded.source)}</a>
 	</audio>
+	<p class="details-listen-unavailable" role="status" hidden>
+		Extrait momentanément indisponible ici · <a href="${escapeAttr(embedded.sourceUrl)}" target="_blank" rel="noopener noreferrer">l’écouter sur ${escapeHtml(embedded.source)}<span class="sr-only"> (nouvel onglet)</span></a>
+	</p>
 	<small class="details-listen-work">${workLine}</small>
 	<small class="details-listen-credit">${creditParts.filter(Boolean).join(' · ')}</small>
 	<small class="details-listen-note">Extrait de l’œuvre citée dans la frise.</small>

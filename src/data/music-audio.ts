@@ -6,6 +6,10 @@ import type { TimelineItemAudioEmbedded, TimelineItemAudioExternal } from './tim
 // aucun fichier audio n'est copié dans le dépôt.
 // `url` pointe vers le transcodage MP3 généré par Commons (lisible par tous les
 // navigateurs) ; `fileUrl` conserve le fichier original déposé.
+// Quand l'original est lui-même un MP3 (pas de transcodage MP3), Commons limite
+// fortement le débit des fichiers originaux par adresse IP (réponse 429, fréquente
+// derrière les NAT des opérateurs mobiles) : `fallbackSources` ajoute alors le
+// transcodage Ogg Vorbis du même fichier, que le navigateur essaie en second.
 // Licences vérifiées sur les pages sources (modèles de licence de Commons) le 2026-10-08.
 // Toutes les compositions sont dans le domaine public (compositeurs morts avant 1884) ;
 // les droits indiqués ci-dessous portent sur l'enregistrement et l'interprétation.
@@ -56,6 +60,9 @@ export const musicAudio = {
 		excerpt: 'IIe mouvement, « Un bal » (valse)',
 		url: 'https://upload.wikimedia.org/wikipedia/commons/f/f9/Hector_Berlioz_Symphonie_fantastique_2nd_movement_excerpt.mp3',
 		mimeType: 'audio/mpeg',
+		fallbackSources: [
+			{ url: 'https://upload.wikimedia.org/wikipedia/commons/transcoded/f/f9/Hector_Berlioz_Symphonie_fantastique_2nd_movement_excerpt.mp3/Hector_Berlioz_Symphonie_fantastique_2nd_movement_excerpt.mp3.ogg', mimeType: 'audio/ogg; codecs=vorbis' },
+		],
 		fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/f/f9/Hector_Berlioz_Symphonie_fantastique_2nd_movement_excerpt.mp3',
 		source: COMMONS,
 		sourceUrl: 'https://commons.wikimedia.org/wiki/File:Hector_Berlioz_Symphonie_fantastique_2nd_movement_excerpt.mp3',
@@ -144,6 +151,9 @@ export const musicAudio = {
 		excerpt: 'Acte I, récit de Gurnemanz',
 		url: 'https://upload.wikimedia.org/wikipedia/commons/5/52/Richard_Wagner_Parsifal_Titurel%2C_der_fromme_Held_excerpt.mp3',
 		mimeType: 'audio/mpeg',
+		fallbackSources: [
+			{ url: 'https://upload.wikimedia.org/wikipedia/commons/transcoded/5/52/Richard_Wagner_Parsifal_Titurel%2C_der_fromme_Held_excerpt.mp3/Richard_Wagner_Parsifal_Titurel%2C_der_fromme_Held_excerpt.mp3.ogg', mimeType: 'audio/ogg; codecs=vorbis' },
+		],
 		fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/5/52/Richard_Wagner_Parsifal_Titurel%2C_der_fromme_Held_excerpt.mp3',
 		source: COMMONS,
 		sourceUrl: 'https://commons.wikimedia.org/wiki/File:Richard_Wagner_Parsifal_Titurel,_der_fromme_Held_excerpt.mp3',

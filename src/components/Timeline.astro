@@ -6,6 +6,7 @@ import {
 	type TimelinePeriod,
 } from '../data/timeline';
 import { compactEntryParts, timelineFilters } from '../data/timeline-filters';
+import MusicalAudio from './MusicalAudio.astro';
 
 interface Props {
 	initialSelectedId?: string;
@@ -306,6 +307,13 @@ const clientData = {
 										</div>
 									)}
 								</button>
+
+								<!-- Sans JavaScript, le panneau de contexte n'existe pas : l'extrait reste écoutable sous la carte -->
+								{(item.audio || item.listenLink) && (
+									<noscript>
+										<MusicalAudio title={item.title} author={item.author} audio={item.audio} listenLink={item.listenLink} />
+									</noscript>
+								)}
 							</li>
 						</>
 					);
@@ -452,6 +460,11 @@ const clientData = {
 				'error',
 				(event) => {
 					if (event.target instanceof HTMLImageElement) handleBrokenImage(event.target);
+					// Extrait : quand la dernière source échoue (429, réseau…), le lecteur reste muet ; on propose la page source
+					const source = event.target;
+					if (source instanceof HTMLSourceElement && !source.nextElementSibling?.matches('source')) {
+						source.closest('.details-listen')?.querySelector<HTMLElement>('.details-listen-unavailable')?.removeAttribute('hidden');
+					}
 				},
 				true,
 			);
@@ -682,6 +695,11 @@ const clientData = {
 				if (host) {
 					if (panel.parentElement !== host) host.append(panel);
 					panel.hidden = false;
+					// Déplié dans la frise, le lecteur est étroit : sans menu « ⋮ », Chrome garde la barre de progression
+					panel.querySelectorAll('audio').forEach((el) => {
+						if (isInline()) el.setAttribute('controlslist', 'nodownload noplaybackrate');
+						else el.removeAttribute('controlslist');
+					});
 				} else {
 					panel.querySelectorAll('audio').forEach((el) => el.pause());
 					if (panel.parentElement !== panelHome) panelHome.append(panel);

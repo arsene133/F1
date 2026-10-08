@@ -59,6 +59,8 @@ export interface TimelineItemAudioEmbedded {
 	/** Fichier lu par le lecteur HTML5 */
 	url: string;
 	mimeType: string;
+	/** Autres encodages du même enregistrement, essayés dans l'ordre si `url` ne répond pas */
+	fallbackSources?: Array<{ url: string; mimeType: string }>;
 	/** Fichier original déposé sur la source */
 	fileUrl?: string;
 	source: string;
