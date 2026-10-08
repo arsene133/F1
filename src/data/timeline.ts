@@ -4,6 +4,7 @@ import { literatureImages } from './literature-images';
 import { scienceImages } from './science-images';
 import { paintingImages } from './painting-images';
 import { musicImages } from './music-images';
+import { musicAudio, musicListenLinks } from './music-audio';
 
 export type TimelineItemType = 'history' | 'political-regime' | 'revolution' | 'war' | 'literature' | 'industry' | 'science' | 'painting' | 'music';
 
@@ -49,6 +50,38 @@ export interface TimelineItemImage {
 	credit?: TimelineImageCredit;
 }
 
+/** Extrait audio intégré, dont les droits sur l'enregistrement ont été vérifiés */
+export interface TimelineItemAudio {
+	/** Nom du mouvement / de l'extrait, affiché « Écouter : … » */
+	title: string;
+	/** Fichier lu par le lecteur HTML5 */
+	url: string;
+	mimeType: string;
+	/** Fichier original déposé sur la source */
+	fileUrl?: string;
+	source: string;
+	/** Page de la source où la licence a été vérifiée */
+	sourceUrl: string;
+	license: string;
+	licenseUrl?: string;
+	performer?: string;
+	recordingDate?: string;
+	/** Durée au format m:ss */
+	duration?: string;
+	excerpt?: string;
+	attributionRequired: boolean;
+	attribution?: string;
+	/** Statut des droits sur l'enregistrement et l'interprétation */
+	rightsNote?: string;
+}
+
+/** Écoute externe, sans intégration ni téléchargement du fichier */
+export interface TimelineItemListenLink {
+	url: string;
+	source: string;
+	note?: string;
+}
+
 export interface TimelineItem {
 	id: string;
 	year: number;
@@ -72,6 +105,8 @@ export interface TimelineItem {
 	importance?: 'exceptional' | 'major' | 'medium' | 'standard';
 	image?: TimelineItemImage;
 	secondaryImage?: TimelineItemImage;
+	audio?: TimelineItemAudio;
+	listenLink?: TimelineItemListenLink;
 	featured?: boolean;
 }
 
@@ -1055,6 +1090,7 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['bonaparte-consulat', 'music-beethoven-symphonie-9', 'alessandro-volta'],
 		importance: 'standard',
 		image: musicImages.beethovenSymphonie1,
+		audio: musicAudio.beethovenSymphonie1,
 	},
 
 	// 2. 1824 — Ludwig van Beethoven : Symphonie n°9
@@ -1077,6 +1113,7 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['restauration-event', 'sadi-carnot', 'music-beethoven-symphonie-1', 'music-berlioz-symphonie-fantastique', 'painting-gericault-radeau-meduse'],
 		importance: 'major',
 		image: musicImages.beethovenSymphonie9,
+		listenLink: musicListenLinks.beethovenSymphonie9,
 	},
 
 	// 3. 1830 — Hector Berlioz : Symphonie fantastique
@@ -1099,6 +1136,7 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['revolution-juillet-1830', 'painting-delacroix-liberte', 'music-chopin-oeuvres-piano', 'on-ne-badine-pas'],
 		importance: 'major',
 		image: musicImages.berliozSymphonieFantastique,
+		audio: musicAudio.berliozSymphonieFantastique,
 	},
 
 	// 4. 1835 — Frédéric Chopin : Nocturnes, Ballades et œuvres pour piano
@@ -1121,6 +1159,7 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['pere-goriot', 'on-ne-badine-pas', 'music-berlioz-symphonie-fantastique', 'painting-delacroix-liberte'],
 		importance: 'standard',
 		image: musicImages.chopinOeuvresPiano,
+		audio: musicAudio.chopinOeuvresPiano,
 	},
 
 	// 5. 1858 — Jacques Offenbach : Orphée aux Enfers
@@ -1143,6 +1182,7 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['second-empire-event', 'painting-manet-dejeuner', 'exposition-universelle-londres'],
 		importance: 'standard',
 		image: musicImages.offenbachOrphee,
+		audio: musicAudio.offenbachOrphee,
 	},
 
 	// 6. 1865 — Richard Wagner : Tristan und Isolde
@@ -1165,6 +1205,7 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['painting-manet-dejeuner', 'gregor-mendel', 'music-wagner-parsifal'],
 		importance: 'major',
 		image: musicImages.wagnerTristan,
+		audio: musicAudio.wagnerTristan,
 	},
 
 	// 7. 1875 — Georges Bizet : Carmen
@@ -1187,6 +1228,7 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['proclamation-troisieme-republique', 'painting-exposition-impressionniste-1874', 'moteur-explosion-otto'],
 		importance: 'standard',
 		image: musicImages.bizetCarmen,
+		audio: musicAudio.bizetCarmen,
 	},
 
 	// 8. 1882 — Richard Wagner : Parsifal
@@ -1209,5 +1251,6 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['pot-bouille', 'music-wagner-tristan'],
 		importance: 'standard',
 		image: musicImages.wagnerParsifal,
+		audio: musicAudio.wagnerParsifal,
 	},
 ];

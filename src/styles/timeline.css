@@ -940,6 +940,87 @@
 	border-radius: 0 4px 4px 0;
 }
 
+/* Écoute : extrait intégré (lecteur natif) ou lien externe */
+.details-listen {
+	margin: 0.85rem 0 0.25rem;
+	padding: 0.65rem 0.8rem;
+	border-radius: 6px;
+	font-size: 0.8rem;
+	color: var(--tl-muted);
+}
+
+.details-listen.is-embedded {
+	background: var(--tl-music-bg);
+	border: 1px solid var(--tl-music-border);
+	border-left: 3px solid var(--tl-music-color);
+}
+
+.details-listen.is-external {
+	background: var(--tl-surface);
+	border: 1px dashed var(--tl-music-border);
+}
+
+.details-section .details-listen-label {
+	margin: 0 0 0.45rem;
+	font-size: 0.84rem;
+	font-weight: 600;
+	line-height: 1.4;
+	color: var(--tl-music-color);
+}
+
+.details-listen-duration {
+	font-weight: 400;
+	color: var(--tl-muted);
+}
+
+.details-listen audio {
+	display: block;
+	width: 100%;
+	height: 36px;
+}
+
+.details-listen audio:focus-visible,
+.details-listen a:focus-visible {
+	outline: 2px solid var(--tl-music-color);
+	outline-offset: 2px;
+}
+
+.details-listen-credit,
+.details-listen-note {
+	display: block;
+	margin-top: 0.35rem;
+	font-size: 0.68rem;
+	line-height: 1.4;
+	letter-spacing: 0.01em;
+}
+
+.details-listen-note {
+	font-style: italic;
+}
+
+.details-listen-credit a {
+	color: inherit;
+	text-decoration: underline;
+	text-decoration-color: var(--tl-border);
+	text-underline-offset: 2px;
+}
+
+.details-listen-credit a:hover {
+	color: var(--tl-ink-soft);
+}
+
+.details-listen-link {
+	font-size: 0.84rem;
+	font-weight: 600;
+	color: var(--tl-music-color);
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.details-listen-link:hover {
+	color: var(--tl-ink);
+}
+
 .details-context-box {
 	background: var(--tl-surface-subtle);
 	border: 1px solid var(--tl-border-soft);
