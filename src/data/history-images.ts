@@ -1,0 +1,262 @@
+import type { TimelineItemImage } from './timeline';
+
+// --------------------------------------------------------------------------
+// Iconographie des jalons historiques (régimes, révolutions, guerres)
+// Fichiers servis localement depuis public/images/timeline/history/
+// (aucun lien direct vers Wikimedia Commons à l'exécution).
+// Licences vérifiées sur les pages Commons le 2026-10-08.
+// Variantes : <nom>-480.webp / <nom>-960.webp + fichier de repli <nom>.jpg (≤ 1600 px).
+// --------------------------------------------------------------------------
+
+const DIR = '/images/timeline/history';
+const COMMONS = 'Wikimedia Commons';
+
+export const historyImages = {
+	revolutionFrancaise: {
+		src: `${DIR}/houel-prise-bastille.jpg`,
+		srcset: `${DIR}/houel-prise-bastille-480.webp 480w, ${DIR}/houel-prise-bastille-960.webp 960w`,
+		width: 1600,
+		height: 1216,
+		fit: 'contain',
+		alt: 'Aquarelle de la prise de la Bastille : la forteresse dans la fumée, la foule armée et l’arrestation du gouverneur de Launay au premier plan',
+		caption: 'Jean-Pierre Houël, Prise de la Bastille (1789), aquarelle, BnF',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Prise_de_la_Bastille.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/4/4e/Prise_de_la_Bastille.jpg',
+			author: 'Jean-Pierre Houël',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Prise de la Bastille, aquarelle de Jean-Pierre Houël (1789). Bibliothèque nationale de France, Gallica btv1b103025148.',
+		},
+	},
+
+	consulat: {
+		src: `${DIR}/gros-bonaparte-premier-consul.jpg`,
+		srcset: `${DIR}/gros-bonaparte-premier-consul-480.webp 480w, ${DIR}/gros-bonaparte-premier-consul-960.webp 960w`,
+		width: 1047,
+		height: 1600,
+		fit: 'cover',
+		position: 'center 18%',
+		alt: 'Portrait en pied de Bonaparte en uniforme rouge de Premier consul, la main posée sur des traités',
+		caption: 'Antoine-Jean Gros, Bonaparte, Premier consul (1802), musée de la Légion d’honneur',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Gros_-_First_Consul_Bonaparte.png',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/4/46/Gros_-_First_Consul_Bonaparte.png',
+			author: 'Antoine-Jean Gros',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Premier Consul Bonaparte, huile sur toile d’Antoine-Jean Gros (1802), musée de la Légion d’honneur (PD-Art, PD-old).',
+		},
+	},
+
+	premierEmpire: {
+		src: `${DIR}/david-sacre-napoleon.jpg`,
+		srcset: `${DIR}/david-sacre-napoleon-480.webp 480w, ${DIR}/david-sacre-napoleon-960.webp 960w`,
+		width: 1600,
+		height: 1006,
+		fit: 'contain',
+		alt: 'Le Sacre de Napoléon à Notre-Dame : l’empereur, debout, s’apprête à couronner Joséphine agenouillée devant le pape Pie VII et la cour',
+		caption: 'Jacques-Louis David, Le Sacre de Napoléon (1805–1807), musée du Louvre',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Jacques-Louis_David_-_The_Coronation_of_Napoleon_(1805-1807).jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/1e/Jacques-Louis_David_-_The_Coronation_of_Napoleon_%281805-1807%29.jpg',
+			author: 'Jacques-Louis David',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Le Sacre de l’empereur Napoléon Ier et le couronnement de l’impératrice Joséphine, 2 décembre 1804. Huile sur toile, musée du Louvre.',
+		},
+	},
+
+	restauration: {
+		src: `${DIR}/gerard-sacre-charles-x.jpg`,
+		srcset: `${DIR}/gerard-sacre-charles-x-480.webp 480w, ${DIR}/gerard-sacre-charles-x-960.webp 960w`,
+		width: 1600,
+		height: 834,
+		fit: 'contain',
+		alt: 'Le sacre de Charles X dans la cathédrale de Reims : le roi en manteau fleurdelisé, entouré des prélats et des grands du royaume',
+		caption: 'François Gérard, Le Sacre de Charles X à Reims, 29 mai 1825 (vers 1827)',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Coronation_of_Charles_X_of_France_by_Fran%C3%A7ois_G%C3%A9rard,_circa_1827.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/7/72/Coronation_of_Charles_X_of_France_by_Fran%C3%A7ois_G%C3%A9rard%2C_circa_1827.jpg',
+			author: 'François Gérard',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'The Coronation of Charles X of France, François Gérard, vers 1827 (PD-Art).',
+		},
+	},
+
+	juillet1830: {
+		src: `${DIR}/lecomte-combat-rue-de-rohan.jpg`,
+		srcset: `${DIR}/lecomte-combat-rue-de-rohan-480.webp 480w, ${DIR}/lecomte-combat-rue-de-rohan-960.webp 960w`,
+		width: 1600,
+		height: 1168,
+		fit: 'contain',
+		alt: 'Combat de rue pendant les Trois Glorieuses : insurgés parisiens brandissant le drapeau tricolore face à la troupe dans la fumée des fusillades, rue de Rohan',
+		caption: 'Hippolyte Lecomte, Combat de la rue de Rohan, le 29 juillet 1830 (1831), musée Carnavalet',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:R%C3%A9volution_de_1830_-_Combat_de_la_rue_de_Rohan_-_29.07.1830.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/bf/R%C3%A9volution_de_1830_-_Combat_de_la_rue_de_Rohan_-_29.07.1830.jpg',
+			author: 'Hippolyte Lecomte',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Combat de la rue de Rohan, le 29 juillet 1830, Hippolyte Lecomte (1831), musée Carnavalet, inv. P213. Œuvre PD-old-100, photographie Paris Musées CC0.',
+		},
+	},
+
+	revolution1848: {
+		src: `${DIR}/philippoteaux-lamartine-hotel-de-ville.jpg`,
+		srcset: `${DIR}/philippoteaux-lamartine-hotel-de-ville-480.webp 480w, ${DIR}/philippoteaux-lamartine-hotel-de-ville-960.webp 960w`,
+		width: 1600,
+		height: 722,
+		fit: 'contain',
+		alt: 'Foule révolutionnaire massée devant l’Hôtel de Ville de Paris en février 1848 ; Lamartine, sur les marches, harangue les insurgés armés',
+		caption: 'Henri Félix Philippoteaux, Lamartine repoussant le drapeau rouge à l’Hôtel de Ville, le 25 février 1848, musée Carnavalet',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Henri_F%C3%A9lix_Philippoteaux_-_Lamartine_repoussant_le_drapeau_rouge_%C3%A0_l%27H%C3%B4tel_de_Ville,_le_25_f%C3%A9vrier_1848_-_P258_-_Mus%C3%A9e_Carnavalet.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/07/Henri_F%C3%A9lix_Philippoteaux_-_Lamartine_repoussant_le_drapeau_rouge_%C3%A0_l%27H%C3%B4tel_de_Ville%2C_le_25_f%C3%A9vrier_1848_-_P258_-_Mus%C3%A9e_Carnavalet.jpg',
+			author: 'Henri Félix Emmanuel Philippoteaux',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Lamartine repoussant le drapeau rouge à l’Hôtel de Ville, le 25 février 1848. Musée Carnavalet, inv. P258 (Paris Musées).',
+		},
+	},
+
+	deuxiemeRepublique: {
+		src: `${DIR}/bosredon-vote-ou-fusil.jpg`,
+		srcset: `${DIR}/bosredon-vote-ou-fusil-480.webp 480w, ${DIR}/bosredon-vote-ou-fusil-960.webp 960w`,
+		width: 993,
+		height: 1400,
+		fit: 'contain',
+		alt: 'Lithographie de 1848 : un ouvrier pose son fusil et glisse son bulletin dans l’urne du suffrage universel',
+		caption: 'Louis Marie Bosredon, Le Vote ou le fusil (1848), lithographie',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Louis_Marie_Bosredon_-_le_vote_ou_le_fusil.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/8/84/Louis_Marie_Bosredon_-_le_vote_ou_le_fusil.jpg',
+			author: 'Louis Marie Bosredon',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Louis Marie Bosredon, le vote ou le fusil, lithographie, 1848 (PD-old).',
+		},
+	},
+
+	coup1851: {
+		src: `${DIR}/pichio-baudin-barricade.jpg`,
+		srcset: `${DIR}/pichio-baudin-barricade-480.webp 480w, ${DIR}/pichio-baudin-barricade-960.webp 960w`,
+		width: 1600,
+		height: 1084,
+		fit: 'contain',
+		alt: 'Le député Alphonse Baudin, debout sur une barricade du faubourg Saint-Antoine, entouré d’ouvriers armés résistant au coup d’État',
+		caption: 'Ernest Pichio, Baudin sur la barricade du faubourg Saint-Antoine, le 3 décembre 1851 (1869), musée Carnavalet',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Ernest_Pichio_-_Victor_Baudin_(1811-1851)_sur_la_barricade_du_faubourg_Saint-Antoine,_le_3_d%C3%A9cembre_1851_-_P495_-_Mus%C3%A9e_Carnavalet.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/00/Ernest_Pichio_-_Victor_Baudin_%281811-1851%29_sur_la_barricade_du_faubourg_Saint-Antoine%2C_le_3_d%C3%A9cembre_1851_-_P495_-_Mus%C3%A9e_Carnavalet.jpg',
+			author: 'Louis-Ernest Pichio',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Victor Baudin (1811-1851) sur la barricade du faubourg Saint-Antoine, le 3 décembre 1851. Ernest Pichio, 1869. Musée Carnavalet, inv. P495 (Paris Musées).',
+		},
+	},
+
+	secondEmpire: {
+		src: `${DIR}/yvon-napoleon-iii-haussmann.jpg`,
+		srcset: `${DIR}/yvon-napoleon-iii-haussmann-480.webp 480w, ${DIR}/yvon-napoleon-iii-haussmann-960.webp 960w`,
+		width: 1199,
+		height: 1600,
+		fit: 'contain',
+		alt: 'Napoléon III, entouré de sa cour aux Tuileries, remet au baron Haussmann le décret d’annexion des communes limitrophes de Paris',
+		caption: 'Napoléon III remet à Haussmann le décret d’annexion des communes limitrophes (16 février 1859), d’après Adolphe Yvon — photographie du tableau, musée Carnavalet',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Napol%C3%A9on_III_remet_%C3%A0_Haussmann_les_d%C3%A9crets_d%27annexion_de_banlieues,_16_f%C3%A9vrier_1859,_peinture_de_Yvon..jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Napol%C3%A9on_III_remet_%C3%A0_Haussmann_les_d%C3%A9crets_d%27annexion_de_banlieues%2C_16_f%C3%A9vrier_1859%2C_peinture_de_Yvon..jpg',
+			author: 'Musée Carnavalet, d’après Adolphe Yvon',
+			license: 'CC0',
+			attributionRequired: false,
+			description: 'Napoléon III remet à Haussmann les décrets d’annexion de banlieues, 16 février 1859. Photographie d’après la peinture d’Adolphe Yvon (tableau détruit), musée Carnavalet.',
+		},
+	},
+
+	guerre1870: {
+		src: `${DIR}/artillerie-tranchees-1870.jpg`,
+		srcset: `${DIR}/artillerie-tranchees-1870-480.webp 480w, ${DIR}/artillerie-tranchees-1870-960.webp 960w`,
+		width: 1600,
+		height: 1188,
+		fit: 'contain',
+		alt: 'Photographie d’époque : pièces d’artillerie et soldats retranchés derrière des gabions dans un paysage d’arbres abattus pendant la guerre de 1870',
+		caption: 'Pièces d’artillerie dans des tranchées durant la guerre de 1870, tirage albuminé anonyme (vers 1871), musée Carnavalet',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Pi%C3%A8ces_d%27artillerie_dans_des_tranch%C3%A9es_durant_la_guerre_de_1870,_photographie_anonyme._Paris_Mus%C3%A9es_20230512063422.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/2/23/Pi%C3%A8ces_d%27artillerie_dans_des_tranch%C3%A9es_durant_la_guerre_de_1870%2C_photographie_anonyme._Paris_Mus%C3%A9es_20230512063422.jpg',
+			author: 'Photographe anonyme',
+			license: 'CC0',
+			attributionRequired: false,
+			description: 'Pièces d’artillerie dans des tranchées durant la guerre de 1870, photographie anonyme, tirage sur papier albuminé, vers 1871. Musée Carnavalet.',
+		},
+	},
+
+	sedan: {
+		src: `${DIR}/capitulation-sedan-imagerie.jpg`,
+		srcset: `${DIR}/capitulation-sedan-imagerie-480.webp 480w, ${DIR}/capitulation-sedan-imagerie-960.webp 960w`,
+		width: 1600,
+		height: 1292,
+		fit: 'contain',
+		alt: 'Imagerie populaire allemande en couleurs : officiers français remettant leur reddition aux troupes prussiennes à Sedan, sur fond de combats',
+		caption: '« Capitulation von Sedan », imagerie populaire allemande (Götz & Ephraim, 1870–1871), musée Carnavalet',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Bilder_aus_dem_Kriege_Deutschlands_gegen_Frankreich._Capitulation_von_Sedan_und_Uebergabe_der_franz%C3%B6sischen_Armee,_Paris_Mus%C3%A9es_20230602235902.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/e1/Bilder_aus_dem_Kriege_Deutschlands_gegen_Frankreich._Capitulation_von_Sedan_und_Uebergabe_der_franz%C3%B6sischen_Armee%2C_Paris_Mus%C3%A9es_20230602235902.jpg',
+			author: 'Graveur anonyme (éd. Götz & Ephraim)',
+			license: 'CC0',
+			attributionRequired: false,
+			description: 'Bilder aus dem Kriege Deutschlands gegen Frankreich. Capitulation von Sedan und Uebergabe der französischen Armee. Imagerie allemande, 1870–1871. Musée Carnavalet.',
+		},
+	},
+
+	quatreSeptembre: {
+		src: `${DIR}/didier-guiaud-4-septembre-1870.jpg`,
+		srcset: `${DIR}/didier-guiaud-4-septembre-1870-480.webp 480w, ${DIR}/didier-guiaud-4-septembre-1870-960.webp 960w`,
+		width: 1600,
+		height: 1009,
+		fit: 'contain',
+		alt: 'Foule parisienne massée devant le palais du Corps législatif le 4 septembre 1870, à l’annonce de la déchéance de l’Empire',
+		caption: 'Jules Didier et Jacques Guiaud, L’annonce de l’abolition du régime impérial devant le Corps législatif, 4 septembre 1870 (1871)',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:JulesDidierJacquesGuiaudAbolitionEmpire4septembre1870.JPG',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/7/75/JulesDidierJacquesGuiaudAbolitionEmpire4septembre1870.JPG',
+			author: 'Jules Didier et Jacques Guiaud',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'L’annonce de l’abolition du régime impérial devant le palais du corps législatif (à Paris), le 4 septembre 1870. Jules Didier et Jacques Guiaud, 1871.',
+		},
+	},
+
+	commune: {
+		src: `${DIR}/braquehais-barricade-voltaire.jpg`,
+		srcset: `${DIR}/braquehais-barricade-voltaire-480.webp 480w, ${DIR}/braquehais-barricade-voltaire-960.webp 960w`,
+		width: 1600,
+		height: 1087,
+		fit: 'contain',
+		alt: 'Photographie de 1871 : gardes nationaux et Communards posant derrière une barricade de pavés à l’angle des boulevards Voltaire et Richard-Lenoir',
+		caption: 'Bruno Braquehais, barricade à l’angle des boulevards Voltaire et Richard-Lenoir (1871), Bibliothèque historique de la Ville de Paris',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Barricade_Voltaire_Lenoir_Commune_Paris_1871.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/2/2e/Barricade_Voltaire_Lenoir_Commune_Paris_1871.jpg',
+			author: 'Bruno Braquehais',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Barricade à l’angle des boulevards Voltaire et Richard-Lenoir pendant la Commune de Paris de 1871. Photographie de Bruno Braquehais (BHVP).',
+		},
+	},
+} satisfies Record<string, TimelineItemImage>;

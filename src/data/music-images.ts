@@ -5,7 +5,7 @@ import type { TimelineItemImage } from './timeline';
 // Fichiers servis localement depuis public/images/timeline/music/
 // (aucun lien distant vers Wikimedia Commons à l'exécution).
 // Licences vérifiées sur les pages sources le 2026-10-08.
-// Tous les documents sont en Domaine Public (manuscrits autographes, affiches d'époque, partitions et portraits historiques).
+// Portraits des compositeurs ou iconographie théâtrale d'époque (affiches, décors), tous en Domaine public.
 // --------------------------------------------------------------------------
 
 const DIR = '/images/timeline/music';
@@ -33,59 +33,62 @@ export const musicImages = {
 	},
 
 	beethovenSymphonie9: {
-		src: `${DIR}/beethoven-symphonie-9.png`,
-		srcset: `${DIR}/beethoven-symphonie-9-480.webp 480w, ${DIR}/beethoven-symphonie-9-960.webp 960w`,
-		width: 1600,
-		height: 1263,
-		fit: 'contain',
-		alt: 'Manuscrit autographe de la Symphonie n°9 de Ludwig van Beethoven (1824), page 12 avec annotations de la main du compositeur',
-		caption: 'Manuscrit autographe de la Neuvième Symphonie (1824), Staatsbibliothek zu Berlin',
+		src: `${DIR}/beethoven-portrait-stieler.jpg`,
+		srcset: `${DIR}/beethoven-portrait-stieler-480.webp 480w, ${DIR}/beethoven-portrait-stieler-960.webp 960w`,
+		width: 1285,
+		height: 1600,
+		fit: 'cover',
+		position: 'center 22%',
+		alt: 'Portrait de Beethoven à cinquante ans, cheveux gris en désordre, écharpe rouge, crayon à la main au-dessus d’une partition',
+		caption: 'Joseph Karl Stieler, Beethoven avec le manuscrit de la Missa solemnis (1820)',
 		credit: {
 			source: COMMONS,
-			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Ninth_Symphony_original.png',
-			author: 'Ludwig van Beethoven',
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Joseph_Karl_Stieler%27s_Beethoven_mit_dem_Manuskript_der_Missa_solemnis.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Joseph_Karl_Stieler%27s_Beethoven_mit_dem_Manuskript_der_Missa_solemnis.jpg',
+			author: 'Joseph Karl Stieler',
 			license: 'Domaine public',
 			attributionRequired: false,
-			attribution: 'Ludwig van Beethoven, manuscrit autographe de la 9e Symphonie, 1824',
-			description: 'Page originale manuscrite conservée à la Bibliothèque d’État de Berlin (Preußischer Kulturbesitz).',
+			description: 'Beethoven mit dem Manuskript der Missa solemnis, Joseph Karl Stieler, 1820 (PD-Art).',
 		},
 	},
 
 	berliozSymphonieFantastique: {
-		src: `${DIR}/berlioz-symphonie-fantastique.jpg`,
-		srcset: `${DIR}/berlioz-symphonie-fantastique-480.webp 480w, ${DIR}/berlioz-symphonie-fantastique-960.webp 960w`,
-		width: 1176,
-		height: 1600,
-		fit: 'contain',
-		alt: 'Page de titre autographe de la Symphonie fantastique d’Hector Berlioz (1830) conservée à la Bibliothèque nationale de France',
-		caption: 'Page de titre autographe de la Symphonie fantastique (1830), BnF Gallica',
+		src: `${DIR}/berlioz-portrait-signol.jpg`,
+		srcset: `${DIR}/berlioz-portrait-signol-480.webp 430w`,
+		width: 430,
+		height: 548,
+		fit: 'cover',
+		position: 'center 25%',
+		alt: 'Portrait d’Hector Berlioz jeune, chevelure rousse abondante, cravate rouge, peint à la villa Médicis',
+		caption: 'Émile Signol, Hector Berlioz (1832), peint à la villa Médicis',
 		credit: {
 			source: COMMONS,
-			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Symphonie_fantastique_Titre.jpg',
-			author: 'Hector Berlioz',
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Berlioz_young.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/8/8d/Berlioz_young.jpg',
+			author: 'Émile Signol',
 			license: 'Domaine public',
 			attributionRequired: false,
-			attribution: 'Hector Berlioz, Symphonie fantastique (autographe, 1830) — BnF',
-			description: 'Manuscrit autographe conservé au Département de la Musique de la Bibliothèque nationale de France.',
+			description: 'Portrait d’Hector Berlioz peint par Émile Signol, 1832 (PD-old).',
 		},
 	},
 
 	chopinOeuvresPiano: {
-		src: `${DIR}/chopin-oeuvres-piano.png`,
-		srcset: `${DIR}/chopin-oeuvres-piano-480.webp 480w, ${DIR}/chopin-oeuvres-piano.png 775w`,
-		width: 775,
-		height: 625,
-		fit: 'contain',
-		alt: 'Manuscrit autographe de la première page de la Ballade n°1 en sol mineur op. 23 de Frédéric Chopin (c. 1835)',
-		caption: 'Manuscrit autographe de la Ballade n°1 op. 23 en sol mineur de Frédéric Chopin (c. 1835)',
+		src: `${DIR}/chopin-portrait-delacroix.jpg`,
+		srcset: `${DIR}/chopin-portrait-delacroix-480.webp 480w, ${DIR}/chopin-portrait-delacroix-960.webp 960w`,
+		width: 1197,
+		height: 1600,
+		fit: 'cover',
+		position: 'center 25%',
+		alt: 'Portrait de Frédéric Chopin par Delacroix, visage tourné de trois quarts, touches de peinture vives sur fond sombre',
+		caption: 'Eugène Delacroix, Frédéric Chopin (1838), musée du Louvre — fragment d’un double portrait avec George Sand',
 		credit: {
 			source: COMMONS,
-			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Chopin_Ballade_1.png',
-			author: 'Frédéric Chopin',
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Eug%C3%A8ne_Ferdinand_Victor_Delacroix_043.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/f/f5/Eug%C3%A8ne_Ferdinand_Victor_Delacroix_043.jpg',
+			author: 'Eugène Delacroix',
 			license: 'Domaine public',
 			attributionRequired: false,
-			attribution: 'Frédéric Chopin, manuscrit de la Ballade n°1 op. 23',
-			description: 'Première page autographe de la Ballade op. 23 composée dans les années 1830 à Paris.',
+			description: 'Portrait of Frédéric Chopin by Eugène Delacroix, 1838, originally part of a larger painting showing both Chopin and George Sand. The Yorck Project (2002).',
 		},
 	},
 
@@ -96,7 +99,7 @@ export const musicImages = {
 		height: 1294,
 		fit: 'contain',
 		alt: 'Affiche lithographique originale de Jules Chéret pour Orphée aux Enfers de Jacques Offenbach au Théâtre des Bouffes-Parisiens',
-		caption: 'Orphée aux Enfers au Théâtre des Bouffes-Parisiens, affiche de Jules Chéret (BnF Gallica)',
+		caption: 'Orphée aux Enfers au Théâtre des Bouffes-Parisiens, affiche de Jules Chéret pour la reprise de 1866 (BnF Gallica)',
 		credit: {
 			source: COMMONS,
 			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Jules_Ch%C3%A9ret_-_Poster_for_Jacques_Offenbach%27s_Orph%C3%A9e_aux_enfers_at_the_Bouffes_Parisiens_-_Original.jpg',

@@ -625,7 +625,7 @@
 	font-weight: 700;
 }
 
-/* Vignette documentaire des jalons artistiques et scientifiques (hauteur fixe : aucun décalage de mise en page) */
+/* Vignette documentaire des jalons artistiques, scientifiques et industriels (hauteur fixe : aucun décalage de mise en page) */
 .entry-thumb {
 	display: block;
 	height: 104px;

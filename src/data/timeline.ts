@@ -1,3 +1,6 @@
+import { historyImages } from './history-images';
+import { industryImages } from './industry-images';
+import { literatureImages } from './literature-images';
 import { scienceImages } from './science-images';
 import { paintingImages } from './painting-images';
 import { musicImages } from './music-images';
@@ -167,6 +170,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'revolution-francaise-regime',
 		relatedTo: ['bonaparte-consulat', 'premier-empire', 'restauration'],
 		importance: 'major',
+		image: historyImages.revolutionFrancaise,
 	},
 
 	// 1799 - Bonaparte / Consulat
@@ -184,6 +188,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'consulat',
 		relatedTo: ['revolution-francaise', 'premier-empire'],
 		importance: 'standard',
+		image: historyImages.consulat,
 	},
 
 	// 1804 - Premier Empire
@@ -201,6 +206,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'premier-empire',
 		relatedTo: ['bonaparte-consulat', 'restauration', 'on-ne-badine-pas'],
 		importance: 'major',
+		image: historyImages.premierEmpire,
 	},
 
 	// 1815 - Restauration
@@ -218,6 +224,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'restauration',
 		relatedTo: ['premier-empire-event', 'revolution-juillet-1830'],
 		importance: 'standard',
+		image: historyImages.restauration,
 	},
 
 	// 1830 - Les Trois Glorieuses
@@ -234,6 +241,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'monarchie-juillet',
 		relatedTo: ['restauration-event', 'on-ne-badine-pas', 'pere-goriot', 'e-galois'],
 		importance: 'major',
+		image: historyImages.juillet1830,
 	},
 
 	// 1834 - On ne badine pas avec l'amour (Alfred de Musset)
@@ -253,6 +261,7 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['monarchie-juillet', 'revolution-juillet-1830', 'pere-goriot'],
 		quote: '« On est souvent trompé en amour, souvent blessé et souvent malheureux ; mais on aime, et quand on est sur le bord de sa tombe, on se retourne pour regarder en arrière, et on se dit : j’ai souffert souvent, je me suis trompé quelquefois, mais j’ai aimé. »',
 		importance: 'major',
+		image: literatureImages.musset,
 	},
 
 	// 1835 - Le Père Goriot (Honoré de Balzac)
@@ -272,11 +281,7 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['monarchie-juillet', 'revolution-juillet-1830', 'on-ne-badine-pas', 'pot-bouille'],
 		quote: '« À nous deux maintenant ! » — Défi final de Rastignac lancé à Paris du haut du Père-Lachaise.',
 		importance: 'major',
-		image: {
-			src: '/_astro/honore-de-balzac-1842.CQNqqlaG_dhsx7.webp',
-			alt: 'Portrait d’Honoré de Balzac en 1842 par Louis-Auguste Bisson',
-			caption: 'Honoré de Balzac (1842), daguerréotype de Louis-Auguste Bisson',
-		},
+		image: literatureImages.balzac,
 	},
 
 	// 1848 - Révolution de 1848
@@ -293,6 +298,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'deuxieme-republique',
 		relatedTo: ['pere-goriot', 'deuxieme-republique-event', 'coup-etat-1851'],
 		importance: 'major',
+		image: historyImages.revolution1848,
 	},
 
 	// 1848 - Deuxième République
@@ -310,6 +316,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'deuxieme-republique',
 		relatedTo: ['revolution-1848', 'coup-etat-1851'],
 		importance: 'standard',
+		image: historyImages.deuxiemeRepublique,
 	},
 
 	// 1851 - Coup d'État de Louis-Napoléon Bonaparte
@@ -326,6 +333,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'deuxieme-republique',
 		relatedTo: ['deuxieme-republique-event', 'second-empire-event'],
 		importance: 'major',
+		image: historyImages.coup1851,
 	},
 
 	// 1852 - Second Empire
@@ -343,6 +351,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'second-empire',
 		relatedTo: ['coup-etat-1851', 'guerre-franco-prussienne', 'cahiers-douai', 'pot-bouille'],
 		importance: 'major',
+		image: historyImages.secondEmpire,
 	},
 
 	// 1870 - Guerre franco-prussienne
@@ -360,6 +369,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'second-empire',
 		relatedTo: ['cahiers-douai', 'bataille-sedan', 'proclamation-troisieme-republique'],
 		importance: 'major',
+		image: historyImages.guerre1870,
 	},
 
 	// 1870 - Cahiers de Douai (Arthur Rimbaud)
@@ -380,11 +390,7 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['guerre-franco-prussienne', 'bataille-sedan', 'proclamation-troisieme-republique', 'second-empire', 'commune-paris'],
 		quote: '« Un soldat jeune, bouche ouverte, tête nue, / Et la nuque baignant dans le frais cresson bleu, / Dort ; il est étendu dans l’herbe, sous la nue... » — Le Dormeur du val (octobre 1870)',
 		importance: 'major',
-		image: {
-			src: '/_astro/arthur-rimbaud.XNJ406zq_Zzz5Ag.webp',
-			alt: 'Portrait d’Arthur Rimbaud adolescent par Étienne Carjat',
-			caption: 'Arthur Rimbaud à 17 ans, photographie d’Étienne Carjat',
-		},
+		image: literatureImages.rimbaud,
 	},
 
 	// 1870 - Bataille de Sedan
@@ -401,6 +407,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'second-empire',
 		relatedTo: ['guerre-franco-prussienne', 'cahiers-douai', 'proclamation-troisieme-republique'],
 		importance: 'major',
+		image: historyImages.sedan,
 	},
 
 	// 1870 - Chute du Second Empire / Proclamation de la IIIe République
@@ -417,6 +424,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'troisieme-republique',
 		relatedTo: ['bataille-sedan', 'cahiers-douai', 'commune-paris'],
 		importance: 'major',
+		image: historyImages.quatreSeptembre,
 	},
 
 	// 1871 - Commune de Paris
@@ -433,11 +441,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'troisieme-republique',
 		relatedTo: ['cahiers-douai', 'proclamation-troisieme-republique', 'pot-bouille'],
 		importance: 'major',
-		image: {
-			src: '/_astro/commune-barricade-1871.CHMdUWQq_ZIX0W3.webp',
-			alt: 'Barricade de la Commune de Paris en 1871 par Bruno Braquehais',
-			caption: 'Barricade à l’angle des boulevards Voltaire et Richard-Lenoir, 1871 (Bruno Braquehais)',
-		},
+		image: historyImages.commune,
 	},
 
 	// 1882 - Pot-Bouille (Émile Zola)
@@ -457,6 +461,7 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['troisieme-republique', 'second-empire', 'pere-goriot'],
 		quote: '« C’est la cuisine de la bourgeoisie, le pot-bouille où tout mijote sans bruit derrière les portes d’acajou. »',
 		importance: 'major',
+		image: literatureImages.zola,
 	},
 
 	// --------------------------------------------------------------------------
@@ -479,6 +484,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'revolution-francaise-regime',
 		relatedTo: ['chemin-de-fer-stockton', 'liverpool-manchester'],
 		importance: 'major',
+		image: industryImages.watt,
 	},
 
 	// 2. 1825 — Premier chemin de fer public à vapeur
@@ -497,6 +503,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'restauration',
 		relatedTo: ['machine-vapeur-watt', 'liverpool-manchester', 'paris-saint-germain'],
 		importance: 'major',
+		image: industryImages.stockton,
 	},
 
 	// 3. 1830 — Liverpool–Manchester
@@ -515,6 +522,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'monarchie-juillet',
 		relatedTo: ['chemin-de-fer-stockton', 'paris-saint-germain', 'procede-bessemer'],
 		importance: 'major',
+		image: industryImages.liverpool,
 	},
 
 	// 4. 1837 — Paris–Saint-Germain
@@ -533,6 +541,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'monarchie-juillet',
 		relatedTo: ['liverpool-manchester', 'pere-goriot', 'on-ne-badine-pas'],
 		importance: 'medium',
+		image: industryImages.parisSaintGermain,
 	},
 
 	// 5. 1851 — Exposition universelle de Londres
@@ -551,6 +560,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'deuxieme-republique',
 		relatedTo: ['procede-bessemer', 'coup-etat-1851', 'second-empire-event'],
 		importance: 'major',
+		image: industryImages.crystalPalace,
 	},
 
 	// 6. 1855 — Procédé Bessemer
@@ -569,6 +579,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'second-empire',
 		relatedTo: ['exposition-universelle-londres', 'dynamo-gramme', 'second-empire-event'],
 		importance: 'major',
+		image: industryImages.bessemer,
 	},
 
 	// 7. 1871 — Dynamo de Gramme
@@ -587,6 +598,8 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'troisieme-republique',
 		relatedTo: ['moteur-explosion-otto', 'commune-paris'],
 		importance: 'major',
+		image: industryImages.gramme,
+		secondaryImage: industryImages.grammePhoto,
 	},
 
 	// 8. 1876 — Moteur à explosion
@@ -605,6 +618,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'troisieme-republique',
 		relatedTo: ['dynamo-gramme', 'pot-bouille'],
 		importance: 'major',
+		image: industryImages.otto,
 	},
 
 	// --------------------------------------------------------------------------

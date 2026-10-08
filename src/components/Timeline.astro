@@ -237,7 +237,7 @@ const clientData = {
 										</span>
 									</div>
 
-									{item.image && (item.isScience || item.isPainting || item.isMusic) && (
+									{item.image && (item.isScience || item.isIndustry || item.isPainting || item.isMusic) && (
 										<span
 											class={`entry-thumb fit-${item.image.fit ?? 'cover'} ${item.image.width && item.image.height && item.image.height > item.image.width * 1.2 ? 'entry-thumb--portrait' : ''}`}
 											aria-hidden="true"
