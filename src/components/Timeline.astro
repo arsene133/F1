@@ -1,8 +1,6 @@
 ---
 import '../styles/timeline.css';
 import {
-	TIMELINE_END_YEAR,
-	TIMELINE_START_YEAR,
 	timelineItems,
 	timelinePeriods,
 	type TimelineItem,
@@ -16,122 +14,67 @@ interface Props {
 
 const { initialSelectedId = 'pere-goriot' } = Astro.props;
 
-// Calcul des positions horizontales (en pourcentage ou en px)
-// Espace virtuel étendu : 2200px pour laisser respirer les événements de 1789 à 1890
-const CANVAS_WIDTH = 2200;
-const TOTAL_YEARS = TIMELINE_END_YEAR - TIMELINE_START_YEAR; // 1890 - 1785 = 105 ans
-
-function yearToX(year: number, offsetFraction = 0): number {
-	const frac = (year + offsetFraction - TIMELINE_START_YEAR) / TOTAL_YEARS;
-	return Math.round(frac * CANVAS_WIDTH);
-}
-
-// Génération des repères chronologiques tous les 5 ou 10 ans
-const yearTicks: { year: number; isMajor: boolean; x: number }[] = [];
-for (let y = 1785; y <= 1890; y += 5) {
-	yearTicks.push({
-		year: y,
-		isMajor: y % 10 === 0,
-		x: yearToX(y),
-	});
-}
-
-// Couleurs et positions des bandes de régimes politiques (Layer 1)
-const periodStyleMap: Record<string, { bg: string; border: string }> = {
-	'revolution-francaise-regime': { bg: 'var(--band-rev)', border: 'var(--tl-rev-border)' },
-	consulat: { bg: 'var(--band-consulat)', border: '#cfa282' },
-	'premier-empire': { bg: 'var(--band-empire)', border: 'var(--tl-regime-border)' },
-	restauration: { bg: 'var(--band-restauration)', border: '#b0bac7' },
-	'monarchie-juillet': { bg: 'var(--band-monarchie)', border: '#7da8a5' },
-	'deuxieme-republique': { bg: 'var(--band-deuxieme-rep)', border: '#c4ad91' },
-	'second-empire': { bg: 'var(--band-second-empire)', border: '#9297b8' },
-	'troisieme-republique': { bg: 'var(--band-troisieme-rep)', border: '#84acc8' },
-};
-
-const periodsWithLayout = timelinePeriods.map((p) => {
-	const left = yearToX(p.startYear);
-	const right = yearToX(p.endYear);
-	const width = Math.max(right - left, 30);
-	const colors = periodStyleMap[p.id] || { bg: 'rgba(0,0,0,0.05)', border: 'var(--tl-border)' };
-	return {
-		...p,
-		left,
-		width,
-		bg: colors.bg,
-		border: colors.border,
+// Tri rigoureux et programmatique des éléments par ordre chronologique
+// Les œuvres littéraires de la même année sont ordonnées avec pertinence (ex. Sedan avant ou après 1870)
+const sortedTimelineItems = [...timelineItems].sort((a, b) => {
+	if (a.year !== b.year) return a.year - b.year;
+	// Ordre chronologique fin en 1870
+	const order1870: Record<string, number> = {
+		'guerre-franco-prussienne': 1,
+		'bataille-sedan': 2,
+		'proclamation-troisieme-republique': 3,
+		'cahiers-douai': 4,
 	};
+	const orderA = order1870[a.id] || 0;
+	const orderB = order1870[b.id] || 0;
+	return orderA - orderB;
 });
 
-// Items séparés : Littérature (Layer 3) vs Événements / Révolutions / Guerres (Layer 2)
-// Ajustement des fractions pour éviter les chevauchements précis en 1870
-const literatureItems = timelineItems.filter((item) => item.type === 'literature').map((item) => {
-	let offset = 0;
-	let tier = 'normal';
-	if (item.id === 'on-ne-badine-pas') {
-		offset = 0.0;
-		tier = 'tier-high'; // Musset légèrement surélevé pour être immédiatement distinguable de Balzac
-	}
-	if (item.id === 'pere-goriot') {
-		offset = 0.8; // Balzac positionné après
-		tier = 'normal';
-	}
-	if (item.id === 'cahiers-douai') {
-		offset = 0.0;
-		tier = 'normal';
-	}
-	if (item.id === 'pot-bouille') {
-		offset = 0.4;
-		tier = 'normal';
-	}
-	const x = yearToX(item.year, offset);
-	return {
-		...item,
-		x,
-		tier,
-	};
-});
+// Périodes politiques associées par id
+const periodsMap = new Map<string, TimelinePeriod>(timelinePeriods.map((p) => [p.id, p]));
 
-const eventItems = timelineItems.filter((item) => item.type !== 'literature').map((item) => {
-	let offset = 0;
-	let isStaggered = false;
-	if (item.id === 'revolution-juillet-1830') offset = 0.55; // Fin juillet 1830
-	if (item.id === 'revolution-1848') offset = 0.15; // Février 1848
-	if (item.id === 'deuxieme-republique-event') {
-		offset = 0.45;
-		isStaggered = true;
-	}
-	if (item.id === 'coup-etat-1851') offset = 0.9; // Décembre 1851
-	if (item.id === 'guerre-franco-prussienne') offset = 0.15; // Été 1870
-	if (item.id === 'bataille-sedan') {
-		offset = 0.68; // 2 sept 1870
-		isStaggered = true;
-	}
-	if (item.id === 'proclamation-troisieme-republique') offset = 0.9; // 4 sept 1870
-	if (item.id === 'commune-paris') offset = 0.35; // Printemps 1871
-	const x = yearToX(item.year, offset);
+// Identifier les tournants historiques majeurs pour accentuation visuelle
+const majorTurningPointIds = new Set([
+	'revolution-francaise',
+	'revolution-juillet-1830',
+	'revolution-1848',
+	'bataille-sedan',
+	'proclamation-troisieme-republique',
+	'commune-paris',
+]);
 
-	let eventColor = 'var(--tl-regime-color)';
-	if (item.type === 'revolution') eventColor = 'var(--tl-rev-color)';
-	if (item.type === 'war') eventColor = 'var(--tl-war-color)';
+// Détermination de l'alternance gauche / droite pour le bureau
+// Les œuvres littéraires et les tournants majeurs s'alternent harmonieusement
+let sideToggle = 0;
+const enrichedItems = sortedTimelineItems.map((item) => {
+	const isLiterature = item.type === 'literature';
+	const isMajorTurningPoint = majorTurningPointIds.has(item.id);
+	const period = periodsMap.get(item.periodId);
+
+	// Alternance gauche/droite
+	const alignment = sideToggle % 2 === 0 ? 'align-left' : 'align-right';
+	sideToggle++;
 
 	return {
 		...item,
-		x,
-		eventColor,
-		isStaggered,
+		alignment,
+		isLiterature,
+		isMajorTurningPoint,
+		periodTitle: period ? period.title : '',
+		periodDates: period ? period.displayDates : '',
 	};
 });
 
-// Préparation des données JSON sécurisées pour le script client
+// Données sérialisées pour le script client
 const clientData = {
-	items: timelineItems,
+	items: sortedTimelineItems,
 	periods: timelinePeriods,
 	initialSelectedId,
 };
 ---
 
 <div class="timeline-wrapper" id="timeline-app" data-timeline={JSON.stringify(clientData)}>
-	<!-- En-tête pédagogique -->
+	<!-- En-tête éditorial -->
 	<header class="timeline-editorial-header">
 		<div class="eyebrow">Visualisation éditoriale interactive</div>
 		<h1>Frise chronologique — littérature et histoire au XIXe siècle</h1>
@@ -150,7 +93,7 @@ const clientData = {
 	<div class="timeline-controls" role="toolbar" aria-label="Filtres de la frise chronologique">
 		<div class="timeline-filters-group">
 			<span class="timeline-filters-label">Filtrer par :</span>
-			{timelineFilters.map((filter, index) => (
+			{timelineFilters.map((filter) => (
 				<button
 					type="button"
 					class={`timeline-filter-btn ${filter.id === 'all' ? 'active' : ''}`}
@@ -167,138 +110,137 @@ const clientData = {
 		</div>
 	</div>
 
-	<!-- Conteneur à défilement horizontal de l'axe -->
-	<div class="timeline-scroll-container" id="timeline-scroll" tabindex="0" aria-label="Frise chronologique défilable horizontalement">
-		<div class="timeline-canvas" style={`--canvas-width: ${CANVAS_WIDTH}px;`}>
-			
-			<!-- Ligne principale d'axe temporel -->
-			<div class="timeline-axis-line" aria-hidden="true"></div>
+	<!-- Disposition principale : Frise verticale + Panneau d'informations -->
+	<div class="timeline-main-layout">
+		
+		<!-- Colonne verticale centrale -->
+		<div class="vertical-timeline-container" id="vertical-timeline" aria-label="Frise chronologique verticale de 1789 à 1882">
+			<!-- Ligne continue d'axe vertical -->
+			<div class="vertical-spine-line" aria-hidden="true"></div>
+			<div class="timeline-flow-arrow" aria-hidden="true">▼</div>
 
-			<!-- Repères d'années (graduation) -->
-			<div class="timeline-year-ticks" aria-hidden="true">
-				{yearTicks.map((tick) => (
-					<div
-						class={`year-tick ${tick.isMajor ? 'major-tick' : ''}`}
-						style={`left: ${tick.x}px;`}
-						data-year={tick.year}
-					>
-						<div class="year-tick-mark"></div>
-						{tick.isMajor && <span class="year-tick-label">{tick.year}</span>}
-					</div>
-				))}
-			</div>
+			<!-- Liste ordonnée sémantique <ol> -->
+			<ol class="timeline-ordered-list">
+				{enrichedItems.map((item, index) => {
+					// Bannière de régime politique contextuelle si nouvelle période
+					const prevItem = index > 0 ? enrichedItems[index - 1] : null;
+					const isNewPeriod = !prevItem || prevItem.periodId !== item.periodId;
+					const currentPeriod = periodsMap.get(item.periodId);
 
-			<!-- SVG pour les liaisons graphiques dynamiques de contexte -->
-			<svg class="timeline-connectors-svg" id="timeline-svg" aria-hidden="true">
-				<!-- Chemins tracés dynamiquement en JavaScript -->
-			</svg>
+					return (
+						<>
+							{isNewPeriod && currentPeriod && (
+								<li
+									class="regime-context-banner"
+									id={`period-banner-${currentPeriod.id}`}
+									data-period-id={currentPeriod.id}
+									aria-hidden="true"
+								>
+									<span class="regime-banner-title">Contexte politique · {currentPeriod.title}</span>
+									<span class="regime-banner-dates">{currentPeriod.displayDates}</span>
+								</li>
+							)}
 
-			<!-- LAYER 1 : Périodes et régimes politiques (Bandes de fond) -->
-			<div class="timeline-regimes-layer" role="region" aria-label="Régimes politiques">
-				{periodsWithLayout.map((p) => (
-					<button
-						type="button"
-						class={`timeline-regime-band ${p.fadeEnd ? 'fade-end' : ''}`}
-						id={`period-${p.id}`}
-						data-period-id={p.id}
-						style={`left: ${p.left}px; width: ${p.width}px; --band-bg: ${p.bg}; --band-border: ${p.border};`}
-						title={`${p.title} (${p.displayDates})`}
-						aria-label={`Régime : ${p.title}, ${p.displayDates}`}
-					>
-						<span class="band-title">{p.title}</span>
-						<span class="band-dates">{p.displayDates}</span>
-					</button>
-				))}
-			</div>
+							<li
+								class={`timeline-step ${item.alignment} ${item.isLiterature ? 'is-literature' : ''} ${item.isMajorTurningPoint ? 'major-turning-point' : ''}`}
+								id={`step-${item.id}`}
+								data-item-id={item.id}
+								data-item-type={item.type}
+								data-period-id={item.periodId}
+								data-year={item.year}
+							>
+								<!-- Nœud d'axe sur la colonne vertébrale -->
+								<div class="step-spine-node" aria-hidden="true">
+									<div class="spine-marker-dot"></div>
+								</div>
 
-			<!-- LAYER 3 : Œuvres littéraires (Cartes au-dessus de l'axe) -->
-			<div class="timeline-literature-layer" role="region" aria-label="Œuvres littéraires">
-				{literatureItems.map((item) => (
-					<div
-						class={`literature-card-container ${item.tier}`}
-						id={`node-container-${item.id}`}
-						style={`left: ${item.x}px;`}
-					>
-						<button
-							type="button"
-							class={`literature-node-btn ${item.id === initialSelectedId ? 'selected' : ''}`}
-							id={`item-${item.id}`}
-							data-item-id={item.id}
-							data-item-type="literature"
-							data-period-id={item.periodId}
-							data-year={item.year}
-							aria-pressed={item.id === initialSelectedId ? 'true' : 'false'}
-							aria-label={`${item.title}, ${item.year}, par ${item.author}`}
-						>
-							<div class="lit-badge">{item.tagLabel}</div>
-							<div class="lit-year">{item.year}</div>
-							<div class="lit-title">{item.title}</div>
-							<div class="lit-author">{item.author}</div>
-						</button>
-						<div class="literature-stem" aria-hidden="true"></div>
-					</div>
-				))}
-			</div>
+								<!-- Connecteur latéral vers la carte -->
+								<div class="step-branch-connector" aria-hidden="true"></div>
 
-			<!-- LAYER 2 : Événements historiques, révolutions, guerres (Marqueurs sous l'axe) -->
-			<div class="timeline-events-layer" role="region" aria-label="Événements et ruptures historiques">
-				{eventItems.map((item) => (
-					<button
-						type="button"
-						class={`timeline-event-marker event-under-axis ${item.importance === 'major' ? 'major-event' : ''} ${item.isStaggered ? 'staggered-down' : ''}`}
-						id={`item-${item.id}`}
-						data-item-id={item.id}
-						data-item-type={item.type}
-						data-period-id={item.periodId}
-						data-year={item.year}
-						style={`left: ${item.x}px; --event-color: ${item.eventColor};`}
-						aria-pressed="false"
-						aria-label={`${item.title}, ${item.datePrecise ?? item.year}`}
-					>
-						<div class="event-line" aria-hidden="true"></div>
-						<div class="event-card">
-							<span class="event-year">{item.datePrecise ?? item.year}</span>
-							<span class="event-title">{item.title}</span>
-						</div>
-					</button>
-				))}
-			</div>
+								<!-- Carte / bouton interactif accessible -->
+								<button
+									type="button"
+									class={`timeline-entry-button ${item.id === initialSelectedId ? 'selected' : ''}`}
+									id={`item-${item.id}`}
+									data-item-id={item.id}
+									data-item-type={item.type}
+									data-period-id={item.periodId}
+									data-year={item.year}
+									aria-pressed={item.id === initialSelectedId ? 'true' : 'false'}
+									aria-label={`${item.title}, ${item.datePrecise ?? item.year}${item.author ? `, par ${item.author}` : ''}`}
+								>
+									<div class="entry-card-header">
+										<time class="entry-year-time" datetime={String(item.year)}>
+											{item.datePrecise ?? item.year}
+										</time>
+										<span class="entry-type-badge">
+											{item.isLiterature ? (item.tagLabel?.split('·')[0].trim() || 'Littérature') : item.type === 'revolution' ? 'Révolution' : item.type === 'war' ? 'Guerre' : 'Histoire'}
+										</span>
+									</div>
 
+									<h3 class="entry-title">{item.title}</h3>
+
+									{item.author && (
+										<div class="entry-author">{item.author}</div>
+									)}
+
+									<p class="entry-short-desc">{item.description}</p>
+
+									{item.periodTitle && (
+										<div class="entry-regime-context-tag">
+											Période : {item.periodTitle}
+										</div>
+									)}
+								</button>
+							</li>
+						</>
+					);
+				})}
+			</ol>
 		</div>
-	</div>
 
-	<!-- Panneau d'informations contextuelles de l'élément sélectionné -->
-	<section
-		class="timeline-details-panel"
-		id="timeline-panel"
-		aria-live="polite"
-		aria-atomic="true"
-	>
-		<!-- Rempli dynamiquement par le script -->
-	</section>
+		<!-- Panneau d'informations contextuelles (Sticky sur grand écran, dessous sur mobile) -->
+		<aside class="timeline-sticky-panel-wrapper">
+			<section
+				class="timeline-details-panel"
+				id="timeline-panel"
+				aria-live="polite"
+				aria-atomic="true"
+			>
+				<!-- Rempli dynamiquement par le script -->
+			</section>
+		</aside>
+
+	</div>
 
 	<!-- Légende éditoriale -->
 	<footer class="timeline-legend" aria-label="Légende de la frise">
 		<div class="legend-item">
-			<span class="legend-color" style="background: var(--tl-lit-bg); border-color: var(--tl-lit-border);"></span>
-			<span>Œuvre littéraire (Théâtre, Roman, Poésie)</span>
+			<span class="legend-indicator dot" style="background: var(--tl-lit-bg); border-color: var(--tl-lit-color); border-width: 2px;"></span>
+			<span>Œuvre littéraire majeure (Musset, Balzac, Rimbaud, Zola)</span>
 		</div>
 		<div class="legend-item">
-			<span class="legend-color" style="background: var(--band-monarchie); border-color: #7da8a5;"></span>
-			<span>Régime politique (Période continue de fond)</span>
+			<span class="legend-indicator dot" style="background: var(--tl-surface); border-color: var(--tl-rev-color); border-width: 3px;"></span>
+			<span>Tournant historique majeur (1789, 1830, 1848, Sedan, Commune)</span>
 		</div>
 		<div class="legend-item">
-			<span class="legend-color" style="background: var(--tl-rev-color);"></span>
-			<span>Révolution & soulèvement populaire</span>
+			<span class="legend-indicator dot" style="background: var(--tl-surface); border-color: var(--tl-muted);"></span>
+			<span>Événement politique & institutionnel</span>
 		</div>
 		<div class="legend-item">
-			<span class="legend-color" style="background: var(--tl-war-color);"></span>
-			<span>Guerre & tournant militaire</span>
+			<span class="legend-indicator" style="background: var(--band-bg-subtle); border-color: var(--band-border-subtle);"></span>
+			<span>Régime politique de fond</span>
 		</div>
 	</footer>
 </div>
 
 <script>
+	interface TimelineItemImage {
+		src: string;
+		alt: string;
+		caption?: string;
+	}
+
 	interface TimelineItem {
 		id: string;
 		year: number;
@@ -317,6 +259,7 @@ const clientData = {
 		relatedTo: string[];
 		quote?: string;
 		importance?: string;
+		image?: TimelineItemImage;
 	}
 
 	interface TimelinePeriod {
@@ -340,242 +283,149 @@ const clientData = {
 
 			const itemsMap = new Map<string, TimelineItem>(items.map((it) => [it.id, it]));
 			const periodsMap = new Map<string, TimelinePeriod>(periods.map((p) => [p.id, p]));
-
 			const panel = document.getElementById('timeline-panel');
-			const scrollContainer = document.getElementById('timeline-scroll');
-			const svg = document.getElementById('timeline-svg') as unknown as SVGSVGElement | null;
 			let currentSelectedId: string = initialSelectedId;
-			let currentFilter: string = 'all';
 
-			// Fonction pour tracer des lignes contextuelles entre l'élément sélectionné et ses liens
-			function updateConnectors(selectedItem: TimelineItem) {
-				if (!svg) return;
-				svg.innerHTML = '';
-
-				const sourceEl = document.getElementById(`item-${selectedItem.id}`);
-				if (!sourceEl) return;
-
-				const scrollRect = scrollContainer?.getBoundingClientRect() || { left: 0, top: 0 };
-				const canvas = scrollContainer?.querySelector('.timeline-canvas');
-				if (!canvas) return;
-				const canvasRect = canvas.getBoundingClientRect();
-
-				const sourceRect = sourceEl.getBoundingClientRect();
-				const sourceX = sourceRect.left - canvasRect.left + sourceRect.width / 2;
-				const sourceY = sourceRect.top - canvasRect.top + sourceRect.height / 2;
-
-				// Relier aux éléments associés (relatedTo)
-				selectedItem.relatedTo.forEach((relId) => {
-					const targetEl = document.getElementById(`item-${relId}`) || document.getElementById(`period-${relId}`);
-					if (!targetEl) return;
-
-					const targetRect = targetEl.getBoundingClientRect();
-					const targetX = targetRect.left - canvasRect.left + targetRect.width / 2;
-					const targetY = targetRect.top - canvasRect.top + targetRect.height / 2;
-
-					const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-					// Courbe de Bézier douce
-					const midY = (sourceY + targetY) / 2;
-					const d = `M ${sourceX} ${sourceY} C ${sourceX} ${midY}, ${targetX} ${midY}, ${targetX} ${targetY}`;
-					path.setAttribute('d', d);
-					path.setAttribute('class', 'context-connector-path');
-					svg.appendChild(path);
-				});
-			}
-
-			// Mise à jour de l'affichage du panneau
+			// Rendu du panneau d'information contextuel
 			function renderPanel(itemId: string) {
 				const item = itemsMap.get(itemId);
-				const period = item ? periodsMap.get(item.periodId) : periodsMap.get(itemId);
+				if (!item || !panel) return;
 
-				if (!panel) return;
+				const period = periodsMap.get(item.periodId);
+				const periodTitle = period ? period.title : '';
+				const tagClass = item.type === 'literature' ? 'lit' : item.type === 'revolution' ? 'rev' : item.type === 'war' ? 'war' : 'hist';
+				const typeHumanLabel = item.type === 'literature' ? (item.tagLabel || 'Littérature') : item.type === 'revolution' ? 'Révolution' : item.type === 'war' ? 'Guerre' : 'Régime politique';
 
-				if (item) {
-					const periodTitle = period ? period.title : '';
-					const tagClass = item.type === 'literature' ? 'lit' : item.type === 'revolution' ? 'rev' : item.type === 'war' ? 'war' : 'hist';
-					const typeHumanLabel = item.type === 'literature' ? (item.tagLabel || 'Littérature') : item.type === 'revolution' ? 'Révolution' : item.type === 'war' ? 'Guerre' : 'Régime politique';
+				// Repères et liens associés
+				const relatedButtons = item.relatedTo
+					.map((relId) => {
+						const relItem = itemsMap.get(relId);
+						const relPeriod = periodsMap.get(relId);
+						const label = relItem ? `${relItem.title} (${relItem.datePrecise || relItem.year})` : relPeriod ? `${relPeriod.title} (${relPeriod.displayDates})` : relId;
+						return `<button type="button" class="details-related-btn" data-target-id="${relId}">↳ ${label}</button>`;
+					})
+					.join('');
 
-					// Éléments associés
-					const relatedButtons = item.relatedTo
-						.map((relId) => {
-							const relItem = itemsMap.get(relId);
-							const relPeriod = periodsMap.get(relId);
-							const label = relItem ? `${relItem.title} (${relItem.datePrecise || relItem.year})` : relPeriod ? `${relPeriod.title} (${relPeriod.displayDates})` : relId;
-							return `<button type="button" class="details-related-btn" data-target-id="${relId}">↳ ${label}</button>`;
-						})
-						.join('');
+				// Affichage optionnel d'une vignette historique si disponible
+				const imageBlock = item.image
+					? `
+						<figure class="details-thumbnail-figure">
+							<img src="${item.image.src}" alt="${item.image.alt}" loading="lazy" />
+							${item.image.caption ? `<figcaption>${item.image.caption}</figcaption>` : ''}
+						</figure>
+					`
+					: '';
 
-					panel.innerHTML = `
-						<div class="details-panel-header">
-							<div>
-								<span class="details-category-tag ${tagClass}">${typeHumanLabel}</span>
-								<h3 class="details-title">${item.title}</h3>
-								<div class="details-meta">
-									${item.author ? `<strong>${item.author}</strong> (${item.authorDates || ''}) · ` : ''}
-									<span>${item.datePrecise || item.year}</span>
-									${periodTitle ? ` · Contemporain de : <em>${periodTitle}</em>` : ''}
+				panel.innerHTML = `
+					<div class="details-panel-header">
+						<span class="details-category-tag ${tagClass}">${typeHumanLabel}</span>
+						<h3 class="details-title">${item.title}</h3>
+						<div class="details-meta">
+							${item.author ? `<strong>${item.author}</strong> (${item.authorDates || ''}) · ` : ''}
+							<time datetime="${item.year}">${item.datePrecise || item.year}</time>
+							${periodTitle ? `<br /><span>Période : <em>${periodTitle}</em></span>` : ''}
+						</div>
+					</div>
+
+					${imageBlock}
+
+					<div class="details-section">
+						<h4>Présentation</h4>
+						<p>${item.description}</p>
+						${item.quote ? `<blockquote class="details-quote">${item.quote}</blockquote>` : ''}
+					</div>
+
+					<div class="details-section details-context-box">
+						<h4>Contexte historique</h4>
+						<p>${item.historicalContext}</p>
+						${item.relatedTo.length > 0 ? `
+							<div style="margin-top: 0.85rem;">
+								<h4 style="font-size: 0.8rem; color: var(--tl-muted); text-transform: uppercase;">Repères & œuvres contemporains :</h4>
+								<div class="details-related-list">
+									${relatedButtons}
 								</div>
 							</div>
-							<button type="button" class="details-close-btn" id="panel-center-btn" aria-label="Centrer la vue sur l'élément">
-								Voir sur la frise
-							</button>
-						</div>
+						` : ''}
+					</div>
+				`;
 
-						<div class="details-content-grid">
-							<div class="details-section">
-								<h4>Présentation</h4>
-								<p>${item.description}</p>
-								${item.quote ? `<blockquote class="details-quote">${item.quote}</blockquote>` : ''}
-							</div>
-
-							<div class="details-section details-context-box">
-								<h4>Contexte historique</h4>
-								<p>${item.historicalContext}</p>
-								${item.relatedTo.length > 0 ? `
-									<div style="margin-top: 1rem;">
-										<h4 style="font-size: 0.85rem; color: var(--tl-muted); text-transform: uppercase;">Repères & œuvres contemporains :</h4>
-										<div class="details-related-list">
-											${relatedButtons}
-										</div>
-									</div>
-								` : ''}
-							</div>
-						</div>
-					`;
-
-					// Bouton centrer
-					const centerBtn = panel.querySelector('#panel-center-btn');
-					centerBtn?.addEventListener('click', () => {
-						centerOnItem(item.id);
+				// Écouteurs sur les boutons de renvoi vers d'autres événements
+				panel.querySelectorAll('.details-related-btn').forEach((btn) => {
+					btn.addEventListener('click', () => {
+						const targetId = btn.getAttribute('data-target-id');
+						if (targetId) {
+							selectItem(targetId);
+							scrollToItem(targetId);
+						}
 					});
-
-					// Boutons de relations
-					panel.querySelectorAll('.details-related-btn').forEach((btn) => {
-						btn.addEventListener('click', () => {
-							const targetId = btn.getAttribute('data-target-id');
-							if (targetId) {
-								selectItem(targetId);
-								centerOnItem(targetId);
-							}
-						});
-					});
-
-				} else if (period) {
-					// Affichage quand une période entière est cliquée
-					panel.innerHTML = `
-						<div class="details-panel-header">
-							<div>
-								<span class="details-category-tag hist">Régime politique</span>
-								<h3 class="details-title">${period.title}</h3>
-								<div class="details-meta">
-									<strong>Période historique</strong> · <span>${period.displayDates}</span>
-								</div>
-							</div>
-						</div>
-
-						<div class="details-content-grid">
-							<div class="details-section">
-								<h4>Période et société</h4>
-								<p>${period.description}</p>
-							</div>
-
-							<div class="details-section details-context-box">
-								<h4>Contexte littéraire</h4>
-								<p>Découvrez les œuvres écrites ou publiées au cours de cette période sur la frise chronologique.</p>
-							</div>
-						</div>
-					`;
-				}
-			}
-
-			// Centrer la vue horizontale sur l'élément sélectionné
-			function centerOnItem(itemId: string) {
-				const el = document.getElementById(`item-${itemId}`) || document.getElementById(`period-${itemId}`);
-				if (!el || !scrollContainer) return;
-
-				const containerWidth = scrollContainer.clientWidth;
-				const elLeft = el.offsetLeft;
-				const targetScroll = elLeft - containerWidth / 2 + el.clientWidth / 2;
-				scrollContainer.scrollTo({
-					left: Math.max(0, targetScroll),
-					behavior: 'smooth',
 				});
 			}
 
-			// Sélectionner un élément (mise à jour visuelle des classes et des repères)
+			// Scroll fluide vers l'élément sélectionné
+			function scrollToItem(itemId: string) {
+				const stepEl = document.getElementById(`step-${itemId}`);
+				if (!stepEl) return;
+				stepEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			}
+
+			// Sélection d'un élément
 			function selectItem(itemId: string) {
 				currentSelectedId = itemId;
 				const selectedItem = itemsMap.get(itemId);
 
-				// Retirer les états précédents
-				document.querySelectorAll('.literature-node-btn').forEach((el) => {
-					el.classList.remove('selected');
-					el.setAttribute('aria-pressed', 'false');
+				// Retrait des classes précédentes
+				document.querySelectorAll('.timeline-step').forEach((el) => {
+					el.classList.remove('selected', 'context-highlight');
 				});
-				document.querySelectorAll('.timeline-event-marker').forEach((el) => {
+				document.querySelectorAll('.timeline-entry-button').forEach((el) => {
 					el.classList.remove('selected', 'context-highlight');
 					el.setAttribute('aria-pressed', 'false');
 				});
-				document.querySelectorAll('.timeline-regime-band').forEach((el) => {
+				document.querySelectorAll('.regime-context-banner').forEach((el) => {
 					el.classList.remove('context-highlight');
 				});
-				document.querySelectorAll('.year-tick').forEach((el) => {
-					el.classList.remove('highlighted');
-				});
 
-				// Appliquer au nouvel élément sélectionné
+				// Mise en valeur de l'élément sélectionné
+				const activeStep = document.getElementById(`step-${itemId}`);
 				const activeBtn = document.getElementById(`item-${itemId}`);
+				if (activeStep) activeStep.classList.add('selected');
 				if (activeBtn) {
 					activeBtn.classList.add('selected');
 					activeBtn.setAttribute('aria-pressed', 'true');
 				}
 
 				if (selectedItem) {
-					// Mettre en valeur la période politique d'appartenance
+					// Mise en valeur de la période politique d'appartenance
 					if (selectedItem.periodId) {
-						const periodBand = document.getElementById(`period-${selectedItem.periodId}`);
-						periodBand?.classList.add('context-highlight');
+						const bannerEl = document.getElementById(`period-banner-${selectedItem.periodId}`);
+						bannerEl?.classList.add('context-highlight');
 					}
 
-					// Mettre en valeur l'année correspondante
-					const tickEl = document.querySelector(`.year-tick[data-year="${Math.round(selectedItem.year / 5) * 5}"]`);
-					tickEl?.classList.add('highlighted');
-
-					// Mettre en valeur les éléments associés (contexte direct)
+					// Mise en valeur des éléments associés (contexte historique direct)
 					selectedItem.relatedTo.forEach((relId) => {
-						const relatedEl = document.getElementById(`item-${relId}`);
-						relatedEl?.classList.add('context-highlight');
-						const relatedPeriod = document.getElementById(`period-${relId}`);
-						relatedPeriod?.classList.add('context-highlight');
+						const relatedStep = document.getElementById(`step-${relId}`);
+						const relatedBtn = document.getElementById(`item-${relId}`);
+						relatedStep?.classList.add('context-highlight');
+						relatedBtn?.classList.add('context-highlight');
 					});
-
-					// Dessiner les connecteurs
-					updateConnectors(selectedItem);
-				} else if (svg) {
-					svg.innerHTML = '';
 				}
 
-				// Mettre à jour le panneau d'informations
 				renderPanel(itemId);
 			}
 
-			// Appliquer les filtres
+			// Filtrage des éléments
 			function applyFilter(filterId: string) {
-				currentFilter = filterId;
-
-				// Boutons de filtres
+				// Mise à jour de l'état des boutons de filtres
 				document.querySelectorAll('.timeline-filter-btn').forEach((btn) => {
 					const isActive = btn.getAttribute('data-filter') === filterId;
 					btn.classList.toggle('active', isActive);
 					btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
 				});
 
-				// Dimmer ou afficher les éléments selon le filtre
+				// Filtrage des étapes
 				items.forEach((item) => {
-					const itemEl = document.getElementById(`item-${item.id}`);
-					const containerEl = document.getElementById(`node-container-${item.id}`);
-					const targetEl = containerEl || itemEl;
-					if (!targetEl) return;
+					const stepEl = document.getElementById(`step-${item.id}`);
+					if (!stepEl) return;
 
 					let visible = true;
 					if (filterId === 'literature') {
@@ -588,66 +438,48 @@ const clientData = {
 						visible = item.type === 'revolution' || item.type === 'war';
 					}
 
-					targetEl.classList.toggle('timeline-item-dimmed', !visible);
+					stepEl.classList.toggle('timeline-step-dimmed', !visible);
 				});
 
-				// Les bandes de régimes politiques
+				// Bannières de régime
 				periods.forEach((p) => {
-					const bandEl = document.getElementById(`period-${p.id}`);
-					if (!bandEl) return;
+					const banner = document.getElementById(`period-banner-${p.id}`);
+					if (!banner) return;
 					let visible = true;
-					if (filterId === 'revolutions-wars') {
+					if (filterId === 'literature' || filterId === 'revolutions-wars') {
 						visible = false;
 					}
-					bandEl.classList.toggle('timeline-item-dimmed', !visible);
+					banner.classList.toggle('timeline-step-dimmed', !visible);
 				});
-
-				// Reconnecter
-				const curItem = itemsMap.get(currentSelectedId);
-				if (curItem) updateConnectors(curItem);
 			}
 
-			// Écouteurs d'événements : clics sur les cartes littéraires
-			document.querySelectorAll('.literature-node-btn').forEach((btn) => {
+			// Écouteurs de clics sur les boutons de la frise
+			document.querySelectorAll('.timeline-entry-button').forEach((btn) => {
 				btn.addEventListener('click', () => {
 					const id = btn.getAttribute('data-item-id');
 					if (id) selectItem(id);
 				});
+			});
+
+			// Écouteurs de survol pour aperçu contextuel rapide
+			document.querySelectorAll('.timeline-entry-button').forEach((btn) => {
 				btn.addEventListener('mouseenter', () => {
 					const id = btn.getAttribute('data-item-id');
 					const item = id ? itemsMap.get(id) : null;
 					if (item && item.periodId) {
-						document.getElementById(`period-${item.periodId}`)?.classList.add('context-highlight');
+						document.getElementById(`period-banner-${item.periodId}`)?.classList.add('context-highlight');
 					}
 				});
 				btn.addEventListener('mouseleave', () => {
-					if (btn.getAttribute('data-item-id') !== currentSelectedId) {
-						const id = btn.getAttribute('data-item-id');
-						const item = id ? itemsMap.get(id) : null;
-						if (item && item.periodId && itemsMap.get(currentSelectedId)?.periodId !== item.periodId) {
-							document.getElementById(`period-${item.periodId}`)?.classList.remove('context-highlight');
-						}
+					const id = btn.getAttribute('data-item-id');
+					const item = id ? itemsMap.get(id) : null;
+					if (item && item.periodId && itemsMap.get(currentSelectedId)?.periodId !== item.periodId) {
+						document.getElementById(`period-banner-${item.periodId}`)?.classList.remove('context-highlight');
 					}
 				});
 			});
 
-			// Clics sur les marqueurs d'événements
-			document.querySelectorAll('.timeline-event-marker').forEach((btn) => {
-				btn.addEventListener('click', () => {
-					const id = btn.getAttribute('data-item-id');
-					if (id) selectItem(id);
-				});
-			});
-
-			// Clics sur les bandes de régime
-			document.querySelectorAll('.timeline-regime-band').forEach((band) => {
-				band.addEventListener('click', () => {
-					const id = band.getAttribute('data-period-id');
-					if (id) selectItem(id);
-				});
-			});
-
-			// Clics sur les boutons de filtre
+			// Écouteurs sur les boutons de filtres
 			document.querySelectorAll('.timeline-filter-btn').forEach((btn) => {
 				btn.addEventListener('click', () => {
 					const filterId = btn.getAttribute('data-filter');
@@ -655,19 +487,8 @@ const clientData = {
 				});
 			});
 
-			// Initialisation
+			// Initialisation au démarrage
 			selectItem(initialSelectedId);
-
-			// Centrage initial sur Le Père Goriot (1835) après chargement
-			setTimeout(() => {
-				centerOnItem(initialSelectedId);
-			}, 100);
-
-			// Recalcul des tracés au redimensionnement
-			window.addEventListener('resize', () => {
-				const item = itemsMap.get(currentSelectedId);
-				if (item) updateConnectors(item);
-			});
 		}
 	}
 </script>

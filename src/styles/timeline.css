@@ -1,6 +1,7 @@
 /* ==========================================================================
-   Frise chronologique XIXe siècle — Styles éditoriaux
+   Frise chronologique VERTICALE — Littérature et Histoire au XIXe siècle
    Esthétique : Atlas historico-littéraire
+   Métaphore : Le temps s'écoule de haut en bas (1789 → 1882)
    ========================================================================== */
 
 :root {
@@ -16,52 +17,46 @@
 	--tl-accent-soft: rgba(35, 55, 255, 0.08);
 	--tl-serif: Georgia, 'Times New Roman', serif;
 
-	/* Thématiques éditoriales pour la frise */
-	--tl-lit-color: #8b3a1e;        /* Teinte littéraire terracotta / cuir relié */
-	--tl-lit-bg: #faf3eb;
-	--tl-lit-border: #e6cbba;
+	/* Couleurs éditoriales */
+	--tl-lit-color: #8b3a1e;        /* Terracotta / reliure cuir */
+	--tl-lit-bg: #fcf8f3;
+	--tl-lit-border: #e2ccbe;
 	--tl-lit-border-active: #8b3a1e;
 
 	--tl-rev-color: #9e2a2b;        /* Rouge révolutionnaire patiné */
-	--tl-rev-bg: rgba(158, 42, 43, 0.07);
+	--tl-rev-bg: rgba(158, 42, 43, 0.06);
 	--tl-rev-border: #d99c9d;
 
 	--tl-regime-color: #274765;     /* Bleu régimes politiques / État */
-	--tl-regime-bg: rgba(39, 71, 101, 0.06);
+	--tl-regime-bg: rgba(39, 71, 101, 0.05);
 	--tl-regime-border: #a8bfd4;
 
-	--tl-war-color: #545b62;        /* Ardoise / conflit */
-	--tl-war-bg: rgba(84, 91, 98, 0.08);
+	--tl-war-color: #545b62;        /* Ardoise / guerre */
+	--tl-war-bg: rgba(84, 91, 98, 0.06);
 
-	/* Périodes politiques */
-	--band-rev: rgba(184, 51, 42, 0.09);
-	--band-consulat: rgba(135, 80, 40, 0.08);
-	--band-empire: rgba(45, 75, 115, 0.10);
-	--band-restauration: rgba(100, 110, 125, 0.09);
-	--band-monarchie: rgba(43, 114, 110, 0.11);
-	--band-deuxieme-rep: rgba(130, 95, 55, 0.11);
-	--band-second-empire: rgba(65, 70, 120, 0.12);
-	--band-troisieme-rep: rgba(35, 95, 140, 0.11);
+	/* Périodes politiques discrètes */
+	--band-bg-subtle: rgba(23, 43, 58, 0.025);
+	--band-border-subtle: rgba(23, 43, 58, 0.1);
 }
 
 .timeline-wrapper {
 	width: 100%;
 	position: relative;
-	margin: 2rem 0;
+	margin: 1.5rem 0 3rem;
 }
 
-/* En-tête pédagogique */
+/* En-tête éditorial */
 .timeline-editorial-header {
-	max-width: 860px;
+	max-width: 820px;
 	margin: 0 auto 2.5rem;
 	text-align: center;
 }
 
 .timeline-editorial-header .eyebrow {
-	font-size: 0.8rem;
+	font-size: 0.78rem;
 	font-weight: 700;
 	text-transform: uppercase;
-	letter-spacing: 0.14em;
+	letter-spacing: 0.15em;
 	color: #8b572a;
 	margin-bottom: 0.5rem;
 }
@@ -104,14 +99,14 @@
 	font-size: 1.05rem;
 }
 
-/* Barre de commandes et filtres */
+/* Filtres de la frise */
 .timeline-controls {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
 	align-items: center;
 	gap: 1rem;
-	margin-bottom: 1.5rem;
+	margin-bottom: 2rem;
 	padding: 0.75rem 1rem;
 	background: var(--tl-surface);
 	border: 1px solid var(--tl-border-soft);
@@ -126,10 +121,10 @@
 }
 
 .timeline-filters-label {
-	font-size: 0.82rem;
+	font-size: 0.8rem;
 	font-weight: 600;
 	text-transform: uppercase;
-	letter-spacing: 0.05em;
+	letter-spacing: 0.06em;
 	color: var(--tl-muted);
 	margin-right: 0.25rem;
 }
@@ -169,454 +164,344 @@
 	font-style: italic;
 }
 
-/* Défilement horizontal conteneur */
-.timeline-scroll-container {
+/* Grille principale : Frise verticale + Panneau latéral (Desktop) */
+.timeline-main-layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 360px;
+	gap: 2.5rem;
+	align-items: start;
 	position: relative;
-	overflow-x: auto;
-	overflow-y: hidden;
-	background: var(--tl-surface);
-	border: 1px solid var(--tl-border);
-	border-radius: 8px;
-	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-	padding: 1.5rem 1rem;
-	scrollbar-width: thin;
-	scrollbar-color: var(--tl-border) var(--tl-surface-subtle);
 }
 
-.timeline-scroll-container::-webkit-scrollbar {
-	height: 8px;
-}
-
-.timeline-scroll-container::-webkit-scrollbar-track {
-	background: var(--tl-surface-subtle);
-}
-
-.timeline-scroll-container::-webkit-scrollbar-thumb {
-	background-color: var(--tl-border);
-	border-radius: 4px;
-}
-
-.timeline-canvas {
+/* --------------------------------------------------------------------------
+   ARBRE ET AXE VERTICAL (SEMANTIC <ol>)
+   -------------------------------------------------------------------------- */
+.vertical-timeline-container {
 	position: relative;
-	width: var(--canvas-width, 2200px);
-	min-height: 580px;
-	margin: 0 auto;
+	padding: 1.5rem 0 3rem;
 }
 
-/* Axe du temps */
-.timeline-axis-line {
+.vertical-spine-line {
 	position: absolute;
-	left: 0;
-	right: 0;
-	top: 310px;
-	height: 2px;
-	background: var(--tl-ink);
-	opacity: 0.35;
-	z-index: 2;
-}
-
-/* Repères d'années */
-.timeline-year-ticks {
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 310px;
-	height: 30px;
-	z-index: 3;
-	pointer-events: none;
-}
-
-.year-tick {
-	position: absolute;
-	transform: translateX(-50%);
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-
-.year-tick-mark {
-	width: 1px;
-	height: 8px;
-	background: var(--tl-muted);
-}
-
-.year-tick.major-tick .year-tick-mark {
-	height: 14px;
+	top: 0;
+	bottom: 0;
+	left: 50%;
 	width: 2px;
-	background: var(--tl-ink);
-}
-
-.year-tick-label {
-	font-size: 0.76rem;
-	font-weight: 600;
-	color: var(--tl-muted);
-	margin-top: 4px;
-	letter-spacing: 0.02em;
-}
-
-.year-tick.major-tick .year-tick-label {
-	color: var(--tl-ink);
-	font-size: 0.82rem;
-	font-weight: 700;
-}
-
-.year-tick.highlighted .year-tick-label {
-	color: var(--tl-accent);
-	font-weight: 800;
-	transform: scale(1.15);
-	transition: transform 0.2s ease;
-}
-
-/* Layer 1 : Régimes politiques (Bandes de fond) */
-.timeline-regimes-layer {
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 250px;
-	height: 52px;
+	background: var(--tl-border);
+	transform: translateX(-50%);
 	z-index: 1;
 }
 
-.timeline-regime-band {
+.timeline-flow-arrow {
 	position: absolute;
-	top: 0;
-	bottom: 0;
-	border-radius: 4px;
-	border: 1px solid transparent;
-	padding: 0 0.5rem;
+	bottom: -14px;
+	left: 50%;
+	transform: translateX(-50%);
+	font-size: 0.85rem;
+	color: var(--tl-muted);
+	z-index: 2;
+}
+
+.timeline-ordered-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	position: relative;
+	z-index: 2;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
-	align-items: flex-start;
-	cursor: pointer;
-	transition: all 0.25s ease;
-	background: var(--band-bg, rgba(0, 0, 0, 0.05));
-	border-color: var(--band-border, rgba(0, 0, 0, 0.15));
-	overflow: hidden;
-	text-align: left;
+	gap: 1.75rem;
 }
 
-.timeline-regime-band:focus-visible {
-	outline: 2px solid var(--tl-accent);
-	outline-offset: 1px;
-}
-
-.timeline-regime-band .band-title {
-	font-size: 0.78rem;
-	font-weight: 700;
-	font-family: var(--tl-serif);
-	color: var(--tl-ink);
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+/* ITEM DE LA FRISE */
+.timeline-step {
+	position: relative;
+	display: flex;
+	align-items: center;
 	width: 100%;
+	box-sizing: border-box;
 }
 
-.timeline-regime-band .band-dates {
-	font-size: 0.68rem;
-	color: var(--tl-muted);
-	white-space: nowrap;
+/* Alternance gauche / droite sur Desktop */
+.timeline-step.align-left {
+	justify-content: flex-start;
+	padding-right: calc(50% + 24px);
 }
 
-.timeline-regime-band:hover {
-	filter: brightness(0.95);
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+.timeline-step.align-right {
+	justify-content: flex-end;
+	padding-left: calc(50% + 24px);
 }
 
-.timeline-regime-band.context-highlight {
-	border-color: var(--tl-ink);
-	box-shadow: 0 0 0 2px var(--tl-ink), 0 4px 10px rgba(0, 0, 0, 0.12);
-	filter: brightness(0.92);
-	z-index: 4;
-}
-
-.timeline-regime-band.fade-end {
-	mask-image: linear-gradient(to right, black 70%, transparent 100%);
-	-webkit-mask-image: linear-gradient(to right, black 70%, transparent 100%);
-}
-
-/* Layer 2 : Événements historiques (Marqueurs verticaux) */
-.timeline-events-layer {
+/* Noeuds centraux sur la colonne vertébrale */
+.step-spine-node {
 	position: absolute;
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	z-index: 5;
-	pointer-events: none; /* Clic transmis aux boutons d'événements */
-}
-
-.timeline-event-marker {
-	position: absolute;
-	transform: translateX(-50%);
-	pointer-events: auto;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 3;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	background: none;
-	border: none;
-	padding: 0;
-	cursor: pointer;
-	text-align: center;
+	pointer-events: none;
+}
+
+.spine-marker-dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: var(--tl-surface);
+	border: 2px solid var(--tl-muted);
 	transition: all 0.25s ease;
 }
 
-.timeline-event-marker:focus-visible {
-	outline: 2px solid var(--tl-accent);
-	outline-offset: 3px;
-	border-radius: 4px;
+.timeline-step.major-turning-point .spine-marker-dot {
+	width: 14px;
+	height: 14px;
+	border-width: 3px;
+	border-color: var(--tl-rev-color);
+	background: var(--tl-surface);
 }
 
-/* Marqueurs sous l'axe (Histoire, révolutions, guerres) */
-.event-under-axis {
-	top: 310px;
+.timeline-step.is-literature .spine-marker-dot {
+	width: 12px;
+	height: 12px;
+	border-width: 2.5px;
+	border-color: var(--tl-lit-color);
+	background: var(--tl-lit-bg);
 }
 
-.event-under-axis .event-line {
-	width: 2px;
-	height: 38px;
-	background: var(--event-color, var(--tl-muted));
-	transition: all 0.2s ease;
+.timeline-step.selected .spine-marker-dot,
+.timeline-step.context-highlight .spine-marker-dot {
+	border-color: var(--tl-accent);
+	background: var(--tl-accent);
+	transform: scale(1.35);
+	box-shadow: 0 0 0 4px var(--tl-accent-soft);
 }
 
-.event-under-axis.major-event .event-line {
-	width: 3px;
-	height: 48px;
-	background: var(--tl-rev-color);
+/* Connecteur horizontal reliant la carte à la colonne centrale */
+.step-branch-connector {
+	position: absolute;
+	top: 50%;
+	height: 1px;
+	background: var(--tl-border);
+	z-index: 1;
 }
 
-.event-under-axis.staggered-down {
-	top: 350px;
+.timeline-step.align-left .step-branch-connector {
+	right: 50%;
+	width: 24px;
 }
 
-.event-under-axis.staggered-down .event-line {
-	height: 55px;
-	margin-top: -40px;
+.timeline-step.align-right .step-branch-connector {
+	left: 50%;
+	width: 24px;
 }
 
-.event-card {
-	max-width: 150px;
+/* Boutons / Cartes interactives */
+.timeline-entry-button {
 	background: var(--tl-surface);
 	border: 1px solid var(--tl-border);
 	border-radius: 6px;
-	padding: 0.4rem 0.55rem;
-	font-size: 0.74rem;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-	transition: all 0.2s ease;
-	margin-top: 4px;
-	text-align: center;
+	padding: 0.75rem 1rem;
+	width: 100%;
+	max-width: 380px;
+	cursor: pointer;
+	text-align: left;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+	position: relative;
+	font-family: inherit;
 }
 
-.event-card .event-year {
+.timeline-entry-button:hover {
+	transform: translateY(-2px);
+	border-color: var(--tl-ink-soft);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.timeline-entry-button:focus-visible {
+	outline: 2px solid var(--tl-accent);
+	outline-offset: 3px;
+}
+
+.timeline-entry-button.selected {
+	border-color: var(--tl-accent);
+	border-width: 2px;
+	box-shadow: 0 0 0 3px var(--tl-accent-soft), 0 6px 18px rgba(35, 55, 255, 0.15);
+	transform: translateY(-2px);
+}
+
+.timeline-entry-button.context-highlight {
+	border-color: var(--tl-accent);
+	background: var(--tl-accent-soft);
+	box-shadow: 0 0 0 2px rgba(35, 55, 255, 0.2);
+}
+
+/* Entête de carte */
+.entry-card-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 0.5rem;
+	margin-bottom: 0.25rem;
+}
+
+.entry-year-time {
+	font-size: 0.84rem;
 	font-weight: 700;
-	font-size: 0.76rem;
-	color: var(--event-color, var(--tl-ink));
-	display: block;
+	color: var(--tl-muted);
 }
 
-.event-card .event-title {
-	color: var(--tl-ink);
+.entry-type-badge {
+	font-size: 0.68rem;
 	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	padding: 0.1rem 0.4rem;
+	border-radius: 3px;
+	background: var(--tl-surface-subtle);
+	color: var(--tl-muted);
+}
+
+.entry-title {
+	font-family: var(--tl-serif);
+	font-size: 1.05rem;
+	font-weight: 700;
 	line-height: 1.25;
+	color: var(--tl-ink);
+	margin: 0.1rem 0 0.25rem;
+}
+
+.entry-author {
+	font-size: 0.86rem;
+	font-style: italic;
+	color: var(--tl-ink-soft);
+	margin-bottom: 0.35rem;
+}
+
+.entry-short-desc {
+	font-size: 0.82rem;
+	line-height: 1.4;
+	color: var(--tl-muted);
+	margin: 0;
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 }
 
-.timeline-event-marker:hover .event-card {
-	border-color: var(--tl-ink);
-	transform: translateY(2px);
-	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+/* Contextual badge */
+.entry-regime-context-tag {
+	display: inline-block;
+	margin-top: 0.45rem;
+	font-size: 0.72rem;
+	color: var(--tl-muted);
+	background: var(--tl-surface-subtle);
+	padding: 0.15rem 0.5rem;
+	border-radius: 4px;
+	border: 1px solid var(--tl-border-soft);
 }
 
-.timeline-event-marker.selected .event-card,
-.timeline-event-marker.context-highlight .event-card {
-	border-color: var(--tl-accent);
-	border-width: 2px;
-	box-shadow: 0 0 0 2px var(--tl-accent-soft), 0 4px 12px rgba(35, 55, 255, 0.2);
-}
-
-.timeline-event-marker.selected .event-line,
-.timeline-event-marker.context-highlight .event-line {
-	background: var(--tl-accent);
-	width: 3px;
-}
-
-/* Layer 3 : Œuvres littéraires (Cartes au-dessus de l'axe) */
-.timeline-literature-layer {
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	z-index: 10;
-	pointer-events: none;
-}
-
-.literature-card-container {
-	position: absolute;
-	transform: translateX(-50%);
-	pointer-events: auto;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	bottom: 272px; /* Assis au-dessus de la bande des régimes */
-}
-
-/* Échelonnement vertical pour éviter les chevauchements Musset/Balzac */
-.literature-card-container.tier-high {
-	bottom: 300px;
-}
-
-.literature-card-container.tier-high .literature-stem {
-	height: 60px;
-}
-
-.literature-stem {
-	width: 2px;
-	height: 32px;
-	background: var(--tl-lit-color);
-	margin-top: -1px;
-}
-
-.literature-node-btn {
+/* HIERARCHIE NIVEAU 1 : ŒUVRES LITTÉRAIRES (cartes plus proéminentes) */
+.timeline-step.is-literature .timeline-entry-button {
 	background: var(--tl-lit-bg);
 	border: 1.5px solid var(--tl-lit-border);
-	border-radius: 8px;
-	padding: 0.75rem 0.95rem;
-	width: 200px;
-	cursor: pointer;
-	text-align: left;
-	box-shadow: 0 4px 12px rgba(139, 58, 30, 0.08);
-	transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-	position: relative;
-	font-family: inherit;
+	padding: 0.95rem 1.15rem;
+	box-shadow: 0 4px 14px rgba(139, 58, 30, 0.07);
 }
 
-.literature-node-btn:focus-visible {
-	outline: 2px solid var(--tl-accent);
-	outline-offset: 3px;
-}
-
-.literature-node-btn:hover {
-	transform: translateY(-4px);
-	border-color: var(--tl-lit-border-active);
-	box-shadow: 0 8px 18px rgba(139, 58, 30, 0.16);
-}
-
-.literature-node-btn.selected {
-	background: #ffffff;
-	border-color: var(--tl-accent);
-	border-width: 2px;
-	box-shadow: 0 0 0 3px var(--tl-accent-soft), 0 8px 22px rgba(35, 55, 255, 0.22);
-	transform: translateY(-4px);
-}
-
-.literature-node-btn .lit-badge {
-	display: inline-block;
-	font-size: 0.68rem;
-	font-weight: 700;
-	text-transform: uppercase;
-	letter-spacing: 0.06em;
-	color: var(--tl-lit-color);
-	background: rgba(139, 58, 30, 0.12);
-	padding: 0.15rem 0.45rem;
-	border-radius: 3px;
-	margin-bottom: 0.35rem;
-}
-
-.literature-node-btn .lit-year {
-	font-size: 0.86rem;
+.timeline-step.is-literature .entry-year-time {
+	font-size: 0.95rem;
 	font-weight: 800;
 	color: var(--tl-lit-color);
-	margin-bottom: 0.15rem;
 }
 
-.literature-node-btn .lit-title {
-	font-family: var(--tl-serif);
-	font-size: 1.02rem;
+.timeline-step.is-literature .entry-type-badge {
+	background: rgba(139, 58, 30, 0.12);
+	color: var(--tl-lit-color);
 	font-weight: 700;
-	line-height: 1.25;
+}
+
+.timeline-step.is-literature .entry-title {
+	font-size: 1.2rem;
 	color: var(--tl-ink);
-	margin-bottom: 0.2rem;
+	letter-spacing: 0.01em;
 }
 
-.literature-node-btn .lit-author {
-	font-size: 0.82rem;
-	font-style: italic;
+/* HIERARCHIE NIVEAU 2 : TOURNANTS HISTORIQUES MAJEURS */
+.timeline-step.major-turning-point .timeline-entry-button {
+	border-left: 4px solid var(--tl-rev-color);
+}
+
+.timeline-step.major-turning-point .entry-year-time {
+	font-size: 0.92rem;
+	color: var(--tl-rev-color);
+	font-weight: 800;
+}
+
+/* PÉRIODES POLITIQUES CONTEXTUELLES DE FOND (Layer discret) */
+.regime-context-banner {
+	margin: 1.25rem 0 0.5rem;
+	padding: 0.5rem 0.85rem;
+	background: var(--band-bg-subtle);
+	border-top: 1px solid var(--band-border-subtle);
+	border-bottom: 1px solid var(--band-border-subtle);
+	text-align: center;
+	position: relative;
+	z-index: 2;
+}
+
+.regime-banner-title {
+	font-family: var(--tl-serif);
+	font-size: 0.76rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.12em;
 	color: var(--tl-ink-soft);
+	display: block;
 }
 
-.literature-node-btn .lit-tag {
-	margin-top: 0.4rem;
-	font-size: 0.72rem;
+.regime-banner-dates {
+	font-size: 0.68rem;
 	color: var(--tl-muted);
 }
 
-/* Lignes et connecteurs contextuels dynamiques */
-.timeline-connectors-svg {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	pointer-events: none;
-	z-index: 4;
-}
-
-.context-connector-path {
-	stroke: var(--tl-accent);
-	stroke-width: 2;
-	stroke-dasharray: 4 4;
-	fill: none;
-	opacity: 0.85;
-	animation: dashDraw 0.4s ease-out;
-}
-
-@keyframes dashDraw {
-	from {
-		stroke-dashoffset: 20;
-		opacity: 0;
-	}
-	to {
-		stroke-dashoffset: 0;
-		opacity: 0.85;
-	}
-}
-
-/* État filtré : estompage doux */
-.timeline-item-dimmed {
-	opacity: 0.22 !important;
-	filter: grayscale(0.8);
+/* Dimming filtré */
+.timeline-step-dimmed {
+	opacity: 0.18 !important;
+	filter: grayscale(0.85);
 	pointer-events: none !important;
 }
 
-/* Panneau de détails contextuels */
+/* --------------------------------------------------------------------------
+   PANNEAU D'INFORMATIONS LATÉRAL (Sticky sur Desktop)
+   -------------------------------------------------------------------------- */
+.timeline-sticky-panel-wrapper {
+	position: sticky;
+	top: 2rem;
+	z-index: 10;
+}
+
 .timeline-details-panel {
-	margin-top: 2rem;
 	background: var(--tl-surface);
 	border: 1px solid var(--tl-border);
 	border-radius: 8px;
-	padding: 1.75rem 2rem;
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-	position: relative;
-	transition: all 0.3s ease;
+	padding: 1.5rem;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+	max-height: calc(100vh - 4rem);
+	overflow-y: auto;
 }
 
 .details-panel-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-	gap: 1.5rem;
 	border-bottom: 1px solid var(--tl-border-soft);
-	padding-bottom: 1.25rem;
-	margin-bottom: 1.25rem;
+	padding-bottom: 1rem;
+	margin-bottom: 1rem;
 }
 
 .details-category-tag {
 	display: inline-block;
-	font-size: 0.75rem;
+	font-size: 0.72rem;
 	font-weight: 700;
 	text-transform: uppercase;
 	letter-spacing: 0.08em;
@@ -651,14 +536,14 @@
 
 .details-title {
 	font-family: var(--tl-serif);
-	font-size: 1.6rem;
+	font-size: 1.4rem;
 	color: var(--tl-ink);
-	margin: 0.2rem 0;
+	margin: 0.2rem 0 0.3rem;
 	line-height: 1.25;
 }
 
 .details-meta {
-	font-size: 0.95rem;
+	font-size: 0.88rem;
 	color: var(--tl-muted);
 }
 
@@ -666,85 +551,85 @@
 	color: var(--tl-ink-soft);
 }
 
-.details-close-btn {
-	background: transparent;
-	border: 1px solid var(--tl-border);
-	border-radius: 20px;
-	padding: 0.35rem 0.75rem;
-	font-size: 0.8rem;
-	color: var(--tl-muted);
-	cursor: pointer;
-	transition: all 0.2s ease;
-	white-space: nowrap;
-}
-
-.details-close-btn:hover {
-	color: var(--tl-ink);
-	border-color: var(--tl-muted);
+/* Image miniature dans le panneau d'information */
+.details-thumbnail-figure {
+	margin: 1rem 0;
+	border: 1px solid var(--tl-border-soft);
+	border-radius: 6px;
+	overflow: hidden;
 	background: var(--tl-surface-subtle);
 }
 
-.details-content-grid {
-	display: grid;
-	grid-template-columns: 1.2fr 1fr;
-	gap: 2rem;
+.details-thumbnail-figure img {
+	width: 100%;
+	height: 160px;
+	object-fit: cover;
+	display: block;
+}
+
+.details-thumbnail-figure figcaption {
+	padding: 0.4rem 0.6rem;
+	font-size: 0.72rem;
+	color: var(--tl-muted);
+	font-style: italic;
+	line-height: 1.3;
 }
 
 .details-section h4 {
 	font-family: var(--tl-serif);
-	font-size: 1.05rem;
+	font-size: 0.95rem;
 	font-weight: 600;
 	color: var(--tl-ink);
-	margin: 0 0 0.6rem;
+	margin: 0.75rem 0 0.4rem;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 }
 
 .details-section p {
-	font-size: 0.95rem;
-	line-height: 1.6;
+	font-size: 0.88rem;
+	line-height: 1.55;
 	color: var(--tl-ink-soft);
-	margin: 0 0 1rem;
+	margin: 0 0 0.75rem;
 }
 
 .details-quote {
 	background: var(--tl-surface-subtle);
 	border-left: 3px solid var(--tl-lit-color);
-	padding: 0.85rem 1.15rem;
-	margin: 1rem 0;
+	padding: 0.65rem 0.9rem;
+	margin: 0.75rem 0;
 	font-style: italic;
-	font-size: 0.92rem;
-	line-height: 1.5;
+	font-size: 0.85rem;
+	line-height: 1.45;
 	color: var(--tl-ink);
 	border-radius: 0 4px 4px 0;
 }
 
-/* Section Contexte historique & Liens */
 .details-context-box {
 	background: var(--tl-surface-subtle);
 	border: 1px solid var(--tl-border-soft);
 	border-radius: 6px;
-	padding: 1.25rem;
+	padding: 0.85rem 1rem;
+	margin-top: 1rem;
 }
 
 .details-context-box h4 {
 	color: #8b572a;
-	margin-bottom: 0.5rem;
+	margin-top: 0;
 }
 
 .details-related-list {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.5rem;
-	margin-top: 0.75rem;
+	gap: 0.4rem;
+	margin-top: 0.5rem;
 }
 
 .details-related-btn {
 	background: var(--tl-surface);
 	border: 1px solid var(--tl-border);
 	border-radius: 4px;
-	padding: 0.35rem 0.65rem;
-	font-size: 0.82rem;
+	padding: 0.25rem 0.55rem;
+	font-size: 0.76rem;
 	color: var(--tl-ink);
 	cursor: pointer;
 	transition: all 0.2s ease;
@@ -757,15 +642,15 @@
 	background: var(--tl-accent-soft);
 }
 
-/* Légende du bas */
+/* Légende en bas */
 .timeline-legend {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 1.5rem;
-	margin-top: 1.75rem;
+	margin-top: 2.5rem;
 	padding-top: 1.25rem;
 	border-top: 1px solid var(--tl-border-soft);
-	font-size: 0.84rem;
+	font-size: 0.82rem;
 	color: var(--tl-muted);
 	justify-content: center;
 }
@@ -773,51 +658,82 @@
 .legend-item {
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
+	gap: 0.45rem;
 }
 
-.legend-color {
-	width: 14px;
-	height: 14px;
+.legend-indicator {
+	width: 12px;
+	height: 12px;
 	border-radius: 3px;
 	border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.legend-indicator.dot {
+	border-radius: 50%;
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE DESIGN (Tablette & Mobile)
+   -------------------------------------------------------------------------- */
+@media (max-width: 960px) {
+	.timeline-main-layout {
+		grid-template-columns: 1fr;
+		gap: 2rem;
+	}
+
+	.timeline-sticky-panel-wrapper {
+		position: static;
+		order: 2; /* S'affiche sous la frise sur tablette/mobile */
+	}
+}
+
+@media (max-width: 720px) {
+	/* Passage strict à 1 colonne : colonne vertébrale à gauche */
+	.vertical-spine-line {
+		left: 18px;
+		transform: none;
+	}
+
+	.timeline-flow-arrow {
+		left: 18px;
+		transform: translateX(-50%);
+	}
+
+	.timeline-ordered-list {
+		gap: 1.25rem;
+	}
+
+	.timeline-step {
+		padding: 0 0 0 46px !important;
+		justify-content: flex-start !important;
+	}
+
+	.step-spine-node {
+		left: 18px;
+		transform: translate(-50%, -50%);
+	}
+
+	.step-branch-connector {
+		display: none; /* Inutile en 1 colonne compacte */
+	}
+
+	.timeline-entry-button {
+		max-width: 100%;
+	}
+
+	.timeline-controls {
+		flex-direction: column;
+		align-items: flex-start;
+	}
 }
 
 /* Accessibilité et mouvement réduit */
 @media (prefers-reduced-motion: reduce) {
 	.timeline-filter-btn,
-	.timeline-regime-band,
-	.timeline-event-marker,
-	.literature-node-btn,
+	.timeline-entry-button,
+	.spine-marker-dot,
 	.details-related-btn {
 		transition: none !important;
-		animation: none !important;
-	}
-}
-
-/* Responsive Tablette & Mobile */
-@media (max-width: 900px) {
-	.details-content-grid {
-		grid-template-columns: 1fr;
-		gap: 1.25rem;
-	}
-
-	.timeline-editorial-header h1 {
-		font-size: 2.1rem;
-	}
-}
-
-@media (max-width: 600px) {
-	.timeline-controls {
-		flex-direction: column;
-		align-items: flex-start;
-	}
-
-	.timeline-details-panel {
-		padding: 1.25rem;
-	}
-
-	.details-title {
-		font-size: 1.35rem;
+		transform: none !important;
 	}
 }

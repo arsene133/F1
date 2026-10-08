@@ -14,6 +14,12 @@ export interface TimelinePeriod {
 	fadeEnd?: boolean;
 }
 
+export interface TimelineItemImage {
+	src: string;
+	alt: string;
+	caption?: string;
+}
+
 export interface TimelineItem {
 	id: string;
 	year: number;
@@ -32,6 +38,7 @@ export interface TimelineItem {
 	relatedTo: string[];
 	quote?: string;
 	importance?: 'major' | 'standard';
+	image?: TimelineItemImage;
 }
 
 export const TIMELINE_START_YEAR = 1785;
@@ -234,6 +241,11 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['monarchie-juillet', 'revolution-juillet-1830', 'on-ne-badine-pas', 'pot-bouille'],
 		quote: '« À nous deux maintenant ! » — Défi final de Rastignac lancé à Paris du haut du Père-Lachaise.',
 		importance: 'major',
+		image: {
+			src: '/_astro/honore-de-balzac-1842.CQNqqlaG_dhsx7.webp',
+			alt: 'Portrait d’Honoré de Balzac en 1842 par Louis-Auguste Bisson',
+			caption: 'Honoré de Balzac (1842), daguerréotype de Louis-Auguste Bisson',
+		},
 	},
 
 	// 1848 - Révolution de 1848
@@ -337,6 +349,11 @@ export const timelineItems: TimelineItem[] = [
 		relatedTo: ['guerre-franco-prussienne', 'bataille-sedan', 'proclamation-troisieme-republique', 'second-empire', 'commune-paris'],
 		quote: '« Un soldat jeune, bouche ouverte, tête nue, / Et la nuque baignant dans le frais cresson bleu, / Dort ; il est étendu dans l’herbe, sous la nue... » — Le Dormeur du val (octobre 1870)',
 		importance: 'major',
+		image: {
+			src: '/_astro/arthur-rimbaud.XNJ406zq_Zzz5Ag.webp',
+			alt: 'Portrait d’Arthur Rimbaud adolescent par Étienne Carjat',
+			caption: 'Arthur Rimbaud à 17 ans, photographie d’Étienne Carjat',
+		},
 	},
 
 	// 1870 - Bataille de Sedan
@@ -385,6 +402,11 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'troisieme-republique',
 		relatedTo: ['cahiers-douai', 'proclamation-troisieme-republique', 'pot-bouille'],
 		importance: 'major',
+		image: {
+			src: '/_astro/commune-barricade-1871.CHMdUWQq_ZIX0W3.webp',
+			alt: 'Barricade de la Commune de Paris en 1871 par Bruno Braquehais',
+			caption: 'Barricade à l’angle des boulevards Voltaire et Richard-Lenoir, 1871 (Bruno Braquehais)',
+		},
 	},
 
 	// 1882 - Pot-Bouille (Émile Zola)
