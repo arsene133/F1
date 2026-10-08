@@ -441,6 +441,9 @@ const clientData = {
 			// Sous 60rem (une seule colonne), le panneau se déplie dans la frise, juste sous l'événement choisi
 			const desktopQuery = window.matchMedia('(min-width: 60rem)');
 			const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+			// Écran de téléphone au doigt alors que la page est en mise en page bureau (Android « version pour ordinateur ») :
+			// le panneau latéral y est réduit à l'échelle de l'écran
+			const scaledDownTouch = window.matchMedia('(pointer: coarse) and (max-device-width: 59.99rem)');
 			const panelHome = panel?.parentElement ?? null;
 			const isInline = () => !desktopQuery.matches;
 			const controls = app.querySelector('.timeline-controls');
@@ -695,9 +698,10 @@ const clientData = {
 				if (host) {
 					if (panel.parentElement !== host) host.append(panel);
 					panel.hidden = false;
-					// Déplié dans la frise, le lecteur est étroit : sans menu « ⋮ », Chrome garde la barre de progression
+					// Lecteur étroit (déplié dans la frise, ou panneau latéral réduit sur un téléphone) : sans menu « ⋮ »,
+					// Chrome garde la barre de progression. Bureau à la souris et grande tablette conservent le menu.
 					panel.querySelectorAll('audio').forEach((el) => {
-						if (isInline()) el.setAttribute('controlslist', 'nodownload noplaybackrate');
+						if (isInline() || scaledDownTouch.matches) el.setAttribute('controlslist', 'nodownload noplaybackrate');
 						else el.removeAttribute('controlslist');
 					});
 				} else {

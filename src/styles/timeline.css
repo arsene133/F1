@@ -65,6 +65,7 @@
 	--tl-sticky-offset: 4.75rem; /* hauteur de la barre de filtres collante + marge */
 	--tl-touch: 2.75rem; /* cible tactile ≈ 44 px */
 	--tl-gutter: clamp(1rem, 4vw, 1.25rem); /* marge latérale de la page, partagée avec /chronologie */
+	--tl-panel-pad-x: clamp(0.9rem, 3vw, 1.25rem); /* marge intérieure latérale du panneau déplié */
 }
 
 .timeline-wrapper {
@@ -976,7 +977,7 @@
 	border: 1px solid var(--tl-border);
 	border-top: 3px solid var(--tl-accent);
 	border-radius: 6px;
-	padding: 1rem clamp(0.9rem, 3vw, 1.25rem) 0.75rem;
+	padding: 1rem var(--tl-panel-pad-x) 0.75rem;
 	margin-top: 0.6rem;
 	overflow-wrap: anywhere;
 }
@@ -1360,6 +1361,12 @@
 }
 
 @media not all and (min-width: 60rem) {
+	/* Déplié dans la frise, le cadre d'écoute (lecteur compris) s'étend jusqu'aux bords du panneau : le lecteur
+	   natif Android y consomme ~200 px en boutons et minutage, chaque pixel rendu va à la barre de progression */
+	.timeline-step .details-listen.is-embedded {
+		margin-inline: calc(-1 * var(--tl-panel-pad-x));
+	}
+
 	.details-listen-link {
 		display: inline-flex;
 		align-items: center;
@@ -1916,6 +1923,23 @@
 	.details-related-btn,
 	.details-model-more summary {
 		min-height: var(--tl-touch);
+	}
+}
+
+/* Téléphone en mise en page bureau (Android « version pour ordinateur ») : le panneau latéral est réduit à l'échelle
+   de l'écran ; comme en mode déplié, le cadre d'écoute rejoint les bords du panneau pour allonger la barre de progression */
+@media (min-width: 60rem) and (pointer: coarse) and (max-device-width: 59.99rem) {
+	.timeline-details-panel .details-listen.is-embedded {
+		margin-inline: -1.5rem;
+		padding-inline: 0;
+	}
+
+	.timeline-details-panel .details-listen.is-embedded > :not(audio) {
+		padding-inline: 0.8rem;
+	}
+
+	.details-listen audio {
+		height: var(--tl-touch);
 	}
 }
 
