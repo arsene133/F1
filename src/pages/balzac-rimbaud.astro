@@ -1,519 +1,766 @@
 ---
-const people = [
-  {
-    id: "balzac",
-    title: "Honoré de Balzac",
-    date: "1799–1850",
-    work: "La Comédie humaine",
-    color: "ochre",
-    points: [
-      "Observe et décrit la société bourgeoise",
-      "Montre la puissance de l’argent et de la propriété",
-      "Fait de Paris un théâtre social",
-    ],
-  },
-  {
-    id: "rastignac",
-    title: "Rastignac",
-    date: "Personnage de Balzac",
-    work: "Le Père Goriot",
-    color: "blue",
-    points: [
-      "Jeune provincial ambitieux",
-      "Découvre les règles du monde parisien",
-      "S’adapte au système pour réussir",
-      "Incarnation de la conquête sociale",
-    ],
-  },
-  {
-    id: "marx",
-    title: "Karl Marx",
-    date: "1818–1883",
-    work: "Le Capital · Manifeste du parti communiste",
-    color: "green",
-    points: [
-      "Analyse le fonctionnement du capitalisme",
-      "Théorise la lutte des classes",
-      "Montre comment la richesse produit l’exploitation",
-    ],
-  },
-  {
-    id: "commune",
-    title: "La Commune de Paris",
-    date: "1871",
-    work: "Insurrection et expérience politique",
-    color: "red",
-    points: [
-      "Insurrection populaire",
-      "Refus de l’ordre bourgeois",
-      "Expérimentation d’une autre société",
-      "Répression sanglante",
-    ],
-  },
-  {
-    id: "rimbaud",
-    title: "Arthur Rimbaud",
-    date: "1854–1891",
-    work: "Poèmes de 1871",
-    color: "purple",
-    points: [
-      "Arrive à Paris pendant la Commune",
-      "Dénonce la bourgeoisie et la répression",
-      "Transforme la révolte sociale en langage poétique",
-      "Refuse le monde et ses règles",
-    ],
-  },
-];
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+
+const pageTitle = "Balzac, Rastignac, la Commune, Marx et Rimbaud";
+const pageDescription = "Carte mentale et relations conceptuelles au XIXe siècle : Balzac, Rastignac, la Commune, Marx et Rimbaud face à la société bourgeoise.";
 ---
 
-<section class="relations" aria-labelledby="relations-title">
-  <header class="intro">
-    <p class="eyebrow">XIXe siècle</p>
-    <h2 id="relations-title">
-      Balzac, Rastignac, la Commune, Marx et Rimbaud
-    </h2>
-    <p>
-      Des regards différents sur une même société :
-      <strong>Paris, l’argent, le pouvoir, la révolte.</strong>
-    </p>
-  </header>
+<!doctype html>
+<html lang="fr">
+	<head>
+		<BaseHead title={pageTitle} description={pageDescription} />
+	</head>
+	<body>
+		<Header />
 
-  <div class="diagram">
-    <!-- Relations visuelles -->
-    <svg class="connections" viewBox="0 0 1000 1200" aria-hidden="true">
-      <defs>
-        <marker
-          id="arrow-blue"
-          markerWidth="10"
-          markerHeight="10"
-          refX="8"
-          refY="3"
-          orient="auto"
-        >
-          <path d="M0,0 L0,6 L9,3 z" />
-        </marker>
-      </defs>
+		<main class="page-container">
+			<article class="mindmap-article" aria-labelledby="page-title">
+				<!-- En-tête éditorial -->
+				<header class="map-intro">
+					<p class="intro-eyebrow">XIX<sup>e</sup> siècle · Cartographie intellectuelle</p>
+					<h1 id="page-title">Balzac, Rastignac, la Commune, Marx et Rimbaud</h1>
+					<p class="intro-desc">
+						Cinq regards sur une même réalité :
+						<strong>Paris, l’argent, le pouvoir, la révolte.</strong>
+					</p>
+				</header>
 
-      <!-- Balzac → Rastignac -->
-      <path
-        class="connection ochre"
-        d="M420 230 C300 270 230 320 230 410"
-        marker-end="url(#arrow-blue)"
-      />
+				<!-- Carte mentale visuelle -->
+				<div class="mindmap-canvas" role="region" aria-label="Carte mentale des relations">
+					<!-- Tracés vectoriels des relations (arrière-plan) -->
+					<svg class="map-svg" viewBox="0 0 1000 940" aria-hidden="true">
+						<defs>
+							<marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+								<path d="M1,1 L7,4 L1,7 Z" class="arrow-head" />
+							</marker>
+						</defs>
 
-      <!-- Balzac → Marx -->
-      <path
-        class="connection blue"
-        d="M580 230 C700 270 770 320 770 410"
-        marker-end="url(#arrow-blue)"
-      />
+						<!-- 1. Balzac -> Rastignac (Observe -> s'adapte) -->
+						<path class="conn-line direct" d="M 500 135 L 500 230" marker-end="url(#arrow)" />
 
-      <!-- Rastignac ↔ Marx -->
-      <path
-        class="connection central"
-        d="M390 500 C470 470 530 470 610 500"
-      />
+						<!-- 2. Balzac <-> Marx (Décrire <-> analyser) -->
+						<path class="conn-line comparison" d="M 370 85 C 190 85, 190 480, 190 560" />
 
-      <!-- Rastignac → Commune -->
-      <path
-        class="connection purple dashed"
-        d="M260 650 C280 730 360 760 410 790"
-        marker-end="url(#arrow-blue)"
-      />
+						<!-- 3. Rastignac -> Centre Social (Conquérir) -->
+						<path class="conn-line direct" d="M 500 330 L 500 415" marker-end="url(#arrow)" />
 
-      <!-- Commune → Marx -->
-      <path
-        class="connection green dashed"
-        d="M610 790 C680 750 730 700 750 650"
-        marker-end="url(#arrow-blue)"
-      />
+						<!-- 4. Centre Social -> Commune -->
+						<path class="conn-line direct" d="M 600 460 C 760 480, 800 520, 800 560" marker-end="url(#arrow)" />
 
-      <!-- Commune ↔ Rimbaud -->
-      <path
-        class="connection red"
-        d="M500 900 L500 1000"
-        marker-end="url(#arrow-blue)"
-      />
-    </svg>
+						<!-- 5. Commune -> Marx (Expérience révolutionnaire) -->
+						<path class="conn-line direct" d="M 680 635 L 340 635" marker-end="url(#arrow)" />
 
-    <article class="card balzac">
-      <span class="number">01</span>
-      <h3>Honoré de Balzac</h3>
-      <p class="date">1799–1850</p>
-      <p class="work">La Comédie humaine</p>
-      <ul>
-        <li>Observe et décrit la société bourgeoise</li>
-        <li>Montre la puissance de l’argent et de la propriété</li>
-        <li>Fait de Paris un théâtre social</li>
-      </ul>
-    </article>
+						<!-- 6. Commune -> Rimbaud (Révolte -> poésie) -->
+						<path class="conn-line direct" d="M 800 710 C 800 760, 640 790, 580 810" marker-end="url(#arrow)" />
 
-    <article class="card rastignac">
-      <span class="number">02</span>
-      <h3>Rastignac</h3>
-      <p class="date">Personnage de Balzac</p>
-      <p class="work">Le Père Goriot</p>
-      <ul>
-        <li>Jeune provincial ambitieux</li>
-        <li>Découvre les règles du monde parisien</li>
-        <li>S’adapte au système pour réussir</li>
-        <li>Incarnation de la conquête sociale</li>
-      </ul>
-    </article>
+						<!-- 7. Rastignac <-> Rimbaud (Accepter le jeu <-> tout renverser) -->
+						<path class="conn-line contrast" d="M 630 280 C 950 350, 950 750, 600 855" />
+					</svg>
 
-    <div class="relation relation-central">
-      <strong>Deux réponses à la même société</strong>
-      <span>
-        Rastignac veut la conquérir.<br />
-        Marx veut l’expliquer et la transformer.
-      </span>
-    </div>
+					<!-- NOEUD BALZAC -->
+					<section class="map-node node-balzac" id="node-balzac" aria-labelledby="title-balzac">
+						<header class="node-header">
+							<span class="node-tag">Littérature · Réalisme</span>
+							<h2 id="title-balzac">Honoré de Balzac</h2>
+							<p class="node-meta">1799–1850 · <em>La Comédie humaine</em></p>
+						</header>
+						<div class="node-posture">
+							<strong>Posture :</strong> Observe
+						</div>
+						<ul class="node-keywords">
+							<li>Société bourgeoise</li>
+							<li>Argent et propriété</li>
+							<li>Paris comme théâtre social</li>
+						</ul>
+					</section>
 
-    <article class="card marx">
-      <span class="number">03</span>
-      <h3>Karl Marx</h3>
-      <p class="date">1818–1883</p>
-      <p class="work">Le Capital · Manifeste du parti communiste</p>
-      <ul>
-        <li>Analyse le fonctionnement du capitalisme</li>
-        <li>Théorise la lutte des classes</li>
-        <li>Montre comment la richesse produit l’exploitation</li>
-      </ul>
-    </article>
+					<!-- LIAISON 1 : BALZAC -> RASTIGNAC -->
+					<div class="rel-label rel-balzac-rastignac" aria-label="Relation Balzac à Rastignac">
+						<span class="rel-title">Observe → s’adapte</span>
+						<p class="rel-desc">Balzac observe le système social ; Rastignac apprend à y réussir.</p>
+					</div>
 
-    <article class="card commune">
-      <span class="number">04</span>
-      <h3>La Commune de Paris</h3>
-      <p class="date">1871</p>
-      <p class="work">Insurrection et expérience politique</p>
-      <ul>
-        <li>Insurrection populaire</li>
-        <li>Refus de l’ordre bourgeois</li>
-        <li>Expérimentation d’une autre société</li>
-        <li>Répression sanglante</li>
-      </ul>
-    </article>
+					<!-- NOEUD RASTIGNAC -->
+					<section class="map-node node-rastignac" id="node-rastignac" aria-labelledby="title-rastignac">
+						<header class="node-header">
+							<span class="node-tag">Personnage balzacien</span>
+							<h2 id="title-rastignac">Rastignac</h2>
+							<p class="node-meta">Personnage de Balzac · <em>Le Père Goriot</em></p>
+						</header>
+						<div class="node-posture">
+							<strong>Posture :</strong> S’adapte et conquiert
+						</div>
+						<ul class="node-keywords">
+							<li>Jeune provincial ambitieux</li>
+							<li>Règles du monde parisien</li>
+							<li>Adaptation au système</li>
+							<li>Conquête sociale</li>
+						</ul>
+					</section>
 
-    <div class="relation relation-rastignac">
-      <strong>Rastignac accepte le jeu.</strong>
-      <span>
-        Rimbaud représente une rupture radicale avec le monde que Rastignac
-        accepte : là où Rastignac veut réussir, Rimbaud veut tout renverser.
-      </span>
-    </div>
+					<!-- LIAISON 3 : RASTIGNAC -> SOCIÉTÉ -->
+					<div class="rel-label rel-rastignac-centre" aria-label="Relation Rastignac au système social">
+						<span class="rel-title">Conquérir</span>
+						<p class="rel-desc">Rastignac accepte les règles du jeu social pour s’élever dans le monde.</p>
+					</div>
 
-    <div class="relation relation-marx">
-      <strong>Marx et la Commune</strong>
-      <span>
-        Marx voit dans la Commune une expérience révolutionnaire
-        et un moment de la lutte des classes.
-      </span>
-    </div>
+					<!-- NOEUD CENTRAL : SOCIÉTÉ DU XIXe SIÈCLE -->
+					<div class="map-node node-center" id="node-society" aria-labelledby="title-society">
+						<span class="center-tag">Nœud central</span>
+						<h2 id="title-society">SOCIÉTÉ DU XIX<sup>e</sup> SIÈCLE</h2>
+						<p class="center-keywords">Paris · argent · pouvoir · révolte</p>
+						<p class="center-axiom">
+							Deux réponses à la même société : Rastignac veut la conquérir. Marx veut l’expliquer et la transformer.
+						</p>
+					</div>
 
-    <article class="card rimbaud">
-      <span class="number">05</span>
-      <h3>Arthur Rimbaud</h3>
-      <p class="date">1854–1891</p>
-      <p class="work">Poèmes de 1871</p>
-      <ul>
-        <li>Arrive à Paris pendant la Commune</li>
-        <li>Dénonce la bourgeoisie et la répression</li>
-        <li>Transforme la révolte sociale en langage poétique</li>
-        <li>Refuse le monde et ses règles</li>
-      </ul>
-    </article>
-  </div>
+					<!-- LIAISON 2 : BALZAC <-> MARX -->
+					<div class="rel-label rel-balzac-marx" aria-label="Relation Balzac et Marx">
+						<span class="rel-title">Décrire ↔ analyser</span>
+						<p class="rel-desc">Balzac montre le monde social ; Marx en dévoile les mécanismes économiques.</p>
+					</div>
 
-  <footer class="summary">
-    <div>
-      <strong>Balzac</strong>
-      <span>Observe</span>
-    </div>
-    <div>
-      <strong>Rastignac</strong>
-      <span>S’adapte et conquiert</span>
-    </div>
-    <div>
-      <strong>Commune</strong>
-      <span>Se révolte</span>
-    </div>
-    <div>
-      <strong>Marx</strong>
-      <span>Analyse et théorise</span>
-    </div>
-    <div>
-      <strong>Rimbaud</strong>
-      <span>Refuse et transforme</span>
-    </div>
-  </footer>
-</section>
+					<!-- NOEUD MARX -->
+					<section class="map-node node-marx" id="node-marx" aria-labelledby="title-marx">
+						<header class="node-header">
+							<span class="node-tag">Philosophie · Économie</span>
+							<h2 id="title-marx">Karl Marx</h2>
+							<p class="node-meta">1818–1883 · <em>Le Capital · Manifeste</em></p>
+						</header>
+						<div class="node-posture">
+							<strong>Posture :</strong> Analyse et théorise
+						</div>
+						<ul class="node-keywords">
+							<li>Fonctionnement du capitalisme</li>
+							<li>Lutte des classes</li>
+							<li>Richesse et exploitation</li>
+						</ul>
+					</section>
+
+					<!-- LIAISON 4 : COMMUNE -> MARX -->
+					<div class="rel-label rel-commune-marx" aria-label="Relation Commune à Marx">
+						<span class="rel-title">Expérience révolutionnaire</span>
+						<p class="rel-desc">
+							Marx voit dans la Commune une expérience révolutionnaire et un moment de la lutte des classes.
+						</p>
+					</div>
+
+					<!-- NOEUD COMMUNE -->
+					<section class="map-node node-commune" id="node-commune" aria-labelledby="title-commune">
+						<header class="node-header">
+							<span class="node-tag">Événement historique</span>
+							<h2 id="title-commune">La Commune de Paris</h2>
+							<p class="node-meta">1871 · Insurrection et politique</p>
+						</header>
+						<div class="node-posture">
+							<strong>Posture :</strong> Se révolte
+						</div>
+						<ul class="node-keywords">
+							<li>Insurrection populaire</li>
+							<li>Refus de l’ordre bourgeois</li>
+							<li>Expérimentation d’une autre société</li>
+							<li>Répression sanglante</li>
+						</ul>
+					</section>
+
+					<!-- LIAISON 5 : COMMUNE -> RIMBAUD -->
+					<div class="rel-label rel-commune-rimbaud" aria-label="Relation Commune à Rimbaud">
+						<span class="rel-title">Révolte → poésie</span>
+						<p class="rel-desc">
+							Rimbaud transforme la révolte sociale en langage poétique.
+						</p>
+					</div>
+
+					<!-- NOEUD RIMBAUD -->
+					<section class="map-node node-rimbaud" id="node-rimbaud" aria-labelledby="title-rimbaud">
+						<header class="node-header">
+							<span class="node-tag">Poésie · Rupture</span>
+							<h2 id="title-rimbaud">Arthur Rimbaud</h2>
+							<p class="node-meta">1854–1891 · <em>Poèmes de 1871</em></p>
+						</header>
+						<div class="node-posture">
+							<strong>Posture :</strong> Refuse et transforme
+						</div>
+						<ul class="node-keywords">
+							<li>Présence à Paris pendant la Commune</li>
+							<li>Dénonciation de la bourgeoisie</li>
+							<li>Révolte métamorphosée en langage</li>
+							<li>Refus du monde et de ses lois</li>
+						</ul>
+					</section>
+
+					<!-- LIAISON 6 : RASTIGNAC <-> RIMBAUD (CONTRASTE CONCEPTUEL) -->
+					<div class="rel-label rel-contrast-box" aria-label="Opposition Rastignac et Rimbaud">
+						<span class="rel-title">Accepter le jeu ↔ tout renverser</span>
+						<p class="rel-desc">
+							Rastignac accepte le jeu. Rimbaud représente une rupture radicale avec le monde que Rastignac accepte :
+							là où Rastignac veut réussir, Rimbaud veut tout renverser.
+						</p>
+					</div>
+				</div>
+
+				<!-- Synthèse d'ensemble -->
+				<footer class="map-synthesis" aria-labelledby="synthesis-title">
+					<h3 id="synthesis-title">Synthèse des postures face à la société bourgeoise</h3>
+					<div class="synthesis-grid">
+						<div class="synthesis-card">
+							<strong>Balzac</strong>
+							<span>Observe</span>
+						</div>
+						<div class="synthesis-card">
+							<strong>Rastignac</strong>
+							<span>S’adapte et conquiert</span>
+						</div>
+						<div class="synthesis-card">
+							<strong>Commune</strong>
+							<span>Se révolte</span>
+						</div>
+						<div class="synthesis-card">
+							<strong>Marx</strong>
+							<span>Analyse et théorise</span>
+						</div>
+						<div class="synthesis-card">
+							<strong>Rimbaud</strong>
+							<span>Refuse et transforme</span>
+						</div>
+					</div>
+				</footer>
+			</article>
+		</main>
+
+		<Footer />
+	</body>
+</html>
 
 <style>
-  .relations {
-    --ink: #172b3a;
-    --muted: #65717a;
-    --paper: #f7f4ed;
-    --line: #d9d4c9;
+	/* ==========================================================================
+	   VARIABLES ÉDITORIALES
+	   ========================================================================== */
+	:root {
+		--map-ink: #172b3a;
+		--map-muted: #536270;
+		--map-light-muted: #788796;
+		--map-border: #dcd6cb;
+		--map-border-soft: #eae5dc;
+		--map-paper: #fbf9f4;
+		--map-card-bg: #ffffff;
+		--map-accent-ochre: #8b572a;
+		--map-accent-blue: #235284;
+		--map-accent-green: #1d6a4f;
+		--map-accent-red: #9e322d;
+		--map-accent-purple: #5b347b;
+	}
 
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 5rem 1.5rem;
-    color: var(--ink);
-  }
+	.page-container {
+		width: 100%;
+		max-width: 1140px;
+		margin: 0 auto;
+		padding: 2.5rem 1.25rem 4rem;
+		box-sizing: border-box;
+	}
 
-  .intro {
-    max-width: 800px;
-    margin: 0 auto 4rem;
-    text-align: center;
-  }
+	/* ==========================================================================
+	   EN-TÊTE
+	   ========================================================================== */
+	.map-intro {
+		text-align: center;
+		max-width: 820px;
+		margin: 0 auto 3rem;
+	}
 
-  .eyebrow {
-    margin: 0 0 .75rem;
-    color: #8c5b2a;
-    font-size: .75rem;
-    font-weight: 700;
-    letter-spacing: .14em;
-    text-transform: uppercase;
-  }
+	.intro-eyebrow {
+		margin: 0 0 0.75rem;
+		font-size: 0.8rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.14em;
+		color: var(--map-accent-ochre);
+	}
 
-  h2 {
-    margin: 0;
-    font-family: Georgia, serif;
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    line-height: 1.05;
-  }
+	.map-intro h1 {
+		margin: 0 0 1rem;
+		font-family: Georgia, "Times New Roman", serif;
+		font-size: clamp(2rem, 4.2vw, 3.1rem);
+		font-weight: normal;
+		line-height: 1.15;
+		color: var(--map-ink);
+	}
 
-  .intro > p:last-child {
-    margin: 1rem auto 0;
-    max-width: 650px;
-    color: var(--muted);
-    font-size: 1.05rem;
-  }
+	.intro-desc {
+		margin: 0;
+		font-size: 1.15rem;
+		color: var(--map-muted);
+		line-height: 1.5;
+	}
 
-  .diagram {
-    position: relative;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5rem 4rem;
-    padding: 0 2rem;
-  }
+	.intro-desc strong {
+		color: var(--map-ink);
+	}
 
-  .connections {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    overflow: visible;
-  }
+	/* ==========================================================================
+	   TOILE DESKTOP & GRILLE
+	   ========================================================================== */
+	.mindmap-canvas {
+		position: relative;
+		width: 100%;
+		min-height: 940px;
+		margin-bottom: 3rem;
+	}
 
-  .connection {
-    fill: none;
-    stroke-width: 3;
-  }
+	.map-svg {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+		overflow: visible;
+		z-index: 1;
+	}
 
-  .connection.ochre { stroke: #a76d2d; }
-  .connection.blue { stroke: #3568a8; }
-  .connection.green { stroke: #287864; }
-  .connection.purple { stroke: #6c43a1; }
-  .connection.red { stroke: #b13b35; }
-  .connection.central { stroke: #9b3c35; }
-  .connection.dashed { stroke-dasharray: 8 8; }
+	.conn-line {
+		fill: none;
+		stroke-linecap: round;
+	}
 
-  .card {
-    position: relative;
-    z-index: 1;
-    padding: 2rem;
-    border: 1px solid var(--line);
-    border-radius: 1.25rem;
-    background: color-mix(in srgb, var(--paper) 92%, white);
-    box-shadow: 0 12px 35px rgb(20 30 40 / 6%);
-  }
+	.conn-line.direct {
+		stroke: #8794a0;
+		stroke-width: 2;
+	}
 
-  .card h3 {
-    margin: 0;
-    font-family: Georgia, serif;
-    font-size: 1.7rem;
-  }
+	.conn-line.comparison {
+		stroke: var(--map-accent-green);
+		stroke-width: 2;
+		stroke-dasharray: 6 6;
+	}
 
-  .number {
-    display: block;
-    margin-bottom: 1rem;
-    color: var(--muted);
-    font-size: .7rem;
-    font-weight: 700;
-    letter-spacing: .15em;
-  }
+	.conn-line.contrast {
+		stroke: var(--map-accent-purple);
+		stroke-width: 2;
+		stroke-dasharray: 6 5;
+	}
 
-  .date,
-  .work {
-    margin: .25rem 0;
-  }
+	.arrow-head {
+		fill: #8794a0;
+	}
 
-  .date {
-    color: var(--muted);
-    font-size: .9rem;
-  }
+	/* ==========================================================================
+	   NŒUDS (PRINCIPAL & SECONDAIRES)
+	   ========================================================================== */
+	.map-node {
+		position: absolute;
+		z-index: 2;
+		background: var(--map-card-bg);
+		border: 1px solid var(--map-border);
+		border-radius: 10px;
+		padding: 1.25rem 1.4rem;
+		box-sizing: border-box;
+		box-shadow: 0 4px 16px rgba(23, 43, 58, 0.05);
+	}
 
-  .work {
-    font-family: Georgia, serif;
-    font-style: italic;
-  }
+	.node-header h2 {
+		margin: 0.2rem 0;
+		font-family: Georgia, "Times New Roman", serif;
+		font-size: 1.35rem;
+		font-weight: bold;
+		line-height: 1.2;
+		color: var(--map-ink);
+	}
 
-  ul {
-    margin: 1.25rem 0 0;
-    padding-left: 1.2rem;
-  }
+	.node-tag {
+		display: inline-block;
+		font-size: 0.68rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: var(--map-light-muted);
+	}
 
-  li + li {
-    margin-top: .45rem;
-  }
+	.node-meta {
+		margin: 0.2rem 0 0.6rem;
+		font-size: 0.85rem;
+		color: var(--map-muted);
+	}
 
-  .balzac { border-top: 4px solid #a76d2d; grid-column: 1 / -1; max-width: 700px; justify-self: center; }
-  .rastignac { border-top: 4px solid #3568a8; }
-  .marx { border-top: 4px solid #287864; }
-  .commune { border-top: 4px solid #b13b35; grid-column: 1 / -1; max-width: 620px; justify-self: center; }
-  .rimbaud { border-top: 4px solid #6c43a1; grid-column: 1 / -1; max-width: 700px; justify-self: center; }
+	.node-meta em {
+		font-style: italic;
+	}
 
-  .relation {
-    position: relative;
-    z-index: 2;
-    max-width: 300px;
-    padding: 1rem;
-    color: #8f3732;
-    font-size: .9rem;
-    line-height: 1.5;
-  }
+	.node-posture {
+		display: inline-block;
+		font-size: 0.82rem;
+		padding: 0.2rem 0.55rem;
+		background: var(--map-paper);
+		border: 1px solid var(--map-border-soft);
+		border-radius: 4px;
+		margin-bottom: 0.75rem;
+		color: var(--map-ink);
+	}
 
-  .relation strong {
-    display: block;
-    margin-bottom: .35rem;
-    font-family: Georgia, serif;
-  }
+	.node-keywords {
+		margin: 0;
+		padding-left: 1.15rem;
+		font-size: 0.86rem;
+		line-height: 1.45;
+		color: var(--map-muted);
+	}
 
-  .relation span {
-    color: var(--muted);
-  }
+	.node-keywords li + li {
+		margin-top: 0.25rem;
+	}
 
-  .relation-central {
-    grid-column: 1 / -1;
-    justify-self: center;
-    margin: -3rem 0;
-    text-align: center;
-  }
+	/* Accents spécifiques par nœud */
+	.node-balzac {
+		top: 0;
+		left: 360px;
+		width: 280px;
+		border-top: 4px solid var(--map-accent-ochre);
+	}
 
-  .relation-rastignac {
-    grid-column: 1;
-    justify-self: end;
-    margin-top: -3rem;
-    color: #5d3790;
-  }
+	.node-rastignac {
+		top: 230px;
+		left: 360px;
+		width: 280px;
+		border-top: 4px solid var(--map-accent-blue);
+	}
 
-  .relation-marx {
-    grid-column: 2;
-    justify-self: start;
-    margin-top: -3rem;
-    color: #287864;
-  }
+	.node-center {
+		top: 415px;
+		left: 320px;
+		width: 360px;
+		text-align: center;
+		background: var(--map-paper);
+		border: 2px solid var(--map-ink);
+		padding: 1.5rem 1.75rem;
+	}
 
-  .summary {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    margin-top: 5rem;
-    border: 1px solid var(--line);
-    border-radius: 1rem;
-    overflow: hidden;
-    background: white;
-  }
+	.center-tag {
+		display: block;
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--map-accent-ochre);
+		margin-bottom: 0.35rem;
+	}
 
-  .summary div {
-    padding: 1.25rem;
-    text-align: center;
-  }
+	.node-center h2 {
+		margin: 0;
+		font-family: Georgia, "Times New Roman", serif;
+		font-size: 1.4rem;
+		letter-spacing: 0.05em;
+		color: var(--map-ink);
+	}
 
-  .summary div + div {
-    border-left: 1px solid var(--line);
-  }
+	.center-keywords {
+		margin: 0.4rem 0 0.85rem;
+		font-size: 0.95rem;
+		font-weight: 600;
+		color: var(--map-muted);
+	}
 
-  .summary strong,
-  .summary span {
-    display: block;
-  }
+	.center-axiom {
+		margin: 0;
+		font-size: 0.86rem;
+		font-style: italic;
+		line-height: 1.45;
+		color: var(--map-ink);
+		padding-top: 0.75rem;
+		border-top: 1px dashed var(--map-border);
+	}
 
-  .summary strong {
-    font-family: Georgia, serif;
-  }
+	.node-marx {
+		top: 560px;
+		left: 40px;
+		width: 300px;
+		border-top: 4px solid var(--map-accent-green);
+	}
 
-  .summary span {
-    margin-top: .3rem;
-    color: var(--muted);
-    font-size: .8rem;
-  }
+	.node-commune {
+		top: 560px;
+		right: 40px;
+		width: 300px;
+		border-top: 4px solid var(--map-accent-red);
+	}
 
-  @media (max-width: 760px) {
-    .relations {
-      padding: 3rem 1rem;
-    }
+	.node-rimbaud {
+		top: 750px;
+		left: 350px;
+		width: 300px;
+		border-top: 4px solid var(--map-accent-purple);
+	}
 
-    .diagram {
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-      padding: 0;
-    }
+	/* ==========================================================================
+	   ÉTIQUETTES DE RELATIONS (DESKTOP)
+	   ========================================================================== */
+	.rel-label {
+		position: absolute;
+		z-index: 2;
+		background: rgba(255, 255, 255, 0.94);
+		border: 1px solid var(--map-border-soft);
+		border-radius: 6px;
+		padding: 0.5rem 0.8rem;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+		backdrop-filter: blur(4px);
+		box-sizing: border-box;
+	}
 
-    .connections {
-      display: none;
-    }
+	.rel-title {
+		display: block;
+		font-family: Georgia, "Times New Roman", serif;
+		font-size: 0.85rem;
+		font-weight: bold;
+		color: var(--map-ink);
+		margin-bottom: 0.2rem;
+	}
 
-    .card,
-    .commune,
-    .rimbaud {
-      max-width: none;
-      width: auto;
-    }
+	.rel-desc {
+		margin: 0;
+		font-size: 0.78rem;
+		line-height: 1.35;
+		color: var(--map-muted);
+	}
 
-    .relation,
-    .relation-central,
-    .relation-rastignac,
-    .relation-marx {
-      order: initial;
-      max-width: none;
-      margin: .25rem 0;
-      padding: .75rem 1rem;
-    }
+	.rel-balzac-rastignac {
+		top: 145px;
+		left: 520px;
+		width: 220px;
+	}
 
-    .relation-central {
-      order: 3;
-    }
+	.rel-rastignac-centre {
+		top: 340px;
+		left: 520px;
+		width: 210px;
+	}
 
-    .marx {
-      order: 4;
-    }
+	.rel-balzac-marx {
+		top: 260px;
+		left: 40px;
+		width: 250px;
+		border-left: 3px solid var(--map-accent-green);
+	}
 
-    .commune {
-      order: 5;
-    }
+	.rel-commune-marx {
+		top: 615px;
+		left: 360px;
+		width: 280px;
+		text-align: center;
+		border-top: 2px solid var(--map-accent-red);
+	}
 
-    .relation-rastignac {
-      order: 6;
-    }
+	.rel-commune-rimbaud {
+		top: 730px;
+		right: 70px;
+		width: 250px;
+	}
 
-    .rimbaud {
-      order: 7;
-    }
+	.rel-contrast-box {
+		top: 340px;
+		right: 30px;
+		width: 260px;
+		border-left: 3px solid var(--map-accent-purple);
+		background: #fbf8fe;
+	}
 
-    .summary {
-      grid-template-columns: 1fr 1fr;
-      margin-top: 3rem;
-    }
+	/* ==========================================================================
+	   SYNTHÈSE FINALE
+	   ========================================================================== */
+	.map-synthesis {
+		background: var(--map-paper);
+		border: 1px solid var(--map-border);
+		border-radius: 12px;
+		padding: 2rem 1.5rem;
+		text-align: center;
+	}
 
-    .summary div + div {
-      border-left: 0;
-    }
+	.map-synthesis h3 {
+		margin: 0 0 1.25rem;
+		font-family: Georgia, "Times New Roman", serif;
+		font-size: 1.25rem;
+		font-weight: normal;
+		color: var(--map-ink);
+	}
 
-    .summary div:nth-child(n + 3) {
-      border-top: 1px solid var(--line);
-    }
-  }
+	.synthesis-grid {
+		display: grid;
+		grid-template-columns: repeat(5, 1fr);
+		gap: 0.75rem;
+	}
+
+	.synthesis-card {
+		background: var(--map-card-bg);
+		border: 1px solid var(--map-border-soft);
+		border-radius: 8px;
+		padding: 1rem 0.6rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+	}
+
+	.synthesis-card strong {
+		font-family: Georgia, "Times New Roman", serif;
+		font-size: 1.05rem;
+		color: var(--map-ink);
+	}
+
+	.synthesis-card span {
+		font-size: 0.82rem;
+		color: var(--map-muted);
+	}
+
+	/* ==========================================================================
+	   TABLETTE (max-width: 1040px)
+	   ========================================================================== */
+	@media (max-width: 1040px) {
+		.mindmap-canvas {
+			min-height: 880px;
+		}
+
+		.node-balzac { left: 50%; transform: translateX(-50%); width: 260px; }
+		.node-rastignac { left: 50%; transform: translateX(-50%); width: 260px; }
+		.node-center { left: 50%; transform: translateX(-50%); width: 330px; }
+		.node-rimbaud { left: 50%; transform: translateX(-50%); width: 280px; }
+		.node-marx { left: 10px; width: 260px; }
+		.node-commune { right: 10px; width: 260px; }
+
+		.rel-balzac-rastignac { left: calc(50% + 140px); width: 190px; }
+		.rel-rastignac-centre { left: calc(50% + 140px); width: 190px; }
+		.rel-balzac-marx { left: 10px; width: 220px; }
+		.rel-contrast-box { right: 10px; width: 230px; top: 320px; }
+		.rel-commune-marx { left: 50%; transform: translateX(-50%); width: 260px; }
+		.rel-commune-rimbaud { right: 10px; width: 220px; }
+
+		.synthesis-grid {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
+	/* ==========================================================================
+	   MOBILE (max-width: 768px) : PARCOURS CONCEPTUEL VERTICAL
+	   Aucun débordement horizontal, connexions intégrées aux cartes
+	   ========================================================================== */
+	@media (max-width: 768px) {
+		.page-container {
+			padding: 1.75rem 0.85rem 3rem;
+		}
+
+		.map-intro {
+			margin-bottom: 2rem;
+		}
+
+		.map-intro h1 {
+			font-size: 1.95rem;
+		}
+
+		.intro-desc {
+			font-size: 1.05rem;
+		}
+
+		.mindmap-canvas {
+			position: static;
+			min-height: auto;
+			display: flex;
+			flex-direction: column;
+			gap: 1rem;
+		}
+
+		.map-svg {
+			display: none;
+		}
+
+		.map-node {
+			position: static;
+			width: 100% !important;
+			left: auto !important;
+			right: auto !important;
+			top: auto !important;
+			transform: none !important;
+			margin: 0;
+			padding: 1.2rem;
+		}
+
+		.rel-label {
+			position: static;
+			width: 100% !important;
+			left: auto !important;
+			right: auto !important;
+			top: auto !important;
+			transform: none !important;
+			margin: 0;
+			padding: 0.75rem 1rem;
+			background: var(--map-paper);
+			border: 1px dashed var(--map-border);
+		}
+
+		.node-center {
+			order: 1;
+		}
+
+		.node-balzac {
+			order: 2;
+		}
+
+		.rel-balzac-rastignac {
+			order: 3;
+		}
+
+		.node-rastignac {
+			order: 4;
+		}
+
+		.rel-rastignac-centre {
+			order: 5;
+		}
+
+		.rel-contrast-box {
+			order: 6;
+		}
+
+		.rel-balzac-marx {
+			order: 7;
+		}
+
+		.node-marx {
+			order: 8;
+		}
+
+		.node-commune {
+			order: 9;
+		}
+
+		.rel-commune-marx {
+			order: 10;
+		}
+
+		.rel-commune-rimbaud {
+			order: 11;
+		}
+
+		.node-rimbaud {
+			order: 12;
+		}
+
+		.synthesis-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	/* ==========================================================================
+	   EXTRA SMALL (320px)
+	   ========================================================================== */
+	@media (max-width: 380px) {
+		.page-container {
+			padding: 1.25rem 0.5rem 2.5rem;
+		}
+
+		.map-intro h1 {
+			font-size: 1.65rem;
+		}
+
+		.map-node {
+			padding: 1rem 0.75rem;
+		}
+	}
 </style>
