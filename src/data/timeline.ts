@@ -51,8 +51,9 @@ export interface TimelineItemImage {
 	credit?: TimelineImageCredit;
 }
 
-/** Extrait audio intégré, dont les droits sur l'enregistrement ont été vérifiés */
-export interface TimelineItemAudio {
+/** Ressource audio intégrée avec lecteur HTML5 */
+export interface TimelineItemAudioEmbedded {
+	type: 'embedded';
 	/** Nom du mouvement / de l'extrait, affiché « Écouter : … » */
 	title: string;
 	/** Fichier lu par le lecteur HTML5 */
@@ -76,12 +77,20 @@ export interface TimelineItemAudio {
 	rightsNote?: string;
 }
 
-/** Écoute externe, sans intégration ni téléchargement du fichier */
-export interface TimelineItemListenLink {
+/** Ressource d'écoute externe (lien vers une page de bibliothèque/catalogue) */
+export interface TimelineItemAudioExternal {
+	type: 'external';
+	title?: string;
 	url: string;
 	source: string;
 	note?: string;
 }
+
+/** Ressource audio d'une œuvre : soit intégrée (lecteur HTML5), soit externe (lien) */
+export type TimelineItemAudio = TimelineItemAudioEmbedded | TimelineItemAudioExternal;
+
+/** Alias de rétrocompatibilité pour les écoutes externes */
+export type TimelineItemListenLink = TimelineItemAudioExternal;
 
 export interface TimelineItem {
 	id: string;
@@ -857,8 +866,7 @@ export const timelineItems: TimelineItem[] = [
 		periodId: 'premier-empire',
 		relatedTo: ['charles-darwin'],
 		importance: 'medium',
-		image: scienceImages.lamarck,
-		secondaryImage: scienceImages.lamarckPortrait,
+		image: scienceImages.lamarckGirafes,
 	},
 
 	// 3. 1824 — Sadi Carnot
@@ -1275,6 +1283,7 @@ export const timelineItems: TimelineItem[] = [
 		importance: 'major',
 		image: musicImages.beethovenSymphonie9,
 		secondaryImage: musicImages.beethovenPortraitStieler,
+		audio: musicListenLinks.beethovenSymphonie9,
 		listenLink: musicListenLinks.beethovenSymphonie9,
 	},
 

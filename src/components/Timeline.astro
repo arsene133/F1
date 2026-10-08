@@ -3,7 +3,6 @@ import '../styles/timeline.css';
 import {
 	timelineItems,
 	timelinePeriods,
-	type TimelineItem,
 	type TimelinePeriod,
 } from '../data/timeline';
 import { timelineFilters } from '../data/timeline-filters';
@@ -336,49 +335,14 @@ const clientData = {
 </div>
 
 <script>
-	import type { TimelineCharacterModel } from '../data/timeline';
-
-	interface TimelineImageCredit {
-		source: string;
-		sourceUrl: string;
-		author?: string;
-		license: string;
-		attributionRequired: boolean;
-		attribution?: string;
-	}
-
-	interface TimelineItemImage {
-		src: string;
-		alt: string;
-		caption?: string;
-		srcset?: string;
-		width?: number;
-		height?: number;
-		fit?: 'contain' | 'cover';
-		position?: string;
-		credit?: TimelineImageCredit;
-	}
-
-	interface TimelineItemAudio {
-		title: string;
-		url: string;
-		mimeType: string;
-		source: string;
-		sourceUrl: string;
-		license: string;
-		licenseUrl?: string;
-		performer?: string;
-		recordingDate?: string;
-		duration?: string;
-		attributionRequired: boolean;
-		attribution?: string;
-	}
-
-	interface TimelineItemListenLink {
-		url: string;
-		source: string;
-		note?: string;
-	}
+	import type {
+		TimelineCharacterModel,
+		TimelineImageCredit,
+		TimelineItemImage,
+		TimelineItemAudio,
+		TimelineItemListenLink,
+	} from '../data/timeline';
+	import { renderMusicalAudio } from './MusicalAudio';
 
 	interface TimelineItem {
 		id: string;
@@ -482,49 +446,9 @@ const clientData = {
 				`;
 			}
 
-			function formatDuration(duration: string): string {
-				const [min, sec] = duration.split(':');
-				return `${Number(min)} min ${sec}`;
-			}
-
-			// Écoute : lecteur natif chargé à la demande (preload="none"), ou lien externe
+			// Écoute : lecteur natif chargé à la demande (preload="none"), ou lien externe via MusicalAudio
 			function renderListening(item: TimelineItem): string {
-				const audio = item.audio;
-				if (audio) {
-					const label = `Écouter : ${audio.title}`;
-					const credit = [
-						audio.performer ? `${audio.performer}${audio.recordingDate ? ` (${audio.recordingDate})` : ''}` : '',
-						`Source : <a href="${escapeAttr(audio.sourceUrl)}" target="_blank" rel="noopener noreferrer">${audio.source}</a>`,
-						audio.licenseUrl
-							? `<a href="${escapeAttr(audio.licenseUrl)}" target="_blank" rel="noopener noreferrer">${audio.license}</a>`
-							: audio.license,
-					];
-					return `
-						<div class="details-listen is-embedded">
-							<p class="details-listen-label">
-								<span aria-hidden="true">▶</span> ${label}${audio.duration ? ` <span class="details-listen-duration">(${formatDuration(audio.duration)})</span>` : ''}
-							</p>
-							<audio controls preload="none" aria-label="${escapeAttr(`${item.title}${item.author ? `, ${item.author}` : ''} — ${audio.title}`)}">
-								<source src="${escapeAttr(audio.url)}" type="${escapeAttr(audio.mimeType)}" />
-								<a href="${escapeAttr(audio.sourceUrl)}" target="_blank" rel="noopener noreferrer">Écouter l’extrait sur ${audio.source}</a>
-							</audio>
-							<small class="details-listen-credit">${credit.filter(Boolean).join(' · ')}</small>
-							<small class="details-listen-note">Extrait de l’œuvre citée dans la frise.</small>
-						</div>
-					`;
-				}
-				const link = item.listenLink;
-				if (link) {
-					return `
-						<div class="details-listen is-external">
-							<a class="details-listen-link" href="${escapeAttr(link.url)}" target="_blank" rel="noopener noreferrer">
-								Écouter l’œuvre <span aria-hidden="true">↗</span><span class="sr-only"> (${link.source}, nouvel onglet)</span>
-							</a>
-							<small class="details-listen-credit">Écoute externe · ${link.source}${link.note ? ` — ${link.note}` : ''}</small>
-						</div>
-					`;
-				}
-				return '';
+				return renderMusicalAudio(item);
 			}
 
 			// Schéma secondaire : comment l'œuvre explique le comportement des personnages

@@ -1,0 +1,15 @@
+---
+import type { TimelineItemAudio, TimelineItemListenLink } from '../data/timeline';
+import { renderMusicalAudio } from './MusicalAudio';
+
+export interface Props {
+	title: string;
+	author?: string;
+	audio?: TimelineItemAudio;
+	listenLink?: TimelineItemListenLink;
+}
+
+const { title, author, audio, listenLink } = Astro.props;
+const html = renderMusicalAudio({ title, author, audio, listenLink });
+---
+<Fragment set:html={html} />
