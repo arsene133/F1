@@ -670,7 +670,7 @@ const clientData = {
 
 					<div class="details-section">
 						<h4>Présentation</h4>
-						<p>${item.description}</p>
+						${item.description.split('\n\n').map((p) => `<p>${p}</p>`).join('')}
 						${item.pageLink ? `
 							<p class="details-page-callout">
 								<a href="${escapeAttr(item.pageLink.url)}" class="details-page-link">
