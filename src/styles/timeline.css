@@ -824,142 +824,137 @@
 }
 
 /* --------------------------------------------------------------------------
-   FILTRE ACTIF SUR MOBILE/TABLETTE (sous 60rem) : hiérarchie, pas de masquage.
+   FILTRE ACTIF (bureau comme mobile) : hiérarchie, pas de masquage ni d'estompage.
    Les repères de la catégorie choisie gardent leur carte complète ; les autres
-   restent en place, en ligne compacte « DATE · TITRE — précision », touchables.
-   Touché, un repère compact redevient une carte complète le temps de sa lecture
-   (.selected), puis reprend sa forme compacte au repli.
+   restent en place, en ligne compacte « DATE · TITRE — précision », activables.
+   Activé, un repère compact redevient une carte complète le temps de sa lecture
+   (.selected), puis reprend sa forme compacte au repli ou à la sélection suivante.
    -------------------------------------------------------------------------- */
-.entry-compact-line,
-.timeline-filter-status {
+.entry-compact-line {
 	display: none;
 }
 
-@media not all and (min-width: 60rem) {
-	.timeline-filter-status:not([hidden]) {
-		display: block;
-		margin: -0.6rem 0 1.25rem;
-		font-size: 0.9rem;
-		line-height: 1.4;
-		color: var(--tl-muted);
-	}
+.timeline-filter-status:not([hidden]) {
+	display: block;
+	margin: -0.6rem 0 1.25rem;
+	font-size: 0.9rem;
+	line-height: 1.4;
+	color: var(--tl-muted);
+}
 
-	.timeline-filter-status strong {
-		color: var(--tl-ink);
-		font-weight: 700;
-	}
+.timeline-filter-status strong {
+	color: var(--tl-ink);
+	font-weight: 700;
+}
 
-	/* Rythme resserré : deux lignes compactes voisines se suivent presque sans blanc,
-	   une carte complète garde de l'air autour d'elle */
-	.timeline-step.is-compact {
-		margin-block: calc(var(--tl-gap) * -0.4);
-	}
+/* Rythme resserré : deux lignes compactes voisines se suivent presque sans blanc,
+   une carte complète garde de l'air autour d'elle */
+.timeline-step.is-compact {
+	margin-block: calc(var(--tl-gap) * -0.4);
+}
 
-	.timeline-step.is-compact:not(.selected) .step-spine-node {
-		top: calc(var(--tl-touch) / 2);
-	}
+.timeline-step.is-compact:not(.selected) .timeline-entry-button {
+	display: flex;
+	align-items: center;
+	min-height: var(--tl-touch);
+	padding: 0.35rem 0.25rem 0.35rem 0.1rem;
+	background: transparent;
+	border: 0;
+	border-bottom: 1px solid var(--tl-border-soft);
+	border-radius: 0;
+	box-shadow: none;
+	transform: none;
+}
 
-	.timeline-step.is-compact:not(.selected) .timeline-entry-button {
-		display: flex;
-		align-items: center;
-		min-height: var(--tl-touch);
-		padding: 0.35rem 0.25rem 0.35rem 0.1rem;
-		background: transparent;
-		border: 0;
-		border-bottom: 1px solid var(--tl-border-soft);
-		border-radius: 0;
-		box-shadow: none;
+.timeline-step.is-compact:not(.selected) .timeline-entry-button > :not(.entry-compact-line) {
+	display: none;
+}
+
+.timeline-step.is-compact:not(.selected) .entry-compact-line {
+	display: flex;
+	align-items: baseline;
+	min-width: 0;
+	width: 100%;
+	font-size: 0.95rem;
+	line-height: 1.35;
+	white-space: nowrap;
+	color: var(--tl-ink);
+}
+
+.entry-compact-date {
+	flex: none;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	color: var(--tl-ink-soft);
+}
+
+.entry-compact-date::after {
+	content: '·';
+	margin: 0 0.4em;
+	font-weight: 400;
+	color: var(--tl-muted);
+}
+
+/* Une seule ligne : la précision s'efface avant le titre quand la place manque */
+.entry-compact-title {
+	flex: 0 1 auto;
+	min-width: 4em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-weight: 600;
+}
+
+/* Base nulle : la précision occupe seulement la place que le titre laisse libre */
+.entry-compact-detail {
+	flex: 1 1 0;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	color: var(--tl-muted);
+}
+
+.entry-compact-detail::before {
+	content: ' — ';
+	white-space: pre;
+}
+
+/* La date garde la couleur de sa catégorie : repère discret mais pas grisé */
+.timeline-step.is-compact.is-literature .entry-compact-date { color: var(--tl-lit-color); }
+.timeline-step.is-compact.major-turning-point .entry-compact-date { color: var(--tl-rev-color); }
+.timeline-step.is-compact.is-industry .entry-compact-date { color: var(--tl-ind-color); }
+.timeline-step.is-compact.is-science .entry-compact-date { color: var(--tl-sci-color); }
+.timeline-step.is-compact.is-painting .entry-compact-date { color: var(--tl-paint-color); }
+.timeline-step.is-compact.is-music .entry-compact-date { color: var(--tl-music-color); }
+.timeline-step.is-compact.is-galois .entry-compact-date { color: var(--tl-galois-accent); }
+
+.timeline-step.is-compact:not(.selected) .timeline-entry-button:active {
+	background: var(--tl-surface-subtle);
+}
+
+/* Bureau : un repère sorti du filtre peut rester celui du panneau latéral (bouton .selected, étape compacte) */
+.timeline-step.is-compact:not(.selected) .timeline-entry-button.selected,
+.timeline-step.is-compact:not(.selected) .timeline-entry-button.context-highlight {
+	background: var(--tl-accent-soft);
+	border-bottom-color: var(--tl-accent);
+}
+
+.timeline-step.is-compact:not(.selected) .timeline-entry-button:focus-visible {
+	outline-offset: 0;
+}
+
+@media (hover: hover) {
+	.timeline-step.is-compact:not(.selected) .timeline-entry-button:hover {
 		transform: none;
-	}
-
-	.timeline-step.is-compact:not(.selected) .timeline-entry-button > :not(.entry-compact-line) {
-		display: none;
-	}
-
-	.timeline-step.is-compact:not(.selected) .entry-compact-line {
-		display: flex;
-		align-items: baseline;
-		min-width: 0;
-		width: 100%;
-		font-size: 0.95rem;
-		line-height: 1.35;
-		white-space: nowrap;
-		color: var(--tl-ink);
-	}
-
-	.entry-compact-date {
-		flex: none;
-		font-weight: 700;
-		font-variant-numeric: tabular-nums;
-		color: var(--tl-ink-soft);
-	}
-
-	.entry-compact-date::after {
-		content: '·';
-		margin: 0 0.4em;
-		font-weight: 400;
-		color: var(--tl-muted);
-	}
-
-	/* Une seule ligne : la précision s'efface avant le titre quand la place manque */
-	.entry-compact-title {
-		flex: 0 1 auto;
-		min-width: 4em;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		font-weight: 600;
-	}
-
-	/* Base nulle : la précision occupe seulement la place que le titre laisse libre */
-	.entry-compact-detail {
-		flex: 1 1 0;
-		min-width: 0;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		color: var(--tl-muted);
-	}
-
-	.entry-compact-detail::before {
-		content: ' — ';
-		white-space: pre;
-	}
-
-	/* La date garde la couleur de sa catégorie : repère discret mais pas grisé */
-	.timeline-step.is-compact.is-literature .entry-compact-date { color: var(--tl-lit-color); }
-	.timeline-step.is-compact.major-turning-point .entry-compact-date { color: var(--tl-rev-color); }
-	.timeline-step.is-compact.is-industry .entry-compact-date { color: var(--tl-ind-color); }
-	.timeline-step.is-compact.is-science .entry-compact-date { color: var(--tl-sci-color); }
-	.timeline-step.is-compact.is-painting .entry-compact-date { color: var(--tl-paint-color); }
-	.timeline-step.is-compact.is-music .entry-compact-date { color: var(--tl-music-color); }
-	.timeline-step.is-compact.is-galois .entry-compact-date { color: var(--tl-galois-accent); }
-
-	.timeline-step.is-compact:not(.selected) .timeline-entry-button:active {
+		box-shadow: none;
 		background: var(--tl-surface-subtle);
-	}
-
-	.timeline-step.is-compact:not(.selected) .timeline-entry-button.context-highlight {
-		background: var(--tl-accent-soft);
-		border-bottom-color: var(--tl-accent);
-	}
-
-	.timeline-step.is-compact:not(.selected) .timeline-entry-button:focus-visible {
-		outline-offset: 0;
-	}
-
-	@media (hover: hover) {
-		.timeline-step.is-compact:not(.selected) .timeline-entry-button:hover {
-			transform: none;
-			box-shadow: none;
-			background: var(--tl-surface-subtle);
-		}
 	}
 }
 
-/* Dimming filtré */
-.timeline-step-dimmed {
-	opacity: 0.25 !important;
-	filter: grayscale(0.85);
-	pointer-events: none !important;
+/* Mobile : le nœud de l'axe suit la date de la ligne compacte (sur bureau, il reste centré sur l'étape) */
+@media not all and (min-width: 60rem) {
+	.timeline-step.is-compact:not(.selected) .step-spine-node {
+		top: calc(var(--tl-touch) / 2);
+	}
 }
 
 /* --------------------------------------------------------------------------
@@ -1745,6 +1740,21 @@
 		max-width: 340px;
 	}
 
+	/* Ligne compacte dans la colonne de la carte (même largeur, connecteur centré), plus basse qu'au doigt */
+	.timeline-step.is-compact:not(.selected) .timeline-entry-button {
+		min-height: 2.25rem;
+		padding: 0.3rem 0.4rem;
+	}
+
+	.timeline-step.is-compact:not(.selected) .entry-compact-line {
+		font-size: 0.9rem;
+	}
+
+	.timeline-filter-status:not([hidden]) {
+		margin: -1.4rem 0 2rem 1rem;
+		font-size: 0.875rem;
+	}
+
 	.entry-year-time {
 		font-size: 0.875rem;
 	}
@@ -1921,7 +1931,8 @@
 @media (min-width: 60rem) and (pointer: coarse) {
 	.timeline-filter-btn,
 	.details-related-btn,
-	.details-model-more summary {
+	.details-model-more summary,
+	.timeline-step.is-compact:not(.selected) .timeline-entry-button {
 		min-height: var(--tl-touch);
 	}
 }

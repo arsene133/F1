@@ -196,7 +196,7 @@ const clientData = {
 		<span class="hint-touch">Touchez une œuvre ou un événement pour explorer son contexte historique</span>
 		<span class="hint-pointer">Cliquez sur une œuvre ou un événement pour explorer son contexte historique</span>
 	</p>
-	<!-- Mobile, filtre actif : ce que signifie la hiérarchie détaillé / en bref (rempli par le script) -->
+	<!-- Filtre actif : ce que signifie la hiérarchie détaillé / en bref (rempli par le script) -->
 	<p class="timeline-filter-status" id="timeline-filter-status" aria-live="polite" hidden></p>
 
 	<!-- Disposition principale : Frise verticale + Panneau d'informations -->
@@ -255,7 +255,7 @@ const clientData = {
 									aria-pressed={item.id === initialSelectedId ? 'true' : 'false'}
 									aria-label={`${item.title}, ${item.datePrecise ?? item.year}${item.author ? `, par ${item.author}` : ''}`}
 								>
-									<!-- Ligne compacte (mobile, repère hors du filtre actif) : le nom accessible reste l'aria-label -->
+									<!-- Ligne compacte (repère hors du filtre actif) : le nom accessible reste l'aria-label -->
 									<span class="entry-compact-line" aria-hidden="true">
 										<span class="entry-compact-date">{item.compact.date}</span>
 										<span class="entry-compact-title">{item.compact.title}</span>
@@ -797,7 +797,8 @@ const clientData = {
 			// Premier repère (ou bandeau) visible sous la barre de filtres collante : la lecture reste calée dessus
 			// quand la densité de la frise change, au lieu de sauter de plusieurs écrans
 			function readingAnchor(): HTMLElement | null {
-				const top = controls?.getBoundingClientRect().bottom ?? 0;
+				// Bureau : la barre de filtres n'est pas collante et peut avoir quitté l'écran
+				const top = Math.max(0, controls?.getBoundingClientRect().bottom ?? 0);
 				for (const el of document.querySelectorAll<HTMLElement>('.timeline-ordered-list > li')) {
 					const rect = el.getBoundingClientRect();
 					if (rect.bottom > top) return rect.top < window.innerHeight ? el : null;
@@ -805,10 +806,8 @@ const clientData = {
 				return null;
 			}
 
-			// Filtrage des éléments
-			// Bureau : les repères hors filtre sont estompés et sortent de la tabulation (comportement d'origine).
-			// Mobile/tablette : rien n'est masqué ni estompé ; les repères hors filtre passent en ligne compacte
-			// (« DATE · TITRE »), toujours touchables, et la frise garde sa continuité.
+			// Filtrage des éléments, sur bureau comme sur mobile : rien n'est masqué ni estompé ; les repères hors filtre
+			// passent en ligne compacte (« DATE · TITRE »), toujours activables, et la frise garde sa continuité.
 			function applyFilter(filterId: string, { keepPosition = false }: { keepPosition?: boolean } = {}) {
 				const inline = isInline();
 				currentFilter = filterId;
@@ -826,7 +825,7 @@ const clientData = {
 					closeInlinePanel({ restoreFocus: false });
 				}
 
-				const anchor = inline && keepPosition ? readingAnchor() : null;
+				const anchor = keepPosition ? readingAnchor() : null;
 				const anchorTop = anchor?.getBoundingClientRect().top;
 
 				let matchCount = 0;
@@ -836,19 +835,13 @@ const clientData = {
 					const matches = matchesTimelineFilter(item.type, filterId);
 					if (matches) matchCount++;
 
-					stepEl.classList.toggle('is-compact', inline && !matches);
-					stepEl.classList.toggle('timeline-step-dimmed', !inline && !matches);
-					// Un repère estompé par le filtre (bureau) sort aussi de l'ordre de tabulation
-					stepEl.inert = !inline && !matches;
+					stepEl.classList.toggle('is-compact', !matches);
+					// Bureau : le repère sélectionné qui sort du filtre reprend sa ligne compacte, son contexte restant
+					// affiché dans le panneau latéral ; l'activer de nouveau le redéplie
+					if (!matches) stepEl.classList.remove('selected');
 				});
 
-				// Bannières de régime : estompées sur bureau hors « Tout » / « Histoire », toujours présentes sur mobile
-				const hidesBanners = !inline && filterId !== 'all' && filterId !== 'history';
-				document.querySelectorAll('.regime-context-banner').forEach((banner) => {
-					banner.classList.toggle('timeline-step-dimmed', hidesBanners);
-				});
-
-				// Mobile : rappel discret de la hiérarchie (le texte est masqué sur bureau par la feuille de style)
+				// Rappel discret de la hiérarchie
 				if (filterStatus) {
 					const label = document.querySelector(`.timeline-filter-btn[data-filter="${filterId}"]`)?.textContent?.trim() ?? '';
 					filterStatus.hidden = filterId === 'all';
