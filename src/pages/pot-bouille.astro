@@ -1,0 +1,327 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import RelationshipMap from '../components/RelationshipMap.astro';
+import {
+	potBouilleCharacters,
+	potBouilleEdgeTypes,
+	potBouilleFunctions,
+	potBouilleMechanism,
+	potBouilleRelationships,
+} from '../data/pot-bouille';
+
+const pageTitle = 'Pot-Bouille d’Émile Zola — les personnages et leurs intrigues';
+const pageDescription =
+	'Carte interactive des personnages de Pot-Bouille d’Émile Zola (1882) : Octave Mouret, Berthe Josserand, la famille Vabre et les secrets du 28, rue de Choiseul. Ambition, mariage d’intérêt et satire bourgeoise.';
+---
+
+<!doctype html>
+<html lang="fr">
+	<head>
+		<BaseHead title={pageTitle} description={pageDescription} />
+	</head>
+	<body>
+		<Header />
+
+		<main class="page-container pot-bouille-page">
+			<article aria-labelledby="page-title">
+				<header class="map-intro">
+					<p class="intro-eyebrow">Émile Zola · 1882 · Les Rougon-Macquart (t. X)</p>
+					<h1 id="page-title"><cite>Pot-Bouille</cite> — les personnages</h1>
+					<p class="intro-desc">
+						<strong>Relations, intrigues et secrets au 28, rue de Choiseul</strong>
+					</p>
+					<p class="intro-context">
+						Dixième volume du cycle des <em>Rougon-Macquart</em> publié en 1882, <em>Pot-Bouille</em>
+						dépeint l’arrivée à Paris du jeune Octave Mouret. Derrière la majestueuse façade de pierre
+						de taille d’un immeuble bourgeois de la rue de Choiseul et ses portes d’acajou verni, Zola
+						déchire le voile de la respectabilité : mariages mercantiles, dots fictives, adultères
+						généralisés, déchirements d’héritage et coulisses ordurières où les domestiques colportent
+						la vérité des maîtres.
+					</p>
+					<p class="intro-instructions">
+						Sélectionnez un personnage ou une relation pour en afficher l’analyse détaillée ; les
+						flèches du clavier parcourent les personnages, Échap réinitialise la vue.
+					</p>
+				</header>
+
+				<ol class="mechanism" aria-label="Mécanisme du roman">
+					{potBouilleMechanism.map((m) => (
+						<li>
+							<strong>{m.step}</strong>
+							<span>{m.text}</span>
+						</li>
+					))}
+				</ol>
+
+				<RelationshipMap
+					id="pot-bouille"
+					ariaLabel="Carte des relations entre les personnages de Pot-Bouille"
+					nodesLabel="Personnages de Pot-Bouille"
+					nodes={potBouilleCharacters}
+					relationships={potBouilleRelationships}
+					edgeTypes={potBouilleEdgeTypes}
+					layout={{ width: 900, height: 560 }}
+					mobileLayout={{ width: 360, height: 750 }}
+					anchor={{
+						x: 450,
+						y: 20,
+						label: '28, rue de Choiseul',
+						sub: 'Le théâtre des apparences bourgeoises',
+					}}
+					hint="Cliquez ou appuyez sur un habitant de l’immeuble pour explorer son rôle et ses relations, ou sur une étiquette pour analyser un lien."
+					pointsLabel="Dans le roman :"
+					relationsLabel="Relations :"
+					indexLabel="Toutes les relations du roman, en texte"
+				/>
+
+				<footer class="map-synthesis" aria-labelledby="synthesis-title">
+					<h2 id="synthesis-title">Les habitants et acteurs du 28, rue de Choiseul</h2>
+					<div class="synthesis-table-wrapper">
+						<table class="synthesis-table">
+							<thead>
+								<tr>
+									<th scope="col">Personnage</th>
+									<th scope="col">Situation & foyer</th>
+									<th scope="col">Rôle narratif & satire</th>
+								</tr>
+							</thead>
+							<tbody>
+								{potBouilleCharacters.map((c) => (
+									<tr>
+										<th scope="row">{c.label}</th>
+										<td>{c.meta?.map((item) => (typeof item === 'string' ? item : item.text)).join(' · ')}</td>
+										<td>{potBouilleFunctions[c.id]}</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+
+					<section class="interpretation-section" aria-labelledby="interpretation-title">
+						<h3 id="interpretation-title">La satire zolienne : la marmite des faux-semblants</h3>
+						<p>
+							Le titre du roman renvoie à la cuisine ordinaire du ménage — le pot-bouille —, mais
+							surtout à la tambouille morale inavouable qui bouillonne à l’abri des regards. Tandis
+							que les traités d’hygiène et l’architecture haussmannienne érigent l’immeuble moderne
+							en modèle d’ordre et de propreté, Zola montre que la cour intérieure et les boyaux de
+							service concentrent toutes les pourritures étouffées. L’ambition d’Octave Mouret — qui
+							déploiera toute son ampleur commerciale dans <em>Au Bonheur des Dames</em> — trouve ici
+							son apprentissage : la conquête de la ville s’opère d’abord par la séduction calculée
+							des femmes de l’étage supérieur.
+						</p>
+					</section>
+
+					<div class="synthesis-axioms">
+						<blockquote>
+							« C’est la cuisine de la bourgeoisie, le pot-bouille où tout mijote sans bruit
+							derrière les portes d’acajou. »
+							<cite>Émile Zola, <cite>Pot-Bouille</cite> (1882)</cite>
+						</blockquote>
+						<blockquote>
+							« Mon Dieu ! monsieur Mouret, l’un ou l’autre, est-ce que ça compte ? Quand on a du
+							plâtre dans les yeux, on n’a pas envie de rire… Celui-ci ou un autre, ils se valent
+							tous. Mais quel fichu ménage ! »
+							<cite>Rachel, chapitre XVIII — conclusion sur l’hypocrisie de l’immeuble</cite>
+						</blockquote>
+					</div>
+
+					<nav class="related-literary-links" aria-label="Œuvres connexes sur le site">
+						<p>Prolongez votre lecture :</p>
+						<ul>
+							<li>
+								<a href="/chronologie#pot-bouille">
+									Consulter <em>Pot-Bouille</em> sur la frise chronologique du XIX<sup>e</sup> siècle
+								</a>
+							</li>
+							<li>
+								<a href="/on-ne-badine-pas-avec-l-amour">
+									Comparer avec <em>On ne badine pas avec l’amour</em> de Musset (1834)
+								</a>
+							</li>
+							<li>
+								<a href="/balzac-rimbaud">
+									Découvrir l’analyse sur Balzac, Rastignac et la société bourgeoise
+								</a>
+							</li>
+						</ul>
+					</nav>
+				</footer>
+			</article>
+		</main>
+
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.pot-bouille-page {
+		--intro-eyebrow-color: #be185d;
+	}
+
+	.map-intro h1 cite {
+		font-style: italic;
+	}
+
+	.intro-context {
+		margin: 0 auto 1.25rem;
+		max-width: 760px;
+		font-size: 0.98rem;
+		line-height: 1.6;
+		color: var(--map-ink-soft);
+		text-align: justify;
+	}
+
+	.intro-context em {
+		font-family: var(--map-serif);
+	}
+
+	/* Mécanisme du roman : Façade → Mariage → Conquête → Crise → Convenance */
+	.mechanism {
+		display: grid;
+		grid-template-columns: repeat(5, 1fr);
+		margin: -0.5rem 0 2rem;
+		padding: 0;
+		list-style: none;
+		counter-reset: step;
+	}
+
+	.mechanism li {
+		position: relative;
+		margin: 0;
+		padding: 0 0.85rem;
+		font-size: 0.8rem;
+		line-height: 1.35;
+		color: #5e6d7a;
+		text-align: center;
+	}
+
+	.mechanism li + li::before {
+		content: '→';
+		position: absolute;
+		left: -0.45rem;
+		top: 0;
+		font-family: Georgia, 'Times New Roman', serif;
+		color: #be185d;
+	}
+
+	.mechanism strong {
+		display: block;
+		margin-bottom: 0.15rem;
+		font-family: Georgia, 'Times New Roman', serif;
+		font-size: 0.95rem;
+		font-style: italic;
+		color: #172b3a;
+	}
+
+	.mechanism li:last-child strong {
+		color: #be185d;
+	}
+
+	/* Mise en valeur des étiquettes d'adultère et de mariage */
+	.pot-bouille-page :global(.rm-label.rm-label--adultery) {
+		font-size: 11.5px;
+		font-weight: 600;
+		color: #be185d;
+	}
+
+	.pot-bouille-page :global(.rm-label.rm-label--marriage) {
+		font-size: 11.5px;
+		font-weight: 600;
+		color: #b45309;
+	}
+
+	.interpretation-section {
+		margin: 2.5rem 0 2rem;
+		padding: 1.5rem;
+		background: var(--map-surface);
+		border: 1px solid var(--map-border-soft);
+		border-left: 4px solid var(--intro-eyebrow-color);
+		border-radius: 4px;
+	}
+
+	.interpretation-section h3 {
+		margin: 0 0 0.75rem;
+		font-family: var(--map-serif);
+		font-size: 1.2rem;
+		color: var(--map-ink);
+	}
+
+	.interpretation-section p {
+		margin: 0;
+		font-size: 0.95rem;
+		line-height: 1.6;
+		color: var(--map-ink-soft);
+		text-align: justify;
+	}
+
+	.related-literary-links {
+		margin-top: 2.5rem;
+		padding-top: 1.5rem;
+		border-top: 1px dashed var(--map-border);
+		text-align: center;
+	}
+
+	.related-literary-links p {
+		margin: 0 0 0.5rem;
+		font-weight: bold;
+		font-size: 0.9rem;
+		color: var(--map-ink);
+	}
+
+	.related-literary-links ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 1.25rem;
+	}
+
+	.related-literary-links a {
+		font-size: 0.9rem;
+		color: var(--map-accent);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.related-literary-links a:hover {
+		color: #172b3a;
+	}
+
+	@media (max-width: 720px) {
+		.mechanism {
+			grid-template-columns: 1fr;
+			gap: 0.35rem;
+			margin-top: -0.5rem;
+		}
+
+		.mechanism li {
+			display: flex;
+			gap: 0.5rem;
+			align-items: baseline;
+			padding: 0 0 0 1.1rem;
+			text-align: left;
+		}
+
+		.mechanism li + li::before {
+			content: '↓';
+			left: 0;
+		}
+
+		.mechanism strong {
+			display: inline;
+			flex-shrink: 0;
+			min-width: 6.5rem;
+		}
+
+		.related-literary-links ul {
+			flex-direction: column;
+			gap: 0.5rem;
+			align-items: flex-start;
+			text-align: left;
+		}
+	}
+</style>
