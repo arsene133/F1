@@ -232,5 +232,40 @@ describe.skipIf(!BUILT)('Carte relationnelle de Pot-Bouille (/pot-bouille) — r
 			await page.close();
 		}
 	});
+
+	test('notes éditoriales : repliées par défaut et ouvrables/fermables', async () => {
+		const page = await openPage();
+		try {
+			const counterfactual = page.locator('details.counterfactual-note');
+			const historyNote = page.locator('details.historical-context-note');
+
+			expect(await counterfactual.count()).toBe(1);
+			expect(await historyNote.count()).toBe(1);
+
+			// 1. Repliées par défaut au chargement
+			expect(await counterfactual.getAttribute('open')).toBeNull();
+			expect(await historyNote.getAttribute('open')).toBeNull();
+
+			// 2. Dépliage de la note contrefactuelle au clic
+			const cfSummary = counterfactual.locator('summary');
+			await cfSummary.click();
+			expect(await counterfactual.getAttribute('open')).not.toBeNull();
+
+			// Repli au second clic
+			await cfSummary.click();
+			expect(await counterfactual.getAttribute('open')).toBeNull();
+
+			// 3. Dépliage de la note historique
+			const histSummary = historyNote.locator('summary');
+			await histSummary.click();
+			expect(await historyNote.getAttribute('open')).not.toBeNull();
+
+			// Repli au second clic
+			await histSummary.click();
+			expect(await historyNote.getAttribute('open')).toBeNull();
+		} finally {
+			await page.close();
+		}
+	});
 });
 
