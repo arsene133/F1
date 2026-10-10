@@ -322,10 +322,19 @@ const clientData = {
 									)}
 								</button>
 
-								<!-- Sans JavaScript, le panneau de contexte n'existe pas : l'extrait reste écoutable sous la carte -->
+								<!-- Sans JavaScript, le panneau de contexte n'existe pas : l'extrait et le lien dédié restent accessibles sous la carte -->
 								{(item.audio || item.listenLink) && (
 									<noscript>
 										<MusicalAudio title={item.title} author={item.author} audio={item.audio} listenLink={item.listenLink} />
+									</noscript>
+								)}
+								{item.pageLink && (
+									<noscript>
+										<p class="timeline-noscript-page-link">
+											<a href={item.pageLink.url}>
+												{item.pageLink.label} →
+											</a>
+										</p>
 									</noscript>
 								)}
 							</li>
@@ -428,6 +437,11 @@ const clientData = {
 		audio?: TimelineItemAudio;
 		listenLink?: TimelineItemListenLink;
 		characterModel?: TimelineCharacterModel;
+		pageLink?: {
+			url: string;
+			label: string;
+			badge?: string;
+		};
 	}
 
 	interface TimelinePeriod {
@@ -657,6 +671,14 @@ const clientData = {
 					<div class="details-section">
 						<h4>Présentation</h4>
 						<p>${item.description}</p>
+						${item.pageLink ? `
+							<p class="details-page-callout">
+								<a href="${escapeAttr(item.pageLink.url)}" class="details-page-link">
+									<span class="details-page-link-label">${escapeAttr(item.pageLink.label)}</span>
+									<span class="details-page-link-arrow" aria-hidden="true">→</span>
+								</a>
+							</p>
+						` : ''}
 						${item.quote ? `<blockquote class="details-quote">${item.quote}</blockquote>` : ''}
 						${renderListening(item)}
 					</div>

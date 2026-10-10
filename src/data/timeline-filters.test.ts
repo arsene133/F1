@@ -92,4 +92,19 @@ describe('ligne compacte', () => {
 			expect(p.title.length, item.id).toBeGreaterThan(0);
 		}
 	});
+
+	test('repère Pot-Bouille comporte un lien vers la page dédiée /pot-bouille', () => {
+		const potBouille = timelineItems.find((it) => it.id === 'pot-bouille');
+		expect(potBouille).toBeDefined();
+		expect(potBouille?.pageLink).toBeDefined();
+		expect(potBouille?.pageLink?.url).toBe('/pot-bouille');
+	});
+
+	test('repère On ne badine pas avec l’amour comporte un lien vers la page dédiée /on-ne-badine-pas-avec-l-amour', () => {
+		const musset = timelineItems.find((it) => it.id === 'on-ne-badine-pas');
+		expect(musset).toBeDefined();
+		expect(musset?.pageLink).toBeDefined();
+		expect(musset?.pageLink?.url).toBe('/on-ne-badine-pas-avec-l-amour');
+	});
 });
+

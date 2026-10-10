@@ -128,6 +128,12 @@ export interface TimelineItem {
 	listenLink?: TimelineItemListenLink;
 	/** Schéma secondaire : manière dont l'œuvre explique le comportement des personnages */
 	characterModel?: TimelineCharacterModel;
+	/** Lien vers une page dédiée du site */
+	pageLink?: {
+		url: string;
+		label: string;
+		badge?: string;
+	};
 	featured?: boolean;
 }
 
@@ -375,6 +381,11 @@ export const timelineItems: TimelineItem[] = [
 			{ id: 'pot-bouille', label: 'Trois modèles de compréhension du personnage : Zola, Pot-Bouille (1882)' },
 		],
 		quote: '« On est souvent trompé en amour, souvent blessé et souvent malheureux ; mais on aime, et quand on est sur le bord de sa tombe, on se retourne pour regarder en arrière, et on se dit : j’ai souffert souvent, je me suis trompé quelquefois, mais j’ai aimé. »',
+		pageLink: {
+			url: '/on-ne-badine-pas-avec-l-amour',
+			label: 'Explorer la page dédiée : personnages & relations (Musset)',
+			badge: 'Page dédiée · Carte des personnages',
+		},
 		importance: 'major',
 		image: literatureImages.onNeBadinePas,
 		secondaryImage: literatureImages.musset,
@@ -649,6 +660,11 @@ export const timelineItems: TimelineItem[] = [
 		contextualTags: ['Littérature', 'Commerce moderne', 'Modernité urbaine', 'Industrie', 'Grands magasins'],
 		historicalContextTags: ['Magasin de nouveautés', 'Rue Neuve-Saint-Augustin', 'Commerce parisien', 'Bourgeoisie'],
 		quote: '« C’est la cuisine de la bourgeoisie, le pot-bouille où tout mijote sans bruit derrière les portes d’acajou. »',
+		pageLink: {
+			url: '/pot-bouille',
+			label: 'Explorer la page dédiée : personnages, intrigues & coupe de l’immeuble',
+			badge: 'Page dédiée · Coupe & personnages',
+		},
 		importance: 'major',
 		image: literatureImages.potBouille,
 		secondaryImage: literatureImages.zola,
