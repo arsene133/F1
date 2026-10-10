@@ -1,6 +1,12 @@
 import { describe, expect, test } from 'vitest';
 import { timelineItems } from './timeline';
-import { compactEntryParts, matchesTimelineFilter, timelineFilters } from './timeline-filters';
+import {
+	compactEntryParts,
+	DEFAULT_TIMELINE_FILTER,
+	matchesTimelineFilter,
+	timelineFilterStatusHtml,
+	timelineFilters,
+} from './timeline-filters';
 
 const count = (filterId: string) => timelineItems.filter((item) => matchesTimelineFilter(item.type, filterId)).length;
 const titlesFor = (filterId: string) =>
@@ -17,6 +23,17 @@ describe('filtres de la frise', () => {
 			'Peinture',
 			'Musique',
 		]);
+	});
+
+	test('la frise s’ouvre sur le filtre « Littérature » existant', () => {
+		expect(DEFAULT_TIMELINE_FILTER).toBe('literature');
+		expect(timelineFilters.find((f) => f.id === DEFAULT_TIMELINE_FILTER)?.label).toBe('Littérature');
+	});
+
+	test('rappel de la hiérarchie : vide pour « Tout », décompte sinon', () => {
+		expect(timelineFilterStatusHtml('all', 'Tout', 99)).toBe('');
+		expect(timelineFilterStatusHtml('literature', 'Littérature', 5)).toContain('<strong>Littérature · 5 événements</strong>');
+		expect(timelineFilterStatusHtml('music', 'Musique', 1)).toContain('1 événement</strong>');
 	});
 
 	test('« Tout » retient chaque repère', () => {

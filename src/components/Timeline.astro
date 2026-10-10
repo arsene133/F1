@@ -5,7 +5,13 @@ import {
 	timelinePeriods,
 	type TimelinePeriod,
 } from '../data/timeline';
-import { compactEntryParts, timelineFilters } from '../data/timeline-filters';
+import {
+	compactEntryParts,
+	DEFAULT_TIMELINE_FILTER,
+	matchesTimelineFilter,
+	timelineFilterStatusHtml,
+	timelineFilters,
+} from '../data/timeline-filters';
 import MusicalAudio from './MusicalAudio.astro';
 
 interface Props {
@@ -150,6 +156,14 @@ const timelineRows = enrichedItems.map((item, index) => {
 	return { item, bannerPeriod, bannerId: currentBannerId };
 });
 
+// Filtre initial rendu côté serveur (boutons, lignes compactes, rappel) : aucun clic simulé au chargement
+const initialFilterLabel = timelineFilters.find((f) => f.id === DEFAULT_TIMELINE_FILTER)?.label ?? '';
+const initialFilterStatus = timelineFilterStatusHtml(
+	DEFAULT_TIMELINE_FILTER,
+	initialFilterLabel,
+	sortedTimelineItems.filter((item) => matchesTimelineFilter(item.type, DEFAULT_TIMELINE_FILTER)).length,
+);
+
 // Données sérialisées pour le script client
 const clientData = {
 	items: sortedTimelineItems,
@@ -181,9 +195,9 @@ const clientData = {
 			{timelineFilters.map((filter) => (
 				<button
 					type="button"
-					class={`timeline-filter-btn ${filter.id === 'all' ? 'active' : ''}`}
+					class={`timeline-filter-btn ${filter.id === DEFAULT_TIMELINE_FILTER ? 'active' : ''}`}
 					data-filter={filter.id}
-					aria-pressed={filter.id === 'all' ? 'true' : 'false'}
+					aria-pressed={filter.id === DEFAULT_TIMELINE_FILTER ? 'true' : 'false'}
 					title={filter.description}
 				>
 					{filter.label}
@@ -197,7 +211,7 @@ const clientData = {
 		<span class="hint-pointer">Cliquez sur une œuvre ou un événement pour explorer son contexte historique</span>
 	</p>
 	<!-- Filtre actif : ce que signifie la hiérarchie détaillé / en bref (rempli par le script) -->
-	<p class="timeline-filter-status" id="timeline-filter-status" aria-live="polite" hidden></p>
+	<p class="timeline-filter-status" id="timeline-filter-status" aria-live="polite" hidden={!initialFilterStatus} set:html={initialFilterStatus}></p>
 
 	<!-- Disposition principale : Frise verticale + Panneau d'informations -->
 	<div class="timeline-main-layout">
@@ -227,7 +241,7 @@ const clientData = {
 							)}
 
 							<li
-								class={`timeline-step ${item.alignment} ${item.isLiterature ? 'is-literature' : ''} ${item.isIndustry ? 'is-industry' : ''} ${item.isScience ? 'is-science' : ''} ${item.isPainting ? 'is-painting' : ''} ${item.isMusic ? 'is-music' : ''} ${item.isArtisticEvent ? 'is-artistic-event' : ''} ${item.isGalois ? 'is-galois featured' : ''} ${item.isMajorTurningPoint ? 'major-turning-point' : ''} ${item.isMajorIndustryPoint ? 'major-industry-point' : ''} ${item.isMajorSciencePoint ? 'major-science-point' : ''} ${item.isMajorPaintingPoint ? 'major-painting-point' : ''} ${item.isMajorMusicPoint ? 'major-music-point' : ''} ${item.isMinorCulturalPoint ? 'minor-cultural-point' : ''}`}
+								class={`timeline-step ${item.alignment} ${item.isLiterature ? 'is-literature' : ''} ${item.isIndustry ? 'is-industry' : ''} ${item.isScience ? 'is-science' : ''} ${item.isPainting ? 'is-painting' : ''} ${item.isMusic ? 'is-music' : ''} ${item.isArtisticEvent ? 'is-artistic-event' : ''} ${item.isGalois ? 'is-galois featured' : ''} ${item.isMajorTurningPoint ? 'major-turning-point' : ''} ${item.isMajorIndustryPoint ? 'major-industry-point' : ''} ${item.isMajorSciencePoint ? 'major-science-point' : ''} ${item.isMajorPaintingPoint ? 'major-painting-point' : ''} ${item.isMajorMusicPoint ? 'major-music-point' : ''} ${item.isMinorCulturalPoint ? 'minor-cultural-point' : ''} ${matchesTimelineFilter(item.type, DEFAULT_TIMELINE_FILTER) ? '' : 'is-compact'}`}
 								id={`step-${item.id}`}
 								data-item-id={item.id}
 								data-item-type={item.type}
@@ -385,7 +399,7 @@ const clientData = {
 		TimelineItemListenLink,
 	} from '../data/timeline';
 	import { renderMusicalAudio } from './MusicalAudio';
-	import { matchesTimelineFilter } from '../data/timeline-filters';
+	import { DEFAULT_TIMELINE_FILTER, matchesTimelineFilter, timelineFilterStatusHtml } from '../data/timeline-filters';
 
 	interface TimelineItem {
 		id: string;
@@ -449,7 +463,7 @@ const clientData = {
 			const controls = app.querySelector('.timeline-controls');
 			const filterStatus = document.getElementById('timeline-filter-status');
 			let currentSelectedId: string | null = null;
-			let currentFilter = 'all';
+			let currentFilter = DEFAULT_TIMELINE_FILTER;
 
 			// Image locale introuvable : on retire le cadre (pas de rectangle vide) sans toucher au texte,
 			// et on signale l'asset manquant en développement. Aucune image de substitution.
@@ -845,9 +859,7 @@ const clientData = {
 				if (filterStatus) {
 					const label = document.querySelector(`.timeline-filter-btn[data-filter="${filterId}"]`)?.textContent?.trim() ?? '';
 					filterStatus.hidden = filterId === 'all';
-					filterStatus.innerHTML = filterId === 'all'
-						? ''
-						: `<strong>${label} · ${matchCount} ${matchCount > 1 ? 'événements' : 'événement'}</strong> en détail ; les autres restent dans la chronologie, en bref.`;
+					filterStatus.innerHTML = timelineFilterStatusHtml(filterId, label, matchCount);
 				}
 
 				if (anchor && anchorTop !== undefined) {

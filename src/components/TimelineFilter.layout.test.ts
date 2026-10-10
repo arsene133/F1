@@ -1,12 +1,13 @@
 // Filtrage de la frise sur /chronologie, dans un vrai navigateur (Chromium) : bureau et mobile partagent la même
-// hiérarchie (cartes complètes pour la catégorie choisie, lignes compactes non estompées pour les autres).
+// hiérarchie (cartes complètes pour la catégorie choisie, lignes compactes non estompées pour les autres),
+// avec « Littérature » actif à l'ouverture.
 // S'exécute sur le site construit : `pnpm build` d'abord, sinon la suite est ignorée.
 import { spawn, type ChildProcess } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { chromium, devices, type Browser, type Page } from 'playwright';
 import { timelineItems } from '../data/timeline';
-import { matchesTimelineFilter } from '../data/timeline-filters';
+import { matchesTimelineFilter, timelineFilters } from '../data/timeline-filters';
 
 const BUILT = existsSync('dist/chronologie/index.html');
 const PORT = 4392;
@@ -140,32 +141,39 @@ describe.skipIf(!BUILT)('Filtrage de la frise : cartes complètes et lignes comp
 		server?.kill();
 	});
 
-	test.each(widths)('%s %i×%i : chaque catégorie, puis retour à « Tout »', async (_label, width, height, desktop) => {
+	test.each(widths)('%s %i×%i : « Littérature » par défaut, chaque catégorie, puis « Tout »', async (_label, width, height, desktop) => {
 		const page = await openPage(width, height, !desktop);
+		// Chargement sans filtre explicite : « Littérature » est actif, rendu tel quel par le serveur
+		const pressed = await page.$$eval('.timeline-filter-btn', (btns) =>
+			btns.map((b) => [b.getAttribute('data-filter'), b.getAttribute('aria-pressed'), b.classList.contains('active')]),
+		);
+		expect(pressed).toEqual(timelineFilters.map(({ id }) => [id, id === 'literature' ? 'true' : 'false', id === 'literature']));
 		const initial = await snapshot(page);
 		const order = expectedOrder(initial);
 		// Ordre chronologique du rendu : celui des données triées, inchangé par le filtrage
 		expect(order).toHaveLength(timelineItems.length);
-		expectPresentation(initial, 'all', desktop, width);
-		const statusHidden = () => page.locator('#timeline-filter-status').isHidden();
-		expect(await statusHidden()).toBe(true);
+		expectPresentation(initial, 'literature', desktop, width);
+		const status = page.locator('#timeline-filter-status');
+		expect(await status.isHidden()).toBe(false);
+		expect(await status.textContent()).toContain('Littérature · 5 événements');
 
-		// Passage d'une catégorie à l'autre sans repasser par « Tout »
-		for (const filterId of CATEGORIES) {
+		// Passage d'une catégorie à l'autre sans repasser par « Tout », puis retour à « Littérature »
+		for (const filterId of [...CATEGORIES.filter((id) => id !== 'literature'), 'literature']) {
 			await applyFilter(page, filterId);
 			const s = await snapshot(page);
 			expect(expectedOrder(s)).toEqual(order);
 			expectPresentation(s, filterId, desktop, width);
-			expect(await statusHidden()).toBe(false);
+			expect(await status.isHidden()).toBe(false);
 		}
+		// De retour sur « Littérature » : même disposition qu'au chargement
+		const back = await snapshot(page);
+		back.steps.forEach((st, i) => expect(Math.abs(st.btn.height - initial.steps[i].btn.height), st.id).toBeLessThan(1));
 
 		await applyFilter(page, 'all');
-		const restored = await snapshot(page);
-		expect(expectedOrder(restored)).toEqual(order);
-		expectPresentation(restored, 'all', desktop, width);
-		// Disposition d'origine : mêmes cartes, aux mêmes dimensions qu'au chargement
-		restored.steps.forEach((st, i) => expect(Math.abs(st.btn.height - initial.steps[i].btn.height), st.id).toBeLessThan(1));
-		expect(await statusHidden()).toBe(true);
+		const all = await snapshot(page);
+		expect(expectedOrder(all)).toEqual(order);
+		expectPresentation(all, 'all', desktop, width);
+		expect(await status.isHidden()).toBe(true);
 		await page.context().close();
 	});
 

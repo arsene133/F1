@@ -43,6 +43,15 @@ export const timelineFilters: FilterOption[] = [
 	},
 ];
 
+/** Filtre actif à l'ouverture de la frise : la littérature en détail, le reste en bref. */
+export const DEFAULT_TIMELINE_FILTER = 'literature';
+
+/** Rappel de la hiérarchie sous la barre de filtres (vide pour « Tout ») */
+export function timelineFilterStatusHtml(filterId: string, label: string, matchCount: number): string {
+	if (filterId === 'all') return '';
+	return `<strong>${label} · ${matchCount} ${matchCount > 1 ? 'événements' : 'événement'}</strong> en détail ; les autres restent dans la chronologie, en bref.`;
+}
+
 /** Catégories qui ont leur propre filtre : tout le reste (régimes, révolutions, guerres, événements) relève de l'Histoire. */
 const CATEGORY_FILTERS = new Set(['literature', 'science', 'industry', 'painting', 'music']);
 
