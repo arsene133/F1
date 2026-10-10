@@ -155,7 +155,7 @@ describe.skipIf(!BUILT)('Filtrage de la frise : cartes complètes et lignes comp
 		expectPresentation(initial, 'literature', desktop, width);
 		const status = page.locator('#timeline-filter-status');
 		expect(await status.isHidden()).toBe(false);
-		expect(await status.textContent()).toContain('Littérature · 5 événements');
+		expect(await status.textContent()).toContain('Littérature · 6 événements');
 
 		// Passage d'une catégorie à l'autre sans repasser par « Tout », puis retour à « Littérature »
 		for (const filterId of [...CATEGORIES.filter((id) => id !== 'literature'), 'literature']) {

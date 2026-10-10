@@ -12,6 +12,25 @@ const DIR = '/images/timeline/science';
 const COMMONS = 'Wikimedia Commons';
 
 export const scienceImages = {
+	revuesScientifiques: {
+		src: `${DIR}/philosophical-transactions-1665.jpg`,
+		srcset: `${DIR}/philosophical-transactions-1665-480.webp 480w, ${DIR}/philosophical-transactions-1665-960.webp 960w`,
+		width: 1200,
+		height: 1659,
+		fit: 'contain',
+		alt: 'Page de titre imprimée du premier volume des Philosophical Transactions (1665) de la Royal Society de Londres',
+		caption: 'Page de titre du premier volume des Philosophical Transactions (1665), Royal Society de Londres',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Philosophical_Transactions_of_the_Royal_Society_cover.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/35/Philosophical_Transactions_of_the_Royal_Society_cover.jpg',
+			author: 'Royal Society of London',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Title page of the first volume of the Philosophical Transactions of the Royal Society, published in London in 1665.',
+		},
+	},
+
 	volta: {
 		src: `${DIR}/voltaic-pile.jpg`,
 		srcset: `${DIR}/voltaic-pile-480.webp 480w, ${DIR}/voltaic-pile-960.webp 960w`,

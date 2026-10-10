@@ -108,6 +108,7 @@ export interface TimelineItem {
 	authorDates?: string;
 	dateType?: 'premiere' | 'composition' | 'publication' | 'exhibition';
 	tagLabel?: string;
+	shortDescription?: string;
 	description: string;
 	historicalContext: string;
 	contextSectionTitle?: string;
@@ -189,10 +190,19 @@ const threeModelsComparison: TimelineModelComparison = {
 	note: 'Trois focales, non une évolution linéaire : Musset n’est pas une étape « avant » Balzac et Zola, il propose une autre manière de représenter le comportement humain. Musset : le personnage agit depuis ses passions et ses croyances. Balzac : il agit dans un espace social mouvant. Zola : il est étudié à travers l’hérédité, le tempérament et le milieu.',
 };
 
-export const TIMELINE_START_YEAR = 1765;
+export const TIMELINE_START_YEAR = 1660;
 export const TIMELINE_END_YEAR = 1890;
 
 export const timelinePeriods: TimelinePeriod[] = [
+	{
+		id: 'regne-louis-xiv',
+		title: 'Règne de Louis XIV (gouvernement personnel)',
+		startYear: 1661,
+		endYear: 1715,
+		displayDates: '1661–1715',
+		description: 'Début du gouvernement personnel de Louis XIV à la mort de Mazarin (1661). Affirmation de la monarchie absolue, mécénat royal, essor des académies et éclat de la cour.',
+		colorTheme: 'louis-xiv',
+	},
 	{
 		id: 'revolution-francaise-regime',
 		title: 'Révolution française',
@@ -269,6 +279,213 @@ export const timelinePeriods: TimelinePeriod[] = [
 ];
 
 export const timelineItems: TimelineItem[] = [
+	// 1661 - Gouvernement personnel de Louis XIV
+	{
+		id: 'louis-xiv-gouvernement-personnel',
+		year: 1661,
+		endYear: 1715,
+		datePrecise: '10 mars 1661',
+		type: 'political-regime',
+		category: 'regime',
+		title: 'Début du gouvernement personnel de Louis XIV',
+		subtitle: '1661–1715 · Monarchie absolue et mécénat royal',
+		description: 'Au lendemain de la mort du cardinal Mazarin, Louis XIV (22 ans) décide de gouverner seul sans Premier ministre. Le pouvoir est centralisé et le mécénat royal devient un instrument d’État.',
+		historicalContext: 'La prise de pouvoir personnelle de Louis XIV inaugure l’âge d’or de la monarchie absolue en France. Pour affirmer son autorité face à une noblesse autrefois rebelle (la Fronde), le jeune roi s’entoure de ministres dévoués comme Colbert et développe une politique culturelle d’une ampleur inédite : création ou réorganisation des Académies royales, octroi de pensions aux artistes et commande de grands spectacles de cour.',
+		periodId: 'regne-louis-xiv',
+		relatedTo: ['lully-moliere-mariage-force', 'controverse-tartuffe-1664', 'dom-juan-moliere', 'troupe-du-roi-1665', 'lully-musique-de-cour'],
+		importance: 'major',
+		image: historyImages.louisXiv,
+	},
+
+	// 1664 - Molière et Lully : Le Mariage forcé
+	{
+		id: 'lully-moliere-mariage-force',
+		year: 1664,
+		datePrecise: '29 janvier 1664',
+		type: 'music',
+		category: 'musical-drama',
+		title: 'Molière et Lully : Le Mariage forcé',
+		subtitle: '1664 · Comédie-ballet créée au Louvre devant la cour',
+		author: 'Jean-Baptiste Lully & Molière',
+		authorDates: '1632–1687 (Lully) · 1622–1673 (Molière)',
+		tagLabel: 'Comédie-ballet · Musique de cour',
+		description: 'Créée au palais du Louvre devant la cour, cette œuvre conjointe inaugure avec éclat la collaboration entre Molière et Lully dans le genre de la comédie-ballet, dansée par Louis XIV lui-même.',
+		historicalContext: 'La date du 29 janvier 1664 correspond à la première représentation privée donnée devant la cour au palais du Louvre, dans l’appartement de la reine mère Anne d’Autriche. Louis XIV y danse lui-même dans les entrées de ballet sous le costume d’un Égyptien. La pièce sera ensuite donnée en public au Palais-Royal à partir du 15 février 1664. Cette œuvre scelle l’alliance théâtrale et musicale féconde de Molière et de Lully, un an avant la création de Dom Juan.',
+		periodId: 'regne-louis-xiv',
+		relatedTo: ['louis-xiv-gouvernement-personnel', 'controverse-tartuffe-1664', 'dom-juan-moliere', 'lully-moliere-amour-medecin'],
+		relatedLinks: [
+			{ id: 'dom-juan-moliere', label: 'Avant Dom Juan : la collaboration théâtrale et musicale de Molière et Lully' },
+		],
+		importance: 'standard',
+		image: musicImages.lully,
+		audio: musicListenLinks.lullyMariageForce,
+		listenLink: musicListenLinks.lullyMariageForce,
+	},
+
+	// 1664 - Querelle et interdiction publique de Tartuffe
+	{
+		id: 'controverse-tartuffe-1664',
+		year: 1664,
+		datePrecise: '12 mai 1664',
+		type: 'history',
+		category: 'event',
+		title: 'Querelle et interdiction publique de Tartuffe',
+		subtitle: '1664 · Les Plaisirs de l’Île enchantée à Versailles',
+		description: 'Représentée devant la cour lors des somptueuses fêtes de Versailles, la comédie de Molière dénonçant les faux dévots déclenche la fureur du parti dévot et est aussitôt interdite au public.',
+		historicalContext: 'Lors des fêtes versaillaises des Plaisirs de l’Île enchantée, Molière donne les trois premiers actes de Tartuffe le 12 mai 1664 devant le roi et la cour. Si Louis XIV apprécie la pièce, les vives protestations de la Compagnie du Saint-Sacrement et de l’archevêque de Paris conduisent à l’interdiction des représentations publiques. Cette interdiction constitue un élément important du contexte dans lequel Molière crée Dom Juan quelques mois plus tard, sans que l’on puisse affirmer qu’elle explique à elle seule le choix de cette pièce.',
+		periodId: 'regne-louis-xiv',
+		relatedTo: ['louis-xiv-gouvernement-personnel', 'dom-juan-moliere', 'troupe-du-roi-1665'],
+		relatedLinks: [
+			{ id: 'dom-juan-moliere', label: '1664 : la censure de Tartuffe dans le contexte de Dom Juan' },
+		],
+		importance: 'major',
+		image: historyImages.tartuffe,
+	},
+
+	// 1665 - Naissance des revues scientifiques modernes
+	{
+		id: 'revues-scientifiques-1665',
+		year: 1665,
+		datePrecise: '1665 (janvier–mars)',
+		type: 'science',
+		category: 'physics',
+		title: 'Naissance des revues scientifiques modernes',
+		subtitle: '1665 · Journal des sçavans & Philosophical Transactions',
+		description: 'À Paris paraît le Journal des sçavans (5 janvier 1665), suivi à Londres des Philosophical Transactions (6 mars 1665), marquant l’avènement de la publication scientifique périodique.',
+		historicalContext: 'Au milieu des années 1660, les savants européens abandonnent la seule correspondance épistolaire privée pour inventer la revue scientifique moderne. Sous l’impulsion de Denis de Sallo à Paris et d’Henry Oldenburg à Londres, ces publications diffusent les découvertes expérimentales, les observations astronomiques et les comptes rendus d’ouvrages à travers toute la République des Lettres.\n\nCet essor illustre la révolution scientifique du XVIIe siècle : primat de l’observation, perfectionnement des lentilles optiques et mécanisation de la nature. Sur scène, cette même maîtrise technique et mécanique de l’époque nourrit l’ingénierie des théâtres à machines capables de simuler les prodiges et les apparitions surnaturelles.',
+		periodId: 'regne-louis-xiv',
+		relatedTo: ['dom-juan-moliere', 'louis-xiv-gouvernement-personnel'],
+		relatedLinks: [
+			{ id: 'dom-juan-moliere', label: '1665 : l’essor des sciences et l’âge des théâtres à machines' },
+		],
+		importance: 'major',
+		image: scienceImages.revuesScientifiques,
+	},
+
+	// 1665 - Molière crée Dom Juan ou le Festin de pierre
+	{
+		id: 'dom-juan-moliere',
+		year: 1665,
+		datePrecise: '15 février 1665',
+		type: 'literature',
+		category: 'theatre',
+		title: 'Molière crée Dom Juan ou le Festin de pierre',
+		subtitle: '1665 · Molière (Jean-Baptiste Poquelin)',
+		author: 'Molière',
+		authorDates: '1622–1673',
+		dateType: 'premiere',
+		tagLabel: 'Théâtre · Comédie en prose',
+		shortDescription: 'Au Palais-Royal, Molière présente une comédie en cinq actes et en prose qui mêle séduction, critique de l’hypocrisie, satire sociale et spectacle surnaturel.',
+		description: `Au Palais-Royal, Molière présente une comédie en cinq actes et en prose qui mêle séduction, critique de l’hypocrisie, satire sociale et spectacle surnaturel.
+
+Créée le 15 février 1665 sur la scène du Palais-Royal à Paris, l’œuvre se singularise par son format : une grande comédie en cinq actes mais écrite en prose, dérogeant au vers régulier de la haute comédie classique. Dans la distribution d'origine, Molière endosse le rôle de Sganarelle, serviteur timoré et contradicteur comique, tandis que son fidèle compagnon La Grange interprète Dom Juan, le grand seigneur libertin et bravache.
+
+La pièce explore des enjeux fondamentaux pour la société du XVIIe siècle : l’inconstance amoureuse théorisée en conquête guerrière, le masque redoutable de l’hypocrisie religieuse érigée en « vice à la mode », la relation dialectique entre maître et serviteur, le rappel à l’ordre d’une aristocratie dégénérée qui oublie que « la vertu est le premier titre de noblesse », et l’issue tragique scellée par la statue du Commandeur.
+
+Le sujet bénéficiait déjà d’une immense ferveur populaire en Europe. Né sous la plume de Tirso de Molina dans El burlador de Sevilla (vers 1630), nourri par les improvisations de la commedia dell'arte italienne, il avait déjà été transposé avec succès à Paris par Dorimond (1658) et Villiers (1659). Molière en retient la force spectaculaire pour attirer le public du Palais-Royal tout en lui insufflant une profondeur philosophique et satirique inédite.`,
+		historicalContext: `Le contexte historique : entre l'interdiction de Tartuffe et le titre de Troupe du Roi
+La genèse de Dom Juan s’inscrit dans une séquence politique et théâtrale sous haute tension. En mai 1664, Tartuffe est interdit de représentation publique sous la pression du parti dévot. Neuf mois plus tard, en février 1665, Molière propose au public Dom Juan, qui réactive avec virulence la satire des faux hommes de bien. Six mois après la première, en août 1665, Louis XIV apporte son soutien solennel à la troupe en lui accordant le titre officiel de « Troupe du Roi » ainsi qu'une pension royale de 6 000 livres.
+Le rôle personnel de Louis XIV doit être qualifié avec discernement : monarque absolu et protecteur des artistes, aucun document historique n’atteste qu’il ait commandé la pièce, orienté son propos ou exigé personnellement son retrait de l’affiche. Après un succès commercial initial attesté par les recettes consignées durant quinze représentations jusqu’aux vacances de Pâques 1665 (consignées dans le Registre de La Grange), on ne connaît aucune reprise de la pièce du vivant de Molière. Cette absence de reprises constitue un constat historique indiscutable, mais elle ne prouve pas à elle seule une interdiction officielle ou une censure formelle : les motifs de cet arrêt font l’objet de plusieurs hypothèses chez les historiens (pressions discrètes des milieux dévots, autocensure tactique de Molière pour ne pas compromettre l’avenir de Tartuffe, ou choix d'exploitation courante face aux polémiques), sans qu’aucune ne puisse être affirmée comme une certitude absolue. L'histoire invite ici à la rigueur méthodologique.
+
+Le contexte artistique et littéraire : la légende de Don Juan et les machines de scène
+L’œuvre s’ancre dans une tradition dramatique européenne féconde : issue du Burlador de Sevilla espagnol attribué à Tirso de Molina, la fable de l'athée foudroyé est passée par les troupes ambulantes italiennes avant d'être adaptée à Paris par Dorimond puis Villiers. Molière y répond également au goût prononcé du XVIIe siècle pour le « théâtre à machines » : trappes secrètes, apparitions surnaturelles et gouffre de flammes final rivalisent avec les machineries d’opéra à l'italienne. À la même époque, Molière collabore activement avec Jean-Baptiste Lully (Le Mariage forcé en 1664, L’Amour médecin à l’automne 1665) pour inventer la comédie-ballet. Il importe cependant de souligner qu’aucune partition originale de Lully n’a été composée spécifiquement pour Dom Juan, conçu comme un drame théâtral sans musique de scène propre.
+
+Le contexte scientifique et technique : l’esprit du siècle et la machinerie moderne
+L’année 1665 voit naître les premières grandes revues scientifiques européennes : le Journal des sçavans en France et les Philosophical Transactions de la Royal Society en Angleterre. Ces parutions marquent l'institutionnalisation d’une démarche fondée sur l’observation minutieuse et le raisonnement méthodique. Loin d’avoir guidé directement la plume de Molière, ce mouvement traduit l’air du temps : un XVIIe siècle passionné de mécanique et de causalité, dont les innovations matérielles se reflètent directement sur scène dans la sophistication des machineries théâtrales et des effets pyrotechniques qui rendent crédible le châtiment de la statue animée.`,
+		periodId: 'regne-louis-xiv',
+		relatedTo: [
+			'controverse-tartuffe-1664',
+			'troupe-du-roi-1665',
+			'louis-xiv-gouvernement-personnel',
+			'lully-moliere-mariage-force',
+			'lully-moliere-amour-medecin',
+			'revues-scientifiques-1665',
+		],
+		relatedLinks: [
+			{ id: 'controverse-tartuffe-1664', label: '1664 : la censure de Tartuffe et le climat de création de Dom Juan' },
+			{ id: 'troupe-du-roi-1665', label: 'Août 1665 : la troupe de Molière devient « Troupe du Roi »' },
+			{ id: 'lully-moliere-mariage-force', label: '1664 : Molière et Lully inventent la comédie-ballet' },
+			{ id: 'lully-moliere-amour-medecin', label: 'Septembre 1665 : L’Amour médecin, collaboration contemporaine de Molière et Lully' },
+			{ id: 'revues-scientifiques-1665', label: '1665 : débuts des revues scientifiques et essor des machines du siècle' },
+		],
+		quote: '« Quoi ! tu veux qu’on se lie à demeurer au premier objet qui nous prend […] et, comme Alexandre, je souhaiterais qu’il y eût d’autres mondes, pour y pouvoir étendre mes conquêtes amoureuses. » (Acte I, scène 2)',
+		importance: 'exceptional',
+		featured: true,
+		image: literatureImages.domJuan,
+		secondaryImage: literatureImages.moliere,
+		pageLink: {
+			url: '/don-juan',
+			label: 'Explorer la carte interactive des personnages et l’analyse thématique de Dom Juan',
+			badge: 'Page dédiée · Analyse seconde',
+		},
+	},
+
+	// 1665 - La troupe de Molière devient « Troupe du Roi »
+	{
+		id: 'troupe-du-roi-1665',
+		year: 1665,
+		datePrecise: '14 août 1665',
+		type: 'history',
+		category: 'event',
+		title: 'La troupe de Molière devient « Troupe du Roi »',
+		subtitle: '1665 · Patronage royal officiel et pension de 6 000 livres',
+		description: 'À Saint-Germain-en-Laye, Louis XIV prend sous sa protection directe la troupe du Palais-Royal, qui quitte le patronage de Monsieur (frère du roi) pour porter le titre de Troupe du Roi au Palais-Royal.',
+		historicalContext: 'Selon l’entrée consignée par le comédien La Grange dans son Registre à la date du 14 août 1665 (bien que la décision royale ait pu intervenir dès le mois de juin), Louis XIV demanda la troupe à son frère Monsieur et lui accorda une pension de six mille livres en même temps que le titre de « Troupe du Roi au Palais-Royal ». Ce soutien direct du monarque intervient quelques mois après le retrait de Dom Juan, attestant le maintien de la faveur royale envers Molière et assurant aux comédiens une reconnaissance institutionnelle et un appui financier majeur.',
+		periodId: 'regne-louis-xiv',
+		relatedTo: ['dom-juan-moliere', 'louis-xiv-gouvernement-personnel', 'lully-moliere-amour-medecin'],
+		importance: 'standard',
+		image: literatureImages.moliere,
+	},
+
+	// 1665 - Molière et Lully : L’Amour médecin
+	{
+		id: 'lully-moliere-amour-medecin',
+		year: 1665,
+		datePrecise: '15–22 septembre 1665',
+		type: 'music',
+		category: 'musical-drama',
+		title: 'Molière et Lully : L’Amour médecin',
+		subtitle: '1665 · Comédie-ballet créée à Versailles pour Louis XIV',
+		author: 'Jean-Baptiste Lully & Molière',
+		authorDates: '1632–1687 (Lully) · 1622–1673 (Molière)',
+		tagLabel: 'Comédie-ballet · Satire médicale',
+		description: 'Créée en quelques jours au château de Versailles, cette comédie-ballet féroce contre les médecins réunit à nouveau Molière et Lully, au lendemain de la nomination de la Troupe du Roi.',
+		historicalContext: 'Molière compose cette comédie-ballet expressément commandée par le roi « en cinq jours » avec Lully (LWV 29). L’œuvre illustre la reprise triomphale de leur travail commun à l’automne 1665, contrastant avec l’absence de partition pour Dom Juan quelques mois plus tôt.',
+		periodId: 'regne-louis-xiv',
+		relatedTo: ['dom-juan-moliere', 'troupe-du-roi-1665', 'lully-moliere-mariage-force', 'louis-xiv-gouvernement-personnel'],
+		relatedLinks: [
+			{ id: 'dom-juan-moliere', label: '1665 : l’autre création théâtrale et musicale de Molière après Dom Juan' },
+		],
+		importance: 'standard',
+		image: musicImages.lully,
+		audio: musicListenLinks.lullyAmourMedecin,
+		listenLink: musicListenLinks.lullyAmourMedecin,
+	},
+
+	// 1670 - Jean-Baptiste Lully et la musique de cour sous Louis XIV
+	{
+		id: 'lully-musique-de-cour',
+		year: 1670,
+		datePrecise: '14 octobre 1670',
+		type: 'music',
+		category: 'musical-drama',
+		title: 'Jean-Baptiste Lully et la musique de cour sous Louis XIV',
+		subtitle: '1670 · Le Bourgeois gentilhomme (Ouverture à la française)',
+		author: 'Jean-Baptiste Lully',
+		authorDates: '1632–1687',
+		tagLabel: 'Musique baroque · Ouverture de cour',
+		description: 'Au château de Chambord, Lully et Molière créent Le Bourgeois gentilhomme. Lully y perfectionne l’ouverture à la française, symbole éclatant du style musical versaillais.',
+		historicalContext: 'Nommé Surintendant de la musique du roi dès 1661, Jean-Baptiste Lully règne sur la vie musicale de la cour. Avec Le Bourgeois gentilhomme (1670) puis la fondation de l’Académie royale de musique en 1672, il fixe les canons de la tragédie lyrique et de l’ouverture solennelle française, modèle qui rayonnera dans toute l’Europe sous le règne de Louis XIV.',
+		periodId: 'regne-louis-xiv',
+		relatedTo: ['louis-xiv-gouvernement-personnel', 'dom-juan-moliere', 'lully-moliere-mariage-force'],
+		relatedLinks: [
+			{ id: 'dom-juan-moliere', label: 'Molière et la scène musicale du règne de Louis XIV' },
+		],
+		importance: 'major',
+		image: musicImages.lully,
+		audio: musicAudio.lullyBourgeoisGentilhomme,
+	},
+
 	// 1789 - Révolution française
 	{
 		id: 'revolution-francaise',

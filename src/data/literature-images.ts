@@ -13,6 +13,45 @@ const DIR = '/images/timeline/literature';
 const COMMONS = 'Wikimedia Commons';
 
 export const literatureImages = {
+	domJuan: {
+		src: `${DIR}/dom-juan-brissart-1682.jpg`,
+		srcset: `${DIR}/dom-juan-brissart-1682-480.webp 480w, ${DIR}/dom-juan-brissart-1682.jpg 750w`,
+		width: 750,
+		height: 643,
+		fit: 'contain',
+		alt: 'Gravure de Pierre Brissart pour Dom Juan (1682) : Dom Juan au souper face à la statue du Commandeur drapée à l’antique, Sganarelle effrayé en retrait',
+		caption: 'Pierre Brissart (dessin) et Jean Sauvé (gravure), frontispice pour Dom Juan ou le Festin de pierre, Les Œuvres de Monsieur de Molière (1682), BnF',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Don_Juan_(Moli%C3%A8re).jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/06/Don_Juan_%28Moli%C3%A8re%29.jpg',
+			author: 'Pierre Brissart, gravé par Jean Sauvé',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Frontispice pour Dom Juan, ou le Festin de Pierre dans Les Œuvres posthumes de Molière (1682), vol. 7. BnF, Réserve des livres rares (Rés. Yf. 3167).',
+		},
+	},
+
+	moliere: {
+		src: `${DIR}/moliere-portrait-mignard.jpg`,
+		srcset: `${DIR}/moliere-portrait-mignard-480.webp 480w, ${DIR}/moliere-portrait-mignard-960.webp 960w`,
+		width: 1200,
+		height: 1499,
+		fit: 'cover',
+		position: 'center 25%',
+		alt: 'Portrait en buste de Molière par Nicolas Mignard : longs cheveux bouclés bruns, fine moustache, regard expressif et col de dentelle',
+		caption: 'Nicolas Mignard, Portrait de Molière (1658), musée Condé, château de Chantilly',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Moli%C3%A8re_-_Nicolas_Mignard_(1658).jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/f/fe/Moli%C3%A8re_-_Nicolas_Mignard_%281658%29.jpg',
+			author: 'Nicolas Mignard',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Portrait de Jean-Baptiste Poquelin dit Molière peint par Nicolas Mignard en 1658. Musée Condé, château de Chantilly.',
+		},
+	},
+
 	musset: {
 		src: `${DIR}/musset-portrait-landelle.jpg`,
 		srcset: `${DIR}/musset-portrait-landelle-480.webp 480w, ${DIR}/musset-portrait-landelle-960.webp 960w`,

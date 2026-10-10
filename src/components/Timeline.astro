@@ -21,18 +21,24 @@ interface Props {
 const { initialSelectedId = 'pere-goriot' } = Astro.props;
 
 // Tri rigoureux et programmatique des éléments par ordre chronologique
-// Les œuvres littéraires de la même année sont ordonnées avec pertinence (ex. Sedan avant ou après 1870)
+// Les œuvres littéraires et événements de la même année sont ordonnés avec pertinence
 const sortedTimelineItems = [...timelineItems].sort((a, b) => {
 	if (a.year !== b.year) return a.year - b.year;
-	// Ordre chronologique fin en 1870
-	const order1870: Record<string, number> = {
+	// Ordre chronologique fin pour les événements de la même année (1664, 1665, 1870)
+	const intraYearOrder: Record<string, number> = {
+		'lully-moliere-mariage-force': 1,
+		'controverse-tartuffe-1664': 2,
+		'revues-scientifiques-1665': 1,
+		'dom-juan-moliere': 2,
+		'troupe-du-roi-1665': 3,
+		'lully-moliere-amour-medecin': 4,
 		'guerre-franco-prussienne': 1,
 		'bataille-sedan': 2,
 		'proclamation-troisieme-republique': 3,
 		'cahiers-douai': 4,
 	};
-	const orderA = order1870[a.id] || 0;
-	const orderB = order1870[b.id] || 0;
+	const orderA = intraYearOrder[a.id] || 0;
+	const orderB = intraYearOrder[b.id] || 0;
 	return orderA - orderB;
 });
 
@@ -41,6 +47,7 @@ const periodsMap = new Map<string, TimelinePeriod>(timelinePeriods.map((p) => [p
 
 // Identifier les tournants historiques majeurs pour accentuation visuelle
 const majorTurningPointIds = new Set([
+	'louis-xiv-gouvernement-personnel',
 	'revolution-francaise',
 	'revolution-juillet-1830',
 	'revolution-1848',
@@ -83,6 +90,7 @@ const majorPaintingPointIds = new Set([
 
 // Identifier les jalons majeurs de musique (visuellement proéminents)
 const majorMusicPointIds = new Set([
+	'lully-musique-de-cour',
 	'music-beethoven-symphonie-9',
 	'music-berlioz-symphonie-fantastique',
 	'music-wagner-tristan',
@@ -313,7 +321,7 @@ const clientData = {
 										<div class="entry-author">{item.author}</div>
 									)}
 
-									<p class="entry-short-desc">{item.description}</p>
+									<p class="entry-short-desc">{item.shortDescription ?? item.description}</p>
 
 									{item.periodTitle && (
 										<div class="entry-regime-context-tag">
@@ -362,11 +370,11 @@ const clientData = {
 	<footer class="timeline-legend" aria-label="Légende de la frise">
 		<div class="legend-item">
 			<span class="legend-indicator dot" style="background: var(--tl-lit-bg); border-color: var(--tl-lit-color); border-width: 2px;"></span>
-			<span>Œuvre littéraire majeure (Musset, Balzac, Rimbaud, Zola)</span>
+			<span>Œuvre littéraire majeure (Molière, Musset, Balzac, Rimbaud, Zola)</span>
 		</div>
 		<div class="legend-item">
 			<span class="legend-indicator dot" style="background: var(--tl-surface); border-color: var(--tl-rev-color); border-width: 3px;"></span>
-			<span>Tournant historique majeur (1789, 1830, 1848, Sedan, Commune)</span>
+			<span>Tournant historique majeur (1661, 1789, 1830, 1848, Sedan, Commune)</span>
 		</div>
 		<div class="legend-item">
 			<span class="legend-indicator dot" style="background: var(--tl-surface); border-color: var(--tl-ind-color); border-width: 2.5px;"></span>
@@ -374,7 +382,7 @@ const clientData = {
 		</div>
 		<div class="legend-item">
 			<span class="legend-indicator dot" style="background: var(--tl-surface); border-color: var(--tl-sci-color); border-width: 2.5px;"></span>
-			<span>Jalon scientifique (physique, biologie, chimie, mathématiques)</span>
+			<span>Jalon scientifique (revues savantes, physique, biologie, chimie, mathématiques)</span>
 		</div>
 		<div class="legend-item">
 			<span class="legend-indicator dot" style="background: var(--tl-surface); border-color: var(--tl-paint-color); border-width: 2.5px;"></span>
@@ -382,7 +390,7 @@ const clientData = {
 		</div>
 		<div class="legend-item">
 			<span class="legend-indicator dot" style="background: var(--tl-surface); border-color: var(--tl-music-color); border-width: 2.5px;"></span>
-			<span>Jalon de musique (Beethoven, Berlioz, Chopin, Offenbach, Wagner, Bizet)</span>
+			<span>Jalon de musique (Lully, Beethoven, Berlioz, Chopin, Offenbach, Wagner, Bizet)</span>
 		</div>
 		<div class="legend-item">
 			<span class="legend-indicator dot" style="background: var(--tl-galois-bg); border-color: var(--tl-galois-accent); border-width: 3px;"></span>
@@ -423,6 +431,7 @@ const clientData = {
 		authorDates?: string;
 		tagLabel?: string;
 		description: string;
+		shortDescription?: string;
 		historicalContext: string;
 		contextSectionTitle?: string;
 		periodId: string;
@@ -688,7 +697,7 @@ const clientData = {
 					<div class="details-section details-context-box">
 						<h4>${contextHeading}</h4>
 						${contextualTagsHtml}
-						<p>${item.historicalContext}</p>
+						${item.historicalContext.split('\n\n').map((p) => `<p>${p}</p>`).join('')}
 						${item.relatedTo.length > 0 ? `
 							<div style="margin-top: 0.85rem;">
 								<h4 style="font-size: 0.8rem; color: var(--tl-muted); text-transform: uppercase;">Repères & œuvres contemporains :</h4>

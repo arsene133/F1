@@ -166,10 +166,48 @@ export const musicAudio = {
 		attribution: 'Hellmut Schwebs, dir. Otto Frickhoeffer — Hessischer Rundfunk',
 		rightsNote: 'Archive publiée sous CC BY-SA 4.0 par le Hessischer Rundfunk (autorisation VRT n° 2020111210010443) ; enregistrement également dans le domaine public dans l’UE (PD-EU-audio).',
 	},
+
+	lullyBourgeoisGentilhomme: {
+		type: 'embedded',
+		title: 'Ouverture (Ouverture à la française)',
+		excerpt: 'Ouverture (grave solennel avec rythmes pointés puis fugato vif)',
+		url: 'https://upload.wikimedia.org/wikipedia/commons/transcoded/7/74/Lully_Le_Bourgeois_Gentilhomme_-_01._Ouverture.ogg/Lully_Le_Bourgeois_Gentilhomme_-_01._Ouverture.ogg.mp3',
+		mimeType: 'audio/mpeg',
+		fallbackSources: [
+			{ url: 'https://upload.wikimedia.org/wikipedia/commons/7/74/Lully_Le_Bourgeois_Gentilhomme_-_01._Ouverture.ogg', mimeType: 'audio/ogg; codecs=vorbis' },
+		],
+		fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/7/74/Lully_Le_Bourgeois_Gentilhomme_-_01._Ouverture.ogg',
+		source: COMMONS,
+		sourceUrl: 'https://commons.wikimedia.org/wiki/File:Lully_Le_Bourgeois_Gentilhomme_-_01._Ouverture.ogg',
+		license: 'CC BY-SA 2.0',
+		licenseUrl: 'https://creativecommons.org/licenses/by-sa/2.0/deed.fr',
+		performer: 'Advent Chamber Orchestra',
+		recordingDate: 'novembre 2007',
+		duration: '2:58',
+		attributionRequired: true,
+		attribution: 'Advent Chamber Orchestra (The Al Goldstein collection, Pandora Music)',
+		rightsNote: 'Enregistrement de concert sous licence libre EFF Open Audio License interchangeable avec CC BY-SA 2.0.',
+	},
 } satisfies Record<string, TimelineItemAudioEmbedded>;
 
-// Écoute externe : aucun enregistrement libre et représentatif n'a pu être intégré.
+// Écoute et consultation externe : liens vers des partitions et sources vérifiées sur IMSLP
 export const musicListenLinks = {
+	lullyMariageForce: {
+		type: 'external',
+		title: 'Consulter la partition et le livret sur IMSLP',
+		url: 'https://imslp.org/wiki/Le_mariage_forc%C3%A9,_LWV_20_(Lully,_Jean-Baptiste)',
+		source: 'IMSLP — Petrucci Music Library',
+		note: 'Partitions d’époque, livrets et matériel d’orchestre de la comédie-ballet créée par Molière et Lully au Louvre en janvier 1664 (LWV 20).',
+	},
+
+	lullyAmourMedecin: {
+		type: 'external',
+		title: 'Consulter la partition et les sources sur IMSLP',
+		url: 'https://imslp.org/wiki/L%27amour_m%C3%A9decin,_LWV_29_(Lully,_Jean-Baptiste)',
+		source: 'IMSLP — Petrucci Music Library',
+		note: 'Partitions, réductions et sources historiques de la comédie-ballet créée à Versailles en septembre 1665 pour Louis XIV (LWV 29).',
+	},
+
 	beethovenSymphonie9: {
 		type: 'external',
 		title: 'Écouter l’œuvre',

@@ -13,6 +13,26 @@ const DIR = '/images/timeline/music';
 const COMMONS = 'Wikimedia Commons';
 
 export const musicImages = {
+	lully: {
+		src: `${DIR}/lully-portrait-mignard.jpg`,
+		srcset: `${DIR}/lully-portrait-mignard-480.webp 480w, ${DIR}/lully-portrait-mignard.jpg 532w`,
+		width: 532,
+		height: 637,
+		fit: 'cover',
+		position: 'center 20%',
+		alt: 'Portrait en buste de Jean-Baptiste Lully en perruque brune volumineuse et jabot de dentelle',
+		caption: 'Paul Mignard, Portrait de Jean-Baptiste Lully (vers 1672), musée Condé, château de Chantilly',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Paul_Mignard_-_Jean-Baptiste_Lully.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/8/85/Paul_Mignard_-_Jean-Baptiste_Lully.jpg',
+			author: 'Paul Mignard',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Portrait de Jean-Baptiste Lully par Paul Mignard, vers 1672. Musée Condé, château de Chantilly.',
+		},
+	},
+
 	beethovenSymphonie1: {
 		src: `${DIR}/beethoven-symphonie-1.jpg`,
 		srcset: `${DIR}/beethoven-symphonie-1-480.webp 480w, ${DIR}/beethoven-symphonie-1.jpg 800w`,

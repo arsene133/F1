@@ -14,17 +14,17 @@ export const timelineFilters: FilterOption[] = [
 	{
 		id: 'history',
 		label: 'Histoire',
-		description: 'Régimes politiques, révolutions, guerres et contextes historiques du XIXe siècle.',
+		description: 'Monarchie absolue, régimes politiques, révolutions, guerres et contextes historiques.',
 	},
 	{
 		id: 'literature',
 		label: 'Littérature',
-		description: 'Les œuvres de Musset, Balzac, Rimbaud et Zola dans leur époque.',
+		description: 'Les œuvres de Molière, Musset, Balzac, Rimbaud et Zola dans leur époque.',
 	},
 	{
 		id: 'science',
 		label: 'Sciences',
-		description: 'Découvertes et théories majeures : électricité, évolution, thermodynamique, algèbre, chimie.',
+		description: 'Revues savantes, théories et découvertes majeures : de 1665 à l’électricité, l’évolution et la chimie.',
 	},
 	{
 		id: 'industry',
@@ -39,7 +39,7 @@ export const timelineFilters: FilterOption[] = [
 	{
 		id: 'music',
 		label: 'Musique',
-		description: 'De la transition beethovénienne au romantisme français, à l’opéra moderne et au drame wagnérien.',
+		description: 'De la musique de cour et comédie-ballet (Lully) au romantisme, à l’opéra moderne et au drame wagnérien.',
 	},
 ];
 

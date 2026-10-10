@@ -12,6 +12,45 @@ const DIR = '/images/timeline/history';
 const COMMONS = 'Wikimedia Commons';
 
 export const historyImages = {
+	louisXiv: {
+		src: `${DIR}/louis-xiv-mignard-1661.jpg`,
+		srcset: `${DIR}/louis-xiv-mignard-1661-480.webp 480w, ${DIR}/louis-xiv-mignard-1661-960.webp 960w`,
+		width: 1200,
+		height: 1563,
+		fit: 'cover',
+		position: 'center 20%',
+		alt: 'Portrait de Louis XIV jeune en armure d’apparat, écharpe blanche et dentelle, vers 1661',
+		caption: 'Nicolas Mignard, Portrait de Louis XIV en armure (vers 1661–1665), musée Calvet, Avignon',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Nicolas_Mignard-Louis_XIV_-_calvet.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/f/f2/Nicolas_Mignard-Louis_XIV_-_calvet.jpg',
+			author: 'Nicolas Mignard',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Portrait de Louis XIV en armure peint par Nicolas Mignard vers 1661–1665. Musée Calvet, Avignon.',
+		},
+	},
+
+	tartuffe: {
+		src: `${DIR}/tartuffe-brissart-1682.jpg`,
+		srcset: `${DIR}/tartuffe-brissart-1682-480.webp 480w, ${DIR}/tartuffe-brissart-1682-960.webp 960w`,
+		width: 1047,
+		height: 1746,
+		fit: 'contain',
+		alt: 'Gravure de Pierre Brissart pour Tartuffe (1682) : scène de la table où Tartuffe tente de séduire Elmire sous les yeux d’Orgon caché',
+		caption: 'Pierre Brissart (dessin) et Jean Sauvé (gravure), frontispice pour Le Tartuffe ou l’Imposteur (1682), BnF',
+		credit: {
+			source: COMMONS,
+			sourceUrl: 'https://commons.wikimedia.org/wiki/File:Tartuffe_Brissart_Sauve.jpg',
+			fileUrl: 'https://upload.wikimedia.org/wikipedia/commons/f/f0/Tartuffe_Brissart_Sauve.jpg',
+			author: 'Pierre Brissart, gravé par Jean Sauvé',
+			license: 'Domaine public',
+			attributionRequired: false,
+			description: 'Frontispice pour Le Tartuffe ou l’Imposteur dans Les Œuvres de Monsieur de Molière (1682). Bibliothèque nationale de France.',
+		},
+	},
+
 	revolutionFrancaise: {
 		src: `${DIR}/houel-prise-bastille.jpg`,
 		srcset: `${DIR}/houel-prise-bastille-480.webp 480w, ${DIR}/houel-prise-bastille-960.webp 960w`,

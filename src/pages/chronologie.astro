@@ -4,8 +4,8 @@ import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import Timeline from '../components/Timeline.astro';
 
-const pageTitle = "Frise chronologique — littérature et histoire au XIXe siècle";
-const pageDescription = "Visualisation éditoriale interactive reliant les œuvres littéraires majeures (Balzac, Musset, Rimbaud, Zola) aux régimes politiques et bouleversements historiques du XIXe siècle.";
+const pageTitle = "Frise chronologique — littérature, histoire, sciences et arts (XVIIe–XIXe siècles)";
+const pageDescription = "Visualisation éditoriale interactive reliant les œuvres littéraires majeures (Molière, Balzac, Musset, Rimbaud, Zola) aux régimes politiques, sciences, musique et bouleversements historiques de 1660 à 1885.";
 ---
 
 <!doctype html>
@@ -76,6 +76,10 @@ const pageDescription = "Visualisation éditoriale interactive reliant les œuvr
 				margin-top: 3rem;
 				padding-top: 1.5rem;
 				border-top: 1px dashed #dcd6cb;
+				display: flex;
+				flex-direction: column;
+				gap: 0.75rem;
+				align-items: center;
 			}
 
 			.navigation-back a {
@@ -107,19 +111,25 @@ const pageDescription = "Visualisation éditoriale interactive reliant les œuvr
 				<h2>Repères d'analyse : comprendre la littérature dans son siècle</h2>
 				<div class="notes-grid">
 					<article class="note-card">
-						<h3>1. Le désenchantement romantique (1830–1835)</h3>
+						<h3>1. L’absolutisme et la liberté au XVIIe siècle (1665)</h3>
+						<p>
+							Sous Louis XIV, le théâtre est au cœur des tensions de cour et de religion. Après la cabale contre <em>Tartuffe</em> (1664), Molière crée <em>Dom Juan</em> (1665), comédie en prose à machines qui défie le conformisme dévot et interroge l’hypocrisie, tandis que naissent les premières revues scientifiques d’Europe (<em>Journal des sçavans</em>, <em>Philosophical Transactions</em>) et que triomphe la collaboration avec Lully.
+						</p>
+					</article>
+					<article class="note-card">
+						<h3>2. Le désenchantement romantique (1830–1835)</h3>
 						<p>
 							Sous la Monarchie de Juillet, la jeunesse orpheline des épopées napoléoniennes se heurte au règne de l’utilitarisme bourgeois. Musset (<em>On ne badine pas avec l’amour</em>) explore la tragédie de l’orgueil et du doute, tandis que Balzac (<em>Le Père Goriot</em>) met en scène la conversion impitoyable de Rastignac aux lois de l’argent.
 						</p>
 					</article>
 					<article class="note-card">
-						<h3>2. La rupture poétique de 1870</h3>
+						<h3>3. La rupture poétique de 1870</h3>
 						<p>
 							L’été et l’automne 1870 concentrent la guerre franco-prussienne, le désastre de Sedan et la fin abrupte du Second Empire. Dans les <em>Cahiers de Douai</em>, Rimbaud (15–16 ans) refuse l’ordre impérial et le conformisme patriarcal pour inventer une poésie libérée, juste avant l’insurrection de la Commune de Paris.
 						</p>
 					</article>
 					<article class="note-card">
-						<h3>3. L’anatomie naturaliste de la bourgeoisie (1882)</h3>
+						<h3>4. L’anatomie naturaliste de la bourgeoisie (1882)</h3>
 						<p>
 							Avec <em>Pot-Bouille</em> sous la IIIe République, Zola ausculte les fondations intimes de la société bourgeoise façonnée par le Second Empire : derrière la respectabilité bourgeoise de l’immeuble moderne, l’hypocrisie et les calculs domestiques régissent le mariage et les fortunes.
 						</p>
@@ -127,6 +137,9 @@ const pageDescription = "Visualisation éditoriale interactive reliant les œuvr
 				</div>
 
 				<div class="navigation-back">
+					<a href="/don-juan">
+						<span>→</span> Découvrir l'analyse complète de l'œuvre : <em>Dom Juan ou le Festin de pierre de Molière (1665)</em>
+					</a>
 					<a href="/balzac-rimbaud">
 						<span>←</span> Découvrir aussi la carte relationnelle : <em>Balzac, Rastignac, la Commune, Marx et Rimbaud</em>
 					</a>

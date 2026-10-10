@@ -40,15 +40,22 @@ describe('filtres de la frise', () => {
 		expect(count('all')).toBe(timelineItems.length);
 	});
 
-	test('Littérature : les cinq œuvres, dont Pot-Bouille et Au Bonheur des Dames', () => {
-		expect(count('literature')).toBe(5);
+	test('Littérature : les œuvres majeures, dont Dom Juan, Pot-Bouille et Au Bonheur des Dames', () => {
+		expect(count('literature')).toBe(6);
 		expect(titlesFor('literature')).toEqual(
-			expect.arrayContaining(['Pot-Bouille', 'Au Bonheur des Dames', 'Le Père Goriot', 'Cahiers de Douai', "On ne badine pas avec l'amour"]),
+			expect.arrayContaining([
+				'Molière crée Dom Juan ou le Festin de pierre',
+				'Pot-Bouille',
+				'Au Bonheur des Dames',
+				'Le Père Goriot',
+				'Cahiers de Douai',
+				"On ne badine pas avec l'amour",
+			]),
 		);
 	});
 
-	test('Sciences : dix repères scientifiques', () => {
-		expect(count('science')).toBe(10);
+	test('Sciences : onze repères scientifiques', () => {
+		expect(count('science')).toBe(11);
 	});
 
 	test('chaque repère relève d’exactement une catégorie filtrable', () => {
