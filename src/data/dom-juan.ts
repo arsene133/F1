@@ -6,6 +6,16 @@ import type { EdgeType, MapNode, MapRelationship } from '../components/relations
 // Les citations ont été contrôlées d'après le texte établi de Molière.
 // ==========================================================================
 
+export interface ThemeHistoricalContext {
+	title: string;
+	text: string;
+}
+
+export interface CreationContextNote {
+	title: string;
+	text: string;
+}
+
 export interface MainTheme {
 	id: string;
 	title: string;
@@ -19,6 +29,7 @@ export interface MainTheme {
 		speaker: string;
 		ref: string;
 	};
+	historicalContext: ThemeHistoricalContext;
 }
 
 export interface SecondaryTheme {
@@ -294,6 +305,11 @@ export const domJuanFunctions: Record<string, string> = {
 // Sections thématiques pédagogiques pour le lycée (classe de seconde)
 // --------------------------------------------------------------------------
 
+export const creationContext: CreationContextNote = {
+	title: 'Pourquoi Molière écrit-il cette pièce en 1665 ?',
+	text: 'Créé en février 1665, Dom Juan est joué dans un climat tendu, quelques mois après l’interdiction publique de Tartuffe. Molière choisit un sujet à grand spectacle alors très populaire, tout en abordant des questions sensibles : la fausse dévotion, l’honneur des familles, les abus des grands seigneurs et les limites de la liberté. Même si l’affaire de Tartuffe a marqué la troupe, il ne faut pas réduire cette création à une seule cause : les intentions réelles de Molière restent discutées.',
+};
+
 export const mainThemes: MainTheme[] = [
 	{
 		id: 'seduction-inconstance',
@@ -309,6 +325,10 @@ export const mainThemes: MainTheme[] = [
 			text: 'Quoi ! tu veux qu’on se lie à demeurer au premier objet qui nous prend, qu’on renonce au monde pour lui, et qu’on n’ait plus d’yeux pour personne ? […] Pour moi, la beauté me ravit partout où je la trouve, et je cède facilement à cette douce violence dont elle nous entraîne. […] et, comme Alexandre, je souhaiterais qu’il y eût d’autres mondes, pour y pouvoir étendre mes conquêtes amoureuses.',
 			speaker: 'Dom Juan',
 			ref: 'Acte I, scène 2',
+		},
+		historicalContext: {
+			title: 'Le contexte historique : mariage et honneur féminin',
+			text: 'Au XVIIᵉ siècle, le mariage engage d’abord l’honneur et la situation matérielle des familles. Pour une femme, la réputation est capitale : être séduite puis délaissée entraîne un déshonneur durable, et selon les décisions familiales, un retrait contraint au couvent pour étouffer le scandale. Alors que Dom Juan jouit d’une relative impunité en multipliant les conquêtes, les femmes qu’il trompe, de la noble Elvire à la paysanne Charlotte, subissent des conséquences sociales bien plus lourdes et inégales.',
 		},
 	},
 	{
@@ -326,6 +346,10 @@ export const mainThemes: MainTheme[] = [
 			speaker: 'Dom Juan',
 			ref: 'Acte V, scène 2',
 		},
+		historicalContext: {
+			title: 'Le contexte historique : l’Église et la fausse dévotion',
+			text: 'Dans la France de Louis XIV, la religion catholique joue un rôle central dans la vie publique et politique. La piété est valorisée et les personnes très dévotes exercent une grande autorité morale. L’interdiction de Tartuffe en 1664 montre à quel point critiquer les faux dévots est alors explosif. À l’acte V, scène 2, Dom Juan choisit d’ailleurs ce masque pour désarmer ses adversaires. Molière s’attaque ainsi à ceux qui détournent la religion par calcul, sans condamner pour autant la foi chrétienne sincère.',
+		},
 	},
 	{
 		id: 'religion-chatiment-divin',
@@ -341,6 +365,10 @@ export const mainThemes: MainTheme[] = [
 			text: 'Non, non, il ne sera pas dit, quoi qu’il arrive, que je sois capable de me repentir. Allons, suis-moi.',
 			speaker: 'Dom Juan',
 			ref: 'Acte V, scène 5',
+		},
+		historicalContext: {
+			title: 'Le contexte historique : foi religieuse et tradition théâtrale',
+			text: 'Au XVIIᵉ siècle, la foi chrétienne donne une place centrale au salut de l’âme, au péché et au jugement après la mort. En faisant bouger la statue du Commandeur, Molière utilise une tradition théâtrale où le surnaturel punit le pécheur. Cependant, si cette fin met en scène la justice divine, le cri final de Sganarelle réclamant ses gages crée une chute comique inattendue. Ce contraste rappelle que la pièce ne se réduit pas à un simple sermon religieux.',
 		},
 	},
 	{
@@ -358,6 +386,10 @@ export const mainThemes: MainTheme[] = [
 			speaker: 'Sganarelle',
 			ref: 'Acte III, scène 1',
 		},
+		historicalContext: {
+			title: 'Le contexte historique : la relation maître-valet au XVIIᵉ siècle',
+			text: 'Au XVIIᵉ siècle, la relation entre un maître et son valet repose sur une obéissance très stricte : le serviteur dépend entièrement de son maître. Au théâtre, Molière accorde pourtant à Sganarelle une liberté de parole pour commenter les actes du noble. Leurs échanges font rire tout en révélant des tensions sociales réelles. Mais Sganarelle n’est pas un modèle de sagesse : ses peurs superstitieuses, son intérêt personnel et ses arguments maladroits le rendent lui-même très contradictoire.',
+		},
 	},
 	{
 		id: 'critique-noblesse',
@@ -374,6 +406,10 @@ export const mainThemes: MainTheme[] = [
 			speaker: 'Dom Louis',
 			ref: 'Acte IV, scène 4',
 		},
+		historicalContext: {
+			title: 'Le contexte historique : rang noble et devoir moral',
+			text: 'Au XVIIᵉ siècle, la société française est divisée en ordres inégaux (clergé, noblesse, tiers état). En tant que grand seigneur, Dom Juan s’appuie sur son rang pour intimider ses créanciers et maltraiter les paysans. Face à lui, son père Dom Louis rappelle que la noblesse ne vaut rien sans la vertu. La pièce met ainsi en scène une tension centrale de l’époque : le conflit entre les privilèges liés à la naissance et l’exigence de responsabilité morale.',
+		},
 	},
 	{
 		id: 'liberte-transgression',
@@ -389,6 +425,10 @@ export const mainThemes: MainTheme[] = [
 			text: 'Va, va, je te le donne pour l’amour de l’humanité. Mais que vois-je là ? Un homme attaqué par trois autres ? La partie est trop inégale, et je ne dois pas souffrir cette lâcheté.',
 			speaker: 'Dom Juan',
 			ref: 'Acte III, scène 2',
+		},
+		historicalContext: {
+			title: 'Le contexte historique : liberté libertine et autorité royale',
+			text: 'Au XVIIᵉ siècle, il faut distinguer les libertins d’esprit historiques, qui interrogent philosophiquement la religion, du personnage théâtral de Dom Juan. Le héros de Molière n’est pas un penseur : il détourne le scepticisme pour justifier sa conduite immorale et son mépris des règles. Cette provocation n’a donc rien à voir avec nos droits individuels d’aujourd’hui : sa liberté ne cherche pas l’émancipation d’autrui, mais sert uniquement son propre plaisir.',
 		},
 	},
 ];

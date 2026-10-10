@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import {
+	creationContext,
 	dissertationTakeaway,
 	domJuanCharacters,
 	domJuanEdgeTypes,
@@ -47,7 +48,7 @@ describe('Modèle de données de Dom Juan (src/data/dom-juan.ts)', () => {
 		});
 	});
 
-	test('contient exactement les 6 thèmes principaux requis avec questions didactiques', () => {
+	test('contient exactement les 6 thèmes principaux requis avec questions didactiques et notes historiques', () => {
 		expect(mainThemes.length).toBe(6);
 		const ids = mainThemes.map((t) => t.id);
 		expect(ids).toEqual([
@@ -68,7 +69,80 @@ describe('Modèle de données de Dom Juan (src/data/dom-juan.ts)', () => {
 			expect(t.quote?.text).toBeTruthy();
 			expect(t.quote?.speaker).toBeTruthy();
 			expect(t.quote?.ref).toBeTruthy();
+
+			// Note contextuelle historique sur chaque thème
+			expect(t.historicalContext).toBeDefined();
+			expect(t.historicalContext.title).toBeTruthy();
+			expect(t.historicalContext.title).toContain('contexte historique');
+			expect(t.historicalContext.text).toBeTruthy();
+
+			// Volume textuel concis adapté à un lycéen (environ 50 à 90 mots)
+			const words = t.historicalContext.text.trim().split(/\s+/).length;
+			expect(words).toBeGreaterThanOrEqual(50);
+			expect(words).toBeLessThanOrEqual(95);
+
+			// Distinct de l'analyse littéraire principale et du résumé
+			expect(t.historicalContext.text).not.toBe(t.analysis);
+			expect(t.historicalContext.text).not.toBe(t.summary);
 		});
+	});
+
+	test('chaque note historique thématise les enjeux historiques du XVIIe siècle requis', () => {
+		// Thème 1 : mariage, honneur et réputation féminine
+		const t1 = mainThemes.find((t) => t.id === 'seduction-inconstance')!;
+		expect(t1.historicalContext.text).toContain('mariage');
+		expect(t1.historicalContext.text).toContain('honneur');
+		expect(t1.historicalContext.text).toContain('réputation');
+		expect(t1.historicalContext.text).toContain('couvent');
+
+		// Thème 2 : religion catholique, Louis XIV et controverse de Tartuffe
+		const t2 = mainThemes.find((t) => t.id === 'hypocrisie-religieuse')!;
+		expect(t2.historicalContext.text).toContain('Louis XIV');
+		expect(t2.historicalContext.text).toContain('Tartuffe');
+		expect(t2.historicalContext.text).toContain('catholique');
+		expect(t2.historicalContext.text).toContain('foi chrétienne sincère');
+
+		// Thème 3 : châtiment divin, statue du Commandeur et gages de Sganarelle
+		const t3 = mainThemes.find((t) => t.id === 'religion-chatiment-divin')!;
+		expect(t3.historicalContext.text).toContain('Commandeur');
+		expect(t3.historicalContext.text).toContain('surnaturel');
+		expect(t3.historicalContext.text).toContain('gages');
+
+		// Thème 4 : maître et valet, liberté de parole et contradictions
+		const t4 = mainThemes.find((t) => t.id === 'maitre-valet')!;
+		expect(t4.historicalContext.text).toContain('valet');
+		expect(t4.historicalContext.text).toContain('Sganarelle');
+		expect(t4.historicalContext.text).toContain('peurs superstitieuses');
+
+		// Thème 5 : société divisée en ordres, grand seigneur et vertu nobiliaire
+		const t5 = mainThemes.find((t) => t.id === 'critique-noblesse')!;
+		expect(t5.historicalContext.text).toContain('ordres');
+		expect(t5.historicalContext.text).toContain('Dom Louis');
+		expect(t5.historicalContext.text).toContain('noblesse');
+
+		// Thème 6 : libertins d'esprit, limites sous monarchie et distinction avec droits modernes
+		const t6 = mainThemes.find((t) => t.id === 'liberte-transgression')!;
+		expect(t6.historicalContext.text).toContain('libertins');
+		expect(t6.historicalContext.text).toContain('droits individuels');
+	});
+
+	test('les libellés des notes contextuelles de thème sont tous uniques', () => {
+		const titles = mainThemes.map((t) => t.historicalContext.title);
+		const uniqueTitles = new Set(titles);
+		expect(uniqueTitles.size).toBe(mainThemes.length);
+	});
+
+	test('la note contextuelle générale sur la création en 1665 est complète et exacte', () => {
+		expect(creationContext).toBeDefined();
+		expect(creationContext.title).toBe('Pourquoi Molière écrit-il cette pièce en 1665 ?');
+		expect(creationContext.text).toContain('février 1665');
+		expect(creationContext.text).toContain('Tartuffe');
+		expect(creationContext.text).toContain('liberté');
+		expect(creationContext.text).toContain('discutées');
+
+		const words = creationContext.text.trim().split(/\s+/).length;
+		expect(words).toBeGreaterThanOrEqual(50);
+		expect(words).toBeLessThanOrEqual(90);
 	});
 
 	test('les citations correspondent à l’acte et à la scène exacts', () => {

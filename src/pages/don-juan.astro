@@ -4,6 +4,7 @@ import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import RelationshipMap from '../components/RelationshipMap.astro';
 import {
+	creationContext,
 	dissertationTakeaway,
 	domJuanCharacters,
 	domJuanEdgeTypes,
@@ -136,6 +137,21 @@ const pageDescription =
 						siècle et compose une œuvre complexe qui échappe aux règles classiques traditionnelles.
 					</p>
 
+					<!-- Note contextuelle générale sur la création de la pièce -->
+					<details class="creation-context-note" id="contexte-creation" aria-labelledby="creation-context-title">
+						<summary class="creation-context-summary">
+							<span class="creation-context-badge">Repère historique</span>
+							<span class="creation-context-title" id="creation-context-title">{creationContext.title}</span>
+							<span class="creation-context-toggle" aria-hidden="true">
+								<span class="toggle-more">Déplier ▾</span>
+								<span class="toggle-less">Replier ▴</span>
+							</span>
+						</summary>
+						<div class="creation-context-content">
+							<p>{creationContext.text}</p>
+						</div>
+					</details>
+
 					<div class="themes-grid">
 						{mainThemes.map((theme) => (
 							<article class="theme-card" id={`theme-${theme.id}`}>
@@ -157,6 +173,23 @@ const pageDescription =
 											<p>« {theme.quote.text} »</p>
 											<cite>{theme.quote.speaker}, {theme.quote.ref}</cite>
 										</blockquote>
+									)}
+									{theme.historicalContext && (
+										<details class="theme-historical-note" aria-labelledby={`hist-title-${theme.id}`}>
+											<summary class="theme-historical-summary">
+												<span class="theme-historical-badge">XVII<sup>e</sup> siècle</span>
+												<span class="theme-historical-title" id={`hist-title-${theme.id}`}>
+													{theme.historicalContext.title}
+												</span>
+												<span class="theme-historical-toggle" aria-hidden="true">
+													<span class="toggle-more">Déplier ▾</span>
+													<span class="toggle-less">Replier ▴</span>
+												</span>
+											</summary>
+											<div class="theme-historical-content">
+												<p>{theme.historicalContext.text}</p>
+											</div>
+										</details>
 									)}
 								</div>
 							</article>
@@ -667,7 +700,210 @@ const pageDescription =
 		font-style: italic;
 	}
 
+	/* ==========================================================================
+	   Notes historiques dépliables (création 1665 et thèmes majeurs)
+	   ========================================================================== */
+	.creation-context-note {
+		margin: 0 auto 2.75rem;
+		max-width: 820px;
+		background: #fbf9f4;
+		border: 1px solid var(--map-border);
+		border-left: 4px solid #8a1f1a;
+		border-radius: 6px;
+		box-shadow: 0 2px 8px rgba(23, 43, 58, 0.03);
+		transition: box-shadow 0.2s ease, border-color 0.2s ease;
+	}
+
+	.creation-context-note[open] {
+		background: #ffffff;
+		box-shadow: 0 4px 14px rgba(23, 43, 58, 0.06);
+	}
+
+	.creation-context-summary {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.6rem 0.85rem;
+		padding: 1rem 1.35rem;
+		cursor: pointer;
+		user-select: none;
+		list-style: none;
+	}
+
+	.creation-context-summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.creation-context-summary:hover {
+		background: rgba(23, 43, 58, 0.02);
+	}
+
+	.creation-context-summary:focus-visible {
+		outline: 2px solid #8a1f1a;
+		outline-offset: 2px;
+		border-radius: 4px;
+	}
+
+	.creation-context-badge {
+		font-size: 0.72rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		padding: 0.18rem 0.5rem;
+		border-radius: 3px;
+		background: rgba(138, 31, 26, 0.08);
+		color: #8a1f1a;
+		border: 1px solid rgba(138, 31, 26, 0.22);
+	}
+
+	.creation-context-title {
+		font-family: var(--map-serif);
+		font-size: 1.1rem;
+		font-weight: 600;
+		color: var(--map-ink);
+		flex: 1 1 auto;
+	}
+
+	.creation-context-toggle {
+		font-size: 0.82rem;
+		font-weight: 600;
+		color: var(--map-muted);
+		transition: color 0.15s ease;
+	}
+
+	.creation-context-note[open] .creation-context-toggle {
+		color: #8a1f1a;
+	}
+
+	.creation-context-content {
+		padding: 0 1.35rem 1.25rem;
+		border-top: 1px solid var(--map-border-soft);
+		margin-top: 0.25rem;
+		padding-top: 1rem;
+	}
+
+	.creation-context-content p {
+		margin: 0;
+		font-size: 0.94rem;
+		line-height: 1.65;
+		color: var(--map-ink-soft);
+		text-align: justify;
+	}
+
+	/* Notes historiques intégrées dans les cartes de thème */
+	.theme-historical-note {
+		margin-top: 0.5rem;
+		background: #fbf9f4;
+		border: 1px solid var(--map-border-soft);
+		border-left: 3px solid #235284;
+		border-radius: 4px;
+		transition: background-color 0.15s ease, border-color 0.15s ease;
+	}
+
+	.theme-historical-note[open] {
+		background: #ffffff;
+		border-color: var(--map-border);
+		border-left-color: #235284;
+	}
+
+	.theme-historical-summary {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem 0.65rem;
+		padding: 0.65rem 0.85rem;
+		cursor: pointer;
+		user-select: none;
+		list-style: none;
+	}
+
+	.theme-historical-summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.theme-historical-summary:hover {
+		background: rgba(35, 82, 132, 0.04);
+	}
+
+	.theme-historical-summary:focus-visible {
+		outline: 2px solid #235284;
+		outline-offset: 2px;
+		border-radius: 4px;
+	}
+
+	.theme-historical-badge {
+		font-size: 0.68rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.07em;
+		padding: 0.15rem 0.45rem;
+		border-radius: 3px;
+		background: rgba(35, 82, 132, 0.08);
+		color: #235284;
+		border: 1px solid rgba(35, 82, 132, 0.22);
+	}
+
+	.theme-historical-title {
+		font-size: 0.86rem;
+		font-weight: 600;
+		color: var(--map-ink);
+		flex: 1 1 auto;
+		line-height: 1.35;
+	}
+
+	.theme-historical-toggle {
+		font-size: 0.78rem;
+		font-weight: 600;
+		color: var(--map-muted);
+		transition: color 0.15s ease;
+	}
+
+	.theme-historical-note[open] .theme-historical-toggle {
+		color: #235284;
+	}
+
+	.theme-historical-content {
+		padding: 0 0.85rem 0.85rem;
+		border-top: 1px solid rgba(35, 82, 132, 0.1);
+		margin-top: 0.15rem;
+		padding-top: 0.65rem;
+	}
+
+	.theme-historical-content p {
+		margin: 0;
+		font-size: 0.88rem;
+		line-height: 1.6;
+		color: var(--map-ink-soft);
+		text-align: justify;
+	}
+
+	/* Gestion du libellé Déplier / Replier en pur CSS */
+	.theme-historical-toggle .toggle-less,
+	.creation-context-toggle .toggle-less {
+		display: none;
+	}
+
+	details[open] .theme-historical-toggle .toggle-more,
+	details[open] .creation-context-toggle .toggle-more {
+		display: none;
+	}
+
+	details[open] .theme-historical-toggle .toggle-less,
+	details[open] .creation-context-toggle .toggle-less {
+		display: inline;
+	}
+
 	@media (max-width: 820px) {
+		.creation-context-summary,
+		.creation-context-content {
+			padding-left: 1.1rem;
+			padding-right: 1.1rem;
+		}
+
+		.creation-context-title {
+			font-size: 1.02rem;
+		}
+
 		.themes-grid {
 			grid-template-columns: 1fr;
 			gap: 1.25rem;
