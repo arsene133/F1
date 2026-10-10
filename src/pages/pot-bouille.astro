@@ -116,6 +116,34 @@ const pageDescription =
 						</p>
 					</section>
 
+					<aside class="counterfactual-note" aria-labelledby="counterfactual-title">
+						<div class="counterfactual-badge">Expérience de pensée contrefactuelle</div>
+						<h3 id="counterfactual-title">Et si l’immeuble avait eu un ascenseur ?</h3>
+						<p class="counterfactual-disclaimer">
+							<em>Note méthodologique :</em> cette réflexion explore une hypothèse technique absente du roman. L’immeuble du 28, rue de Choiseul décrit par Zola ne possède aucun ascenseur : l’ensemble des intrigues s’y déploie à travers l’escalier d’honneur feutré et l’escalier de service. Cet exercice vise uniquement à mesurer le rôle narratif et social de l’architecture.
+						</p>
+						<p>
+							Si la présence d’ascenseurs hydrauliques était techniquement plausible dans certains grands hôtels ou édifices parisiens de la seconde moitié du XIX<sup>e</sup> siècle, son introduction au 28, rue de Choiseul aurait profondément reconfiguré l’espace romanesque :
+						</p>
+						<ul class="counterfactual-points">
+							<li>
+								<strong>Les rencontres :</strong> l’escalier zolien est le lieu des lenteurs, des frôlements calculés et des conversations amorcées sur les paliers. L’ascenseur aurait supprimé ces croisements progressifs, mais aurait créé de nouveaux huis clos mécaniques — une promiscuité physique intense et brève où les convenances bourgeoises auraient été mises à rude épreuve.
+							</li>
+							<li>
+								<strong>La hiérarchie sociale :</strong> la circulation verticale aurait été facilitée sans pour autant abolir les clivages de classe. L’accès à la cabine aurait lui-même constitué un privilège réservé aux locataires nobles des premiers étages, tandis que les domestiques et les fournisseurs seraient demeurés relégués aux volées nues du boyau de service.
+							</li>
+							<li>
+								<strong>Les secrets et la surveillance :</strong> la police exercée par le concierge Gourd repose sur l’observation continue des montées et des descentes. Une cabine fermée aurait déplacé les indices : non plus le bruit feutré d’un pas sur le tapis rouge, mais l’attente sur le palier, les horaires de machinerie, les accès verrouillés et les disparitions précipitées.
+							</li>
+							<li>
+								<strong>La portée symbolique :</strong> l’ascenseur aurait offert un équivalent mécanique direct à l’ascension sociale d’Octave Mouret, capable de changer d’étage d’une secousse sans modifier la pesanteur des rapports de pouvoir sous-jacents.
+							</li>
+						</ul>
+						<p class="counterfactual-conclusion">
+							En définitive, là où l’escalier rend les déplacements visibles et donne du temps aux rencontres, l’ascenseur aurait condensé ces circulations en huis clos furtifs, tout en maintenant intactes les frontières sociales de l’immeuble.
+						</p>
+					</aside>
+
 					<div class="synthesis-axioms">
 						<blockquote>
 							« C’est la cuisine de la bourgeoisie, le pot-bouille où tout mijote sans bruit
@@ -257,6 +285,90 @@ const pageDescription =
 		line-height: 1.6;
 		color: var(--map-ink-soft);
 		text-align: justify;
+	}
+
+	/* Encadré d’expérience de pensée contrefactuelle */
+	.counterfactual-note {
+		margin: 2rem 0;
+		padding: 1.5rem 1.75rem;
+		background: #fbf9f4;
+		border: 1px solid #e5dfd3;
+		border-left: 4px solid #8b572a;
+		border-radius: 6px;
+		box-shadow: 0 2px 8px rgba(23, 43, 58, 0.03);
+	}
+
+	.counterfactual-badge {
+		display: inline-block;
+		font-size: 0.74rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		background: rgba(139, 87, 42, 0.1);
+		color: #8b572a;
+		border: 1px solid rgba(139, 87, 42, 0.25);
+		padding: 0.2rem 0.55rem;
+		border-radius: 3px;
+		margin-bottom: 0.6rem;
+	}
+
+	.counterfactual-note h3 {
+		margin: 0 0 0.85rem;
+		font-family: var(--map-serif);
+		font-size: 1.25rem;
+		color: var(--map-ink);
+	}
+
+	.counterfactual-disclaimer {
+		margin: 0 0 1rem;
+		padding: 0.65rem 0.9rem;
+		background: rgba(139, 87, 42, 0.05);
+		border-left: 2px solid #8b572a;
+		font-size: 0.88rem;
+		line-height: 1.5;
+		color: #5e6d7a;
+		border-radius: 0 4px 4px 0;
+	}
+
+	.counterfactual-disclaimer em {
+		font-weight: 600;
+		color: #172b3a;
+		font-style: normal;
+	}
+
+	.counterfactual-note p {
+		margin: 0 0 0.85rem;
+		font-size: 0.95rem;
+		line-height: 1.6;
+		color: var(--map-ink-soft);
+	}
+
+	.counterfactual-points {
+		margin: 0.75rem 0 1.1rem;
+		padding-left: 1.35rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.7rem;
+	}
+
+	.counterfactual-points li {
+		font-size: 0.93rem;
+		line-height: 1.55;
+		color: var(--map-ink-soft);
+	}
+
+	.counterfactual-points strong {
+		color: var(--map-ink);
+	}
+
+	.counterfactual-conclusion {
+		margin: 0;
+		padding-top: 0.75rem;
+		border-top: 1px dashed #dcd6cb;
+		font-style: italic;
+		font-size: 0.93rem;
+		line-height: 1.55;
+		color: #475569;
 	}
 
 	.related-literary-links {
