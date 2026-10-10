@@ -6,6 +6,10 @@ import {
 	potBouilleMechanism,
 	potBouilleRelationships,
 } from './pot-bouille';
+import {
+	potBouilleBuildingFloors,
+	potBouilleExteriorSpace,
+} from './pot-bouille-building';
 
 describe('Modèle de données de Pot-Bouille (src/data/pot-bouille.ts)', () => {
 	test('tous les personnages ont des identifiants uniques et non vides', () => {
@@ -192,5 +196,63 @@ describe('Modèle de données de Pot-Bouille (src/data/pot-bouille.ts)', () => {
 			targets.forEach((t) => connectedIds.add(t));
 		});
 		expect(connectedIds.size).toBe(17);
+	});
+});
+
+describe('Coupe architecturale du 28, rue de Choiseul (src/data/pot-bouille-building.ts)', () => {
+	test('tous les étages sont définis du rez-de-chaussée aux combles', () => {
+		const levels = potBouilleBuildingFloors.map((f: any) => f.level);
+		expect(levels).toEqual([5, 4, 3, 2, 1, 0, -1]);
+	});
+
+	test('la répartition spatiale respecte le texte de Zola (Chapitre I)', () => {
+		const floorMap = new Map(potBouilleBuildingFloors.map((f: any) => [f.id, f]));
+
+		// 4e étage : Josserand sur rue, Pichon et chambre d'Octave sur cour
+		const f4: any = floorMap.get('etage-4');
+		expect(f4).toBeDefined();
+		const f4Rooms = f4.rooms.map((r: any) => r.id);
+		expect(f4Rooms).toContain('foyer-josserand');
+		expect(f4Rooms).toContain('chambre-octave');
+		expect(f4Rooms).toContain('foyer-pichon');
+
+		// 3e étage : Campardon sur rue, Juzeur sur cour
+		const f3: any = floorMap.get('etage-3');
+		expect(f3).toBeDefined();
+		const f3Rooms = f3.rooms.map((r: any) => r.id);
+		expect(f3Rooms).toContain('foyer-campardon');
+		expect(f3Rooms).toContain('logement-juzeur');
+
+		// 1er étage : Duveyrier et vieux Vabre sur rue, Théophile et Valérie sur cour
+		const f1: any = floorMap.get('etage-1');
+		expect(f1).toBeDefined();
+		const f1Rooms = f1.rooms.map((r: any) => r.id);
+		expect(f1Rooms).toContain('appartement-duveyrier');
+		expect(f1Rooms).toContain('appartement-theophile-valerie');
+
+		// RDC : magasin de soieries, vestibule, loge Gourd et cour de service
+		const rdc: any = floorMap.get('rdc');
+		expect(rdc).toBeDefined();
+		const rdcRooms = rdc.rooms.map((r: any) => r.id);
+		expect(rdcRooms).toContain('magasin-soieries');
+		expect(rdcRooms).toContain('vestibule-honneur');
+		expect(rdcRooms).toContain('loge-gourd');
+		expect(rdcRooms).toContain('cour-service');
+	});
+
+	test('tous les personnages associés aux pièces sont valides dans potBouilleCharacters', () => {
+		const characterIds = new Set(potBouilleCharacters.map((c) => c.id));
+
+		potBouilleBuildingFloors.forEach((floor: any) => {
+			floor.rooms.forEach((room: any) => {
+				room.characterIds.forEach((cid: string) => {
+					expect(characterIds.has(cid), `Personnage inconnu dans ${room.id} : ${cid}`).toBe(true);
+				});
+			});
+		});
+
+		potBouilleExteriorSpace.characterIds.forEach((cid: string) => {
+			expect(characterIds.has(cid), `Personnage inconnu dans l'espace extérieur : ${cid}`).toBe(true);
+		});
 	});
 });

@@ -1,0 +1,1305 @@
+---
+// Coupe architecturale narrative du 28, rue de Choiseul (Pot-Bouille)
+// Représentation spatiale de l'immeuble bourgeois d'Émile Zola (1882) :
+// étages, distribution rue/cour, escalier d'honneur, escalier de service,
+// habitants et contrastes sociaux (façade honorable vs secrets privés).
+import {
+	potBouilleBuildingFloors,
+	potBouilleExteriorSpace,
+	type BuildingFloor,
+	type BuildingRoom,
+} from '../data/pot-bouille-building';
+import { potBouilleCharacters } from '../data/pot-bouille';
+
+interface Props {
+	id?: string;
+}
+
+const { id = 'coupe-immeuble' } = Astro.props;
+
+const charactersById = new Map(potBouilleCharacters.map((c) => [c.id, c]));
+
+// Liste aplatie de toutes les pièces pour le sélecteur et l'index textuel
+const allRooms: { floor: BuildingFloor; room: BuildingRoom }[] = [];
+potBouilleBuildingFloors.forEach((f) => {
+	f.rooms.forEach((r) => {
+		allRooms.push({ floor: f, room: r });
+	});
+});
+allRooms.push({
+	floor: {
+		id: 'exterieur',
+		level: -2,
+		name: 'Extérieur',
+		subtitle: 'Le monde des grands magasins',
+		carpet: 'Pavé parisien',
+		rooms: [potBouilleExteriorSpace],
+		circulationNote: 'Rue Neuve-Saint-Augustin / Rue de la Michodière',
+	},
+	room: potBouilleExteriorSpace,
+});
+
+// Données client pour interactions
+const clientBuildingData = {
+	floors: potBouilleBuildingFloors,
+	exterior: potBouilleExteriorSpace,
+	characters: Object.fromEntries(
+		potBouilleCharacters.map((c) => [
+			c.id,
+			{
+				id: c.id,
+				label: c.label,
+				caption: c.caption,
+				eyebrow: c.eyebrow,
+				color: c.color,
+				tier: c.tier,
+			},
+		]),
+	),
+};
+---
+
+<section
+	id={id}
+	class="building-cutaway"
+	aria-labelledby={`${id}-heading`}
+	data-building-cutaway
+>
+	<script type="application/json" data-building-json set:html={JSON.stringify(clientBuildingData)} />
+
+	<header class="cutaway-header">
+		<p class="cutaway-eyebrow">Architecture spatiale & mœurs bourgeoises</p>
+		<h2 id={`${id}-heading`}>Coupe de l’immeuble du 28, rue de Choiseul</h2>
+		<p class="cutaway-sub">
+			Explorez l’organisation verticale de la maison : du luxe trompeur des vestibules chauffés et des
+			premiers étages nobles jusqu’au froid des combles où croupissent les domestiques.
+		</p>
+		<p class="cutaway-instructions">
+			Sélectionnez une pièce ou un résident pour révéler les intrigues, secrets et contrastes de cet espace.
+		</p>
+	</header>
+
+	<!-- Barre de filtres / modes de vue -->
+	<nav class="cutaway-controls" aria-label="Filtres de la coupe architecturale">
+		<span class="controls-label">Explorer par contraste :</span>
+		<div class="controls-buttons" role="group">
+			<button
+				type="button"
+				class="ctrl-btn is-active"
+				data-filter="all"
+				aria-pressed="true"
+			>
+				Tous les étages
+			</button>
+			<button
+				type="button"
+				class="ctrl-btn"
+				data-filter="rue"
+				aria-pressed="false"
+			>
+				Façade & rue (Apparences)
+			</button>
+			<button
+				type="button"
+				class="ctrl-btn"
+				data-filter="cour"
+				aria-pressed="false"
+			>
+				Cour & alcôves (Secrets)
+			</button>
+			<button
+				type="button"
+				class="ctrl-btn"
+				data-filter="communs"
+				aria-pressed="false"
+			>
+				Escaliers & Coulisses
+			</button>
+			<button
+				type="button"
+				class="ctrl-btn"
+				data-filter="mouret"
+				aria-pressed="false"
+			>
+				Lieux d’Octave Mouret
+			</button>
+		</div>
+	</nav>
+
+	<div class="cutaway-main-layout">
+		<!-- Vue graphique de la coupe (Schéma architectural stylisé) -->
+		<div class="cutaway-elevation-wrapper">
+			<div class="building-facade-roof" aria-hidden="true">
+				<div class="roof-zinc">
+					<div class="zinc-ridge"></div>
+					<div class="roof-dormers">
+						<span class="dormer" title="Lucarne mansardée"></span>
+						<span class="dormer" title="Lucarne mansardée"></span>
+						<span class="dormer" title="Lucarne mansardée"></span>
+						<span class="dormer" title="Lucarne mansardée"></span>
+					</div>
+					<div class="chimneys">
+						<span class="chimney"></span>
+						<span class="chimney"></span>
+					</div>
+				</div>
+			</div>
+
+			<div class="building-structure" role="region" aria-label="Coupe verticale des étages de l'immeuble">
+				{potBouilleBuildingFloors.map((floor) => (
+					<section
+						class={`building-floor floor-${floor.id}`}
+						data-floor-id={floor.id}
+						data-floor-level={floor.level}
+						aria-labelledby={`floor-label-${floor.id}`}
+					>
+						<!-- En-tête de l'étage avec tapis et mention architecturale -->
+						<div class="floor-strip">
+							<div class="floor-badge">
+								<span class="floor-number" id={`floor-label-${floor.id}`}>{floor.name}</span>
+								<span class="floor-carpet" title={floor.carpet}>
+									{floor.level >= 1 && floor.level <= 3 ? '🔴 Tapis rouge' : floor.level === 4 ? '⚪ Toile grise' : floor.level === 5 ? '🟡 Combles zinc' : '🏛️ Vestibule'}
+								</span>
+							</div>
+							<div class="floor-specs" aria-hidden="true">
+								<span class="floor-facade-note">{floor.facadeFeature || floor.subtitle}</span>
+							</div>
+						</div>
+
+						<!-- Distribution des pièces sur l'étage -->
+						<div class="floor-rooms-row">
+							{floor.rooms.map((room) => {
+								const characters = room.characterIds
+									.map((cid) => charactersById.get(cid))
+									.filter(Boolean);
+
+								return (
+									<article
+										class={`room-cell room-orient-${room.orientation}`}
+										data-room-id={room.id}
+										data-orientation={room.orientation}
+										data-character-ids={room.characterIds.join(' ')}
+										tabindex="0"
+										role="button"
+										aria-expanded="false"
+										aria-controls="cutaway-detail-panel"
+									>
+										<div class="room-cell-header">
+											<span class={`room-tag tag-${room.orientation}`}>
+												{room.orientation === 'rue' ? 'Façade Rue' : room.orientation === 'cour' ? 'Sur Cour' : room.orientation === 'communs' ? 'Circulation / Service' : 'Commerce'}
+											</span>
+											<h3 class="room-title">{room.title}</h3>
+										</div>
+
+										{room.subtitle && <p class="room-subtitle">{room.subtitle}</p>}
+
+										{characters.length > 0 && (
+											<div class="room-occupants" aria-label="Habitants de cette pièce">
+												{characters.map((ch) => ch && (
+													<span
+														class="occupant-pill"
+														style={`--occupant-color: ${ch.color};`}
+														data-char-id={ch.id}
+														title={`${ch.label} (${ch.caption})`}
+													>
+														<span class="occupant-dot"></span>
+														<strong class="occupant-name">{ch.label}</strong>
+													</span>
+												))}
+											</div>
+										)}
+
+										<p class="room-micro-desc">{room.description}</p>
+									</article>
+								);
+							})}
+						</div>
+					</section>
+				))}
+
+				<!-- Espace extérieur rattaché : Au Bonheur des Dames -->
+				<aside
+					class="building-exterior-cell room-cell room-orient-commerce"
+					data-room-id={potBouilleExteriorSpace.id}
+					data-orientation="commerce"
+					data-character-ids="caroline-hedouin"
+					tabindex="0"
+					role="button"
+					aria-expanded="false"
+					aria-controls="cutaway-detail-panel"
+				>
+					<div class="room-cell-header">
+						<span class="room-tag tag-commerce">Extérieur · Nouveautés</span>
+						<h3 class="room-title">{potBouilleExteriorSpace.title}</h3>
+					</div>
+					<p class="room-subtitle">{potBouilleExteriorSpace.subtitle}</p>
+					<div class="room-occupants">
+						{potBouilleExteriorSpace.characterIds
+							.map((cid) => charactersById.get(cid))
+							.filter(Boolean)
+							.map((ch) => ch && (
+								<span
+									class="occupant-pill"
+									style={`--occupant-color: ${ch.color};`}
+									data-char-id={ch.id}
+								>
+									<span class="occupant-dot"></span>
+									<strong class="occupant-name">{ch.label}</strong>
+								</span>
+							))}
+					</div>
+					<p class="room-micro-desc">{potBouilleExteriorSpace.description}</p>
+				</aside>
+			</div>
+
+			<!-- Pied architectural du bâtiment : fondations et trottoir -->
+			<div class="building-trottoir" aria-hidden="true">
+				<div class="trottoir-pave">
+					<span>Trottoir de la rue de Choiseul</span>
+					<span class="pave-symbol">◆ Pavés parisiens ◆ Égouts & caves</span>
+				</div>
+			</div>
+		</div>
+
+		<!-- Panneau latéral d'analyse narrative détaillée -->
+		<aside
+			id="cutaway-detail-panel"
+			class="cutaway-detail-panel"
+			aria-live="polite"
+			data-detail-panel
+		>
+			<div class="detail-placeholder" data-detail-placeholder>
+				<div class="placeholder-icon" aria-hidden="true">🏛️</div>
+				<h3>Sélectionnez une pièce ou un habitant</h3>
+				<p>
+					Cliquez sur un appartement, sur la loge ou sur l’un des résidents pour explorer les détails
+					architecturaux, les citations de Zola et les intrigues qui s’y trament.
+				</p>
+				<div class="placeholder-tips">
+					<p><strong>Repères de lecture zolienne :</strong></p>
+					<ul>
+						<li><strong>Façade sur rue :</strong> respectabilité, salons blanc et or, pianotages virtuoses.</li>
+						<li><strong>Sur cour :</strong> chambres étouffantes, jalousies, adultères et calculs d’argent.</li>
+						<li><strong>L’escalier :</strong> faux marbre et chaleur tiède en bas, mansardes glacées en haut.</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="detail-content is-hidden" data-detail-content>
+				<header class="detail-header">
+					<span class="detail-badge" data-detail-badge>Étage</span>
+					<h3 class="detail-title" data-detail-title>Titre de la pièce</h3>
+					<p class="detail-sub" data-detail-subtitle>Sous-titre</p>
+				</header>
+
+				<div class="detail-occupants-list" data-detail-occupants></div>
+
+				<div class="detail-body">
+					<p class="detail-description" data-detail-desc></p>
+
+					<blockquote class="detail-quote" data-detail-quote-block>
+						<p class="quote-text" data-detail-quote-text></p>
+						<cite class="quote-source" data-detail-quote-source></cite>
+					</blockquote>
+
+					<div class="detail-secrets-block" data-detail-secrets-block>
+						<h4>Sous le vernis bourgeois :</h4>
+						<ul class="detail-secrets-list" data-detail-secrets-list></ul>
+					</div>
+				</div>
+
+				<footer class="detail-footer">
+					<button type="button" class="detail-reset-btn" data-detail-reset>
+						Fermer les détails
+					</button>
+				</footer>
+			</div>
+		</aside>
+	</div>
+
+	<!-- Tableau récapitulatif textuel et accessible de la coupe pour lecteurs d'écran -->
+	<details class="cutaway-accessible-index">
+		<summary>Inventaire complet des étages et appartements de l’immeuble (version texte)</summary>
+		<div class="accessible-table-wrapper">
+			<table class="accessible-table">
+				<thead>
+					<tr>
+						<th scope="col">Niveau</th>
+						<th scope="col">Pièce ou appartement</th>
+						<th scope="col">Orientation</th>
+						<th scope="col">Résidents principaux</th>
+						<th scope="col">Fonction narrative & satire</th>
+					</tr>
+				</thead>
+				<tbody>
+					{allRooms.map(({ floor, room }) => (
+						<tr>
+							<th scope="row">
+								<strong>{floor.name}</strong>
+								<br />
+								<small>{floor.subtitle}</small>
+							</th>
+							<td>
+								<strong>{room.title}</strong>
+								{room.subtitle && <><br /><span>{room.subtitle}</span></>}
+							</td>
+							<td>{room.orientation === 'rue' ? 'Façade Rue' : room.orientation === 'cour' ? 'Sur Cour' : room.orientation === 'communs' ? 'Circulation / Service' : 'Commerce'}</td>
+							<td>
+								{room.characterIds.length > 0
+									? room.characterIds
+											.map((cid) => charactersById.get(cid)?.label)
+											.filter(Boolean)
+											.join(', ')
+									: 'Aucun ou anonymes'}
+							</td>
+							<td>{room.description}</td>
+						</tr>
+					))}
+				</tbody>
+			</table>
+		</div>
+	</details>
+</section>
+
+<script>
+	function initBuildingCutaway() {
+		const root = document.querySelector('[data-building-cutaway]');
+		if (!root) return;
+
+		const scriptTag = root.querySelector('[data-building-json]');
+		if (!scriptTag) return;
+
+		let buildingData: any = {};
+		try {
+			buildingData = JSON.parse(scriptTag.textContent || '{}');
+		} catch (e) {
+			console.error('Erreur chargement données de coupe', e);
+			return;
+		}
+
+		const roomCells = root.querySelectorAll<HTMLElement>('.room-cell');
+		const filterButtons = root.querySelectorAll<HTMLButtonElement>('.ctrl-btn');
+		const detailPlaceholder = root.querySelector<HTMLElement>('[data-detail-placeholder]');
+		const detailContent = root.querySelector<HTMLElement>('[data-detail-content]');
+		const detailBadge = root.querySelector<HTMLElement>('[data-detail-badge]');
+		const detailTitle = root.querySelector<HTMLElement>('[data-detail-title]');
+		const detailSub = root.querySelector<HTMLElement>('[data-detail-subtitle]');
+		const detailOccupants = root.querySelector<HTMLElement>('[data-detail-occupants]');
+		const detailDesc = root.querySelector<HTMLElement>('[data-detail-desc]');
+		const detailQuoteBlock = root.querySelector<HTMLElement>('[data-detail-quote-block]');
+		const detailQuoteText = root.querySelector<HTMLElement>('[data-detail-quote-text]');
+		const detailQuoteSource = root.querySelector<HTMLElement>('[data-detail-quote-source]');
+		const detailSecretsBlock = root.querySelector<HTMLElement>('[data-detail-secrets-block]');
+		const detailSecretsList = root.querySelector<HTMLElement>('[data-detail-secrets-list]');
+		const detailResetBtn = root.querySelector<HTMLButtonElement>('[data-detail-reset]');
+
+		// Index des pièces par ID
+		const roomsById = new Map<string, { floor: any; room: any }>();
+		buildingData.floors.forEach((f: any) => {
+			f.rooms.forEach((r: any) => {
+				roomsById.set(r.id, { floor: f, room: r });
+			});
+		});
+		if (buildingData.exterior) {
+			roomsById.set(buildingData.exterior.id, {
+				floor: {
+					name: 'Extérieur',
+					subtitle: 'Rue Neuve-Saint-Augustin',
+					carpet: 'Pavé parisien',
+				},
+				room: buildingData.exterior,
+			});
+		}
+
+		let activeRoomId: string | null = null;
+
+		function selectRoom(roomId: string | null) {
+			activeRoomId = roomId;
+
+			roomCells.forEach((cell) => {
+				const isSelected = cell.dataset.roomId === roomId;
+				cell.classList.toggle('is-selected', isSelected);
+				cell.setAttribute('aria-expanded', isSelected ? 'true' : 'false');
+			});
+
+			if (!roomId || !roomsById.has(roomId)) {
+				if (detailPlaceholder) detailPlaceholder.classList.remove('is-hidden');
+				if (detailContent) detailContent.classList.add('is-hidden');
+				return;
+			}
+
+			const data = roomsById.get(roomId)!;
+			const { floor, room } = data;
+
+			if (detailPlaceholder) detailPlaceholder.classList.add('is-hidden');
+			if (detailContent) detailContent.classList.remove('is-hidden');
+
+			if (detailBadge) {
+				detailBadge.textContent = `${floor.name} · ${room.orientation === 'rue' ? 'Façade Rue' : room.orientation === 'cour' ? 'Sur Cour' : room.orientation === 'communs' ? 'Circulation' : 'Commerce'}`;
+			}
+			if (detailTitle) detailTitle.textContent = room.title;
+			if (detailSub) detailSub.textContent = room.subtitle || floor.subtitle || '';
+			if (detailDesc) detailDesc.textContent = room.description;
+
+			// Occupants
+			if (detailOccupants) {
+				detailOccupants.innerHTML = '';
+				const charIds: string[] = room.characterIds || [];
+				if (charIds.length > 0) {
+					charIds.forEach((cid) => {
+						const ch = buildingData.characters[cid];
+						if (ch) {
+							const el = document.createElement('div');
+							el.className = 'detail-occupant-card';
+							el.style.borderColor = ch.color || '#888';
+							el.innerHTML = `
+								<span class="docc-dot" style="background:${ch.color}"></span>
+								<div class="docc-text">
+									<strong>${ch.label}</strong>
+									<small>${ch.caption}</small>
+								</div>
+							`;
+							detailOccupants.appendChild(el);
+						}
+					});
+				}
+			}
+
+			// Citation
+			if (detailQuoteBlock && detailQuoteText && detailQuoteSource) {
+				if (room.quote && room.quote.text) {
+					detailQuoteBlock.style.display = 'block';
+					detailQuoteText.textContent = `« ${room.quote.text} »`;
+					detailQuoteSource.textContent = `Émile Zola, Pot-Bouille (${room.quote.source})`;
+				} else {
+					detailQuoteBlock.style.display = 'none';
+				}
+			}
+
+			// Secrets / satire
+			if (detailSecretsBlock && detailSecretsList) {
+				if (room.secrets && room.secrets.length > 0) {
+					detailSecretsBlock.style.display = 'block';
+					detailSecretsList.innerHTML = '';
+					room.secrets.forEach((s: string) => {
+						const li = document.createElement('li');
+						li.textContent = s;
+						detailSecretsList.appendChild(li);
+					});
+				} else {
+					detailSecretsBlock.style.display = 'none';
+				}
+			}
+		}
+
+		// Gestion des clics sur les cellules
+		roomCells.forEach((cell) => {
+			const roomId = cell.dataset.roomId;
+			if (!roomId) return;
+
+			cell.addEventListener('click', () => {
+				if (activeRoomId === roomId) {
+					selectRoom(null);
+				} else {
+					selectRoom(roomId);
+				}
+			});
+
+			cell.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					e.preventDefault();
+					if (activeRoomId === roomId) {
+						selectRoom(null);
+					} else {
+						selectRoom(roomId);
+					}
+				} else if (e.key === 'Escape') {
+					selectRoom(null);
+				}
+			});
+		});
+
+		// Bouton réinitialiser
+		if (detailResetBtn) {
+			detailResetBtn.addEventListener('click', () => {
+				selectRoom(null);
+			});
+		}
+
+		// Filtres
+		filterButtons.forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const filter = btn.dataset.filter || 'all';
+
+				filterButtons.forEach((b) => {
+					const isActive = b === btn;
+					b.classList.toggle('is-active', isActive);
+					b.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+				});
+
+				roomCells.forEach((cell) => {
+					const orient = cell.dataset.orientation;
+					const charIds = (cell.dataset.characterIds || '').split(' ');
+
+					let visible = true;
+					if (filter === 'all') {
+						visible = true;
+					} else if (filter === 'rue' || filter === 'cour' || filter === 'communs') {
+						visible = orient === filter;
+					} else if (filter === 'mouret') {
+						visible = charIds.includes('mouret') || cell.dataset.roomId === 'chambre-octave';
+					}
+
+					cell.classList.toggle('is-dimmed', !visible);
+				});
+			});
+		});
+	}
+
+	// Initialisation au chargement de la page et lors des navigations Astro
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initBuildingCutaway);
+	} else {
+		initBuildingCutaway();
+	}
+	document.addEventListener('astro:page-load', initBuildingCutaway);
+</script>
+
+<style>
+	.building-cutaway {
+		margin: 3.5rem 0 2rem;
+		padding: 2.25rem 1.5rem;
+		background: #fbf9f4;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 8px;
+		box-shadow: 0 4px 18px rgba(23, 43, 58, 0.04);
+	}
+
+	.cutaway-header {
+		text-align: center;
+		max-width: 800px;
+		margin: 0 auto 1.75rem;
+	}
+
+	.cutaway-eyebrow {
+		margin: 0 0 0.4rem;
+		font-size: 0.8rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.12em;
+		color: #9f1239;
+	}
+
+	.cutaway-header h2 {
+		margin: 0 0 0.65rem;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: clamp(1.6rem, 3vw, 2.2rem);
+		color: var(--map-ink, #172b3a);
+		font-weight: normal;
+	}
+
+	.cutaway-sub {
+		margin: 0 auto 0.5rem;
+		font-size: 0.96rem;
+		line-height: 1.55;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	.cutaway-instructions {
+		margin: 0;
+		font-size: 0.88rem;
+		color: var(--map-muted, #5e6d7a);
+		font-style: italic;
+	}
+
+	/* Contrôles / Filtres */
+	.cutaway-controls {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 0.6rem;
+		margin-bottom: 2rem;
+		padding: 0.75rem 1rem;
+		background: #f4ede2;
+		border: 1px solid #e2d9ca;
+		border-radius: 6px;
+	}
+
+	.controls-label {
+		font-size: 0.85rem;
+		font-weight: bold;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.controls-buttons {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+	}
+
+	.ctrl-btn {
+		background: #ffffff;
+		border: 1px solid #d4c8b6;
+		padding: 0.35rem 0.75rem;
+		font-size: 0.82rem;
+		border-radius: 4px;
+		cursor: pointer;
+		color: #2d3e4d;
+		transition: all 0.15s ease;
+		font-family: inherit;
+	}
+
+	.ctrl-btn:hover {
+		background: #ece3d3;
+		border-color: #b5a58e;
+		color: #172b3a;
+	}
+
+	.ctrl-btn.is-active {
+		background: #9f1239;
+		border-color: #881337;
+		color: #ffffff;
+		font-weight: 600;
+	}
+
+	/* Layout principal : Coupe à gauche, panneau détails à droite */
+	.cutaway-main-layout {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 340px;
+		gap: 1.5rem;
+		align-items: start;
+	}
+
+	/* Façade et toiture */
+	.cutaway-elevation-wrapper {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.building-facade-roof {
+		position: relative;
+		margin-bottom: -1px;
+	}
+
+	.roof-zinc {
+		position: relative;
+		height: 48px;
+		background: linear-gradient(180deg, #64748b 0%, #475569 100%);
+		border-top-left-radius: 12px;
+		border-top-right-radius: 12px;
+		border: 2px solid #334155;
+		border-bottom: none;
+		box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.2);
+	}
+
+	.zinc-ridge {
+		height: 6px;
+		background: #1e293b;
+		border-bottom: 1px solid #94a3b8;
+	}
+
+	.roof-dormers {
+		display: flex;
+		justify-content: space-around;
+		padding: 6px 40px 0;
+	}
+
+	.dormer {
+		width: 22px;
+		height: 22px;
+		background: #f8fafc;
+		border: 2px solid #1e293b;
+		border-top-left-radius: 11px;
+		border-top-right-radius: 11px;
+		box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
+	}
+
+	.chimneys {
+		position: absolute;
+		top: -14px;
+		left: 0;
+		right: 0;
+		display: flex;
+		justify-content: space-between;
+		padding: 0 24px;
+		pointer-events: none;
+	}
+
+	.chimney {
+		width: 16px;
+		height: 18px;
+		background: #b91c1c;
+		border: 1px solid #7f1d1d;
+		border-radius: 2px 2px 0 0;
+	}
+
+	/* Structure du bâtiment */
+	.building-structure {
+		display: flex;
+		flex-direction: column;
+		background: #e7dfd1;
+		border: 2px solid #4a3e35;
+		border-top: none;
+		gap: 4px;
+		padding: 4px;
+	}
+
+	.building-floor {
+		background: #fffdf9;
+		border: 1px solid #d4c7b2;
+		border-radius: 4px;
+		padding: 0.6rem 0.75rem;
+		transition: background-color 0.2s ease;
+	}
+
+	/* Différenciation des étages par niveau */
+	.floor-combles {
+		background: #f8fafc;
+		border-color: #cbd5e1;
+	}
+
+	.floor-etage-4 {
+		background: #faf8f5;
+	}
+
+	.floor-etage-3 {
+		background: #fffdf8;
+	}
+
+	.floor-etage-2 {
+		background: #fdfaf2;
+	}
+
+	.floor-etage-1 {
+		background: #fffaf0;
+		border: 2px solid #b45309;
+		box-shadow: 0 0 8px rgba(180, 83, 9, 0.1);
+	}
+
+	.floor-entresol {
+		background: #fbf7ee;
+	}
+
+	.floor-rdc {
+		background: #f8f3e8;
+		border-bottom: 2px solid #78350f;
+	}
+
+	.floor-strip {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		margin-bottom: 0.5rem;
+		padding-bottom: 0.35rem;
+		border-bottom: 1px dashed #ded4c3;
+	}
+
+	.floor-badge {
+		display: flex;
+		align-items: baseline;
+		gap: 0.6rem;
+	}
+
+	.floor-number {
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.05rem;
+		font-weight: bold;
+		color: #172b3a;
+	}
+
+	.floor-carpet {
+		font-size: 0.78rem;
+		color: #78350f;
+		background: #faeed9;
+		padding: 0.1rem 0.45rem;
+		border-radius: 3px;
+		font-weight: 500;
+	}
+
+	.floor-specs {
+		font-size: 0.8rem;
+		color: #64748b;
+		font-style: italic;
+	}
+
+	.floor-rooms-row {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+		gap: 0.5rem;
+	}
+
+	/* Cellule de pièce (appartement / espace) */
+	.room-cell {
+		background: #ffffff;
+		border: 1px solid #dcd3c3;
+		border-radius: 4px;
+		padding: 0.55rem 0.65rem;
+		cursor: pointer;
+		transition: all 0.18s ease;
+		display: flex;
+		flex-direction: column;
+		position: relative;
+	}
+
+	.room-cell:hover {
+		border-color: #9f1239;
+		box-shadow: 0 2px 8px rgba(159, 18, 57, 0.12);
+		transform: translateY(-1px);
+	}
+
+	.room-cell:focus-visible {
+		outline: 2px solid #2337ff;
+		outline-offset: 2px;
+	}
+
+	.room-cell.is-selected {
+		border-color: #9f1239;
+		background: #fff5f7;
+		box-shadow: 0 0 0 2px #9f1239, 0 3px 10px rgba(159, 18, 57, 0.18);
+	}
+
+	.room-cell.is-dimmed {
+		opacity: 0.35;
+		filter: grayscale(0.5);
+	}
+
+	/* Nuances selon l'orientation */
+	.room-orient-rue {
+		border-left: 3px solid #b45309;
+	}
+
+	.room-orient-cour {
+		border-left: 3px solid #be185d;
+	}
+
+	.room-orient-communs {
+		border-left: 3px solid #64748b;
+		background: #fcfcfc;
+	}
+
+	.room-orient-commerce {
+		border-left: 3px solid #059669;
+	}
+
+	.room-cell-header {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.4rem;
+		margin-bottom: 0.25rem;
+	}
+
+	.room-tag {
+		font-size: 0.68rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		padding: 0.08rem 0.3rem;
+		border-radius: 2px;
+		flex-shrink: 0;
+	}
+
+	.tag-rue {
+		background: #fef3c7;
+		color: #92400e;
+	}
+
+	.tag-cour {
+		background: #fce7f3;
+		color: #9d174d;
+	}
+
+	.tag-communs {
+		background: #f1f5f9;
+		color: #475569;
+	}
+
+	.tag-commerce {
+		background: #d1fae5;
+		color: #065f46;
+	}
+
+	.room-title {
+		margin: 0;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 0.95rem;
+		color: #172b3a;
+		line-height: 1.25;
+	}
+
+	.room-subtitle {
+		margin: 0 0 0.35rem;
+		font-size: 0.78rem;
+		color: #64748b;
+		line-height: 1.25;
+	}
+
+	.room-occupants {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.3rem;
+		margin-bottom: 0.35rem;
+	}
+
+	.occupant-pill {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3rem;
+		background: #f8f6f0;
+		border: 1px solid #ded5c4;
+		padding: 0.1rem 0.4rem;
+		border-radius: 999px;
+		font-size: 0.74rem;
+		line-height: 1.2;
+	}
+
+	.occupant-dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: var(--occupant-color, #78350f);
+	}
+
+	.occupant-name {
+		font-weight: 600;
+		color: #1e293b;
+	}
+
+	.room-micro-desc {
+		margin: 0;
+		font-size: 0.78rem;
+		line-height: 1.35;
+		color: #475569;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	/* Espace extérieur rattaché */
+	.building-exterior-cell {
+		margin-top: 0.25rem;
+		border: 1px dashed #059669;
+		background: #f0fdf4;
+	}
+
+	.building-exterior-cell:hover {
+		border-color: #047857;
+	}
+
+	/* Trottoir */
+	.building-trottoir {
+		background: #334155;
+		color: #f8fafc;
+		border: 2px solid #1e293b;
+		border-top: none;
+		border-bottom-left-radius: 6px;
+		border-bottom-right-radius: 6px;
+		padding: 0.5rem 1rem;
+		font-size: 0.8rem;
+	}
+
+	.trottoir-pave {
+		display: flex;
+		justify-content: space-between;
+		font-style: italic;
+	}
+
+	.pave-symbol {
+		color: #94a3b8;
+	}
+
+	/* Panneau latéral de détails */
+	.cutaway-detail-panel {
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 6px;
+		padding: 1.25rem;
+		box-shadow: 0 4px 12px rgba(23, 43, 58, 0.05);
+		position: sticky;
+		top: 1rem;
+	}
+
+	.detail-placeholder {
+		text-align: center;
+		padding: 1rem 0.5rem;
+	}
+
+	.placeholder-icon {
+		font-size: 2.2rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.detail-placeholder h3 {
+		margin: 0 0 0.5rem;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.15rem;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.detail-placeholder p {
+		margin: 0 0 1rem;
+		font-size: 0.88rem;
+		line-height: 1.5;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.placeholder-tips {
+		text-align: left;
+		background: #fbf7ee;
+		border: 1px solid #ebdcc5;
+		border-radius: 4px;
+		padding: 0.75rem;
+		font-size: 0.8rem;
+		color: #475569;
+	}
+
+	.placeholder-tips p {
+		margin: 0 0 0.4rem;
+		color: #172b3a;
+	}
+
+	.placeholder-tips ul {
+		margin: 0;
+		padding-left: 1.2rem;
+	}
+
+	.placeholder-tips li {
+		margin-bottom: 0.3rem;
+	}
+
+	.detail-content.is-hidden,
+	.detail-placeholder.is-hidden {
+		display: none;
+	}
+
+	.detail-header {
+		margin-bottom: 1rem;
+		padding-bottom: 0.75rem;
+		border-bottom: 1px solid #eee;
+	}
+
+	.detail-badge {
+		display: inline-block;
+		font-size: 0.72rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		background: #fce7f3;
+		color: #9d174d;
+		padding: 0.15rem 0.5rem;
+		border-radius: 3px;
+		margin-bottom: 0.4rem;
+	}
+
+	.detail-title {
+		margin: 0 0 0.25rem;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.25rem;
+		line-height: 1.3;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.detail-sub {
+		margin: 0;
+		font-size: 0.85rem;
+		color: #64748b;
+	}
+
+	.detail-occupants-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+		margin-bottom: 1rem;
+	}
+
+	:global(.detail-occupant-card) {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		background: #fdfcf9;
+		border-left: 3px solid #888;
+		border-top: 1px solid #eee;
+		border-right: 1px solid #eee;
+		border-bottom: 1px solid #eee;
+		border-radius: 3px;
+		padding: 0.4rem 0.6rem;
+	}
+
+	:global(.docc-dot) {
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		flex-shrink: 0;
+	}
+
+	:global(.docc-text) {
+		display: flex;
+		flex-direction: column;
+		font-size: 0.82rem;
+		line-height: 1.25;
+	}
+
+	:global(.docc-text strong) {
+		color: #172b3a;
+	}
+
+	:global(.docc-text small) {
+		color: #64748b;
+	}
+
+	.detail-description {
+		font-size: 0.9rem;
+		line-height: 1.55;
+		color: var(--map-ink-soft, #2d3e4d);
+		margin-bottom: 1rem;
+		text-align: justify;
+	}
+
+	.detail-quote {
+		margin: 0 0 1rem;
+		padding: 0.75rem 0.9rem;
+		background: #f8fafc;
+		border-left: 3px solid #3b82f6;
+		border-radius: 3px;
+		font-style: italic;
+	}
+
+	.quote-text {
+		margin: 0 0 0.35rem;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 0.88rem;
+		line-height: 1.45;
+		color: #1e293b;
+	}
+
+	.quote-source {
+		display: block;
+		font-size: 0.75rem;
+		color: #64748b;
+		text-align: right;
+		font-style: normal;
+	}
+
+	.detail-secrets-block {
+		margin-bottom: 1rem;
+		background: #fff8f8;
+		border: 1px solid #fed7d7;
+		border-radius: 4px;
+		padding: 0.75rem;
+	}
+
+	.detail-secrets-block h4 {
+		margin: 0 0 0.4rem;
+		font-size: 0.82rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: #9f1239;
+	}
+
+	.detail-secrets-list {
+		margin: 0;
+		padding-left: 1.15rem;
+		font-size: 0.82rem;
+		line-height: 1.45;
+		color: #7f1d1d;
+	}
+
+	.detail-secrets-list li {
+		margin-bottom: 0.3rem;
+	}
+
+	.detail-footer {
+		margin-top: 1rem;
+		padding-top: 0.75rem;
+		border-top: 1px solid #eee;
+		text-align: center;
+	}
+
+	.detail-reset-btn {
+		background: none;
+		border: 1px solid #cbd5e1;
+		padding: 0.35rem 0.8rem;
+		border-radius: 4px;
+		font-size: 0.8rem;
+		color: #475569;
+		cursor: pointer;
+	}
+
+	.detail-reset-btn:hover {
+		background: #f1f5f9;
+		color: #1e293b;
+	}
+
+	/* Version accessible textuelle */
+	.cutaway-accessible-index {
+		margin-top: 2rem;
+		padding: 1rem;
+		background: #ffffff;
+		border: 1px solid #e2d9ca;
+		border-radius: 4px;
+	}
+
+	.cutaway-accessible-index summary {
+		font-weight: bold;
+		cursor: pointer;
+		font-size: 0.92rem;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.accessible-table-wrapper {
+		margin-top: 1rem;
+		overflow-x: auto;
+	}
+
+	.accessible-table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 0.85rem;
+		text-align: left;
+	}
+
+	.accessible-table th,
+	.accessible-table td {
+		padding: 0.5rem 0.65rem;
+		border-bottom: 1px solid #e2e8f0;
+		vertical-align: top;
+	}
+
+	.accessible-table thead th {
+		background: #f8fafc;
+		font-weight: 600;
+	}
+
+	/* Responsive */
+	@media (max-width: 900px) {
+		.cutaway-main-layout {
+			grid-template-columns: 1fr;
+		}
+
+		.cutaway-detail-panel {
+			position: static;
+			margin-top: 1.5rem;
+		}
+	}
+
+	@media (max-width: 600px) {
+		.building-cutaway {
+			padding: 1.25rem 0.75rem;
+		}
+
+		.floor-rooms-row {
+			grid-template-columns: 1fr;
+		}
+
+		.cutaway-controls {
+			flex-direction: column;
+			align-items: stretch;
+		}
+
+		.controls-buttons {
+			justify-content: center;
+		}
+	}
+</style>

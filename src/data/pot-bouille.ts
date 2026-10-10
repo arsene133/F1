@@ -31,7 +31,7 @@ export const potBouilleCharacters: MapNode[] = [
 		my: 210,
 	},
 
-	// --- FOYER JOSSERAND (Troisième étage) ---
+	// --- FOYER JOSSERAND (Quatrième étage sur rue) ---
 	{
 		id: 'berthe',
 		label: 'Berthe Josserand',
@@ -39,7 +39,7 @@ export const potBouilleCharacters: MapNode[] = [
 		eyebrow: 'Éduquée pour le mariage d’apparence · maîtresse d’Octave',
 		meta: ['fille cadette des Josserand', 'mariée à Auguste Vabre'],
 		description:
-			"Dressée par sa mère pour capturer un mari bourgeois fortuné, elle épouse Auguste Vabre sans amour. Confrontée à l’avarice de son mari et à l’absence de la dot promise, elle se laisse séduire par Octave Mouret avant que le scandale n’éclate.",
+			"Dressée par sa mère au quatrième étage pour capturer un mari bourgeois fortuné, elle épouse Auguste Vabre sans amour et s'installe à l'entresol. Confrontée à l’avarice de son mari et à l’absence de la dot promise, elle se laisse séduire par Octave Mouret avant que le scandale n’éclate.",
 		points: [
 			'Chasse au mari orchestrée par sa mère lors des soirées du mardi (ch. III)',
 			'Épouse Auguste avec la promesse mensongère d’une dot de 50 000 francs (ch. VIII)',

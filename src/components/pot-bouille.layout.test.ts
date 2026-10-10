@@ -118,10 +118,10 @@ describe.skipIf(!BUILT)('Carte relationnelle de Pot-Bouille (/pot-bouille) — r
 		try {
 			await page.click('button[data-node-id="mouret"]');
 
-			const title = await page.locator('[data-detail-title]').textContent();
+			const title = await page.locator('.rm-panel [data-detail-title]').textContent();
 			expect(title).toBe('Octave Mouret');
 
-			const eyebrow = await page.locator('[data-detail-eyebrow]').textContent();
+			const eyebrow = await page.locator('.rm-panel [data-detail-eyebrow]').textContent();
 			expect(eyebrow).toContain('ambitieux');
 
 			const relations = await page.locator('[data-detail-relations] li').allTextContents();
@@ -180,10 +180,57 @@ describe.skipIf(!BUILT)('Carte relationnelle de Pot-Bouille (/pot-bouille) — r
 			expect(await mobileLines.count()).toBe(1);
 
 			await page.click('button[data-node-id="mouret"]');
-			const title = await page.locator('[data-detail-title]').textContent();
+			const title = await page.locator('.rm-panel [data-detail-title]').textContent();
 			expect(title).toBe('Octave Mouret');
 		} finally {
 			await page.close();
 		}
 	});
+
+	test('coupe architecturale de l’immeuble : rendu des étages, pièces et sélection interactive', async () => {
+		const page = await openPage();
+		try {
+			// Vérifier la présence de la section coupe
+			const cutaway = page.locator('[data-building-cutaway]');
+			expect(await cutaway.count()).toBe(1);
+
+			// Vérifier les étages rendus
+			const floors = page.locator('.building-floor');
+			expect(await floors.count()).toBe(7);
+
+			// Vérifier la présence de pièces clés
+			const foyerJosserand = page.locator('.room-cell[data-room-id="foyer-josserand"]');
+			expect(await foyerJosserand.count()).toBe(1);
+
+			const chambreOctave = page.locator('.room-cell[data-room-id="chambre-octave"]');
+			expect(await chambreOctave.count()).toBe(1);
+
+			// Clic sur la chambre d'Octave
+			await chambreOctave.click();
+
+			// Vérifier que le panneau latéral s'actualise
+			const detailTitle = await page.locator('#cutaway-detail-panel [data-detail-title]').textContent();
+			expect(detailTitle).toContain('Chambre d’Octave Mouret');
+
+			const detailBadge = await page.locator('#cutaway-detail-panel [data-detail-badge]').textContent();
+			expect(detailBadge).toContain('Quatrième étage');
+
+			// Vérifier que le filtre fonctionne
+			const filterCourBtn = page.locator('.ctrl-btn[data-filter="cour"]');
+			await filterCourBtn.click();
+			expect(await filterCourBtn.getAttribute('aria-pressed')).toBe('true');
+
+			const dimmedRue = await page.locator('.room-cell[data-room-id="foyer-josserand"]').getAttribute('class');
+			expect(dimmedRue).toContain('is-dimmed');
+
+			// Réinitialisation de la sélection
+			const resetBtn = page.locator('[data-detail-reset]');
+			await resetBtn.click();
+			const isPlaceholderVisible = await page.locator('[data-detail-placeholder]').isVisible();
+			expect(isPlaceholderVisible).toBe(true);
+		} finally {
+			await page.close();
+		}
+	});
 });
+
