@@ -80,27 +80,35 @@ const pageDescription =
 				/>
 
 				<footer class="map-synthesis" aria-labelledby="synthesis-title">
-					<h2 id="synthesis-title">Les habitants et acteurs du 28, rue de Choiseul</h2>
-					<div class="synthesis-table-wrapper">
-						<table class="synthesis-table">
-							<thead>
-								<tr>
-									<th scope="col">Personnage</th>
-									<th scope="col">Situation & foyer</th>
-									<th scope="col">Rôle narratif & satire</th>
-								</tr>
-							</thead>
-							<tbody>
-								{potBouilleCharacters.map((c) => (
-									<tr>
-										<th scope="row">{c.label}</th>
-										<td>{c.meta?.map((item) => (typeof item === 'string' ? item : item.text)).join(' · ')}</td>
-										<td>{potBouilleFunctions[c.id]}</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
-					</div>
+					<details class="inhabitants-note" aria-labelledby="synthesis-title">
+						<summary class="note-summary">
+							<span class="note-summary-badge badge-inhabitants">Inventaire des personnages</span>
+							<h2 class="note-summary-title" id="synthesis-title">Les habitants et acteurs du 28, rue de Choiseul</h2>
+							<span class="note-summary-toggle" aria-hidden="true">Déplier ▾</span>
+						</summary>
+						<div class="note-details-content">
+							<div class="synthesis-table-wrapper">
+								<table class="synthesis-table">
+									<thead>
+										<tr>
+											<th scope="col">Personnage</th>
+											<th scope="col">Situation & foyer</th>
+											<th scope="col">Rôle narratif & satire</th>
+										</tr>
+									</thead>
+									<tbody>
+										{potBouilleCharacters.map((c) => (
+											<tr>
+												<th scope="row">{c.label}</th>
+												<td>{c.meta?.map((item) => (typeof item === 'string' ? item : item.text)).join(' · ')}</td>
+												<td>{potBouilleFunctions[c.id]}</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</details>
 
 					<section class="interpretation-section" aria-labelledby="interpretation-title">
 						<h3 id="interpretation-title">La satire zolienne : la marmite des faux-semblants</h3>
@@ -401,6 +409,7 @@ const pageDescription =
 	}
 
 	/* Encadrés d’approfondissement dépliables (details / summary) */
+	.inhabitants-note,
 	.counterfactual-note,
 	.historical-context-note {
 		margin: 1.75rem 0;
@@ -409,6 +418,12 @@ const pageDescription =
 		border-radius: 6px;
 		box-shadow: 0 2px 8px rgba(23, 43, 58, 0.03);
 		transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	}
+
+	.inhabitants-note {
+		background: #ffffff;
+		border: 1px solid #dcd6cb;
+		border-left: 4px solid var(--intro-eyebrow-color, #be185d);
 	}
 
 	.counterfactual-note {
@@ -421,6 +436,7 @@ const pageDescription =
 		border-left: 4px solid #274765;
 	}
 
+	.inhabitants-note[open],
 	.counterfactual-note[open],
 	.historical-context-note[open] {
 		box-shadow: 0 4px 14px rgba(23, 43, 58, 0.06);
@@ -472,6 +488,12 @@ const pageDescription =
 		border: 1px solid rgba(39, 71, 101, 0.22);
 	}
 
+	.badge-inhabitants {
+		background: rgba(190, 24, 93, 0.08);
+		color: #be185d;
+		border: 1px solid rgba(190, 24, 93, 0.22);
+	}
+
 	.note-summary-title {
 		font-family: var(--map-serif);
 		font-size: 1.15rem;
@@ -487,6 +509,7 @@ const pageDescription =
 		transition: transform 0.2s ease, color 0.2s ease;
 	}
 
+	.inhabitants-note[open] .note-summary-toggle,
 	.counterfactual-note[open] .note-summary-toggle,
 	.historical-context-note[open] .note-summary-toggle {
 		color: var(--map-ink);

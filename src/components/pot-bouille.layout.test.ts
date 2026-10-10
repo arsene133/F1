@@ -238,13 +238,16 @@ describe.skipIf(!BUILT)('Carte relationnelle de Pot-Bouille (/pot-bouille) — r
 		try {
 			const counterfactual = page.locator('details.counterfactual-note');
 			const historyNote = page.locator('details.historical-context-note');
+			const inhabitantsNote = page.locator('details.inhabitants-note');
 
 			expect(await counterfactual.count()).toBe(1);
 			expect(await historyNote.count()).toBe(1);
+			expect(await inhabitantsNote.count()).toBe(1);
 
 			// 1. Repliées par défaut au chargement
 			expect(await counterfactual.getAttribute('open')).toBeNull();
 			expect(await historyNote.getAttribute('open')).toBeNull();
+			expect(await inhabitantsNote.getAttribute('open')).toBeNull();
 
 			// 2. Dépliage de la note contrefactuelle au clic
 			const cfSummary = counterfactual.locator('summary');
@@ -263,6 +266,15 @@ describe.skipIf(!BUILT)('Carte relationnelle de Pot-Bouille (/pot-bouille) — r
 			// Repli au second clic
 			await histSummary.click();
 			expect(await historyNote.getAttribute('open')).toBeNull();
+
+			// 4. Dépliage de la note des habitants
+			const inhSummary = inhabitantsNote.locator('summary');
+			await inhSummary.click();
+			expect(await inhabitantsNote.getAttribute('open')).not.toBeNull();
+
+			// Repli au second clic
+			await inhSummary.click();
+			expect(await inhabitantsNote.getAttribute('open')).toBeNull();
 		} finally {
 			await page.close();
 		}
