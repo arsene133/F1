@@ -30,7 +30,7 @@ const pageDescription =
 		<main class="page-container dom-juan-page">
 			<article aria-labelledby="page-title">
 				<header class="map-intro">
-					<p class="intro-eyebrow">Molière · 1665 · Comédie en cinq actes</p>
+					<p class="intro-eyebrow">Molière · 1665 · Comédie en cinq actes et en prose</p>
 					<h1 id="page-title"><cite>Dom Juan</cite> — les personnages et les thèmes</h1>
 					<p class="intro-desc">
 						<strong>Libertinage, défi divin, hypocrisie et comédie de mœurs</strong>
@@ -40,8 +40,8 @@ const pageDescription =
 					</p>
 				</header>
 
-				<!-- Mécanisme dramatique de la pièce -->
-				<ol class="mechanism" aria-label="Mécanisme de la pièce">
+				<!-- Modèle interprétatif en cinq temps de la trajectoire dramatique -->
+				<ol class="mechanism" aria-label="Trajectoire dramatique de la pièce en cinq étapes">
 					{domJuanMechanism.map((m) => (
 						<li>
 							<strong>{m.step}</strong>
@@ -98,12 +98,12 @@ const pageDescription =
 
 					<div class="synthesis-axioms">
 						<blockquote>
-							« Quoi ? tu veux qu’on se lie à demeurer au premier objet qui nous prend, qu’on renonce au monde pour lui, et qu’on n’ait plus d’yeux pour personne ? »
+							« Quoi ! tu veux qu’on se lie à demeurer au premier objet qui nous prend, qu’on renonce au monde pour lui, et qu’on n’ait plus d’yeux pour personne ? »
 							<cite>Dom Juan, acte I, scène 2</cite>
 						</blockquote>
 						<blockquote>
-							« Ah ! mes gages ! mes gages ! Voilà par sa mort un chacun satisfait […] Il n’y a que moi seul de malheureux. Mes gages, mes gages, mes gages ! »
-							<cite>Sganarelle, acte V, scène 6 — dénouement</cite>
+							« Ah ! mes gages ! mes gages ! Voilà, par sa mort, un chacun satisfait […] il n’y a que moi seul de malheureux. Mes gages, Mes gages, Mes gages ! »
+							<cite>Sganarelle, acte V, scène 6 (texte original de 1682) — dénouement</cite>
 						</blockquote>
 					</div>
 
@@ -130,10 +130,10 @@ const pageDescription =
 					</header>
 
 					<p class="pedagogical-intro-lead">
-						Créée en 1665 au théâtre du Palais-Royal, la pièce de Molière conjugue avec un brio saisissant
+						Créée en 1665 au théâtre du Palais-Royal, la pièce de Molière conjugue avec une audace singulière
 						la comédie, la satire sociale, les interrogations morales et l’irruption du surnaturel.
-						À travers le parcours provocateur de son héros libertin, l'auteur explore les tensions de son
-						siècle et offre un spectacle total qui défie les règles dramatiques traditionnelles.
+						À travers le parcours provocateur de son héros libertin, l'auteur explore les contradictions de son
+						siècle et compose une œuvre complexe qui échappe aux règles classiques traditionnelles.
 					</p>
 
 					<div class="themes-grid">
@@ -144,8 +144,14 @@ const pageDescription =
 									<h3 class="theme-title">{theme.title}</h3>
 								</header>
 								<div class="theme-card-body">
-									<p class="theme-summary">{theme.summary}</p>
-									<p class="theme-analysis">{theme.analysis}</p>
+									<div class="theme-section-unit">
+										<p class="theme-didactic-question">{theme.definitionQuestion}</p>
+										<p class="theme-summary">{theme.summary}</p>
+									</div>
+									<div class="theme-section-unit">
+										<p class="theme-didactic-question">{theme.illustrationQuestion}</p>
+										<p class="theme-analysis">{theme.analysis}</p>
+									</div>
 									{theme.quote && (
 										<blockquote class="theme-quote">
 											<p>« {theme.quote.text} »</p>
@@ -166,7 +172,7 @@ const pageDescription =
 							<h3 class="secondary-themes-title">D’autres thèmes à retenir</h3>
 						</div>
 						<p class="secondary-themes-lead">
-							Au-delà des grands axes fondateurs, plusieurs motifs essentiels enrichissent la lecture de la pièce et fournissent des exemples précis pour nourrir un commentaire ou une dissertation :
+							Au-delà des grands axes fondateurs, plusieurs motifs essentiels enrichissent la compréhension de la pièce et fournissent des exemples précis pour nourrir un commentaire ou une dissertation :
 						</p>
 						<div class="secondary-themes-grid">
 							{secondaryThemes.map((item) => (
@@ -188,13 +194,13 @@ const pageDescription =
 						</div>
 						<div class="question-box-content">
 							<p>
-								Poser cette question, c'est toucher au cœur de l'ambiguïté fascinante du chef-d'œuvre de Molière. D'un côté, Dom Juan apparaît indéniablement comme un <strong>esprit fort et courageux</strong>. Il refuse les conformismes, démasque les hypocrisies mondaines et fait preuve d’une insolence intellectuelle brillante qui rejette les terreurs superstitieuses de son époque. Devant les brigands qui agressent Dom Carlos ou face à l’apparition spectaculaire de la statue de pierre, il ne recule jamais et montre une bravoure physique exemplaire.
+								Poser cette question, c’est explorer la tension morale et philosophique fondamentale qui habite la pièce de Molière. D’un côté, Dom Juan fascine par son <strong>audace intellectuelle et son courage héroïque</strong> : il refuse les conventions étouffantes, démasque les hypocrisies de son temps et ne cède devant aucune intimidation. Face aux brigands qui encerclent Dom Carlos (acte III, scène 2) ou devant la statue de pierre qui s’avance (actes IV et V), il ne fuit jamais et refuse de mentir sur sa peur.
 							</p>
 							<p>
-								Mais de l'autre côté, cette soif d'autonomie se traduit par un <strong>mépris destructeur d'autrui</strong>. Dom Juan utilise sa liberté pour séduire et abandonner les femmes, escroquer ses créanciers, humilier son père et trahir sa parole d'honneur. Sa liberté ne s'accompagne d'aucune responsabilité morale : elle devient une tyrannie égoïste où les autres ne sont que des instruments au service de son plaisir ou de sa vanité.
+								Mais d’un autre côté, cette liberté revendiquée se retourne en <strong>instrument de domination et de prédation cruelle</strong>. Dom Juan utilise sa supériorité d’esprit et son statut social pour duper les femmes, fouler aux pieds sa parole d’honneur, se débarrasser sans scrupule de ses créanciers et humilier son père. Sa liberté personnelle refuse toute réciprocité morale : elle se fonde sur l’écrasement de ceux qui l’entourent et refuse toute responsabilité envers la société humaine.
 							</p>
 							<p>
-								Il serait donc réducteur d'enfermer le personnage dans un jugement univoque. Molière ne propose pas une pièce manichéenne avec une morale simpliste. Dom Juan séduit le spectateur par son éloquence éclatante et son audace intellectuelle, tout en le troublant profondément par la cruauté de ses actes et son cynisme calculateur. C'est précisément cette tension permanente entre le panache de la liberté individuelle et le vertige de la déchéance éthique qui fait la force inépuisable de l'œuvre.
+								La pièce se garde bien de trancher d’une manière simpliste. Molière ne propose ni une apologie enthousiaste du libertin ni une pièce morale édifiante au dénouement convenu : le spectateur demeure partagé entre l’admiration pour la virtuosité et l’éloquence du personnage, et le malaise profond face à son cynisme dévastateur. C’est cette ambiguïté permanente qui fait de <cite>Dom Juan</cite> un classique inépuisable.
 							</p>
 						</div>
 					</div>
@@ -433,13 +439,28 @@ const pageDescription =
 		padding: 1.25rem;
 		display: flex;
 		flex-direction: column;
-		gap: 0.85rem;
+		gap: 1rem;
 		flex: 1 1 auto;
+	}
+
+	.theme-section-unit {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+	}
+
+	.theme-didactic-question {
+		margin: 0;
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.07em;
+		color: #235284;
 	}
 
 	.theme-summary {
 		margin: 0;
-		font-size: 0.95rem;
+		font-size: 0.94rem;
 		line-height: 1.55;
 		font-weight: 600;
 		color: var(--map-ink);
@@ -447,14 +468,14 @@ const pageDescription =
 
 	.theme-analysis {
 		margin: 0;
-		font-size: 0.92rem;
+		font-size: 0.91rem;
 		line-height: 1.62;
 		color: var(--map-ink-soft);
 		text-align: justify;
 	}
 
 	.theme-quote {
-		margin: 0.35rem 0 0;
+		margin: 0.25rem 0 0;
 		padding: 0.75rem 0.95rem;
 		background: #fdfcf9;
 		border-left: 3px solid #8a1f1a;
