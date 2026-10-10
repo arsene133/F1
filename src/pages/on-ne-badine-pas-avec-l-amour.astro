@@ -137,6 +137,7 @@ const edgeTypes: Record<string, EdgeType> = {
 	education: { legend: 'Éducation', stroke: '#c4bbac', activeStroke: '#5e6d7a', width: 1.25, activeWidth: 2, arrow: 'end' },
 	influence: { legend: 'Influence', stroke: '#c4bbac', activeStroke: '#5e6d7a', width: 1.25, activeWidth: 2, dash: '5 3', arrow: 'end' },
 	rivalry: { legend: 'Rivalité comique', stroke: '#cfc6b6', activeStroke: '#7a7366', width: 1.25, activeWidth: 2, dash: '3 5' },
+	friendship: { legend: 'Amitié', stroke: '#a39886', activeStroke: '#4a5a68', width: 1.6, activeWidth: 2.4, dash: '6 4' },
 	'collective-observation': { legend: 'Regard collectif', stroke: '#cfc6b6', activeStroke: '#7a7366', width: 1.25, activeWidth: 2, dash: '1 4' },
 };
 
@@ -208,6 +209,17 @@ const relationships: MapRelationship[] = [
 		label: 'oncle → nièce',
 		description: "Le Baron est l’oncle de Camille, qui revient au château au sortir du couvent.",
 		labelDx: 26,
+	},
+	{
+		source: 'baron',
+		target: 'bridaine',
+		type: 'friendship',
+		label: 'amis',
+		description:
+			"Le Baron qualifie explicitement Maître Bridaine de son ami à l’acte I, scène 2 (« Maître Bridaine, vous êtes mon ami »). Curé de la paroisse, Bridaine est son confident et participe aux projets du Baron pour marier Perdican et Camille.",
+		labelT: 0.8,
+		labelDx: 0,
+		labelDy: -8,
 	},
 	{
 		source: 'dame-pluche',
