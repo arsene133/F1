@@ -1,0 +1,411 @@
+---
+import { Image } from 'astro:assets';
+import pereGoriotIllustration from '../assets/pere-goriot-illustration.jpg';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import GoriotMap from '../components/GoriotMap.astro';
+import Header from '../components/Header.astro';
+import { goriotCategories, goriotPlaces } from '../data/goriot-places';
+
+const pageTitle = 'Le Père Goriot d’Honoré de Balzac — Carte interactive des lieux de Paris';
+const pageDescription =
+	'Explorez la géographie parisienne du Père Goriot (1835) : de la misérable pension Vauquer aux hôtels aristocratiques du faubourg Saint-Germain et au défi final du Père-Lachaise. Parcours narratif de Rastignac et contrastes sociaux.';
+---
+
+<!doctype html>
+<html lang="fr">
+	<head>
+		<BaseHead title={pageTitle} description={pageDescription} />
+		<link
+			rel="stylesheet"
+			href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+			integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+			crossorigin=""
+		/>
+	</head>
+	<body>
+		<Header />
+
+		<main class="page-container goriot-page">
+			<article aria-labelledby="page-title">
+				<!-- En-tête éditorial -->
+				<header class="map-intro">
+					<p class="intro-eyebrow">Honoré de Balzac · 1835 · La Comédie humaine</p>
+					<h1 id="page-title"><cite>Le Père Goriot</cite> — la carte des lieux parisiens</h1>
+					<p class="intro-desc">
+						<strong>Topographie sociale, ascension de Rastignac et géographie des inégalités</strong>
+					</p>
+					<p class="intro-context">
+						Situé à Paris à la fin de l’année 1819 sous la Restauration, <em>Le Père Goriot</em> déploie
+						une dramaturgie où la ville n’est pas un simple arrière-plan pittoresque, mais un
+						<strong>espace social divisé</strong> et un puissant moteur dramatique. Entre le faubourg
+						Saint-Marceau (où végètent les déclassés de la pension Vauquer), le noble faubourg
+						Saint-Germain (où règne l’ancienne aristocratie) et la Chaussée-d’Antin (où triomphe la haute banque),
+						chaque franchissement de la Seine traduit une conquête ou une déchéance morale.
+					</p>
+					<p class="intro-instructions">
+						Explorez les 11 stations parisiennes clés du roman, filtrez par sphère sociale ou suivez pas à pas
+						le parcours narratif et initiatique d’Eugène de Rastignac.
+					</p>
+				</header>
+
+				<!-- Panneau d'introduction illustrée et repères littéraires -->
+				<section class="goriot-literary-overview" aria-labelledby="overview-title">
+					<div class="overview-grid">
+						<div class="overview-image-wrapper">
+							<Image
+								src={pereGoriotIllustration}
+								alt="Illustration du roman Le Père Goriot d'Honoré de Balzac"
+								class="overview-image"
+								width={320}
+								height={420}
+							/>
+							<figcaption class="overview-image-caption">
+								Le père Goriot dépouillé par la passion de ses filles (illustration d’époque).
+							</figcaption>
+						</div>
+
+						<div class="overview-text">
+							<h2 id="overview-title" class="overview-title">Paris comme théâtre des ambitions et des abîmes</h2>
+							<p>
+								Dans <em>Le Père Goriot</em>, Honoré de Balzac invente une véritable « sociologie de l’espace ».
+								Le jeune Eugène de Rastignac, venu de sa province charentaise pour étudier le droit, découvre
+								que la capitale est un échiquier impitoyable gouverné par deux passions absolues : <strong>l’argent</strong>
+								et <strong>le paraître</strong>.
+							</p>
+							<div class="social-contrasts-cards">
+								<div class="contrast-card contrast-modest">
+									<span class="contrast-badge">Le monde d’en bas</span>
+									<h3>Le faubourg Saint-Marceau</h3>
+									<p>
+										La <em>rue Neuve-Sainte-Geneviève</em> et la pension Vauquer : ruelles boueuses, crasse, odeur de renfermé.
+										Ici s’accumulent les misères, les ambitions contrariées et le sacrifice du père Goriot.
+									</p>
+								</div>
+								<div class="contrast-card contrast-noble">
+									<span class="contrast-badge">Le monde du rang</span>
+									<h3>Le faubourg Saint-Germain</h3>
+									<p>
+										La <em>rue de Grenelle</em> et l’hôtel de Beauséant : salons aux armoiries séculaires, faste glacé et
+										mépris aristocratique des parvenus. L’école où Rastignac apprend les lois du cynisme.
+									</p>
+								</div>
+								<div class="contrast-card contrast-bourgeois">
+									<span class="contrast-badge">Le monde de l’or</span>
+									<h3>La Chaussée-d’Antin</h3>
+									<p>
+										La <em>rue Saint-Lazare</em> et la <em>rue du Helder</em> : hôtels de banquiers aux stucs opulents,
+										spéculations boursières dévorantes et filles ingrates prêtes à dépouiller leur père pour une parure.
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- Composant interactif principal de la carte -->
+				<GoriotMap />
+
+				<!-- Synthèse pédagogique : tableau comparatif des lieux et des contrastes -->
+				<footer class="map-synthesis" aria-labelledby="synthesis-title">
+					<details class="inhabitants-note" open aria-labelledby="synthesis-title">
+						<summary class="note-summary">
+							<span class="note-summary-badge badge-places">Synthèse littéraire</span>
+							<h2 class="note-summary-title" id="synthesis-title">
+								Tableau géographique des lieux et des fractures sociales
+							</h2>
+							<span class="note-summary-toggle" aria-hidden="true">Replier ▴</span>
+						</summary>
+						<div class="note-details-content">
+							<p class="synthesis-intro">
+								Ce tableau récapitule la portée symbolique et narrative des stations explorées sur la carte,
+								en précisant pour chacune son ancrage topographique dans le Paris de 1819 et le degré de certitude
+								historique de son emplacement.
+							</p>
+							<div class="synthesis-table-wrapper">
+								<table class="synthesis-table">
+									<thead>
+										<tr>
+											<th scope="col">Lieu & Rôle</th>
+											<th scope="col">Sphère sociale</th>
+											<th scope="col">Adresse historique & moderne</th>
+											<th scope="col">Personnages majeurs</th>
+											<th scope="col">Enjeu littéraire & contraste</th>
+										</tr>
+									</thead>
+									<tbody>
+										{goriotPlaces.map((p) => (
+											<tr>
+												<td>
+													<strong>{p.name}</strong>
+													<br />
+													<small>{p.subtitle}</small>
+												</td>
+												<td>
+													<span
+														class="table-cat-badge"
+														style={`color: ${goriotCategories[p.category].color}; border-color: ${goriotCategories[p.category].color};`}
+													>
+														{goriotCategories[p.category].label}
+													</span>
+												</td>
+												<td>
+													<span>{p.historicalAddress}</span>
+													<br />
+													<small class="text-muted">Actuel : {p.modernLocation}</small>
+												</td>
+												<td>{p.characters.join(', ')}</td>
+												<td>{p.literaryAnalysis}</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</details>
+				</footer>
+			</article>
+		</main>
+
+		<Footer />
+	</body>
+</html>
+
+<style>
+	/* Styles de la page Goriot ---------------------------------------------- */
+	.goriot-page {
+		max-width: 1100px;
+	}
+
+	.intro-context {
+		font-size: 1.05rem;
+		line-height: 1.6;
+		color: var(--map-ink-soft, #2d3e4d);
+		margin-bottom: 1rem;
+		text-align: left;
+	}
+
+	/* Aperçu littéraire et gravure ------------------------------------------- */
+	.goriot-literary-overview {
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 10px;
+		padding: 1.75rem;
+		margin-bottom: 2rem;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+	}
+
+	.overview-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1.75rem;
+		align-items: center;
+	}
+
+	@media (min-width: 800px) {
+		.overview-grid {
+			grid-template-columns: 240px 1fr;
+		}
+	}
+
+	.overview-image-wrapper {
+		text-align: center;
+	}
+
+	.overview-image {
+		width: 100%;
+		max-width: 220px;
+		height: auto;
+		border-radius: 8px;
+		border: 1px solid var(--map-border, #dcd6cb);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	}
+
+	.overview-image-caption {
+		margin-top: 0.5rem;
+		font-size: 0.78rem;
+		color: var(--map-muted, #5e6d7a);
+		font-style: italic;
+	}
+
+	.overview-title {
+		margin: 0 0 0.85rem;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.45rem;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.overview-text p {
+		margin: 0 0 1.25rem;
+		font-size: 0.96rem;
+		line-height: 1.6;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	/* Cartes de contrastes sociaux */
+	.social-contrasts-cards {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1rem;
+	}
+
+	@media (min-width: 640px) {
+		.social-contrasts-cards {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
+	.contrast-card {
+		padding: 1rem;
+		border-radius: 8px;
+		border: 1px solid var(--map-border, #dcd6cb);
+		background: #faf8f5;
+	}
+
+	.contrast-card h3 {
+		margin: 0.4rem 0 0.3rem;
+		font-size: 1rem;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.contrast-card p {
+		margin: 0;
+		font-size: 0.84rem;
+		line-height: 1.45;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	.contrast-badge {
+		font-size: 0.72rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		display: inline-block;
+	}
+
+	.contrast-modest {
+		border-left: 3px solid #8b5a2b;
+	}
+	.contrast-modest .contrast-badge {
+		color: #8b5a2b;
+	}
+
+	.contrast-noble {
+		border-left: 3px solid #1e4b88;
+	}
+	.contrast-noble .contrast-badge {
+		color: #1e4b88;
+	}
+
+	.contrast-bourgeois {
+		border-left: 3px solid #9e6200;
+	}
+	.contrast-bourgeois .contrast-badge {
+		color: #9e6200;
+	}
+
+	/* Synthèse pliable sous la carte ----------------------------------------- */
+	.inhabitants-note {
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 10px;
+		overflow: hidden;
+	}
+
+	.note-summary {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.8rem;
+		padding: 1.25rem 1.5rem;
+		cursor: pointer;
+		background: #fdfcf9;
+	}
+
+	.note-summary:focus-visible {
+		outline: 3px solid #2337ff;
+	}
+
+	.note-summary-badge {
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		padding: 0.3rem 0.6rem;
+		border-radius: 4px;
+		background: #eef3f8;
+		color: #1e4b88;
+	}
+
+	.note-summary-title {
+		margin: 0;
+		flex-grow: 1;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.25rem;
+		font-weight: normal;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.note-summary-toggle {
+		font-size: 0.85rem;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.note-details-content {
+		padding: 1.5rem;
+		border-top: 1px solid var(--map-border-soft, #ece7de);
+	}
+
+	.synthesis-intro {
+		margin: 0 0 1.25rem;
+		font-size: 0.92rem;
+		color: var(--map-muted, #5e6d7a);
+		font-style: italic;
+	}
+
+	.synthesis-table-wrapper {
+		overflow-x: auto;
+	}
+
+	.synthesis-table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 0.88rem;
+		text-align: left;
+	}
+
+	.synthesis-table th,
+	.synthesis-table td {
+		padding: 0.85rem 1rem;
+		border-bottom: 1px solid var(--map-border-soft, #ece7de);
+		vertical-align: top;
+	}
+
+	.synthesis-table th {
+		background: #f7f5f0;
+		color: var(--map-ink, #172b3a);
+		font-weight: 700;
+		font-size: 0.82rem;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+	}
+
+	.synthesis-table tbody tr:hover {
+		background: #faf8f5;
+	}
+
+	.table-cat-badge {
+		display: inline-block;
+		padding: 0.2rem 0.5rem;
+		font-size: 0.75rem;
+		font-weight: 600;
+		border-radius: 4px;
+		border: 1px solid currentColor;
+		background: #ffffff;
+	}
+
+	.text-muted {
+		color: var(--map-muted, #5e6d7a);
+	}
+</style>

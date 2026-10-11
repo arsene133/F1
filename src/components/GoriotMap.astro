@@ -1,0 +1,1376 @@
+---
+import {
+	goriotCategories,
+	goriotPlaces,
+	precisionLabels,
+	type GoriotPlace,
+	type PlaceCategory,
+} from '../data/goriot-places';
+
+const categoriesList = Object.values(goriotCategories);
+const initialPlace = goriotPlaces[0];
+---
+
+<div class="goriot-map-interactive" id="goriot-interactive-app" data-goriot-app>
+	<!-- Données JSON sérialisées pour hydratation client côté script -->
+	<script type="application/json" id="goriot-places-data" set:html={JSON.stringify({ places: goriotPlaces, categories: goriotCategories, precisionLabels })} />
+
+	<!-- Barre de contrôle des modes : Mode A (Exploration libre) vs Mode B (Parcours narratif) -->
+	<section class="map-controls" aria-label="Modes de navigation et filtres">
+		<div class="mode-selector-wrapper">
+			<span class="control-label" id="mode-selector-label">Mode de découverte :</span>
+			<div class="mode-tabs" role="tablist" aria-labelledby="mode-selector-label">
+				<button
+					type="button"
+					role="tab"
+					id="tab-mode-explore"
+					class="mode-tab is-active"
+					aria-selected="true"
+					aria-controls="panel-explore"
+					data-mode="explore"
+				>
+					<span class="tab-icon" aria-hidden="true">🗺️</span>
+					<span>Mode A · Explorer les lieux</span>
+				</button>
+				<button
+					type="button"
+					role="tab"
+					id="tab-mode-narrative"
+					class="mode-tab"
+					aria-selected="false"
+					aria-controls="panel-narrative"
+					data-mode="narrative"
+				>
+					<span class="tab-icon" aria-hidden="true">🚶</span>
+					<span>Mode B · Suivre le parcours narratif</span>
+				</button>
+			</div>
+		</div>
+
+		<!-- Panneau Mode A : Filtres par catégorie -->
+		<div
+			id="panel-explore"
+			role="tabpanel"
+			aria-labelledby="tab-mode-explore"
+			class="subpanel subpanel-explore"
+		>
+			<span class="filter-instruction">Filtrer par catégorie d’espace social :</span>
+			<div class="filter-chips" role="group" aria-label="Filtrer les lieux">
+				<button
+					type="button"
+					class="chip-button is-active"
+					data-filter="all"
+					aria-pressed="true"
+				>
+					<span class="chip-dot chip-all" aria-hidden="true"></span>
+					<span>Tous les lieux ({goriotPlaces.length})</span>
+				</button>
+				{categoriesList.map((cat) => {
+					const count = goriotPlaces.filter((p) => p.category === cat.id).length;
+					return (
+						<button
+							type="button"
+							class="chip-button"
+							data-filter={cat.id}
+							aria-pressed="false"
+							style={`--cat-color: ${cat.color};`}
+						>
+							<span class="chip-dot" aria-hidden="true"></span>
+							<span>{cat.label} ({count})</span>
+						</button>
+					);
+				})}
+			</div>
+		</div>
+
+		<!-- Panneau Mode B : Navigation étape par étape -->
+		<div
+			id="panel-narrative"
+			role="tabpanel"
+			aria-labelledby="tab-mode-narrative"
+			class="subpanel subpanel-narrative"
+			hidden
+		>
+			<div class="narrative-stepper">
+				<div class="stepper-actions">
+					<button
+						type="button"
+						id="narrative-prev-btn"
+						class="btn-stepper"
+						aria-label="Étape précédente"
+						disabled
+					>
+						← Précédent
+					</button>
+					<div class="stepper-indicator" aria-live="polite">
+						<span class="stepper-count">Étape <strong id="current-step-index">1</strong> sur {goriotPlaces.length}</span>
+						<span class="stepper-title" id="current-step-title">{initialPlace.name}</span>
+					</div>
+					<button
+						type="button"
+						id="narrative-next-btn"
+						class="btn-stepper"
+						aria-label="Étape suivante"
+					>
+						Suivant →
+					</button>
+				</div>
+				<p class="stepper-explanation" id="current-step-explanation">
+					{initialPlace.narrativeStepExplanation}
+				</p>
+			</div>
+		</div>
+	</section>
+
+	<!-- Zone principale : Carte interactive + Fiche du lieu sélectionné -->
+	<div class="map-view-grid">
+		<!-- Conteneur Carte -->
+		<div class="map-canvas-container">
+			<div class="map-actions-bar">
+				<span class="map-status" id="map-live-status" aria-live="polite">
+					Affichage de 11 lieux sur Paris
+				</span>
+				<div class="map-action-buttons">
+					<button
+						type="button"
+						id="btn-recenter-places"
+						class="btn-map-utility"
+						title="Ajuster la vue pour voir tous les marqueurs visibles"
+					>
+						Recentrer sur les lieux
+					</button>
+					<button
+						type="button"
+						id="btn-reset-paris"
+						class="btn-map-utility"
+						title="Revenir à une vue générale de Paris"
+					>
+						Vue générale de Paris
+					</button>
+				</div>
+			</div>
+
+			<!-- L’élément DOM monté par Leaflet -->
+			<div
+				id="balzac-paris-map"
+				class="leaflet-map-element"
+				role="region"
+				aria-label="Carte interactive de Paris en 1819"
+				tabindex="0"
+			>
+				<noscript>
+					<div class="noscript-map-message">
+						<p>
+							<strong>La carte interactive nécessite JavaScript.</strong>
+							Consultez la liste textuelle exhaustive et accessible des lieux ci-dessous.
+						</p>
+					</div>
+				</noscript>
+			</div>
+
+			<!-- Légende cartographique interprétative -->
+			<div class="map-legend" aria-label="Légende des catégories et contrastes sociaux">
+				<span class="legend-heading">Espaces balzaciens :</span>
+				<ul class="legend-list">
+					{categoriesList.map((cat) => (
+						<li class="legend-item" style={`--cat-color: ${cat.color};`}>
+							<span class="legend-marker-sample" aria-hidden="true"></span>
+							<span class="legend-name">{cat.label}</span>
+						</li>
+					))}
+				</ul>
+			</div>
+		</div>
+
+		<!-- Fiche d'information du lieu sélectionné -->
+		<aside
+			class="place-card-panel"
+			id="place-card-panel"
+			aria-labelledby="card-place-title"
+			aria-live="polite"
+		>
+			<div class="place-card" id="active-place-card">
+				<header class="card-header">
+					<div class="card-badges">
+						<span
+							class="badge-category"
+							id="card-badge-category"
+							style={`background-color: ${goriotCategories[initialPlace.category].color};`}
+						>
+							{goriotCategories[initialPlace.category].label}
+						</span>
+						<span
+							class={`badge-precision precision-${initialPlace.locationPrecision}`}
+							id="card-badge-precision"
+							title={precisionLabels[initialPlace.locationPrecision].description}
+						>
+							{precisionLabels[initialPlace.locationPrecision].label}
+						</span>
+					</div>
+					<h2 class="card-title" id="card-place-title">{initialPlace.name}</h2>
+					<p class="card-subtitle" id="card-place-subtitle">{initialPlace.subtitle}</p>
+				</header>
+
+				<div class="card-body">
+					<!-- Repères géographiques -->
+					<div class="card-section card-geo">
+						<div class="geo-row">
+							<span class="geo-label">Adresse dans le roman :</span>
+							<span class="geo-value" id="card-historical-address">
+								{initialPlace.historicalAddress}
+							</span>
+						</div>
+						<div class="geo-row">
+							<span class="geo-label">Localisation moderne :</span>
+							<span class="geo-value" id="card-modern-location">
+								{initialPlace.modernLocation}
+							</span>
+						</div>
+						<div class="geo-row">
+							<span class="geo-label">Personnages associés :</span>
+							<span class="geo-value characters-list" id="card-characters">
+								{initialPlace.characters.join(' · ')}
+							</span>
+						</div>
+					</div>
+
+					<!-- Rôle dans l'intrigue -->
+					<div class="card-section">
+						<h3 class="section-title">Rôle dans l’intrigue</h3>
+						<p class="section-text" id="card-narrative-role">{initialPlace.narrativeRole}</p>
+					</div>
+
+					<!-- Analyse littéraire et sociale -->
+					<div class="card-section card-analysis">
+						<h3 class="section-title">Analyse littéraire & contrastes sociaux</h3>
+						<p class="section-text" id="card-literary-analysis">{initialPlace.literaryAnalysis}</p>
+						{initialPlace.observationPoint && (
+							<p class="observation-box" id="card-observation-box">
+								<strong>À observer :</strong> <span id="card-observation-text">{initialPlace.observationPoint}</span>
+							</p>
+						)}
+					</div>
+
+					<!-- Citation vérifiée du texte -->
+					<div class="card-section card-quotation">
+						<h3 class="section-title">Extrait du texte (Wikisource)</h3>
+						<blockquote id="card-quote-block">
+							<p class="quote-text" id="card-quote-text">« {initialPlace.quotation} »</p>
+							<cite class="quote-ref" id="card-quote-ref">— {initialPlace.quotationReference}</cite>
+						</blockquote>
+					</div>
+				</div>
+			</div>
+		</aside>
+	</div>
+
+	<!-- Alternative textuelle complète pour l'accessibilité -->
+	<section class="places-text-alternative" aria-labelledby="alt-text-heading">
+		<details class="alt-details">
+			<summary class="alt-summary">
+				<h2 id="alt-text-heading" class="alt-summary-title">
+					Inventaire textuel et accessible de tous les lieux du roman
+				</h2>
+				<span class="alt-summary-desc">
+					(Revue complète des 11 stations géographiques, adresses et analyses)
+				</span>
+			</summary>
+			<div class="alt-content">
+				<ol class="alt-places-list">
+					{goriotPlaces.map((place) => (
+						<li class="alt-place-item" id={`text-place-${place.id}`}>
+							<article>
+								<header class="alt-item-header">
+									<span class="alt-item-order">Étape {place.eventOrder}</span>
+									<h3>{place.name} — <small>{place.subtitle}</small></h3>
+									<span class="alt-item-cat" style={`color: ${goriotCategories[place.category].color};`}>
+										[{goriotCategories[place.category].label}]
+									</span>
+								</header>
+								<div class="alt-item-details">
+									<p><strong>Adresse historique :</strong> {place.historicalAddress}</p>
+									<p><strong>Repère actuel :</strong> {place.modernLocation} (<em>{precisionLabels[place.locationPrecision].label}</em>)</p>
+									<p><strong>Personnages :</strong> {place.characters.join(', ')}</p>
+									<p><strong>Intrigue :</strong> {place.narrativeRole}</p>
+									<p><strong>Analyse littéraire :</strong> {place.literaryAnalysis}</p>
+									<blockquote>
+										<p>« {place.quotation} »</p>
+										<cite>— {place.quotationReference}</cite>
+									</blockquote>
+								</div>
+								<button
+									type="button"
+									class="btn-select-from-text"
+									data-select-place-id={place.id}
+								>
+									Voir sur la carte ↗
+								</button>
+							</article>
+						</li>
+					))}
+				</ol>
+			</div>
+		</details>
+	</section>
+</div>
+
+<!-- Feuille de styles intégrée du composant de carte interactive -->
+<style>
+	.goriot-map-interactive {
+		margin: 2rem 0 3.5rem;
+		font-family: inherit;
+		color: var(--map-ink, #172b3a);
+	}
+
+	/* Contrôles et sélecteur de mode ---------------------------------------- */
+	.map-controls {
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 10px;
+		padding: 1.25rem;
+		margin-bottom: 1.5rem;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+	}
+
+	.mode-selector-wrapper {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 1rem;
+		margin-bottom: 1rem;
+		padding-bottom: 1rem;
+		border-bottom: 1px solid var(--map-border-soft, #ece7de);
+	}
+
+	.control-label {
+		font-size: 0.88rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.mode-tabs {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.mode-tab {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.6rem 1.1rem;
+		font-family: inherit;
+		font-size: 0.95rem;
+		font-weight: 600;
+		color: var(--map-ink-soft, #2d3e4d);
+		background: #f8f6f0;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 6px;
+		cursor: pointer;
+		transition: all 0.15s ease-in-out;
+	}
+
+	.mode-tab:hover {
+		background: #ede8dc;
+		border-color: #beb5a5;
+	}
+
+	.mode-tab.is-active {
+		background: #172b3a;
+		color: #ffffff;
+		border-color: #172b3a;
+		box-shadow: 0 2px 5px rgba(23, 43, 58, 0.25);
+	}
+
+	.mode-tab:focus-visible {
+		outline: 3px solid #2337ff;
+		outline-offset: 2px;
+	}
+
+	/* Panneau Mode A : Filtres chips */
+	.filter-instruction {
+		display: block;
+		font-size: 0.85rem;
+		color: var(--map-muted, #5e6d7a);
+		margin-bottom: 0.6rem;
+		font-style: italic;
+	}
+
+	.filter-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.chip-button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		padding: 0.45rem 0.85rem;
+		font-family: inherit;
+		font-size: 0.86rem;
+		font-weight: 500;
+		color: var(--map-ink, #172b3a);
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 20px;
+		cursor: pointer;
+		transition: all 0.15s ease;
+	}
+
+	.chip-button:hover {
+		background: #f4efe6;
+	}
+
+	.chip-button.is-active {
+		background: var(--map-accent-soft, rgba(35, 55, 255, 0.08));
+		border-color: var(--map-accent, #2337ff);
+		color: #0d1db8;
+		font-weight: 700;
+	}
+
+	.chip-button:focus-visible {
+		outline: 3px solid #2337ff;
+		outline-offset: 2px;
+	}
+
+	.chip-dot {
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		background-color: var(--cat-color, #172b3a);
+		flex-shrink: 0;
+	}
+
+	.chip-all {
+		background: #5e6d7a;
+	}
+
+	/* Panneau Mode B : Stepper narratif */
+	.narrative-stepper {
+		background: #faf8f5;
+		border: 1px solid var(--map-border-soft, #ece7de);
+		border-radius: 8px;
+		padding: 0.9rem 1.1rem;
+	}
+
+	.stepper-actions {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-bottom: 0.6rem;
+	}
+
+	.btn-stepper {
+		padding: 0.5rem 1rem;
+		font-family: inherit;
+		font-size: 0.9rem;
+		font-weight: 600;
+		background: #ffffff;
+		color: var(--map-ink, #172b3a);
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 6px;
+		cursor: pointer;
+		transition: all 0.15s ease;
+		min-width: 110px;
+	}
+
+	.btn-stepper:hover:not(:disabled) {
+		background: #172b3a;
+		color: #ffffff;
+		border-color: #172b3a;
+	}
+
+	.btn-stepper:disabled {
+		opacity: 0.4;
+		cursor: not-allowed;
+	}
+
+	.btn-stepper:focus-visible {
+		outline: 3px solid #2337ff;
+		outline-offset: 2px;
+	}
+
+	.stepper-indicator {
+		text-align: center;
+		flex-grow: 1;
+	}
+
+	.stepper-count {
+		display: block;
+		font-size: 0.8rem;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.stepper-title {
+		display: block;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.15rem;
+		font-weight: bold;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.stepper-explanation {
+		margin: 0;
+		font-size: 0.92rem;
+		line-height: 1.5;
+		color: var(--map-ink-soft, #2d3e4d);
+		background: #ffffff;
+		border-left: 3px solid #8b5a2b;
+		padding: 0.6rem 0.9rem;
+		border-radius: 0 4px 4px 0;
+	}
+
+	/* Grille principale : Carte + Fiche --------------------------------------- */
+	.map-view-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1.5rem;
+	}
+
+	@media (min-width: 860px) {
+		.map-view-grid {
+			grid-template-columns: 1.15fr 0.85fr;
+			align-items: start;
+		}
+	}
+
+	/* Conteneur Carte Leaflet */
+	.map-canvas-container {
+		display: flex;
+		flex-direction: column;
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 10px;
+		overflow: hidden;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+	}
+
+	.map-actions-bar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+		padding: 0.65rem 1rem;
+		background: #f7f5f0;
+		border-bottom: 1px solid var(--map-border, #dcd6cb);
+		font-size: 0.84rem;
+	}
+
+	.map-status {
+		color: var(--map-muted, #5e6d7a);
+		font-weight: 500;
+	}
+
+	.map-action-buttons {
+		display: flex;
+		gap: 0.4rem;
+	}
+
+	.btn-map-utility {
+		padding: 0.35rem 0.75rem;
+		font-size: 0.8rem;
+		font-family: inherit;
+		color: var(--map-ink, #172b3a);
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 4px;
+		cursor: pointer;
+		transition: background 0.15s ease;
+	}
+
+	.btn-map-utility:hover {
+		background: #ede8dc;
+	}
+
+	.btn-map-utility:focus-visible {
+		outline: 2px solid #2337ff;
+	}
+
+	.leaflet-map-element {
+		width: 100%;
+		height: 480px;
+		min-height: 420px;
+		background: #f4efe6;
+		position: relative;
+		outline: none;
+	}
+
+	@media (min-width: 860px) {
+		.leaflet-map-element {
+			height: 560px;
+		}
+	}
+
+	.leaflet-map-element:focus-visible {
+		box-shadow: inset 0 0 0 3px #2337ff;
+	}
+
+	.noscript-map-message {
+		padding: 2rem;
+		background: #fffdf9;
+		color: #172b3a;
+		text-align: center;
+	}
+
+	/* Légende sous la carte */
+	.map-legend {
+		padding: 0.75rem 1rem;
+		background: #faf8f5;
+		border-top: 1px solid var(--map-border-soft, #ece7de);
+		font-size: 0.82rem;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.legend-heading {
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.legend-list {
+		list-style: none;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.8rem;
+		margin: 0;
+		padding: 0;
+	}
+
+	.legend-item {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+	}
+
+	.legend-marker-sample {
+		width: 11px;
+		height: 11px;
+		border-radius: 50%;
+		background-color: var(--cat-color);
+		border: 1.5px solid #ffffff;
+		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
+	}
+
+	/* Fiche du lieu sélectionné (Place Card) ---------------------------------- */
+	.place-card-panel {
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 10px;
+		padding: 1.4rem;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+	}
+
+	.card-header {
+		padding-bottom: 1rem;
+		border-bottom: 1px solid var(--map-border-soft, #ece7de);
+		margin-bottom: 1rem;
+	}
+
+	.card-badges {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-bottom: 0.65rem;
+	}
+
+	.badge-category {
+		padding: 0.25rem 0.6rem;
+		border-radius: 4px;
+		color: #ffffff;
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+	}
+
+	.badge-precision {
+		padding: 0.25rem 0.6rem;
+		border-radius: 4px;
+		font-size: 0.75rem;
+		font-weight: 600;
+		border: 1px solid var(--map-border, #dcd6cb);
+		background: #fbf9f5;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.precision-exact {
+		border-color: #2d7a56;
+		color: #1b5338;
+		background: #eef7f2;
+	}
+
+	.precision-approximate {
+		border-color: #d1973a;
+		color: #8b5a2b;
+		background: #fdf8ed;
+	}
+
+	.precision-district {
+		border-color: #5e6d7a;
+		color: #3b4854;
+		background: #f4f5f7;
+	}
+
+	.card-title {
+		margin: 0 0 0.35rem;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.55rem;
+		font-weight: normal;
+		line-height: 1.25;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.card-subtitle {
+		margin: 0;
+		font-size: 0.95rem;
+		color: var(--map-muted, #5e6d7a);
+		font-style: italic;
+	}
+
+	.card-section {
+		margin-bottom: 1.15rem;
+	}
+
+	.section-title {
+		margin: 0 0 0.4rem;
+		font-size: 0.82rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.section-text {
+		margin: 0;
+		font-size: 0.92rem;
+		line-height: 1.55;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	.card-geo {
+		background: #fcfbf8;
+		border: 1px solid var(--map-border-soft, #ece7de);
+		border-radius: 6px;
+		padding: 0.75rem 0.9rem;
+	}
+
+	.geo-row {
+		display: flex;
+		flex-direction: column;
+		margin-bottom: 0.5rem;
+		font-size: 0.88rem;
+	}
+
+	.geo-row:last-child {
+		margin-bottom: 0;
+	}
+
+	.geo-label {
+		font-weight: 600;
+		color: var(--map-muted, #5e6d7a);
+		font-size: 0.8rem;
+	}
+
+	.geo-value {
+		color: var(--map-ink, #172b3a);
+	}
+
+	.characters-list {
+		color: #172b3a;
+		font-weight: 500;
+	}
+
+	.observation-box {
+		margin: 0.75rem 0 0;
+		padding: 0.65rem 0.85rem;
+		background: #fbf9f4;
+		border-left: 3px solid #2337ff;
+		font-size: 0.88rem;
+		line-height: 1.5;
+		color: #172b3a;
+		border-radius: 0 4px 4px 0;
+	}
+
+	.card-quotation {
+		background: #faf8f5;
+		border: 1px solid var(--map-border-soft, #ece7de);
+		border-radius: 6px;
+		padding: 0.85rem 1rem;
+	}
+
+	.card-quotation blockquote {
+		margin: 0;
+		padding: 0;
+	}
+
+	.quote-text {
+		margin: 0 0 0.5rem;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 0.93rem;
+		font-style: italic;
+		line-height: 1.55;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.quote-ref {
+		display: block;
+		font-size: 0.78rem;
+		color: var(--map-muted, #5e6d7a);
+		text-align: right;
+		font-style: normal;
+	}
+
+	/* Alternative textuelle accessible --------------------------------------- */
+	.places-text-alternative {
+		margin-top: 2.5rem;
+		border-top: 1px solid var(--map-border, #dcd6cb);
+		padding-top: 1.5rem;
+	}
+
+	.alt-details {
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 8px;
+		padding: 0.5rem;
+	}
+
+	.alt-summary {
+		padding: 0.75rem 1rem;
+		cursor: pointer;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.5rem;
+	}
+
+	.alt-summary:focus-visible {
+		outline: 3px solid #2337ff;
+	}
+
+	.alt-summary-title {
+		display: inline;
+		margin: 0;
+		font-size: 1.05rem;
+		font-family: var(--map-serif, Georgia, serif);
+		color: var(--map-ink, #172b3a);
+	}
+
+	.alt-summary-desc {
+		font-size: 0.85rem;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.alt-content {
+		padding: 1rem 1.25rem 1.5rem;
+		border-top: 1px solid var(--map-border-soft, #ece7de);
+	}
+
+	.alt-places-list {
+		margin: 0;
+		padding-left: 1.5rem;
+	}
+
+	.alt-place-item {
+		margin-bottom: 1.5rem;
+		padding-bottom: 1.5rem;
+		border-bottom: 1px dashed var(--map-border-soft, #ece7de);
+	}
+
+	.alt-place-item:last-child {
+		border-bottom: none;
+		margin-bottom: 0;
+		padding-bottom: 0;
+	}
+
+	.alt-item-header h3 {
+		display: inline;
+		margin: 0 0.5rem 0 0;
+		font-size: 1.15rem;
+	}
+
+	.alt-item-order {
+		display: inline-block;
+		font-size: 0.78rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		color: var(--map-muted, #5e6d7a);
+		margin-right: 0.5rem;
+	}
+
+	.alt-item-details p {
+		margin: 0.4rem 0;
+		font-size: 0.9rem;
+		line-height: 1.5;
+	}
+
+	.alt-item-details blockquote {
+		margin: 0.5rem 0;
+		padding-left: 0.8rem;
+		border-left: 2px solid var(--map-border, #dcd6cb);
+		font-style: italic;
+		font-size: 0.88rem;
+	}
+
+	.btn-select-from-text {
+		margin-top: 0.5rem;
+		padding: 0.35rem 0.75rem;
+		font-family: inherit;
+		font-size: 0.82rem;
+		color: #172b3a;
+		background: #f5f2eb;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 4px;
+		cursor: pointer;
+	}
+
+	.btn-select-from-text:hover {
+		background: #172b3a;
+		color: #ffffff;
+	}
+
+	/* Marqueurs Leaflet personnalisés stylés en CSS pur ---------------------- */
+	:global(.custom-balzac-marker) {
+		background: transparent;
+		border: none;
+	}
+
+	:global(.balzac-pin-wrapper) {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+		background: var(--marker-color, #172b3a);
+		border: 2.5px solid #ffffff;
+		box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+		color: #ffffff;
+		font-weight: bold;
+		font-size: 13px;
+		cursor: pointer;
+		transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	}
+
+	:global(.balzac-pin-wrapper:hover) {
+		transform: scale(1.18);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+	}
+
+	:global(.balzac-pin-wrapper.is-selected) {
+		transform: scale(1.3);
+		border-color: #ffd700;
+		box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.45), 0 5px 14px rgba(0, 0, 0, 0.5);
+		z-index: 1000 !important;
+	}
+</style>
+
+<!-- Script d'interactivité côté client -->
+<script>
+	import L from 'leaflet';
+	import 'leaflet/dist/leaflet.css';
+
+	interface PlaceData {
+		id: string;
+		name: string;
+		subtitle: string;
+		category: string;
+		coordinates: [number, number];
+		locationPrecision: 'exact' | 'approximate' | 'district';
+		historicalAddress: string;
+		modernLocation: string;
+		characters: string[];
+		narrativeRole: string;
+		literaryAnalysis: string;
+		observationPoint?: string;
+		eventOrder: number;
+		narrativeStepTitle: string;
+		narrativeStepExplanation: string;
+		quotation: string;
+		quotationReference: string;
+	}
+
+	interface AppData {
+		places: PlaceData[];
+		categories: Record<string, { id: string; label: string; color: string }>;
+		precisionLabels: Record<string, { label: string; description: string }>;
+	}
+
+	function initGoriotMap() {
+		const dataScript = document.getElementById('goriot-places-data');
+		if (!dataScript) return;
+
+		let appData: AppData;
+		try {
+			appData = JSON.parse(dataScript.textContent || '{}');
+		} catch (e) {
+			console.error('Erreur de parsing des données du Père Goriot', e);
+			return;
+		}
+
+		const { places, categories, precisionLabels } = appData;
+		const mapContainer = document.getElementById('balzac-paris-map');
+		if (!mapContainer) return;
+
+		// Initialisation de Leaflet
+		// Centre initial : Paris (entre le Quartier Latin et l'Opéra)
+		const map = L.map(mapContainer, {
+			center: [48.858, 2.348],
+			zoom: 13,
+			zoomControl: true,
+			scrollWheelZoom: false, // Empêche le défilement intempestif sur mobile
+		});
+
+		// Fond de carte CartoDB Positron sobre et élégant (style gravure / papier clair)
+		L.tileLayer(
+			'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+			{
+				attribution:
+					'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>',
+				subdomains: 'abcd',
+				maxZoom: 19,
+			}
+		).addTo(map);
+
+		// État de l'application
+		let currentMode: 'explore' | 'narrative' = 'explore';
+		let activeFilter: string = 'all';
+		let selectedPlaceId: string = places[0].id;
+		let currentStepIndex: number = 0; // 0 à places.length - 1
+
+		// Dictionnaire des marqueurs Leaflet
+		const markersById: Record<string, { marker: L.Marker; el: HTMLElement; place: PlaceData }> = {};
+
+		// Création des marqueurs personnalisés
+		places.forEach((place) => {
+			const cat = categories[place.category];
+			const pinEl = document.createElement('div');
+			pinEl.className = 'balzac-pin-wrapper';
+			pinEl.style.setProperty('--marker-color', cat?.color || '#172b3a');
+			pinEl.setAttribute('role', 'button');
+			pinEl.setAttribute('aria-label', `${place.name} (${cat?.label})`);
+			pinEl.tabIndex = 0;
+			pinEl.innerHTML = `<span aria-hidden="true">${place.eventOrder}</span>`;
+
+			const customIcon = L.divIcon({
+				html: pinEl,
+				className: 'custom-balzac-marker',
+				iconSize: [32, 32],
+				iconAnchor: [16, 16],
+				popupAnchor: [0, -18],
+			});
+
+			const marker = L.marker(place.coordinates, { icon: customIcon });
+
+			// Popup accessible Leaflet avec informations synthétiques
+			marker.bindPopup(`
+				<div style="font-family: inherit; font-size: 0.9rem; line-height: 1.4;">
+					<strong style="color: ${cat?.color || '#172b3a'}; display: block; font-size: 0.75rem; text-transform: uppercase;">
+						${cat?.label || ''}
+					</strong>
+					<h4 style="margin: 0.2rem 0 0.3rem; font-size: 1.05rem;">${place.name}</h4>
+					<p style="margin: 0 0 0.4rem; color: #555; font-size: 0.85rem;">${place.subtitle}</p>
+					<p style="margin: 0; font-size: 0.8rem;"><strong>Lieu :</strong> ${place.historicalAddress}</p>
+				</div>
+			`);
+
+			marker.on('click', () => {
+				selectPlace(place.id, { centerMap: false });
+			});
+
+			// Clavier sur le marqueur
+			pinEl.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					e.preventDefault();
+					selectPlace(place.id, { centerMap: true });
+				}
+			});
+
+			marker.addTo(map);
+			markersById[place.id] = { marker, el: pinEl, place };
+		});
+
+		// Fonction d'actualisation de la fiche lieu
+		function updatePlaceCard(place: PlaceData) {
+			const cat = categories[place.category];
+			const prec = precisionLabels[place.locationPrecision];
+
+			const catBadge = document.getElementById('card-badge-category');
+			if (catBadge) {
+				catBadge.textContent = cat?.label || place.category;
+				catBadge.style.backgroundColor = cat?.color || '#172b3a';
+			}
+
+			const precBadge = document.getElementById('card-badge-precision');
+			if (precBadge) {
+				precBadge.textContent = prec?.label || place.locationPrecision;
+				precBadge.title = prec?.description || '';
+				precBadge.className = `badge-precision precision-${place.locationPrecision}`;
+			}
+
+			const titleEl = document.getElementById('card-place-title');
+			if (titleEl) titleEl.textContent = place.name;
+
+			const subEl = document.getElementById('card-place-subtitle');
+			if (subEl) subEl.textContent = place.subtitle;
+
+			const histEl = document.getElementById('card-historical-address');
+			if (histEl) histEl.textContent = place.historicalAddress;
+
+			const modEl = document.getElementById('card-modern-location');
+			if (modEl) modEl.textContent = place.modernLocation;
+
+			const charEl = document.getElementById('card-characters');
+			if (charEl) charEl.textContent = place.characters.join(' · ');
+
+			const narrEl = document.getElementById('card-narrative-role');
+			if (narrEl) narrEl.textContent = place.narrativeRole;
+
+			const litEl = document.getElementById('card-literary-analysis');
+			if (litEl) litEl.textContent = place.literaryAnalysis;
+
+			const obsBox = document.getElementById('card-observation-box');
+			const obsText = document.getElementById('card-observation-text');
+			if (obsBox && obsText) {
+				if (place.observationPoint) {
+					obsBox.hidden = false;
+					obsText.textContent = place.observationPoint;
+				} else {
+					obsBox.hidden = true;
+				}
+			}
+
+			const quoteText = document.getElementById('card-quote-text');
+			if (quoteText) quoteText.textContent = `« ${place.quotation} »`;
+
+			const quoteRef = document.getElementById('card-quote-ref');
+			if (quoteRef) quoteRef.textContent = `— ${place.quotationReference}`;
+		}
+
+		// Sélectionner un lieu
+		function selectPlace(placeId: string, options: { centerMap?: boolean; zoom?: number } = {}) {
+			const item = markersById[placeId];
+			if (!item) return;
+
+			selectedPlaceId = placeId;
+			const { place, marker, el } = item;
+
+			// Mettre à jour les classes visuelles des pins
+			Object.values(markersById).forEach(({ el: otherEl }) => {
+				otherEl.classList.remove('is-selected');
+			});
+			el.classList.add('is-selected');
+
+			// Mise à jour de la fiche latérale
+			updatePlaceCard(place);
+
+			// Ouvrir le popup du marqueur
+			marker.openPopup();
+
+			// Recentrage si demandé
+			if (options.centerMap) {
+				map.setView(place.coordinates, options.zoom || 14, { animate: true });
+			}
+
+			// Si en mode narratif, ajuster l'index du stepper
+			const stepIdx = places.findIndex((p) => p.id === placeId);
+			if (stepIdx !== -1) {
+				currentStepIndex = stepIdx;
+				updateNarrativeStepperUI();
+			}
+		}
+
+		// Filtrage Mode A
+		function applyFilter(filterId: string) {
+			activeFilter = filterId;
+			let visibleCount = 0;
+			const visibleLatLngs: L.LatLngExpression[] = [];
+
+			places.forEach((place) => {
+				const item = markersById[place.id];
+				if (!item) return;
+
+				const isVisible = filterId === 'all' || place.category === filterId;
+				if (isVisible) {
+					if (!map.hasLayer(item.marker)) {
+						map.addLayer(item.marker);
+					}
+					visibleLatLngs.push(place.coordinates);
+					visibleCount++;
+				} else {
+					if (map.hasLayer(item.marker)) {
+						map.removeLayer(item.marker);
+					}
+				}
+			});
+
+			const statusEl = document.getElementById('map-live-status');
+			if (statusEl) {
+				statusEl.textContent = `Affichage de ${visibleCount} lieu${visibleCount > 1 ? 'x' : ''} sur Paris`;
+			}
+
+			// Mettre à jour l'état visuel des boutons de filtres
+			document.querySelectorAll('.chip-button').forEach((btn) => {
+				const f = btn.getAttribute('data-filter');
+				const isSelected = f === filterId;
+				btn.classList.toggle('is-active', isSelected);
+				btn.setAttribute('aria-pressed', String(isSelected));
+			});
+
+			// Si le lieu sélectionné n'est plus visible, sélectionner le premier lieu visible
+			const currentItem = markersById[selectedPlaceId];
+			if (currentItem && !map.hasLayer(currentItem.marker)) {
+				const firstVisible = places.find(
+					(p) => filterId === 'all' || p.category === filterId
+				);
+				if (firstVisible) {
+					selectPlace(firstVisible.id, { centerMap: false });
+				}
+			}
+
+			if (visibleLatLngs.length > 0) {
+				map.fitBounds(L.latLngBounds(visibleLatLngs), { padding: [40, 40], maxZoom: 14 });
+			}
+		}
+
+		// Mise à jour de l'UI du mode narratif
+		function updateNarrativeStepperUI() {
+			const curPlace = places[currentStepIndex];
+			if (!curPlace) return;
+
+			const stepIdxEl = document.getElementById('current-step-index');
+			if (stepIdxEl) stepIdxEl.textContent = String(currentStepIndex + 1);
+
+			const stepTitleEl = document.getElementById('current-step-title');
+			if (stepTitleEl) stepTitleEl.textContent = curPlace.name;
+
+			const stepExpEl = document.getElementById('current-step-explanation');
+			if (stepExpEl) stepExpEl.textContent = curPlace.narrativeStepExplanation;
+
+			const prevBtn = document.getElementById('narrative-prev-btn') as HTMLButtonElement;
+			const nextBtn = document.getElementById('narrative-next-btn') as HTMLButtonElement;
+
+			if (prevBtn) prevBtn.disabled = currentStepIndex === 0;
+			if (nextBtn) nextBtn.disabled = currentStepIndex === places.length - 1;
+		}
+
+		// Bascule de mode
+		function setMode(mode: 'explore' | 'narrative') {
+			currentMode = mode;
+
+			const tabExplore = document.getElementById('tab-mode-explore');
+			const tabNarrative = document.getElementById('tab-mode-narrative');
+			const panelExplore = document.getElementById('panel-explore');
+			const panelNarrative = document.getElementById('panel-narrative');
+
+			if (mode === 'explore') {
+				tabExplore?.classList.add('is-active');
+				tabExplore?.setAttribute('aria-selected', 'true');
+				tabNarrative?.classList.remove('is-active');
+				tabNarrative?.setAttribute('aria-selected', 'false');
+
+				if (panelExplore) panelExplore.hidden = false;
+				if (panelNarrative) panelNarrative.hidden = true;
+
+				// Réappliquer le filtre courant
+				applyFilter(activeFilter);
+			} else {
+				tabNarrative?.classList.add('is-active');
+				tabNarrative?.setAttribute('aria-selected', 'true');
+				tabExplore?.classList.remove('is-active');
+				tabExplore?.setAttribute('aria-selected', 'false');
+
+				if (panelNarrative) panelNarrative.hidden = false;
+				if (panelExplore) panelExplore.hidden = true;
+
+				// En mode narratif, s'assurer que tous les marqueurs sont sur la carte
+				places.forEach((p) => {
+					const item = markersById[p.id];
+					if (item && !map.hasLayer(item.marker)) {
+						map.addLayer(item.marker);
+					}
+				});
+
+				updateNarrativeStepperUI();
+				const target = places[currentStepIndex];
+				if (target) {
+					selectPlace(target.id, { centerMap: true, zoom: 14 });
+				}
+			}
+		}
+
+		// Événements boutons de mode
+		document.getElementById('tab-mode-explore')?.addEventListener('click', () => setMode('explore'));
+		document.getElementById('tab-mode-narrative')?.addEventListener('click', () => setMode('narrative'));
+
+		// Événements filtres chips
+		document.querySelectorAll('.chip-button').forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const filter = btn.getAttribute('data-filter');
+				if (filter) applyFilter(filter);
+			});
+		});
+
+		// Événements navigation narrative
+		document.getElementById('narrative-prev-btn')?.addEventListener('click', () => {
+			if (currentStepIndex > 0) {
+				currentStepIndex--;
+				const p = places[currentStepIndex];
+				selectPlace(p.id, { centerMap: true, zoom: 14 });
+			}
+		});
+
+		document.getElementById('narrative-next-btn')?.addEventListener('click', () => {
+			if (currentStepIndex < places.length - 1) {
+				currentStepIndex++;
+				const p = places[currentStepIndex];
+				selectPlace(p.id, { centerMap: true, zoom: 14 });
+			}
+		});
+
+		// Événements boutons utilitaires carte
+		document.getElementById('btn-recenter-places')?.addEventListener('click', () => {
+			const visibleMarkers = Object.values(markersById)
+				.filter(({ marker }) => map.hasLayer(marker))
+				.map(({ place }) => place.coordinates);
+			if (visibleMarkers.length > 0) {
+				map.fitBounds(L.latLngBounds(visibleMarkers), { padding: [40, 40], maxZoom: 14 });
+			}
+		});
+
+		document.getElementById('btn-reset-paris')?.addEventListener('click', () => {
+			map.setView([48.858, 2.348], 12, { animate: true });
+		});
+
+		// Événements boutons de sélection depuis l'alternative textuelle
+		document.querySelectorAll('.btn-select-from-text').forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const placeId = btn.getAttribute('data-select-place-id');
+				if (placeId) {
+					selectPlace(placeId, { centerMap: true, zoom: 15 });
+					mapContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+				}
+			});
+		});
+
+		// Sélection initiale
+		selectPlace(initialPlace.id, { centerMap: false });
+	}
+
+	// Lancement après chargement du DOM
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initGoriotMap);
+	} else {
+		initGoriotMap();
+	}
+</script>
