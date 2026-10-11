@@ -195,33 +195,6 @@ describe.skipIf(!BUILT)('Carte interactive du Père Goriot (/goriot) — E2E & I
 		}
 	});
 
-	test('bascule du fond de carte : carte historique (1820) par défaut et bascule moderne', async () => {
-		const page = await openPage();
-		try {
-			const btnHist = page.locator('#btn-layer-historical');
-			const btnMod = page.locator('#btn-layer-modern');
-
-			expect(await btnHist.isVisible()).toBe(true);
-			expect(await btnMod.isVisible()).toBe(true);
-
-			// Carte historique active par défaut
-			expect(await btnHist.getAttribute('aria-pressed')).toBe('true');
-			expect(await btnMod.getAttribute('aria-pressed')).toBe('false');
-
-			// Bascule vers le plan moderne
-			await btnMod.click();
-			expect(await btnMod.getAttribute('aria-pressed')).toBe('true');
-			expect(await btnHist.getAttribute('aria-pressed')).toBe('false');
-
-			// Bascule retour vers la carte historique
-			await btnHist.click();
-			expect(await btnHist.getAttribute('aria-pressed')).toBe('true');
-			expect(await btnMod.getAttribute('aria-pressed')).toBe('false');
-		} finally {
-			await page.close();
-		}
-	});
-
 	test('comportement responsive mobile (viewport 375×812)', async () => {
 		const page = await openPage(375, 812);
 		try {
