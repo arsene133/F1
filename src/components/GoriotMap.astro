@@ -131,13 +131,33 @@ const initialPlace = goriotPlaces[0];
 					Affichage de 11 lieux sur Paris
 				</span>
 				<div class="map-action-buttons">
+					<div class="map-layer-selector" role="group" aria-label="Choisir le fond cartographique">
+						<button
+							type="button"
+							id="btn-layer-historical"
+							class="btn-map-utility btn-map-layer is-active"
+							aria-pressed="true"
+							title="Carte de l’état-major des environs de Paris (1818-1824) contemporaine de l’action du roman"
+						>
+							📜 Carte d’époque (1820)
+						</button>
+						<button
+							type="button"
+							id="btn-layer-modern"
+							class="btn-map-utility btn-map-layer"
+							aria-pressed="false"
+							title="Plan contemporain sobre pour repérer la géographie moderne"
+						>
+							🏙️ Plan moderne
+						</button>
+					</div>
 					<button
 						type="button"
 						id="btn-recenter-places"
 						class="btn-map-utility"
 						title="Ajuster la vue pour voir tous les marqueurs visibles"
 					>
-						Recentrer sur les lieux
+						Recentrer
 					</button>
 					<button
 						type="button"
@@ -145,7 +165,7 @@ const initialPlace = goriotPlaces[0];
 						class="btn-map-utility"
 						title="Revenir à une vue générale de Paris"
 					>
-						Vue générale de Paris
+						Vue générale
 					</button>
 				</div>
 			</div>
@@ -570,7 +590,34 @@ const initialPlace = goriotPlaces[0];
 
 	.map-action-buttons {
 		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
 		gap: 0.4rem;
+	}
+
+	.map-layer-selector {
+		display: inline-flex;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 4px;
+		overflow: hidden;
+		background: #ffffff;
+	}
+
+	.map-layer-selector .btn-map-layer {
+		border: none;
+		border-radius: 0;
+		padding: 0.35rem 0.65rem;
+		font-weight: 500;
+	}
+
+	.map-layer-selector .btn-map-layer:first-child {
+		border-right: 1px solid var(--map-border-soft, #ece7de);
+	}
+
+	.map-layer-selector .btn-map-layer.is-active {
+		background: #172b3a;
+		color: #ffffff;
+		font-weight: 700;
 	}
 
 	.btn-map-utility {
@@ -1031,16 +1078,56 @@ const initialPlace = goriotPlaces[0];
 			scrollWheelZoom: false, // Empêche le défilement intempestif sur mobile
 		});
 
-		// Fond de carte CartoDB Positron sobre et élégant (style gravure / papier clair)
-		L.tileLayer(
-			'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-			{
-				attribution:
-					'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>',
-				subdomains: 'abcd',
-				maxZoom: 19,
+		// Fond historique : Carte de l’état-major des environs de Paris (1818-1824) - contemporaine de l’action du roman
+		const historicalTileUrl =
+			'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.ETATMAJOR10&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}';
+		const historicalLayer = L.tileLayer(historicalTileUrl, {
+			attribution:
+				'&copy; <a href="https://www.ign.fr/" target="_blank" rel="noopener">IGN-F</a> Carte de l’état-major des environs de Paris (1818-1824)',
+			minZoom: 6,
+			maxNativeZoom: 16,
+			maxZoom: 18,
+			tileSize: 256,
+		});
+
+		// Fond alternatif contemporain sobre (CartoDB Positron)
+		const modernTileUrl = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+		const modernLayer = L.tileLayer(modernTileUrl, {
+			attribution:
+				'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>',
+			subdomains: 'abcd',
+			maxZoom: 19,
+		});
+
+		// Par défaut : la carte d’époque historique est active
+		historicalLayer.addTo(map);
+		let currentBaseLayer: 'historical' | 'modern' = 'historical';
+
+		function setBaseLayer(layerType: 'historical' | 'modern') {
+			if (layerType === currentBaseLayer) return;
+			if (layerType === 'historical') {
+				if (map.hasLayer(modernLayer)) map.removeLayer(modernLayer);
+				if (!map.hasLayer(historicalLayer)) historicalLayer.addTo(map);
+				currentBaseLayer = 'historical';
+			} else {
+				if (map.hasLayer(historicalLayer)) map.removeLayer(historicalLayer);
+				if (!map.hasLayer(modernLayer)) modernLayer.addTo(map);
+				currentBaseLayer = 'modern';
 			}
-		).addTo(map);
+
+			const btnHist = document.getElementById('btn-layer-historical');
+			const btnMod = document.getElementById('btn-layer-modern');
+			if (btnHist) {
+				const isHist = currentBaseLayer === 'historical';
+				btnHist.classList.toggle('is-active', isHist);
+				btnHist.setAttribute('aria-pressed', String(isHist));
+			}
+			if (btnMod) {
+				const isMod = currentBaseLayer === 'modern';
+				btnMod.classList.toggle('is-active', isMod);
+				btnMod.setAttribute('aria-pressed', String(isMod));
+			}
+		}
 
 		// État de l'application
 		let currentMode: 'explore' | 'narrative' = 'explore';
@@ -1337,6 +1424,10 @@ const initialPlace = goriotPlaces[0];
 				selectPlace(p.id, { centerMap: true, zoom: 14 });
 			}
 		});
+
+		// Événements boutons de fond de carte
+		document.getElementById('btn-layer-historical')?.addEventListener('click', () => setBaseLayer('historical'));
+		document.getElementById('btn-layer-modern')?.addEventListener('click', () => setBaseLayer('modern'));
 
 		// Événements boutons utilitaires carte
 		document.getElementById('btn-recenter-places')?.addEventListener('click', () => {
