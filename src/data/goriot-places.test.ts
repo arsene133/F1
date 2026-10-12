@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+	HISTORICAL_MAP_CONFIG,
+	MODERN_MAP_CONFIG,
 	goriotCategories,
 	goriotPlaces,
 	precisionLabels,
@@ -107,5 +109,18 @@ describe('Données géographiques et littéraires du Père Goriot', () => {
 			expect(leafletCoords[0]).toBeCloseTo(2452 - pixel3200[1], 1);
 			expect(leafletCoords[1]).toBeCloseTo(pixel3200[0], 1);
 		}
+	});
+
+	it('valide la configuration des fonds de carte historique et moderne', () => {
+		expect(HISTORICAL_MAP_CONFIG.imageSrc).toBe('/images/plan-maire-paris-1821.webp');
+		expect(HISTORICAL_MAP_CONFIG.width).toBe(3200);
+		expect(HISTORICAL_MAP_CONFIG.height).toBe(2452);
+		expect(HISTORICAL_MAP_CONFIG.attribution).toContain('N. M. Maire, 1821');
+
+		expect(MODERN_MAP_CONFIG.tileUrl).toContain('cartocdn.com');
+		expect(MODERN_MAP_CONFIG.attribution).toContain('OpenStreetMap');
+		expect(MODERN_MAP_CONFIG.attribution).toContain('CARTO');
+		expect(MODERN_MAP_CONFIG.defaultCenter[0]).toBeCloseTo(48.858, 2);
+		expect(MODERN_MAP_CONFIG.defaultCenter[1]).toBeCloseTo(2.348, 2);
 	});
 });

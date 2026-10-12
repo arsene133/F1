@@ -1,6 +1,7 @@
 ---
 import {
 	HISTORICAL_MAP_CONFIG,
+	MODERN_MAP_CONFIG,
 	goriotCategories,
 	goriotPlaces,
 	precisionLabels,
@@ -22,6 +23,7 @@ const initialPlace = goriotPlaces[0];
 			categories: goriotCategories,
 			precisionLabels,
 			mapConfig: HISTORICAL_MAP_CONFIG,
+			modernMapConfig: MODERN_MAP_CONFIG,
 		})}
 	/>
 
@@ -137,26 +139,60 @@ const initialPlace = goriotPlaces[0];
 		<!-- Conteneur Carte -->
 		<div class="map-canvas-container">
 			<div class="map-actions-bar">
-				<span class="map-status" id="map-live-status" aria-live="polite">
-					Affichage de 11 lieux sur Paris
-				</span>
-				<div class="map-action-buttons">
+				<!-- Sélecteur de fond de carte : 1821 vs Moderne -->
+				<div
+					class="map-layer-switch"
+					role="radiogroup"
+					aria-label="Fond de carte"
+				>
 					<button
 						type="button"
-						id="btn-recenter-places"
-						class="btn-map-utility"
-						title="Ajuster la vue pour voir tous les marqueurs visibles"
+						role="radio"
+						id="btn-layer-historical"
+						class="btn-layer-tab is-active"
+						aria-checked="true"
+						tabindex="0"
+						data-layer="historical"
 					>
-						Recentrer sur les lieux
+						<span class="layer-tab-icon" aria-hidden="true">📜</span>
+						<span>1821 · Plan historique</span>
 					</button>
 					<button
 						type="button"
-						id="btn-reset-paris"
-						class="btn-map-utility"
-						title="Revenir à une vue générale de Paris"
+						role="radio"
+						id="btn-layer-modern"
+						class="btn-layer-tab"
+						aria-checked="false"
+						tabindex="-1"
+						data-layer="modern"
 					>
-						Vue générale de Paris
+						<span class="layer-tab-icon" aria-hidden="true">🏙️</span>
+						<span>Aujourd’hui · Plan moderne</span>
 					</button>
+				</div>
+
+				<div class="map-actions-right">
+					<span class="map-status" id="map-live-status" aria-live="polite">
+						Affichage de 11 lieux sur Paris
+					</span>
+					<div class="map-action-buttons">
+						<button
+							type="button"
+							id="btn-recenter-places"
+							class="btn-map-utility"
+							title="Ajuster la vue pour voir tous les marqueurs visibles"
+						>
+							Recentrer sur les lieux
+						</button>
+						<button
+							type="button"
+							id="btn-reset-paris"
+							class="btn-map-utility"
+							title="Revenir à une vue générale de Paris"
+						>
+							Vue générale de Paris
+						</button>
+					</div>
 				</div>
 			</div>
 
@@ -178,14 +214,34 @@ const initialPlace = goriotPlaces[0];
 				</noscript>
 			</div>
 
-			<!-- Notice historique et crédit cartographique -->
-			<div class="map-historical-credit" aria-label="Crédit et repère historique du plan">
+			<!-- Notice historique et crédit cartographique (1821) -->
+			<div
+				class="map-historical-credit"
+				id="credit-historical-map"
+				aria-label="Crédit et repère historique du plan"
+			>
 				<p class="historical-credit-caption">
 					<strong>Repère historique :</strong> Plan dressé en 1821, immédiatement contemporain du cadre temporel du roman (novembre 1819 – février 1820). Les douze anciens arrondissements, barrières de l’octroi et tracés d’époque matérialisent l’espace urbain parcouru par Rastignac et Goriot.
 				</p>
 				<p class="historical-credit-source">
 					<span class="credit-icon" aria-hidden="true">📜</span>
 					<span><strong>Source :</strong> Plan lavé topographiquement de Paris, N. M. Maire, 1821 — David Rumsey Historical Map Collection.</span>
+				</p>
+			</div>
+
+			<!-- Notice et crédit cartographique moderne (CARTO / OpenStreetMap) -->
+			<div
+				class="map-historical-credit map-modern-credit"
+				id="credit-modern-map"
+				aria-label="Crédit et repère de la carte moderne"
+				hidden
+			>
+				<p class="historical-credit-caption">
+					<strong>Repère contemporain :</strong> Voirie et tissu urbain actuels de Paris. Les marqueurs indiquent les adresses contemporaines correspondantes pour apprécier l'évolution des quartiers depuis la Restauration.
+				</p>
+				<p class="historical-credit-source">
+					<span class="credit-icon" aria-hidden="true">🌐</span>
+					<span><strong>Source :</strong> Tuiles CARTO Positron &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a> — Données &copy; contributeurs <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>.</span>
 				</p>
 			</div>
 
@@ -577,11 +633,67 @@ const initialPlace = goriotPlaces[0];
 		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
-		gap: 0.5rem;
+		gap: 0.75rem;
 		padding: 0.65rem 1rem;
 		background: #f7f5f0;
 		border-bottom: 1px solid var(--map-border, #dcd6cb);
 		font-size: 0.84rem;
+	}
+
+	/* Contrôle de fond de carte (1821 vs Moderne) */
+	.map-layer-switch {
+		display: inline-flex;
+		align-items: center;
+		background: #ece7de;
+		padding: 3px;
+		border-radius: 6px;
+		border: 1px solid var(--map-border, #dcd6cb);
+		gap: 2px;
+	}
+
+	.btn-layer-tab {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.35rem 0.75rem;
+		font-family: inherit;
+		font-size: 0.82rem;
+		font-weight: 600;
+		color: var(--map-ink-soft, #2d3e4d);
+		background: transparent;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		transition: all 0.15s ease-in-out;
+		white-space: nowrap;
+	}
+
+	.btn-layer-tab:hover:not(.is-active) {
+		background: rgba(255, 255, 255, 0.6);
+		color: var(--map-ink, #172b3a);
+	}
+
+	.btn-layer-tab.is-active {
+		background: #172b3a;
+		color: #ffffff;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+	}
+
+	.btn-layer-tab:focus-visible {
+		outline: 2px solid #2337ff;
+		outline-offset: 1px;
+	}
+
+	.layer-tab-icon {
+		font-size: 0.95rem;
+		line-height: 1;
+	}
+
+	.map-actions-right {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.6rem;
 	}
 
 	.map-status {
@@ -1078,11 +1190,24 @@ const initialPlace = goriotPlaces[0];
 		originalHeight: number;
 	}
 
+	interface ModernMapConfig {
+		title: string;
+		tileUrl: string;
+		subdomains: string;
+		maxZoom: number;
+		minZoom: number;
+		defaultCenter: [number, number];
+		defaultZoom: number;
+		attribution: string;
+		altText: string;
+	}
+
 	interface AppData {
 		places: PlaceData[];
 		categories: Record<string, { id: string; label: string; color: string }>;
 		precisionLabels: Record<string, { label: string; description: string }>;
 		mapConfig: MapConfig;
+		modernMapConfig: ModernMapConfig;
 	}
 
 	function initGoriotMap() {
@@ -1097,111 +1222,181 @@ const initialPlace = goriotPlaces[0];
 			return;
 		}
 
-		const { places, categories, precisionLabels, mapConfig } = appData;
+		const { places, categories, precisionLabels, mapConfig, modernMapConfig } = appData;
 		const mapContainer = document.getElementById('balzac-paris-map');
 		if (!mapContainer) return;
 
 		// Dimensions de l'image historique (3200 × 2452 px)
 		const imgW = mapConfig?.width || 3200;
 		const imgH = mapConfig?.height || 2452;
-		const mapBounds: L.LatLngBoundsExpression = [
+		const historicalBounds: L.LatLngBoundsExpression = [
 			[0, 0],
 			[imgH, imgW],
 		];
 
-		// Initialisation de Leaflet avec projection plane CRS.Simple pour document historique
-		const map = L.map(mapContainer, {
-			crs: L.CRS.Simple,
-			minZoom: -2,
-			maxZoom: 2,
-			zoomSnap: 0.25,
-			zoomDelta: 0.5,
-			zoomControl: true,
-			scrollWheelZoom: false, // Empêche le défilement intempestif sur mobile
-			attributionControl: true,
-			maxBounds: [
-				[-imgH * 0.2, -imgW * 0.2],
-				[imgH * 1.2, imgW * 1.2],
-			],
-			maxBoundsViscosity: 0.8,
-		});
-
-		// Fond de carte : image historique locale haute résolution (Plan Maire 1821)
-		const historicalOverlay = L.imageOverlay(mapConfig?.imageSrc || '/images/plan-maire-paris-1821.webp', mapBounds, {
-			attribution: mapConfig?.attribution || 'Plan lavé topographiquement de Paris, N. M. Maire, 1821 — David Rumsey Historical Map Collection',
-			alt: mapConfig?.altText || 'Plan historique de Paris par N. M. Maire (1821)',
-			interactive: false,
-		}).addTo(map);
-
-		// Ajuster initialement la vue pour afficher l'ensemble du plan de Paris
-		map.fitBounds(mapBounds, { padding: [10, 10] });
-
 		// État de l'application
+		let activeLayer: 'historical' | 'modern' = 'historical';
 		let currentMode: 'explore' | 'narrative' = 'explore';
 		let activeFilter: string = 'all';
 		let selectedPlaceId: string = places[0].id;
 		let currentStepIndex: number = 0; // 0 à places.length - 1
 
+		let map: L.Map | null = null;
+		let historicalOverlay: L.ImageOverlay | null = null;
+		let modernTileLayer: L.TileLayer | null = null;
+
 		// Dictionnaire des marqueurs Leaflet
 		const markersById: Record<string, { marker: L.Marker; el: HTMLElement; place: PlaceData }> = {};
 
-		// Création des marqueurs personnalisés
-		places.forEach((place) => {
-			const cat = categories[place.category];
-			const pinEl = document.createElement('div');
-			pinEl.className = 'balzac-pin-wrapper';
-			pinEl.style.setProperty('--marker-color', cat?.color || '#172b3a');
-			pinEl.setAttribute('role', 'button');
-			pinEl.setAttribute('aria-label', `${place.name} (${cat?.label})`);
-			pinEl.tabIndex = 0;
-			pinEl.innerHTML = `<span aria-hidden="true">${place.eventOrder}</span>`;
+		// Initialisation ou recréation de l'instance Leaflet selon le système de projection (CRS)
+		function setupMapInstance(layer: 'historical' | 'modern', preserveView = false) {
+			const previousCenter = map ? map.getCenter() : null;
+			const previousZoom = map ? map.getZoom() : null;
 
-			const customIcon = L.divIcon({
-				html: pinEl,
-				className: 'custom-balzac-marker',
-				iconSize: [28, 28],
-				iconAnchor: [14, 14],
-				popupAnchor: [0, -16],
-			});
+			if (map) {
+				map.closePopup();
+				map.stop();
+				Object.values(markersById).forEach(({ marker }) => {
+					marker.remove();
+				});
+				map.remove();
+				map = null;
+				historicalOverlay = null;
+				modernTileLayer = null;
+			}
 
-			// Utiliser les coordonnées historiques CRS.Simple [Y, X]
-			const markerCoords: L.LatLngExpression = place.historicalCoordinates?.leafletCoords || [
-				imgH - (place.coordinates[0] - 48.81) * (imgH / 0.1),
-				(place.coordinates[1] - 2.24) * (imgW / 0.19),
-			];
+			if (layer === 'historical') {
+				// Projection plane CRS.Simple pour le plan historique de 1821
+				map = L.map(mapContainer, {
+					crs: L.CRS.Simple,
+					minZoom: -2,
+					maxZoom: 2,
+					zoomSnap: 0.25,
+					zoomDelta: 0.5,
+					zoomControl: true,
+					scrollWheelZoom: false,
+					attributionControl: true,
+					maxBounds: [
+						[-imgH * 0.2, -imgW * 0.2],
+						[imgH * 1.2, imgW * 1.2],
+					],
+					maxBoundsViscosity: 0.8,
+				});
 
-			const marker = L.marker(markerCoords, {
-				icon: customIcon,
-				zIndexOffset: place.eventOrder * 10,
-			});
+				historicalOverlay = L.imageOverlay(mapConfig?.imageSrc || '/images/plan-maire-paris-1821.webp', historicalBounds, {
+					attribution: mapConfig?.attribution || 'Plan lavé topographiquement de Paris, N. M. Maire, 1821 — David Rumsey Historical Map Collection',
+					alt: mapConfig?.altText || 'Plan historique de Paris par N. M. Maire (1821)',
+					interactive: false,
+				}).addTo(map);
 
-			// Popup accessible Leaflet avec informations synthétiques
-			marker.bindPopup(`
-				<div style="font-family: inherit; font-size: 0.9rem; line-height: 1.4;">
-					<strong style="color: ${cat?.color || '#172b3a'}; display: block; font-size: 0.75rem; text-transform: uppercase;">
-						${cat?.label || ''}
-					</strong>
-					<h4 style="margin: 0.2rem 0 0.3rem; font-size: 1.05rem;">${place.name}</h4>
-					<p style="margin: 0 0 0.4rem; color: #555; font-size: 0.85rem;">${place.subtitle}</p>
-					<p style="margin: 0; font-size: 0.8rem;"><strong>Lieu (1821) :</strong> ${place.historicalAddress}</p>
-				</div>
-			`);
+				mapContainer.setAttribute('aria-label', 'Carte interactive historique de Paris (1821)');
+			} else {
+				// Projection géographique moderne EPSG:3857 (Spherical Mercator) pour CARTO Positron
+				map = L.map(mapContainer, {
+					crs: L.CRS.EPSG3857,
+					minZoom: modernMapConfig?.minZoom || 11,
+					maxZoom: modernMapConfig?.maxZoom || 19,
+					zoomControl: true,
+					scrollWheelZoom: false,
+					attributionControl: true,
+				});
 
-			marker.on('click', () => {
-				selectPlace(place.id, { centerMap: false });
-			});
+				modernTileLayer = L.tileLayer(
+					modernMapConfig?.tileUrl || 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key=cb1_4hbo_1_0764a6788a577c5a3bff641e',
+					{
+						attribution:
+							modernMapConfig?.attribution ||
+							'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>',
+						subdomains: modernMapConfig?.subdomains || 'abcd',
+						maxZoom: modernMapConfig?.maxZoom || 19,
+					}
+				).addTo(map);
 
-			// Clavier sur le marqueur
-			pinEl.addEventListener('keydown', (e) => {
-				if (e.key === 'Enter' || e.key === ' ') {
-					e.preventDefault();
-					selectPlace(place.id, { centerMap: true });
+				mapContainer.setAttribute('aria-label', 'Carte interactive contemporaine de Paris');
+			}
+
+			// Création ou repositionnement des marqueurs Leaflet avec les coordonnées adaptées
+			places.forEach((place) => {
+				const cat = categories[place.category];
+				const pinEl = document.createElement('div');
+				pinEl.className = 'balzac-pin-wrapper';
+				if (place.id === selectedPlaceId) {
+					pinEl.classList.add('is-selected');
+				}
+				pinEl.style.setProperty('--marker-color', cat?.color || '#172b3a');
+				pinEl.setAttribute('role', 'button');
+				pinEl.setAttribute('aria-label', `${place.name} (${cat?.label})`);
+				pinEl.tabIndex = 0;
+				pinEl.innerHTML = `<span aria-hidden="true">${place.eventOrder}</span>`;
+
+				const customIcon = L.divIcon({
+					html: pinEl,
+					className: 'custom-balzac-marker',
+					iconSize: [28, 28],
+					iconAnchor: [14, 14],
+					popupAnchor: [0, -16],
+				});
+
+				// Coordonnées : CRS.Simple pour 1821, géographiques [lat, lng] pour moderne
+				const markerCoords: L.LatLngExpression =
+					layer === 'historical'
+						? place.historicalCoordinates?.leafletCoords || [imgH / 2, imgW / 2]
+						: place.coordinates;
+
+				const marker = L.marker(markerCoords, {
+					icon: customIcon,
+					zIndexOffset: place.eventOrder * 10,
+				});
+
+				marker.bindPopup(`
+					<div style="font-family: inherit; font-size: 0.9rem; line-height: 1.4;">
+						<strong style="color: ${cat?.color || '#172b3a'}; display: block; font-size: 0.75rem; text-transform: uppercase;">
+							${cat?.label || ''}
+						</strong>
+						<h4 style="margin: 0.2rem 0 0.3rem; font-size: 1.05rem;">${place.name}</h4>
+						<p style="margin: 0 0 0.4rem; color: #555; font-size: 0.85rem;">${place.subtitle}</p>
+						<p style="margin: 0; font-size: 0.8rem;"><strong>${layer === 'historical' ? 'Lieu (1821) :' : 'Adresse actuelle :'}</strong> ${layer === 'historical' ? place.historicalAddress : place.modernLocation}</p>
+					</div>
+				`);
+
+				marker.on('click', () => {
+					selectPlace(place.id, { centerMap: false });
+				});
+
+				pinEl.addEventListener('click', (e) => {
+					e.stopPropagation();
+					selectPlace(place.id, { centerMap: false });
+				});
+
+				pinEl.addEventListener('keydown', (e) => {
+					if (e.key === 'Enter' || e.key === ' ') {
+						e.preventDefault();
+						selectPlace(place.id, { centerMap: true });
+					}
+				});
+
+				markersById[place.id] = { marker, el: pinEl, place };
+
+				// Vérifier si le marqueur doit être affiché selon le filtre actif
+				const isVisible = currentMode === 'narrative' || activeFilter === 'all' || place.category === activeFilter;
+				if (isVisible) {
+					marker.addTo(map!);
 				}
 			});
 
-			marker.addTo(map);
-			markersById[place.id] = { marker, el: pinEl, place };
-		});
+			// Ajustement initial de la vue
+			if (layer === 'historical') {
+				map.fitBounds(historicalBounds, { padding: [10, 10] });
+			} else {
+				const allGeoCoords = places.map((p) => p.coordinates);
+				map.fitBounds(L.latLngBounds(allGeoCoords), { padding: [35, 35] });
+			}
+
+			// Garantir le bon calcul des dimensions du conteneur après le basculement
+			setTimeout(() => {
+				map?.invalidateSize();
+			}, 50);
+		}
 
 		// Fonction d'actualisation de la fiche lieu
 		function updatePlaceCard(place: PlaceData) {
@@ -1261,9 +1456,12 @@ const initialPlace = goriotPlaces[0];
 		}
 
 		// Sélectionner un lieu
-		function selectPlace(placeId: string, options: { centerMap?: boolean; zoom?: number } = {}) {
+		function selectPlace(
+			placeId: string,
+			options: { centerMap?: boolean; zoom?: number; openPopup?: boolean; animate?: boolean } = {}
+		) {
 			const item = markersById[placeId];
-			if (!item) return;
+			if (!item || !map) return;
 
 			selectedPlaceId = placeId;
 			const { place, marker, el } = item;
@@ -1277,13 +1475,17 @@ const initialPlace = goriotPlaces[0];
 			// Mise à jour de la fiche latérale
 			updatePlaceCard(place);
 
-			// Ouvrir le popup du marqueur
-			marker.openPopup();
+			// Ouvrir le popup du marqueur si explicitement demandé (par défaut true lors d'un clic/interaction)
+			if (options.openPopup !== false) {
+				marker.openPopup();
+			}
 
 			// Recentrage si demandé
 			if (options.centerMap) {
-				const targetZoom = options.zoom !== undefined ? options.zoom : Math.max(map.getZoom(), 0.5);
-				map.setView(marker.getLatLng(), targetZoom, { animate: true });
+				const defaultZoom = activeLayer === 'historical' ? 0.5 : 15;
+				const targetZoom = options.zoom !== undefined ? options.zoom : Math.max(map.getZoom(), defaultZoom);
+				const shouldAnimate = options.animate !== false;
+				map.setView(marker.getLatLng(), targetZoom, { animate: shouldAnimate });
 			}
 
 			// Si en mode narratif, ajuster l'index du stepper
@@ -1296,6 +1498,7 @@ const initialPlace = goriotPlaces[0];
 
 		// Filtrage Mode A
 		function applyFilter(filterId: string) {
+			if (!map) return;
 			activeFilter = filterId;
 			let visibleCount = 0;
 			const visibleLatLngs: L.LatLng[] = [];
@@ -1306,14 +1509,14 @@ const initialPlace = goriotPlaces[0];
 
 				const isVisible = filterId === 'all' || place.category === filterId;
 				if (isVisible) {
-					if (!map.hasLayer(item.marker)) {
-						map.addLayer(item.marker);
+					if (!map!.hasLayer(item.marker)) {
+						map!.addLayer(item.marker);
 					}
 					visibleLatLngs.push(item.marker.getLatLng());
 					visibleCount++;
 				} else {
-					if (map.hasLayer(item.marker)) {
-						map.removeLayer(item.marker);
+					if (map!.hasLayer(item.marker)) {
+						map!.removeLayer(item.marker);
 					}
 				}
 			});
@@ -1343,7 +1546,8 @@ const initialPlace = goriotPlaces[0];
 			}
 
 			if (visibleLatLngs.length > 0) {
-				map.fitBounds(L.latLngBounds(visibleLatLngs), { padding: [40, 40], maxZoom: 0.5 });
+				const maxZ = activeLayer === 'historical' ? 0.5 : 15;
+				map.fitBounds(L.latLngBounds(visibleLatLngs), { padding: [40, 40], maxZoom: maxZ });
 			}
 		}
 
@@ -1370,6 +1574,7 @@ const initialPlace = goriotPlaces[0];
 
 		// Bascule de mode
 		function setMode(mode: 'explore' | 'narrative') {
+			if (!map) return;
 			currentMode = mode;
 
 			const tabExplore = document.getElementById('tab-mode-explore');
@@ -1400,18 +1605,88 @@ const initialPlace = goriotPlaces[0];
 				// En mode narratif, s'assurer que tous les marqueurs sont sur la carte
 				places.forEach((p) => {
 					const item = markersById[p.id];
-					if (item && !map.hasLayer(item.marker)) {
-						map.addLayer(item.marker);
+					if (item && !map!.hasLayer(item.marker)) {
+						map!.addLayer(item.marker);
 					}
 				});
 
 				updateNarrativeStepperUI();
 				const target = places[currentStepIndex];
 				if (target) {
-					selectPlace(target.id, { centerMap: true, zoom: 0.5 });
+					const defaultZoom = activeLayer === 'historical' ? 0.5 : 15;
+					selectPlace(target.id, { centerMap: true, zoom: defaultZoom });
 				}
 			}
 		}
+
+		// Bascule de fond de carte (1821 vs Moderne)
+		function setLayer(layer: 'historical' | 'modern') {
+			if (activeLayer === layer) return;
+			activeLayer = layer;
+
+			const btnHist = document.getElementById('btn-layer-historical');
+			const btnMod = document.getElementById('btn-layer-modern');
+			const creditHist = document.getElementById('credit-historical-map');
+			const creditMod = document.getElementById('credit-modern-map');
+
+			if (layer === 'historical') {
+				btnHist?.classList.add('is-active');
+				btnHist?.setAttribute('aria-checked', 'true');
+				btnHist?.setAttribute('tabindex', '0');
+				btnMod?.classList.remove('is-active');
+				btnMod?.setAttribute('aria-checked', 'false');
+				btnMod?.setAttribute('tabindex', '-1');
+
+				if (creditHist) creditHist.hidden = false;
+				if (creditMod) creditMod.hidden = true;
+			} else {
+				btnMod?.classList.add('is-active');
+				btnMod?.setAttribute('aria-checked', 'true');
+				btnMod?.setAttribute('tabindex', '0');
+				btnHist?.classList.remove('is-active');
+				btnHist?.setAttribute('aria-checked', 'false');
+				btnHist?.setAttribute('tabindex', '-1');
+
+				if (creditMod) creditMod.hidden = false;
+				if (creditHist) creditHist.hidden = true;
+			}
+
+			// Recréer l'instance Leaflet avec le CRS approprié
+			setupMapInstance(layer);
+
+			// Mettre à jour la vue selon le lieu sélectionné ou le filtre
+			if (selectedPlaceId) {
+				const currentItem = markersById[selectedPlaceId];
+				if (currentItem && map?.hasLayer(currentItem.marker)) {
+					selectPlace(selectedPlaceId, { centerMap: true, openPopup: false, animate: false });
+				}
+			}
+		}
+
+		// Initialisation du fond de carte par défaut (1821)
+		setupMapInstance('historical');
+
+		// Événements boutons de fond de carte
+		const btnLayerHist = document.getElementById('btn-layer-historical');
+		const btnLayerMod = document.getElementById('btn-layer-modern');
+
+		btnLayerHist?.addEventListener('click', () => setLayer('historical'));
+		btnLayerMod?.addEventListener('click', () => setLayer('modern'));
+
+		// Gestion de l'accessibilité clavier (Touches fléchées dans le radiogroup)
+		const layerRadiogroup = document.querySelector('.map-layer-switch');
+		layerRadiogroup?.addEventListener('keydown', (e) => {
+			const evt = e as KeyboardEvent;
+			if (evt.key === 'ArrowRight' || evt.key === 'ArrowDown') {
+				evt.preventDefault();
+				setLayer('modern');
+				btnLayerMod?.focus();
+			} else if (evt.key === 'ArrowLeft' || evt.key === 'ArrowUp') {
+				evt.preventDefault();
+				setLayer('historical');
+				btnLayerHist?.focus();
+			}
+		});
 
 		// Événements boutons de mode
 		document.getElementById('tab-mode-explore')?.addEventListener('click', () => setMode('explore'));
@@ -1430,7 +1705,8 @@ const initialPlace = goriotPlaces[0];
 			if (currentStepIndex > 0) {
 				currentStepIndex--;
 				const p = places[currentStepIndex];
-				selectPlace(p.id, { centerMap: true, zoom: 0.5 });
+				const defaultZoom = activeLayer === 'historical' ? 0.5 : 15;
+				selectPlace(p.id, { centerMap: true, zoom: defaultZoom });
 			}
 		});
 
@@ -1438,22 +1714,30 @@ const initialPlace = goriotPlaces[0];
 			if (currentStepIndex < places.length - 1) {
 				currentStepIndex++;
 				const p = places[currentStepIndex];
-				selectPlace(p.id, { centerMap: true, zoom: 0.5 });
+				const defaultZoom = activeLayer === 'historical' ? 0.5 : 15;
+				selectPlace(p.id, { centerMap: true, zoom: defaultZoom });
 			}
 		});
 
 		// Événements boutons utilitaires carte
 		document.getElementById('btn-recenter-places')?.addEventListener('click', () => {
+			if (!map) return;
 			const visibleMarkers = Object.values(markersById)
-				.filter(({ marker }) => map.hasLayer(marker))
+				.filter(({ marker }) => map!.hasLayer(marker))
 				.map(({ marker }) => marker.getLatLng());
 			if (visibleMarkers.length > 0) {
-				map.fitBounds(L.latLngBounds(visibleMarkers), { padding: [40, 40], maxZoom: 0.5 });
+				const maxZ = activeLayer === 'historical' ? 0.5 : 15;
+				map.fitBounds(L.latLngBounds(visibleMarkers), { padding: [40, 40], maxZoom: maxZ });
 			}
 		});
 
 		document.getElementById('btn-reset-paris')?.addEventListener('click', () => {
-			map.fitBounds(mapBounds, { padding: [10, 10] });
+			if (!map) return;
+			if (activeLayer === 'historical') {
+				map.fitBounds(historicalBounds, { padding: [10, 10] });
+			} else {
+				map.setView(modernMapConfig?.defaultCenter || [48.858, 2.348], modernMapConfig?.defaultZoom || 13);
+			}
 		});
 
 		// Événements boutons de sélection depuis l'alternative textuelle
@@ -1461,14 +1745,17 @@ const initialPlace = goriotPlaces[0];
 			btn.addEventListener('click', () => {
 				const placeId = btn.getAttribute('data-select-place-id');
 				if (placeId) {
-					selectPlace(placeId, { centerMap: true, zoom: 0.5 });
+					const defaultZoom = activeLayer === 'historical' ? 0.5 : 15;
+					selectPlace(placeId, { centerMap: true, zoom: defaultZoom });
 					mapContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
 				}
 			});
 		});
 
 		// Sélection initiale
-		selectPlace(initialPlace.id, { centerMap: false });
+		if (places.length > 0) {
+			selectPlace(places[0].id, { centerMap: false, openPopup: false });
+		}
 	}
 
 	// Lancement après chargement du DOM

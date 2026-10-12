@@ -227,7 +227,7 @@ describe.skipIf(!BUILT)('Carte interactive du Père Goriot (/goriot) — E2E & I
 			expect(imgAlt).toContain('N. M. Maire');
 
 			// Vérifier la notice historique et le bloc d'attribution
-			const creditNotice = page.locator('.map-historical-credit');
+			const creditNotice = page.locator('#credit-historical-map');
 			expect(await creditNotice.isVisible()).toBe(true);
 			const creditText = await creditNotice.textContent();
 			expect(creditText).toContain('N. M. Maire, 1821');
@@ -237,4 +237,125 @@ describe.skipIf(!BUILT)('Carte interactive du Père Goriot (/goriot) — E2E & I
 			await page.close();
 		}
 	});
+
+	test('sélecteur de fond de carte : bascule fluide entre 1821 et carte moderne avec préservation d’état et accessibilité clavier', async () => {
+		const page = await openPage();
+		try {
+			const consoleErrors: string[] = [];
+			page.on('console', (msg) => {
+				if (msg.type() === 'error') consoleErrors.push(msg.text());
+			});
+			page.on('pageerror', (err) => consoleErrors.push(err.message));
+
+			const cartoTileResponses: number[] = [];
+			page.on('response', (res) => {
+				if (res.url().includes('cartocdn.com')) {
+					cartoTileResponses.push(res.status());
+				}
+			});
+
+			const btnHist = page.locator('#btn-layer-historical');
+			const btnMod = page.locator('#btn-layer-modern');
+
+			// 1. État par défaut : 1821 actif
+			expect(await btnHist.getAttribute('aria-checked')).toBe('true');
+			expect(await btnHist.getAttribute('tabindex')).toBe('0');
+			expect(await btnMod.getAttribute('aria-checked')).toBe('false');
+			expect(await btnMod.getAttribute('tabindex')).toBe('-1');
+			expect(await page.locator('#credit-historical-map').isVisible()).toBe(true);
+			expect(await page.locator('#credit-modern-map').isVisible()).toBe(false);
+
+			// Vérifier le CRS initial (L.CRS.Simple)
+			const initialIsSimpleCRS = await page.evaluate(() => {
+				const mapEl = document.getElementById('balzac-paris-map');
+				return mapEl?.getAttribute('aria-label')?.includes('1821');
+			});
+			expect(initialIsSimpleCRS).toBe(true);
+
+			// Sélectionner un lieu particulier (ex: L’École de droit)
+			const ecolePin = page.locator('.balzac-pin-wrapper[aria-label*="cole de droit"]');
+			await ecolePin.click();
+			expect(await page.locator('#card-place-title').textContent()).toContain('École de droit');
+
+			// 2. Bascule vers la carte moderne au clavier (Touche ArrowRight)
+			await btnHist.focus();
+			await page.keyboard.press('ArrowRight');
+
+			expect(await btnMod.getAttribute('aria-checked')).toBe('true');
+			expect(await btnMod.getAttribute('tabindex')).toBe('0');
+			expect(await btnHist.getAttribute('aria-checked')).toBe('false');
+			expect(await btnHist.getAttribute('tabindex')).toBe('-1');
+
+			// Vérifier que les tuiles modernes sont montées
+			await page.waitForSelector('.leaflet-tile-pane', { state: 'attached' });
+			expect(await page.locator('#credit-modern-map').isVisible()).toBe(true);
+			expect(await page.locator('#credit-historical-map').isVisible()).toBe(false);
+
+			// Vérifier l'attribution moderne CARTO / OSM
+			const modernCredit = await page.locator('#credit-modern-map').textContent();
+			expect(modernCredit).toContain('CARTO');
+			expect(modernCredit).toContain('OpenStreetMap');
+
+			// Tous les 11 marqueurs doivent rester disponibles et le lieu sélectionné conservé
+			const modernPins = await page.locator('.balzac-pin-wrapper').all();
+			expect(modernPins.length).toBe(goriotPlaces.length);
+			expect(await page.locator('#card-place-title').textContent()).toContain('École de droit');
+
+			// Vérifier le label d'accessibilité contemporain
+			const modernAriaLabel = await page.locator('#balzac-paris-map').getAttribute('aria-label');
+			expect(modernAriaLabel).toContain('contemporaine');
+
+			// 3. Bascules répétées dans les deux sens
+			for (let i = 0; i < 3; i++) {
+				await btnHist.click();
+				await page.waitForTimeout(50);
+				await btnMod.click();
+				await page.waitForTimeout(50);
+			}
+
+			// Toujours exactement 1 conteneur de map valide et 11 marqueurs
+			const pinsAfterLoops = await page.locator('.balzac-pin-wrapper').all();
+			expect(pinsAfterLoops.length).toBe(goriotPlaces.length);
+			expect(await page.locator('#card-place-title').textContent()).toContain('École de droit');
+
+			// 4. Bascule retour finale vers 1821 au clavier (Touche ArrowLeft)
+			await btnMod.focus();
+			await page.keyboard.press('ArrowLeft');
+			expect(await btnHist.getAttribute('aria-checked')).toBe('true');
+			expect(await btnHist.getAttribute('tabindex')).toBe('0');
+			expect(await btnMod.getAttribute('aria-checked')).toBe('false');
+			expect(await btnMod.getAttribute('tabindex')).toBe('-1');
+			expect(await page.locator('#credit-historical-map').isVisible()).toBe(true);
+			expect(await page.locator('#credit-modern-map').isVisible()).toBe(false);
+			expect(await page.locator('#card-place-title').textContent()).toContain('École de droit');
+
+			// Vérifier que le plan historique est remonté
+			await page.waitForSelector('.leaflet-image-layer', { state: 'attached' });
+
+			// Vérifier l'absence d'erreurs consoles JavaScript
+			expect(consoleErrors).toEqual([]);
+		} finally {
+			await page.close();
+		}
+	}, 15_000);
+
+	test('carte moderne : fonctionne parfaitement sur écran mobile 375 px sans débordement', async () => {
+		const page = await openPage(375, 812);
+		try {
+			const btnMod = page.locator('#btn-layer-modern');
+			await btnMod.click();
+			expect(await btnMod.getAttribute('aria-checked')).toBe('true');
+
+			// Vérifier l'absence de débordement horizontal
+			const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+			const innerWidth = await page.evaluate(() => window.innerWidth);
+			expect(scrollWidth).toBeLessThanOrEqual(innerWidth);
+
+			// Tous les marqueurs sont présents et cliquables
+			const pins = await page.locator('.balzac-pin-wrapper').all();
+			expect(pins.length).toBe(goriotPlaces.length);
+		} finally {
+			await page.close();
+		}
+	}, 15_000);
 });
