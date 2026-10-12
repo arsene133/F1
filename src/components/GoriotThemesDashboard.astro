@@ -1,0 +1,1159 @@
+---
+// Composant interactif du Tableau de Bord Thématique du Père Goriot
+// Permet aux lycéens d'explorer les 8 grands thèmes du roman d'Honoré de Balzac,
+// articulés avec les personnages, les lieux, les scènes et les citations vérifiées.
+// Respecte les conventions d'accessibilité (WCAG AAA/AA, aria, navigation clavier, focus visible).
+
+import { goriotPlaces } from '../data/goriot-places';
+import { goriotCharacters, goriotRelationships } from '../data/goriot-relationships';
+import { goriotThemes, type GoriotTheme } from '../data/goriot-themes';
+
+interface Props {
+	id?: string;
+}
+
+const { id = 'goriot-themes-dashboard' } = Astro.props;
+
+// Indexation pour le rendu serveur et les fiches
+const charMap = new Map(goriotCharacters.map((c) => [c.id, c]));
+const placeMap = new Map(goriotPlaces.map((p) => [p.id, p]));
+const relMap = new Map(goriotRelationships.map((r) => [r.id, r]));
+const defaultTheme = goriotThemes[0];
+
+const clientThemesPayload = {
+	themes: goriotThemes,
+	characters: goriotCharacters.map((c) => ({
+		id: c.id,
+		label: c.label,
+		usageName: c.usageName,
+		caption: c.caption,
+		color: c.color,
+	})),
+	places: goriotPlaces.map((p) => ({
+		id: p.id,
+		name: p.name,
+		historicalAddress: p.historicalAddress,
+	})),
+};
+---
+
+<div class="goriot-thematic-dashboard" id={id} data-themes-dashboard>
+	<!-- Introduction pédagogique -->
+	<header class="theme-dashboard-intro">
+		<div class="theme-intro-badge">Grille de lecture critique</div>
+		<h3 class="theme-intro-title">Huit thèmes majeurs pour interpréter le roman</h3>
+		<p class="theme-intro-lead">
+			Chez Balzac, un thème n’est jamais une idée abstraite : il s’incarne dans des corps marqués par l’obsession,
+			des sommes d’argent précisément chiffrées, des salons rivaux et des stations topographiques entre les deux rives de la Seine.
+			Sélectionnez un thème pour analyser sa question centrale, ses scènes fondatrices et ses preuves textuelles vérifiées.
+		</p>
+	</header>
+
+	<!-- Grille de navigation des 8 thèmes (cartes sélectionnables) -->
+	<nav class="theme-cards-grid" aria-label="Sélectionner un thème d’analyse" role="tablist">
+		{
+			goriotThemes.map((theme, index) => {
+				const isSelected = index === 0;
+				return (
+					<button
+						type="button"
+						role="tab"
+						id={`${id}-tab-${theme.id}`}
+						aria-selected={isSelected ? 'true' : 'false'}
+						aria-controls={`${id}-panel`}
+						tabindex={isSelected ? 0 : -1}
+						class:list={['theme-card-btn', { 'is-active': isSelected }]}
+						data-theme-id={theme.id}
+						style={`--theme-accent: ${theme.accentColor};`}
+					>
+						<div class="theme-card-top">
+							<span class="theme-card-badge" style={`background-color: ${theme.accentColor}18; color: ${theme.accentColor}; border-color: ${theme.accentColor}40;`}>
+								{theme.badgeLabel}
+							</span>
+							<span class="theme-card-index" aria-hidden="true">0{index + 1}</span>
+						</div>
+						<strong class="theme-card-title">{theme.title}</strong>
+						<p class="theme-card-tagline">{theme.tagline}</p>
+						<div class="theme-card-footer">
+							<span class="theme-card-indicator">
+								<span class="indicator-dot" aria-hidden="true" style={`background-color: ${theme.accentColor};`} />
+								<span>{theme.scenes.length} scènes · {theme.quotations.length} citations</span>
+							</span>
+							<span class="theme-card-arrow" aria-hidden="true">→</span>
+						</div>
+					</button>
+				);
+			})
+		}
+	</nav>
+
+	<!-- Panneau d'approfondissement du thème actif -->
+	<section
+		class="theme-detail-panel"
+		id={`${id}-panel`}
+		role="tabpanel"
+		aria-labelledby={`${id}-tab-${defaultTheme.id}`}
+		tabindex="0"
+		data-theme-panel
+		style={`--theme-active-color: ${defaultTheme.accentColor};`}
+	>
+		<!-- En-tête du thème affiché -->
+		<header class="theme-panel-header">
+			<div class="theme-header-left">
+				<div class="theme-header-eyebrow-wrap">
+					<span class="theme-header-badge" data-theme-badge>{defaultTheme.badgeLabel}</span>
+					<span class="theme-header-subtitle" data-theme-subtitle>{defaultTheme.subtitle}</span>
+				</div>
+				<h4 class="theme-panel-title" data-theme-title>{defaultTheme.title}</h4>
+			</div>
+		</header>
+
+		<!-- 1. Question centrale & Comprendre le thème -->
+		<div class="theme-core-grid">
+			<div class="theme-core-card core-question-card">
+				<div class="core-card-header">
+					<span class="core-icon" aria-hidden="true">❓</span>
+					<h5>Question centrale pour la dissertation & l’analyse</h5>
+				</div>
+				<blockquote class="central-question-quote" data-theme-question>
+					« {defaultTheme.centralQuestion} »
+				</blockquote>
+			</div>
+
+			<div class="theme-core-card core-explanation-card">
+				<div class="core-card-header">
+					<span class="core-icon" aria-hidden="true">💡</span>
+					<h5>Comprendre le thème (repères pour le lycéen)</h5>
+				</div>
+				<p class="core-explanation-text" data-theme-student-desc>
+					{defaultTheme.studentExplanation}
+				</p>
+				<p class="core-significance-text" data-theme-significance>
+					<strong>Portée littéraire dans <em>La Comédie humaine</em> :</strong>
+					<span> {defaultTheme.literarySignificance}</span>
+				</p>
+			</div>
+		</div>
+
+		<!-- 2. Observations textuelles directes -->
+		<div class="theme-section-block">
+			<h5 class="section-block-title">
+				<span class="title-bullet" aria-hidden="true">🔍</span>
+				<span>Observations vérifiées dans le roman</span>
+			</h5>
+			<ul class="theme-observations-list" data-theme-observations>
+				{defaultTheme.keyObservations.map((obs) => (
+					<li>{obs}</li>
+				))}
+			</ul>
+		</div>
+
+		<!-- 3. Réseau d'ancrage : Personnages, Lieux parisiens et Relations -->
+		<div class="theme-anchors-grid">
+			<!-- Personnages clés -->
+			<div class="theme-anchor-column">
+				<h5 class="anchor-col-title">
+					<span class="anchor-icon" aria-hidden="true">👥</span>
+					<span>Personnages majeurs impliqués</span>
+				</h5>
+				<div class="theme-character-chips" data-theme-characters>
+					{defaultTheme.characterIds.map((cid) => {
+						const char = charMap.get(cid);
+						if (!char) return null;
+						return (
+							<a
+								href={`#section-reseau-personnages`}
+								class="theme-chip character-chip"
+								data-char-link={cid}
+								title={`Voir ${char.label} dans le réseau relationnel`}
+							>
+								<span class="chip-color-bullet" style={`background-color: ${char.color};`} />
+								<span class="chip-label"><strong>{char.usageName}</strong> ({char.caption})</span>
+							</a>
+						);
+					})}
+				</div>
+			</div>
+
+			<!-- Lieux parisiens -->
+			<div class="theme-anchor-column">
+				<h5 class="anchor-col-title">
+					<span class="anchor-icon" aria-hidden="true">📍</span>
+					<span>Lieux de Paris où le thème s'exprime</span>
+				</h5>
+				<div class="theme-place-chips" data-theme-places>
+					{defaultTheme.locationIds.map((lid) => {
+						const place = placeMap.get(lid);
+						if (!place) return null;
+						return (
+							<a
+								href={`#section-carte-lieux`}
+								class="theme-chip place-chip"
+								data-place-link={lid}
+								title={`Situer ${place.name} sur la carte de Paris`}
+							>
+								<span class="chip-pin" aria-hidden="true">🏛️</span>
+								<span class="chip-label"><strong>{place.name}</strong> ({place.historicalAddress})</span>
+							</a>
+						);
+					})}
+				</div>
+			</div>
+		</div>
+
+		<!-- 4. Scènes clés du roman -->
+		<div class="theme-section-block">
+			<h5 class="section-block-title">
+				<span class="title-bullet" aria-hidden="true">🎬</span>
+				<span>Scènes narratives clés illustrant le thème</span>
+			</h5>
+			<div class="theme-scenes-grid" data-theme-scenes>
+				{defaultTheme.scenes.map((scene) => (
+					<article class="theme-scene-card">
+						<header class="scene-card-header">
+							<span class="scene-stage-tag">{scene.stageLabel}</span>
+							{scene.locationName && (
+								<span class="scene-location-tag">📍 {scene.locationName}</span>
+							)}
+						</header>
+						<h6 class="scene-card-title">{scene.title}</h6>
+						<p class="scene-card-summary">{scene.summary}</p>
+						<p class="scene-card-meaning">
+							<strong>Enjeu littéraire :</strong> {scene.literarySignificance}
+						</p>
+					</article>
+				))}
+			</div>
+		</div>
+
+		<!-- 5. Citations textuelles vérifiées avec explication -->
+		<div class="theme-section-block">
+			<h5 class="section-block-title">
+				<span class="title-bullet" aria-hidden="true">📜</span>
+				<span>Citations textuelles vérifiées</span>
+			</h5>
+			<div class="theme-quotes-grid" data-theme-quotes>
+				{defaultTheme.quotations.map((q) => (
+					<blockquote class="theme-quote-card">
+						<p class="quote-text">« {q.text} »</p>
+						<footer class="quote-footer">
+							<cite class="quote-cite">
+								{q.speaker ? <strong>{q.speaker}</strong> : null}
+								{q.speaker ? ' · ' : ''}
+								<span>{q.reference}</span>
+							</cite>
+							<p class="quote-explanation">
+								<strong>Analyse :</strong> {q.explanation}
+							</p>
+						</footer>
+					</blockquote>
+				))}
+			</div>
+		</div>
+
+		<!-- 6. Renvois vers les thèmes associés & Notes philologiques -->
+		<footer class="theme-panel-footer">
+			<div class="related-themes-box">
+				<span class="related-label">Thèmes étroitement liés :</span>
+				<div class="related-chips" data-theme-related>
+					{defaultTheme.relatedThemeIds.map((relThemeId) => {
+						const relT = goriotThemes.find((t) => t.id === relThemeId);
+						if (!relT) return null;
+						return (
+							<button
+								type="button"
+								class="related-theme-btn"
+								data-goto-theme={relT.id}
+								style={`--rel-color: ${relT.accentColor};`}
+							>
+								<span>{relT.title}</span>
+								<span aria-hidden="true">→</span>
+							</button>
+						);
+					})}
+				</div>
+			</div>
+
+			<p class="theme-verification-note" data-theme-verification>
+				<span class="note-icon" aria-hidden="true">ℹ️</span>
+				<span><strong>Source et méthode :</strong> {defaultTheme.verificationNotes}</span>
+			</p>
+		</footer>
+	</section>
+
+	<!-- Script de données pour le client JS -->
+	<script type="application/json" data-themes-json set:html={JSON.stringify(clientThemesPayload)} />
+</div>
+
+<script>
+	interface ThemePayload {
+		id: string;
+		title: string;
+		subtitle: string;
+		tagline: string;
+		centralQuestion: string;
+		studentExplanation: string;
+		literarySignificance: string;
+		keyObservations: string[];
+		characterIds: string[];
+		locationIds: string[];
+		relationshipIds?: string[];
+		scenes: Array<{
+			title: string;
+			stageId: string;
+			stageLabel: string;
+			locationId?: string;
+			locationName?: string;
+			characterIds: string[];
+			summary: string;
+			literarySignificance: string;
+		}>;
+		quotations: Array<{
+			text: string;
+			speaker?: string;
+			reference: string;
+			explanation: string;
+		}>;
+		relatedThemeIds: string[];
+		verificationNotes: string;
+		accentColor: string;
+		badgeLabel: string;
+	}
+
+	interface CharacterPayload {
+		id: string;
+		label: string;
+		usageName: string;
+		caption: string;
+		color: string;
+	}
+
+	interface PlacePayload {
+		id: string;
+		name: string;
+		historicalAddress: string;
+	}
+
+	interface DashboardData {
+		themes: ThemePayload[];
+		characters: CharacterPayload[];
+		places: PlacePayload[];
+	}
+
+	function initThematicDashboard(dashboardEl: HTMLElement) {
+		const rawJson = dashboardEl.querySelector('[data-themes-json]')?.textContent;
+		if (!rawJson) return;
+
+		let data: DashboardData;
+		try {
+			data = JSON.parse(rawJson);
+		} catch {
+			return;
+		}
+
+		const themeMap = new Map(data.themes.map((t) => [t.id, t]));
+		const charMap = new Map(data.characters.map((c) => [c.id, c]));
+		const placeMap = new Map(data.places.map((p) => [p.id, p]));
+
+		const tabButtons = [...dashboardEl.querySelectorAll<HTMLButtonElement>('[data-theme-id]')];
+		const panelEl = dashboardEl.querySelector<HTMLElement>('[data-theme-panel]');
+		if (!panelEl) return;
+
+		// Éléments du panneau
+		const badgeEl = panelEl.querySelector('[data-theme-badge]')!;
+		const subtitleEl = panelEl.querySelector('[data-theme-subtitle]')!;
+		const titleEl = panelEl.querySelector('[data-theme-title]')!;
+		const questionEl = panelEl.querySelector('[data-theme-question]')!;
+		const studentDescEl = panelEl.querySelector('[data-theme-student-desc]')!;
+		const significanceEl = panelEl.querySelector('[data-theme-significance]')!;
+		const observationsEl = panelEl.querySelector('[data-theme-observations]')!;
+		const charactersEl = panelEl.querySelector('[data-theme-characters]')!;
+		const placesEl = panelEl.querySelector('[data-theme-places]')!;
+		const scenesEl = panelEl.querySelector('[data-theme-scenes]')!;
+		const quotesEl = panelEl.querySelector('[data-theme-quotes]')!;
+		const relatedEl = panelEl.querySelector('[data-theme-related]')!;
+		const verificationEl = panelEl.querySelector('[data-theme-verification]')!;
+
+		function selectTheme(themeId: string, focusPanel = false) {
+			const theme = themeMap.get(themeId);
+			if (!theme) return;
+
+			// Mettre à jour les boutons d'onglets
+			tabButtons.forEach((btn) => {
+				const isCurrent = btn.dataset.themeId === themeId;
+				btn.classList.toggle('is-active', isCurrent);
+				btn.setAttribute('aria-selected', isCurrent ? 'true' : 'false');
+				btn.setAttribute('tabindex', isCurrent ? '0' : '-1');
+			});
+
+			// Couleurs d'accent
+			panelEl!.style.setProperty('--theme-active-color', theme.accentColor);
+			panelEl!.setAttribute('aria-labelledby', `${dashboardEl.id}-tab-${theme.id}`);
+
+			// Textes d'en-tête
+			badgeEl.textContent = theme.badgeLabel;
+			subtitleEl.textContent = theme.subtitle;
+			titleEl.textContent = theme.title;
+			questionEl.textContent = `« ${theme.centralQuestion} »`;
+			studentDescEl.textContent = theme.studentExplanation;
+
+			significanceEl.innerHTML = `<strong>Portée littéraire dans <em>La Comédie humaine</em> :</strong> <span>${theme.literarySignificance}</span>`;
+
+			// Observations
+			observationsEl.innerHTML = '';
+			theme.keyObservations.forEach((obs) => {
+				const li = document.createElement('li');
+				li.textContent = obs;
+				observationsEl.appendChild(li);
+			});
+
+			// Personnages
+			charactersEl.innerHTML = '';
+			theme.characterIds.forEach((cid) => {
+				const char = charMap.get(cid);
+				if (!char) return;
+				const a = document.createElement('a');
+				a.href = '#section-reseau-personnages';
+				a.className = 'theme-chip character-chip';
+				a.title = `Voir ${char.label} dans le réseau relationnel`;
+				a.innerHTML = `<span class="chip-color-bullet" style="background-color: ${char.color};"></span><span class="chip-label"><strong>${char.usageName}</strong> (${char.caption})</span>`;
+				charactersEl.appendChild(a);
+			});
+
+			// Lieux
+			placesEl.innerHTML = '';
+			theme.locationIds.forEach((lid) => {
+				const place = placeMap.get(lid);
+				if (!place) return;
+				const a = document.createElement('a');
+				a.href = '#section-carte-lieux';
+				a.className = 'theme-chip place-chip';
+				a.title = `Situer ${place.name} sur la carte de Paris`;
+				a.innerHTML = `<span class="chip-pin" aria-hidden="true">🏛️</span><span class="chip-label"><strong>${place.name}</strong> (${place.historicalAddress})</span>`;
+				placesEl.appendChild(a);
+			});
+
+			// Scènes
+			scenesEl.innerHTML = '';
+			theme.scenes.forEach((scene) => {
+				const art = document.createElement('article');
+				art.className = 'theme-scene-card';
+				art.innerHTML = `
+					<header class="scene-card-header">
+						<span class="scene-stage-tag">${scene.stageLabel}</span>
+						${scene.locationName ? `<span class="scene-location-tag">📍 ${scene.locationName}</span>` : ''}
+					</header>
+					<h6 class="scene-card-title">${scene.title}</h6>
+					<p class="scene-card-summary">${scene.summary}</p>
+					<p class="scene-card-meaning"><strong>Enjeu littéraire :</strong> ${scene.literarySignificance}</p>
+				`;
+				scenesEl.appendChild(art);
+			});
+
+			// Citations
+			quotesEl.innerHTML = '';
+			theme.quotations.forEach((q) => {
+				const bq = document.createElement('blockquote');
+				bq.className = 'theme-quote-card';
+				bq.innerHTML = `
+					<p class="quote-text">« ${q.text} »</p>
+					<footer class="quote-footer">
+						<cite class="quote-cite">
+							${q.speaker ? `<strong>${q.speaker}</strong> · ` : ''}
+							<span>${q.reference}</span>
+						</cite>
+						<p class="quote-explanation"><strong>Analyse :</strong> ${q.explanation}</p>
+					</footer>
+				`;
+				quotesEl.appendChild(bq);
+			});
+
+			// Thèmes associés
+			relatedEl.innerHTML = '';
+			theme.relatedThemeIds.forEach((relId) => {
+				const relT = themeMap.get(relId);
+				if (!relT) return;
+				const btn = document.createElement('button');
+				btn.type = 'button';
+				btn.className = 'related-theme-btn';
+				btn.dataset.gotoTheme = relT.id;
+				btn.style.setProperty('--rel-color', relT.accentColor);
+				btn.innerHTML = `<span>${relT.title}</span><span aria-hidden="true">→</span>`;
+				btn.addEventListener('click', () => {
+					selectTheme(relT.id, true);
+				});
+				relatedEl.appendChild(btn);
+			});
+
+			// Notes de vérification
+			verificationEl.innerHTML = `<span class="note-icon" aria-hidden="true">ℹ️</span><span><strong>Source et méthode :</strong> ${theme.verificationNotes}</span>`;
+
+			if (focusPanel) {
+				panelEl.focus({ preventScroll: true });
+				panelEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+			}
+		}
+
+		// Clic sur les onglets
+		tabButtons.forEach((btn, idx) => {
+			btn.addEventListener('click', () => {
+				selectTheme(btn.dataset.themeId!);
+			});
+
+			// Navigation fléchée au clavier (WAI-ARIA Tabs pattern)
+			btn.addEventListener('keydown', (e) => {
+				let targetIdx = -1;
+				if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+					targetIdx = (idx + 1) % tabButtons.length;
+				} else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+					targetIdx = (idx - 1 + tabButtons.length) % tabButtons.length;
+				} else if (e.key === 'Home') {
+					targetIdx = 0;
+				} else if (e.key === 'End') {
+					targetIdx = tabButtons.length - 1;
+				}
+
+				if (targetIdx !== -1) {
+					e.preventDefault();
+					const nextBtn = tabButtons[targetIdx];
+					nextBtn.focus();
+					selectTheme(nextBtn.dataset.themeId!);
+				}
+			});
+		});
+
+		// Attacher les clics sur les boutons de renvois initiaux
+		dashboardEl.querySelectorAll<HTMLButtonElement>('[data-goto-theme]').forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const targetThemeId = btn.dataset.gotoTheme!;
+				selectTheme(targetThemeId, true);
+			});
+		});
+	}
+
+	// Initialisation sur DOMContentLoaded ou direct si déjà chargé
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', () => {
+			document.querySelectorAll<HTMLElement>('[data-themes-dashboard]').forEach(initThematicDashboard);
+		});
+	} else {
+		document.querySelectorAll<HTMLElement>('[data-themes-dashboard]').forEach(initThematicDashboard);
+	}
+</script>
+
+<style>
+	/* ==========================================================================
+	   Tableau de bord thématique du Père Goriot — Styles éditoriaux & responsive
+	   ========================================================================== */
+	.goriot-thematic-dashboard {
+		margin: 2.5rem 0 3.5rem;
+		background: #ffffff;
+		border: 1px solid var(--map-border);
+		border-radius: 12px;
+		padding: 2rem 1.75rem;
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+	}
+
+	/* En-tête d'introduction */
+	.theme-dashboard-intro {
+		max-width: 840px;
+		margin: 0 auto 2rem;
+		text-align: center;
+	}
+
+	.theme-intro-badge {
+		display: inline-block;
+		font-size: 0.76rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.12em;
+		color: #8b5a2b;
+		background: rgba(139, 90, 43, 0.1);
+		padding: 0.25rem 0.75rem;
+		border-radius: 999px;
+		margin-bottom: 0.5rem;
+	}
+
+	.theme-intro-title {
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.65rem;
+		font-weight: normal;
+		color: var(--map-ink);
+		margin: 0 0 0.65rem;
+	}
+
+	.theme-intro-lead {
+		font-size: 0.98rem;
+		line-height: 1.6;
+		color: var(--map-ink-soft);
+		margin: 0;
+	}
+
+	/* Grille de sélection des 8 cartes thématiques */
+	.theme-cards-grid {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 0.85rem;
+		margin-bottom: 2rem;
+	}
+
+	@media (max-width: 900px) {
+		.theme-cards-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 520px) {
+		.theme-cards-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.theme-card-btn {
+		display: flex;
+		flex-direction: column;
+		text-align: left;
+		background: #ffffff;
+		border: 1px solid var(--map-border);
+		border-radius: 10px;
+		padding: 1rem 0.95rem;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+		position: relative;
+	}
+
+	.theme-card-btn:hover {
+		border-color: var(--theme-accent);
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+	}
+
+	.theme-card-btn:focus-visible {
+		outline: 3px solid var(--theme-accent);
+		outline-offset: 2px;
+	}
+
+	.theme-card-btn.is-active {
+		border-color: var(--theme-accent);
+		border-width: 2px;
+		background: #fdfdfd;
+		box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+	}
+
+	.theme-card-btn.is-active::after {
+		content: '';
+		position: absolute;
+		bottom: -10px;
+		left: 50%;
+		transform: translateX(-50%);
+		border-width: 8px 8px 0 8px;
+		border-style: solid;
+		border-color: var(--theme-accent) transparent transparent transparent;
+	}
+
+	.theme-card-top {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 0.6rem;
+	}
+
+	.theme-card-badge {
+		font-size: 0.68rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		padding: 0.15rem 0.5rem;
+		border-radius: 4px;
+		border: 1px solid transparent;
+	}
+
+	.theme-card-index {
+		font-size: 0.75rem;
+		font-weight: 700;
+		color: var(--map-muted);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.theme-card-title {
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.05rem;
+		color: var(--map-ink);
+		line-height: 1.3;
+		margin-bottom: 0.4rem;
+	}
+
+	.theme-card-tagline {
+		font-size: 0.82rem;
+		line-height: 1.45;
+		color: var(--map-ink-soft);
+		margin: 0 0 0.8rem;
+		flex-grow: 1;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.theme-card-footer {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding-top: 0.6rem;
+		border-top: 1px solid var(--map-border-soft);
+		font-size: 0.76rem;
+		color: var(--map-muted);
+	}
+
+	.theme-card-indicator {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+	}
+
+	.indicator-dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		display: inline-block;
+	}
+
+	.theme-card-arrow {
+		font-weight: 700;
+		transition: transform 0.15s ease;
+	}
+
+	.theme-card-btn:hover .theme-card-arrow {
+		transform: translateX(3px);
+	}
+
+	/* ==========================================================================
+	   Panneau d'approfondissement du thème actif
+	   ========================================================================== */
+	.theme-detail-panel {
+		background: #ffffff;
+		border: 1px solid var(--map-border);
+		border-top: 4px solid var(--theme-active-color);
+		border-radius: 10px;
+		padding: 2rem;
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+		scroll-margin-top: 2rem;
+	}
+
+	.theme-detail-panel:focus-visible {
+		outline: 2px solid var(--theme-active-color);
+		outline-offset: 4px;
+	}
+
+	/* En-tête du panneau */
+	.theme-panel-header {
+		margin-bottom: 1.75rem;
+		padding-bottom: 1.25rem;
+		border-bottom: 1px solid var(--map-border-soft);
+	}
+
+	.theme-header-eyebrow-wrap {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.65rem;
+		margin-bottom: 0.4rem;
+	}
+
+	.theme-header-badge {
+		font-size: 0.74rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		padding: 0.2rem 0.65rem;
+		border-radius: 4px;
+		background: var(--map-surface);
+		border: 1px solid var(--theme-active-color);
+		color: var(--theme-active-color);
+	}
+
+	.theme-header-subtitle {
+		font-size: 0.88rem;
+		font-weight: 600;
+		color: var(--map-muted);
+	}
+
+	.theme-panel-title {
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.75rem;
+		font-weight: normal;
+		color: var(--map-ink);
+		margin: 0;
+	}
+
+	/* Grille Question centrale & Comprendre le thème */
+	.theme-core-grid {
+		display: grid;
+		grid-template-columns: 1fr 1.3fr;
+		gap: 1.25rem;
+		margin-bottom: 2rem;
+	}
+
+	@media (max-width: 800px) {
+		.theme-core-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.theme-core-card {
+		background: #faf8f5;
+		border: 1px solid var(--map-border-soft);
+		border-radius: 8px;
+		padding: 1.25rem;
+	}
+
+	.core-card-header {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-bottom: 0.85rem;
+	}
+
+	.core-card-header h5 {
+		font-size: 0.82rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--map-ink);
+		margin: 0;
+	}
+
+	.central-question-quote {
+		margin: 0;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.12rem;
+		line-height: 1.5;
+		color: var(--map-ink);
+		font-style: italic;
+		border-left: 3px solid var(--theme-active-color);
+		padding-left: 1rem;
+	}
+
+	.core-explanation-text {
+		font-size: 0.94rem;
+		line-height: 1.6;
+		color: var(--map-ink);
+		margin: 0 0 0.85rem;
+	}
+
+	.core-significance-text {
+		font-size: 0.88rem;
+		line-height: 1.55;
+		color: var(--map-ink-soft);
+		margin: 0;
+		padding-top: 0.65rem;
+		border-top: 1px dashed var(--map-border);
+	}
+
+	/* Blocs de sections */
+	.theme-section-block {
+		margin-bottom: 2rem;
+	}
+
+	.section-block-title {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.15rem;
+		font-weight: normal;
+		color: var(--map-ink);
+		margin: 0 0 0.95rem;
+		padding-bottom: 0.4rem;
+		border-bottom: 1px solid var(--map-border-soft);
+	}
+
+	/* Observations */
+	.theme-observations-list {
+		margin: 0;
+		padding-left: 1.4rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.45rem;
+	}
+
+	.theme-observations-list li {
+		font-size: 0.92rem;
+		line-height: 1.55;
+		color: var(--map-ink-soft);
+	}
+
+	/* Ancrages : Personnages et Lieux */
+	.theme-anchors-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1.25rem;
+		margin-bottom: 2rem;
+		background: #fdfcf9;
+		border: 1px solid var(--map-border-soft);
+		border-radius: 8px;
+		padding: 1.25rem;
+	}
+
+	@media (max-width: 768px) {
+		.theme-anchors-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.anchor-col-title {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		font-size: 0.85rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--map-ink);
+		margin: 0 0 0.75rem;
+	}
+
+	.theme-character-chips,
+	.theme-place-chips {
+		display: flex;
+		flex-direction: column;
+		gap: 0.45rem;
+	}
+
+	.theme-chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.55rem;
+		padding: 0.5rem 0.75rem;
+		border-radius: 6px;
+		border: 1px solid var(--map-border-soft);
+		background: #ffffff;
+		color: var(--map-ink);
+		text-decoration: none;
+		font-size: 0.86rem;
+		line-height: 1.35;
+		transition: all 0.15s ease;
+	}
+
+	.theme-chip:hover {
+		border-color: var(--theme-active-color);
+		background: #faf8f5;
+		transform: translateX(2px);
+	}
+
+	.theme-chip:focus-visible {
+		outline: 2px solid var(--theme-active-color);
+	}
+
+	.chip-color-bullet {
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		flex-shrink: 0;
+	}
+
+	.chip-pin {
+		font-size: 0.95rem;
+		flex-shrink: 0;
+	}
+
+	.chip-label {
+		flex-grow: 1;
+	}
+
+	/* Scènes narratives */
+	.theme-scenes-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+		gap: 1rem;
+	}
+
+	.theme-scene-card {
+		background: #ffffff;
+		border: 1px solid var(--map-border-soft);
+		border-left: 3px solid var(--theme-active-color);
+		border-radius: 6px;
+		padding: 1.15rem;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+	}
+
+	.scene-card-header {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.45rem;
+		margin-bottom: 0.55rem;
+	}
+
+	.scene-stage-tag {
+		font-size: 0.7rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		background: #ede9fe;
+		color: #5b21b6;
+		padding: 0.15rem 0.45rem;
+		border-radius: 4px;
+	}
+
+	.scene-location-tag {
+		font-size: 0.74rem;
+		color: var(--map-muted);
+	}
+
+	.scene-card-title {
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.02rem;
+		color: var(--map-ink);
+		margin: 0 0 0.45rem;
+	}
+
+	.scene-card-summary {
+		font-size: 0.88rem;
+		line-height: 1.5;
+		color: var(--map-ink-soft);
+		margin: 0 0 0.65rem;
+	}
+
+	.scene-card-meaning {
+		font-size: 0.82rem;
+		line-height: 1.45;
+		color: var(--map-ink-soft);
+		background: #faf8f5;
+		padding: 0.5rem 0.65rem;
+		border-radius: 4px;
+		margin: 0;
+	}
+
+	/* Citations */
+	.theme-quotes-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+		gap: 1rem;
+	}
+
+	@media (max-width: 600px) {
+		.theme-quotes-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.theme-quote-card {
+		margin: 0;
+		background: #faf8f5;
+		border: 1px solid var(--map-border-soft);
+		border-left: 3px solid var(--theme-active-color);
+		border-radius: 6px;
+		padding: 1.15rem;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+	}
+
+	.quote-text {
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 0.98rem;
+		line-height: 1.55;
+		color: var(--map-ink);
+		font-style: italic;
+		margin: 0 0 0.85rem;
+	}
+
+	.quote-footer {
+		display: flex;
+		flex-direction: column;
+		gap: 0.45rem;
+		padding-top: 0.65rem;
+		border-top: 1px dashed var(--map-border);
+	}
+
+	.quote-cite {
+		font-size: 0.8rem;
+		font-style: normal;
+		color: var(--map-muted);
+	}
+
+	.quote-cite strong {
+		color: var(--map-ink);
+	}
+
+	.quote-explanation {
+		font-size: 0.82rem;
+		line-height: 1.45;
+		color: var(--map-ink-soft);
+		margin: 0;
+	}
+
+	/* Pied de panneau : renvois et méthode */
+	.theme-panel-footer {
+		margin-top: 2rem;
+		padding-top: 1.25rem;
+		border-top: 1px solid var(--map-border-soft);
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.related-themes-box {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.65rem;
+	}
+
+	.related-label {
+		font-size: 0.82rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--map-ink);
+	}
+
+	.related-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.related-theme-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.35rem 0.75rem;
+		border-radius: 6px;
+		border: 1px solid var(--map-border);
+		background: #ffffff;
+		color: var(--map-ink);
+		font-size: 0.82rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition: all 0.15s ease;
+	}
+
+	.related-theme-btn:hover {
+		border-color: var(--rel-color);
+		color: var(--rel-color);
+		background: #faf8f5;
+		transform: translateY(-1px);
+	}
+
+	.related-theme-btn:focus-visible {
+		outline: 2px solid var(--rel-color);
+	}
+
+	.theme-verification-note {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.5rem;
+		font-size: 0.8rem;
+		line-height: 1.45;
+		color: var(--map-muted);
+		margin: 0;
+	}
+
+	.note-icon {
+		flex-shrink: 0;
+		font-size: 0.9rem;
+	}
+</style>

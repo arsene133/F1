@@ -5,12 +5,13 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import GoriotMap from '../components/GoriotMap.astro';
 import GoriotRelationshipsMap from '../components/GoriotRelationshipsMap.astro';
+import GoriotThemesDashboard from '../components/GoriotThemesDashboard.astro';
 import Header from '../components/Header.astro';
 import { goriotCategories, goriotPlaces } from '../data/goriot-places';
 
-const pageTitle = 'Le Père Goriot d’Honoré de Balzac — Lieux parisiens et réseau des personnages';
+const pageTitle = 'Le Père Goriot d’Honoré de Balzac — Lieux, personnages et thèmes du roman';
 const pageDescription =
-	'Explorez Le Père Goriot (1835) : la carte géographique des lieux parisiens et la carte interactive des relations entre personnages (Rastignac, Goriot, Vautrin, Restaud, Nucingen). Topographie sociale, liens familiaux et financiers.';
+	'Explorez Le Père Goriot (1835) : le réseau relationnel des personnages, la carte géographique des lieux de Paris et le tableau de bord thématique interactif (paternité, argent, ambition, corruption, solitude).';
 ---
 
 <!doctype html>
@@ -32,9 +33,9 @@ const pageDescription =
 				<!-- En-tête éditorial -->
 				<header class="map-intro">
 					<p class="intro-eyebrow">Honoré de Balzac · 1835 · La Comédie humaine</p>
-					<h1 id="page-title"><cite>Le Père Goriot</cite> — Lieux et relations des personnages</h1>
+					<h1 id="page-title"><cite>Le Père Goriot</cite> — Lieux, relations et thèmes</h1>
 					<p class="intro-desc">
-						<strong>Topographie parisienne, ascension d’Eugène de Rastignac et réseau des passions</strong>
+						<strong>Topographie parisienne, ascension d’Eugène de Rastignac et grille d’analyse critique</strong>
 					</p>
 					<p class="intro-context">
 						Situé à Paris à la fin de l’année 1819 sous la Restauration, <em>Le Père Goriot</em> déploie
@@ -45,11 +46,11 @@ const pageDescription =
 						chaque franchissement de la Seine traduit une conquête ou une déchéance morale.
 					</p>
 					<p class="intro-instructions">
-						Naviguez entre les deux visualisations complémentaires : la carte géographique des lieux de Paris et le réseau interactif des relations humaines et financières.
+						Naviguez entre les trois volets complémentaires : le réseau des personnages, la carte topographique des lieux et le tableau de bord des thèmes littéraires.
 					</p>
 
-					<!-- Navigation rapide entre les deux visualisations -->
-					<nav class="goriot-visualizations-nav" aria-label="Choisir la visualisation">
+					<!-- Navigation rapide entre les trois sections -->
+					<nav class="goriot-visualizations-nav" aria-label="Choisir la vue ou l’outil d’analyse">
 						<a href="#section-reseau-personnages" class="viz-nav-btn viz-nav-highlight">
 							<span class="viz-nav-icon" aria-hidden="true">👥</span>
 							<span>1. Réseau des personnages & intrigues</span>
@@ -57,6 +58,10 @@ const pageDescription =
 						<a href="#section-carte-lieux" class="viz-nav-btn">
 							<span class="viz-nav-icon" aria-hidden="true">🗺️</span>
 							<span>2. Carte géographique des lieux de Paris</span>
+						</a>
+						<a href="#section-themes-roman" class="viz-nav-btn viz-nav-thematic">
+							<span class="viz-nav-icon" aria-hidden="true">💡</span>
+							<span>3. Tableau de bord thématique</span>
 						</a>
 					</nav>
 				</header>
@@ -140,6 +145,19 @@ const pageDescription =
 
 					<!-- Composant interactif principal de la carte géographique -->
 					<GoriotMap />
+				</section>
+
+				<!-- Section 3 : Tableau de bord thématique du roman -->
+				<section class="goriot-section" id="section-themes-roman" aria-labelledby="themes-dashboard-title">
+					<header class="section-editorial-header">
+						<p class="section-tag">Analyse littéraire & baccalauréat</p>
+						<h2 id="themes-dashboard-title" class="section-title">Tableau de bord thématique du roman</h2>
+						<p class="section-lead">
+							Passer de l’observation des faits à l’interprétation littéraire : questions directrices pour la dissertation, repères pour la classe de seconde, scènes fondatrices et citations vérifiées.
+						</p>
+					</header>
+
+					<GoriotThemesDashboard id="goriot-themes" />
 				</section>
 
 				<!-- Synthèse pédagogique : tableau comparatif des lieux et des contrastes -->
@@ -249,6 +267,12 @@ const pageDescription =
 		border-color: #8b5a2b;
 		background: #fdfaf6;
 		color: #8b5a2b;
+	}
+
+	.viz-nav-thematic {
+		border-color: #1e4b88;
+		background: #f8fafc;
+		color: #1e4b88;
 	}
 
 	.viz-nav-icon {

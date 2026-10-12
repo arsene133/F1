@@ -58,11 +58,12 @@ describe.skipIf(!BUILT)('Réseau interactif des relations du Père Goriot (/gori
 			expect(await relSection.count()).toBe(1);
 			expect(await geoSection.count()).toBe(1);
 
-			// Liens d'ancrage dans l'en-tête
+			// Liens d'ancrage dans l'en-tête (réseau des personnages, lieux de Paris et thèmes)
 			const navLinks = page.locator('.goriot-visualizations-nav a');
-			expect(await navLinks.count()).toBe(2);
-			expect(await navLinks.first().getAttribute('href')).toBe('#section-reseau-personnages');
-			expect(await navLinks.last().getAttribute('href')).toBe('#section-carte-lieux');
+			expect(await navLinks.count()).toBeGreaterThanOrEqual(2);
+			const hrefs = await navLinks.evaluateAll((links) => links.map((a) => a.getAttribute('href')));
+			expect(hrefs).toContain('#section-reseau-personnages');
+			expect(hrefs).toContain('#section-carte-lieux');
 
 			// La carte géographique Leaflet reste parfaitement fonctionnelle
 			expect(await page.locator('#balzac-paris-map').isVisible()).toBe(true);
