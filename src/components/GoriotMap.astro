@@ -237,11 +237,11 @@ const initialPlace = goriotPlaces[0];
 				hidden
 			>
 				<p class="historical-credit-caption">
-					<strong>Repère contemporain :</strong> Voirie et tissu urbain actuels de Paris. Les marqueurs indiquent les adresses contemporaines correspondantes pour apprécier l'évolution des quartiers depuis la Restauration.
+					<strong>Repère contemporain :</strong> Plan détaillé des rues de Paris (rues, boulevards, avenues, places et espaces publics). Les marqueurs indiquent les adresses contemporaines correspondantes pour apprécier l'évolution des quartiers depuis la Restauration.
 				</p>
 				<p class="historical-credit-source">
 					<span class="credit-icon" aria-hidden="true">🌐</span>
-					<span><strong>Source :</strong> Tuiles CARTO Positron &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a> — Données &copy; contributeurs <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>.</span>
+					<span><strong>Source :</strong> Plan des rues CARTO Voyager &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a> — Données &copy; contributeurs <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>.</span>
 				</p>
 			</div>
 
@@ -1339,7 +1339,7 @@ const initialPlace = goriotPlaces[0];
 				});
 
 				modernTileLayer = L.tileLayer(
-					modernMapConfig?.tileUrl || 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key=cb1_4hbo_1_0764a6788a577c5a3bff641e',
+					modernMapConfig?.tileUrl || 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=cb1_4hbo_1_0764a6788a577c5a3bff641e',
 					{
 						attribution:
 							modernMapConfig?.attribution ||

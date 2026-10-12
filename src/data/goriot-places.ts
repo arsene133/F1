@@ -61,8 +61,8 @@ export const HISTORICAL_MAP_CONFIG = {
 };
 
 export const MODERN_MAP_CONFIG = {
-	title: 'Paris aujourd’hui (Plan moderne)',
-	tileUrl: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key=cb1_4hbo_1_0764a6788a577c5a3bff641e',
+	title: 'Paris aujourd’hui (Plan des rues contemporain)',
+	tileUrl: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=cb1_4hbo_1_0764a6788a577c5a3bff641e',
 	subdomains: 'abcd',
 	maxZoom: 19,
 	minZoom: 11,
@@ -70,7 +70,7 @@ export const MODERN_MAP_CONFIG = {
 	defaultZoom: 13,
 	attribution:
 		'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>',
-	altText: 'Carte moderne de Paris représentant la voirie contemporaine et les 11 lieux du Père Goriot géoréférencés.',
+	altText: 'Carte moderne détaillée des rues de Paris représentant la voirie contemporaine, les noms de rues et les 11 lieux du Père Goriot géoréférencés.',
 };
 
 export interface CategoryMetadata {
