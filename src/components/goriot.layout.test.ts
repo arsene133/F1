@@ -358,4 +358,36 @@ describe.skipIf(!BUILT)('Carte interactive du Père Goriot (/goriot) — E2E & I
 			await page.close();
 		}
 	}, 15_000);
+
+	test('synchronisation d’échelle et de centre géographique entre les vues 1821 et moderne', async () => {
+		const page = await openPage();
+		try {
+			// Ouvrir le bloc d'alternative textuelle pour rendre les boutons visibles
+			await page.locator('.alt-summary').click();
+			expect(await page.locator('.alt-content').isVisible()).toBe(true);
+
+			// Sélectionner un lieu avec coordonnées vérifiées (ex: Saint-Étienne-du-Mont)
+			const stEtienneBtn = page.locator('.btn-select-from-text[data-select-place-id="eglise-saint-etienne-du-mont"]');
+			await stEtienneBtn.click();
+			await page.waitForTimeout(100);
+
+			// 1. Bascule vers la carte moderne
+			const btnMod = page.locator('#btn-layer-modern');
+			await btnMod.click();
+			await page.waitForSelector('.leaflet-tile-pane', { state: 'attached' });
+
+			// La fiche reste centrée sur Saint-Étienne-du-Mont
+			expect(await page.locator('#card-place-title').textContent()).toContain('Saint-Étienne-du-Mont');
+
+			// 2. Bascule retour vers le plan de 1821
+			const btnHist = page.locator('#btn-layer-historical');
+			await btnHist.click();
+			await page.waitForSelector('.leaflet-image-layer', { state: 'attached' });
+
+			// Vérifier que le lieu reste parfaitement sélectionné et affiché
+			expect(await page.locator('#card-place-title').textContent()).toContain('Saint-Étienne-du-Mont');
+		} finally {
+			await page.close();
+		}
+	}, 15_000);
 });

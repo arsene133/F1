@@ -116,6 +116,9 @@ describe('Données géographiques et littéraires du Père Goriot', () => {
 		expect(HISTORICAL_MAP_CONFIG.width).toBe(3200);
 		expect(HISTORICAL_MAP_CONFIG.height).toBe(2452);
 		expect(HISTORICAL_MAP_CONFIG.attribution).toContain('N. M. Maire, 1821');
+		expect(HISTORICAL_MAP_CONFIG.geoBounds.center[0]).toBeCloseTo(48.858, 2);
+		expect(HISTORICAL_MAP_CONFIG.geoBounds.center[1]).toBeCloseTo(2.344, 2);
+		expect(HISTORICAL_MAP_CONFIG.zoomOffsetToEPSG3857).toBeCloseTo(15.08, 1);
 
 		expect(MODERN_MAP_CONFIG.tileUrl).toContain('cartocdn.com');
 		expect(MODERN_MAP_CONFIG.attribution).toContain('OpenStreetMap');

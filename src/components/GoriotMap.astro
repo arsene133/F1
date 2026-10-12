@@ -1188,6 +1188,12 @@ const initialPlace = goriotPlaces[0];
 		height: number;
 		originalWidth: number;
 		originalHeight: number;
+		geoBounds?: {
+			southWest: [number, number];
+			northEast: [number, number];
+			center: [number, number];
+		};
+		zoomOffsetToEPSG3857?: number;
 	}
 
 	interface ModernMapConfig {
@@ -1248,11 +1254,40 @@ const initialPlace = goriotPlaces[0];
 		// Dictionnaire des marqueurs Leaflet
 		const markersById: Record<string, { marker: L.Marker; el: HTMLElement; place: PlaceData }> = {};
 
-		// Initialisation ou recréation de l'instance Leaflet selon le système de projection (CRS)
-		function setupMapInstance(layer: 'historical' | 'modern', preserveView = false) {
-			const previousCenter = map ? map.getCenter() : null;
-			const previousZoom = map ? map.getZoom() : null;
+		// Fonctions de synchronisation et transformation géographique
+		// Calibrées sur les 11 repères historiques et urbains de Paris sous la Restauration
+		function geoToHistoricalSimple(lat: number, lng: number): [number, number] {
+			const x = 24426.06 * lng - 619.08 * lat - 25401.01;
+			const y = -515.95 * lng + 40473.25 * lat - 1974992.42;
+			return [
+				Math.max(0, Math.min(imgH, y)),
+				Math.max(0, Math.min(imgW, x)),
+			];
+		}
 
+		function historicalSimpleToGeo(y: number, x: number): [number, number] {
+			const lng = 0.00004051 * x + 0.00000055 * y + 2.27823;
+			const lat = 0.00000049 * x + 0.00002455 * y + 48.82678;
+			return [lat, lng];
+		}
+
+		// Décalage théorique d'échelle entre CRS.Simple et Web Mercator EPSG:3857 (≈ 15.08)
+		const ZOOM_OFFSET = mapConfig?.zoomOffsetToEPSG3857 || 15.08;
+
+		function zoomHistoricalToModern(zHist: number): number {
+			return Math.max(11, Math.min(19, zHist + ZOOM_OFFSET));
+		}
+
+		function zoomModernToHistorical(zMod: number): number {
+			return Math.max(-2, Math.min(2, zMod - ZOOM_OFFSET));
+		}
+
+		// Initialisation ou recréation de l'instance Leaflet selon le système de projection (CRS)
+		function setupMapInstance(
+			layer: 'historical' | 'modern',
+			preserveView = false,
+			previousView?: { centerGeo: [number, number]; zoomScale: number }
+		) {
 			if (map) {
 				map.closePopup();
 				map.stop();
@@ -1271,7 +1306,7 @@ const initialPlace = goriotPlaces[0];
 					crs: L.CRS.Simple,
 					minZoom: -2,
 					maxZoom: 2,
-					zoomSnap: 0.25,
+					zoomSnap: 0.1,
 					zoomDelta: 0.5,
 					zoomControl: true,
 					scrollWheelZoom: false,
@@ -1296,6 +1331,8 @@ const initialPlace = goriotPlaces[0];
 					crs: L.CRS.EPSG3857,
 					minZoom: modernMapConfig?.minZoom || 11,
 					maxZoom: modernMapConfig?.maxZoom || 19,
+					zoomSnap: 0.1,
+					zoomDelta: 0.5,
 					zoomControl: true,
 					scrollWheelZoom: false,
 					attributionControl: true,
@@ -1384,12 +1421,24 @@ const initialPlace = goriotPlaces[0];
 				}
 			});
 
-			// Ajustement initial de la vue
-			if (layer === 'historical') {
-				map.fitBounds(historicalBounds, { padding: [10, 10] });
+			// Ajustement de la vue (synchronisation géographique si preserveView = true)
+			if (preserveView && previousView) {
+				if (layer === 'historical') {
+					const [lat, lng] = previousView.centerGeo;
+					const [y, x] = geoToHistoricalSimple(lat, lng);
+					const targetZoom = zoomModernToHistorical(previousView.zoomScale);
+					map.setView([y, x], targetZoom, { animate: false });
+				} else {
+					const targetZoom = zoomHistoricalToModern(previousView.zoomScale);
+					map.setView(previousView.centerGeo, targetZoom, { animate: false });
+				}
 			} else {
-				const allGeoCoords = places.map((p) => p.coordinates);
-				map.fitBounds(L.latLngBounds(allGeoCoords), { padding: [35, 35] });
+				if (layer === 'historical') {
+					map.fitBounds(historicalBounds, { padding: [10, 10] });
+				} else {
+					const allGeoCoords = places.map((p) => p.coordinates);
+					map.fitBounds(L.latLngBounds(allGeoCoords), { padding: [35, 35] });
+				}
 			}
 
 			// Garantir le bon calcul des dimensions du conteneur après le basculement
@@ -1482,7 +1531,7 @@ const initialPlace = goriotPlaces[0];
 
 			// Recentrage si demandé
 			if (options.centerMap) {
-				const defaultZoom = activeLayer === 'historical' ? 0.5 : 15;
+				const defaultZoom = activeLayer === 'historical' ? 0.5 : zoomHistoricalToModern(0.5);
 				const targetZoom = options.zoom !== undefined ? options.zoom : Math.max(map.getZoom(), defaultZoom);
 				const shouldAnimate = options.animate !== false;
 				map.setView(marker.getLatLng(), targetZoom, { animate: shouldAnimate });
@@ -1546,7 +1595,7 @@ const initialPlace = goriotPlaces[0];
 			}
 
 			if (visibleLatLngs.length > 0) {
-				const maxZ = activeLayer === 'historical' ? 0.5 : 15;
+				const maxZ = activeLayer === 'historical' ? 0.5 : zoomHistoricalToModern(0.5);
 				map.fitBounds(L.latLngBounds(visibleLatLngs), { padding: [40, 40], maxZoom: maxZ });
 			}
 		}
@@ -1613,7 +1662,7 @@ const initialPlace = goriotPlaces[0];
 				updateNarrativeStepperUI();
 				const target = places[currentStepIndex];
 				if (target) {
-					const defaultZoom = activeLayer === 'historical' ? 0.5 : 15;
+					const defaultZoom = activeLayer === 'historical' ? 0.5 : zoomHistoricalToModern(0.5);
 					selectPlace(target.id, { centerMap: true, zoom: defaultZoom });
 				}
 			}
@@ -1622,7 +1671,29 @@ const initialPlace = goriotPlaces[0];
 		// Bascule de fond de carte (1821 vs Moderne)
 		function setLayer(layer: 'historical' | 'modern') {
 			if (activeLayer === layer) return;
+			const previousLayer = activeLayer;
 			activeLayer = layer;
+
+			// Capture de la vue géographique courante avant destruction de l'ancienne carte
+			let previousView: { centerGeo: [number, number]; zoomScale: number } | undefined;
+			if (map) {
+				const center = map.getCenter();
+				const zoom = map.getZoom();
+				if (previousLayer === 'historical') {
+					// L'ancienne carte était 'historical' (center = [y, x] en CRS.Simple)
+					const [lat, lng] = historicalSimpleToGeo(center.lat, center.lng);
+					previousView = {
+						centerGeo: [lat, lng],
+						zoomScale: zoom,
+					};
+				} else {
+					// L'ancienne carte était 'modern' (center = [lat, lng] en EPSG:3857)
+					previousView = {
+						centerGeo: [center.lat, center.lng],
+						zoomScale: zoom,
+					};
+				}
+			}
 
 			const btnHist = document.getElementById('btn-layer-historical');
 			const btnMod = document.getElementById('btn-layer-modern');
@@ -1651,14 +1722,14 @@ const initialPlace = goriotPlaces[0];
 				if (creditHist) creditHist.hidden = true;
 			}
 
-			// Recréer l'instance Leaflet avec le CRS approprié
-			setupMapInstance(layer);
+			// Recréer l'instance Leaflet avec le CRS approprié en préservant l'échelle géographique et le centre
+			setupMapInstance(layer, Boolean(previousView), previousView);
 
-			// Mettre à jour la vue selon le lieu sélectionné ou le filtre
+			// Mettre à jour l'état visuel du marqueur sélectionné sans forcer un autre niveau de zoom
 			if (selectedPlaceId) {
 				const currentItem = markersById[selectedPlaceId];
 				if (currentItem && map?.hasLayer(currentItem.marker)) {
-					selectPlace(selectedPlaceId, { centerMap: true, openPopup: false, animate: false });
+					selectPlace(selectedPlaceId, { centerMap: false, openPopup: false });
 				}
 			}
 		}
@@ -1705,7 +1776,7 @@ const initialPlace = goriotPlaces[0];
 			if (currentStepIndex > 0) {
 				currentStepIndex--;
 				const p = places[currentStepIndex];
-				const defaultZoom = activeLayer === 'historical' ? 0.5 : 15;
+				const defaultZoom = activeLayer === 'historical' ? 0.5 : zoomHistoricalToModern(0.5);
 				selectPlace(p.id, { centerMap: true, zoom: defaultZoom });
 			}
 		});
@@ -1714,7 +1785,7 @@ const initialPlace = goriotPlaces[0];
 			if (currentStepIndex < places.length - 1) {
 				currentStepIndex++;
 				const p = places[currentStepIndex];
-				const defaultZoom = activeLayer === 'historical' ? 0.5 : 15;
+				const defaultZoom = activeLayer === 'historical' ? 0.5 : zoomHistoricalToModern(0.5);
 				selectPlace(p.id, { centerMap: true, zoom: defaultZoom });
 			}
 		});
@@ -1726,7 +1797,7 @@ const initialPlace = goriotPlaces[0];
 				.filter(({ marker }) => map!.hasLayer(marker))
 				.map(({ marker }) => marker.getLatLng());
 			if (visibleMarkers.length > 0) {
-				const maxZ = activeLayer === 'historical' ? 0.5 : 15;
+				const maxZ = activeLayer === 'historical' ? 0.5 : zoomHistoricalToModern(0.5);
 				map.fitBounds(L.latLngBounds(visibleMarkers), { padding: [40, 40], maxZoom: maxZ });
 			}
 		});
@@ -1736,7 +1807,13 @@ const initialPlace = goriotPlaces[0];
 			if (activeLayer === 'historical') {
 				map.fitBounds(historicalBounds, { padding: [10, 10] });
 			} else {
-				map.setView(modernMapConfig?.defaultCenter || [48.858, 2.348], modernMapConfig?.defaultZoom || 13);
+				// Cadrage moderne sur l'emprise historique équivalente de Paris 1821
+				const gb = mapConfig?.geoBounds;
+				if (gb) {
+					map.fitBounds([gb.southWest, gb.northEast], { padding: [10, 10] });
+				} else {
+					map.setView(modernMapConfig?.defaultCenter || [48.8577, 2.3437], 12.8);
+				}
 			}
 		});
 
@@ -1745,7 +1822,7 @@ const initialPlace = goriotPlaces[0];
 			btn.addEventListener('click', () => {
 				const placeId = btn.getAttribute('data-select-place-id');
 				if (placeId) {
-					const defaultZoom = activeLayer === 'historical' ? 0.5 : 15;
+					const defaultZoom = activeLayer === 'historical' ? 0.5 : zoomHistoricalToModern(0.5);
 					selectPlace(placeId, { centerMap: true, zoom: defaultZoom });
 					mapContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
 				}

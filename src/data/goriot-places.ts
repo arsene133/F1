@@ -50,6 +50,14 @@ export const HISTORICAL_MAP_CONFIG = {
 	height: 2452,
 	originalWidth: 9760,
 	originalHeight: 7480,
+	// Emprise géographique approximative couverte par le plan de 1821 (calibrée sur les monuments identifiables)
+	geoBounds: {
+		southWest: [48.8268, 2.2782] as [number, number],
+		northEast: [48.8885, 2.4092] as [number, number],
+		center: [48.8577, 2.3437] as [number, number],
+	},
+	// Décalage théorique d'échelle entre CRS.Simple et Web Mercator EPSG:3857 : Z_mod ≈ Z_hist + 15.08
+	zoomOffsetToEPSG3857: 15.08,
 };
 
 export const MODERN_MAP_CONFIG = {
