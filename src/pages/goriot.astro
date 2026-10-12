@@ -4,12 +4,13 @@ import pereGoriotIllustration from '../assets/pere-goriot-illustration.jpg';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import GoriotMap from '../components/GoriotMap.astro';
+import GoriotRelationshipsMap from '../components/GoriotRelationshipsMap.astro';
 import Header from '../components/Header.astro';
 import { goriotCategories, goriotPlaces } from '../data/goriot-places';
 
-const pageTitle = 'Le Père Goriot d’Honoré de Balzac — Carte interactive des lieux de Paris';
+const pageTitle = 'Le Père Goriot d’Honoré de Balzac — Lieux parisiens et réseau des personnages';
 const pageDescription =
-	'Explorez la géographie parisienne du Père Goriot (1835) : de la misérable pension Vauquer aux hôtels aristocratiques du faubourg Saint-Germain et au défi final du Père-Lachaise. Parcours narratif de Rastignac et contrastes sociaux.';
+	'Explorez Le Père Goriot (1835) : la carte géographique des lieux parisiens et la carte interactive des relations entre personnages (Rastignac, Goriot, Vautrin, Restaud, Nucingen). Topographie sociale, liens familiaux et financiers.';
 ---
 
 <!doctype html>
@@ -31,9 +32,9 @@ const pageDescription =
 				<!-- En-tête éditorial -->
 				<header class="map-intro">
 					<p class="intro-eyebrow">Honoré de Balzac · 1835 · La Comédie humaine</p>
-					<h1 id="page-title"><cite>Le Père Goriot</cite> — la carte des lieux parisiens</h1>
+					<h1 id="page-title"><cite>Le Père Goriot</cite> — Lieux et relations des personnages</h1>
 					<p class="intro-desc">
-						<strong>Topographie sociale, ascension de Rastignac et géographie des inégalités</strong>
+						<strong>Topographie parisienne, ascension d’Eugène de Rastignac et réseau des passions</strong>
 					</p>
 					<p class="intro-context">
 						Situé à Paris à la fin de l’année 1819 sous la Restauration, <em>Le Père Goriot</em> déploie
@@ -44,67 +45,102 @@ const pageDescription =
 						chaque franchissement de la Seine traduit une conquête ou une déchéance morale.
 					</p>
 					<p class="intro-instructions">
-						Explorez les 11 stations parisiennes clés du roman, filtrez par sphère sociale ou suivez pas à pas
-						le parcours narratif et initiatique d’Eugène de Rastignac.
+						Naviguez entre les deux visualisations complémentaires : la carte géographique des lieux de Paris et le réseau interactif des relations humaines et financières.
 					</p>
+
+					<!-- Navigation rapide entre les deux visualisations -->
+					<nav class="goriot-visualizations-nav" aria-label="Choisir la visualisation">
+						<a href="#section-reseau-personnages" class="viz-nav-btn viz-nav-highlight">
+							<span class="viz-nav-icon" aria-hidden="true">👥</span>
+							<span>1. Réseau des personnages & intrigues</span>
+						</a>
+						<a href="#section-carte-lieux" class="viz-nav-btn">
+							<span class="viz-nav-icon" aria-hidden="true">🗺️</span>
+							<span>2. Carte géographique des lieux de Paris</span>
+						</a>
+					</nav>
 				</header>
 
-				<!-- Panneau d'introduction illustrée et repères littéraires -->
-				<section class="goriot-literary-overview" aria-labelledby="overview-title">
-					<div class="overview-grid">
-						<div class="overview-image-wrapper">
-							<Image
-								src={pereGoriotIllustration}
-								alt="Illustration du roman Le Père Goriot d'Honoré de Balzac"
-								class="overview-image"
-								width={320}
-								height={420}
-							/>
-							<figcaption class="overview-image-caption">
-								Le père Goriot dépouillé par la passion de ses filles (illustration d’époque).
-							</figcaption>
-						</div>
+				<!-- Section 1 : Carte relationnelle des personnages -->
+				<section class="goriot-section" id="section-reseau-personnages" aria-labelledby="rel-network-title">
+					<header class="section-editorial-header">
+						<p class="section-tag">Visualisation relationnelle</p>
+						<h2 id="rel-network-title" class="section-title">Le réseau des personnages et leurs relations</h2>
+						<p class="section-lead">
+							Comprendre qui sont les 16 protagonistes majeurs, comment s'entrecroisent les liens familiaux, financiers, amoureux et de manipulation, et quelle place centrale occupe Eugène de Rastignac dans cet échiquier social.
+						</p>
+					</header>
 
-						<div class="overview-text">
-							<h2 id="overview-title" class="overview-title">Paris comme théâtre des ambitions et des abîmes</h2>
-							<p>
-								Dans <em>Le Père Goriot</em>, Honoré de Balzac invente une véritable « sociologie de l’espace ».
-								Le jeune Eugène de Rastignac, venu de sa province charentaise pour étudier le droit, découvre
-								que la capitale est un échiquier impitoyable gouverné par deux passions absolues : <strong>l’argent</strong>
-								et <strong>le paraître</strong>.
-							</p>
-							<div class="social-contrasts-cards">
-								<div class="contrast-card contrast-modest">
-									<span class="contrast-badge">Le monde d’en bas</span>
-									<h3>Le faubourg Saint-Marceau</h3>
-									<p>
-										La <em>rue Neuve-Sainte-Geneviève</em> et la pension Vauquer : ruelles boueuses, crasse, odeur de renfermé.
-										Ici s’accumulent les misères, les ambitions contrariées et le sacrifice du père Goriot.
-									</p>
-								</div>
-								<div class="contrast-card contrast-noble">
-									<span class="contrast-badge">Le monde du rang</span>
-									<h3>Le faubourg Saint-Germain</h3>
-									<p>
-										La <em>rue de Grenelle</em> et l’hôtel de Beauséant : salons aux armoiries séculaires, faste glacé et
-										mépris aristocratique des parvenus. L’école où Rastignac apprend les lois du cynisme.
-									</p>
-								</div>
-								<div class="contrast-card contrast-bourgeois">
-									<span class="contrast-badge">Le monde de l’or</span>
-									<h3>La Chaussée-d’Antin</h3>
-									<p>
-										La <em>rue Saint-Lazare</em> et la <em>rue du Helder</em> : hôtels de banquiers aux stucs opulents,
-										spéculations boursières dévorantes et filles ingrates prêtes à dépouiller leur père pour une parure.
-									</p>
+					<GoriotRelationshipsMap id="goriot-relationships" />
+				</section>
+
+				<!-- Section 2 : Carte géographique des lieux parisiens -->
+				<section class="goriot-section" id="section-carte-lieux" aria-labelledby="geo-places-title">
+					<header class="section-editorial-header">
+						<p class="section-tag">Visualisation topographique</p>
+						<h2 id="geo-places-title" class="section-title">La carte des lieux parisiens du roman</h2>
+						<p class="section-lead">
+							Topographie sociale, fractures spatiales entre les rives de la Seine et stations du parcours initiatique d’Eugène de Rastignac.
+						</p>
+					</header>
+
+					<!-- Panneau d'introduction illustrée et repères littéraires -->
+					<section class="goriot-literary-overview" aria-labelledby="overview-title">
+						<div class="overview-grid">
+							<div class="overview-image-wrapper">
+								<Image
+									src={pereGoriotIllustration}
+									alt="Illustration du roman Le Père Goriot d'Honoré de Balzac"
+									class="overview-image"
+									width={320}
+									height={420}
+								/>
+								<figcaption class="overview-image-caption">
+									Le père Goriot dépouillé par la passion de ses filles (illustration d’époque).
+								</figcaption>
+							</div>
+
+							<div class="overview-text">
+								<h3 id="overview-title" class="overview-title">Paris comme théâtre des ambitions et des abîmes</h3>
+								<p>
+									Dans <em>Le Père Goriot</em>, Honoré de Balzac invente une véritable « sociologie de l’espace ».
+									Le jeune Eugène de Rastignac, venu de sa province charentaise pour étudier le droit, découvre
+									que la capitale est un échiquier impitoyable gouverné par deux passions absolues : <strong>l’argent</strong>
+									et <strong>le paraître</strong>.
+								</p>
+								<div class="social-contrasts-cards">
+									<div class="contrast-card contrast-modest">
+										<span class="contrast-badge">Le monde d’en bas</span>
+										<h4>Le faubourg Saint-Marceau</h4>
+										<p>
+											La <em>rue Neuve-Sainte-Geneviève</em> et la pension Vauquer : ruelles boueuses, crasse, odeur de renfermé.
+											Ici s’accumulent les misères, les ambitions contrariées et le sacrifice du père Goriot.
+										</p>
+									</div>
+									<div class="contrast-card contrast-noble">
+										<span class="contrast-badge">Le monde du rang</span>
+										<h4>Le faubourg Saint-Germain</h4>
+										<p>
+											La <em>rue de Grenelle</em> et l’hôtel de Beauséant : salons aux armoiries séculaires, faste glacé et
+											mépris aristocratique des parvenus. L’école où Rastignac apprend les lois du cynisme.
+										</p>
+									</div>
+									<div class="contrast-card contrast-bourgeois">
+										<span class="contrast-badge">Le monde de l’or</span>
+										<h4>La Chaussée-d’Antin</h4>
+										<p>
+											La <em>rue Saint-Lazare</em> et la <em>rue du Helder</em> : hôtels de banquiers aux stucs opulents,
+											spéculations boursières dévorantes et filles ingrates prêtes à dépouiller leur père pour une parure.
+										</p>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-				</section>
+					</section>
 
-				<!-- Composant interactif principal de la carte -->
-				<GoriotMap />
+					<!-- Composant interactif principal de la carte géographique -->
+					<GoriotMap />
+				</section>
 
 				<!-- Synthèse pédagogique : tableau comparatif des lieux et des contrastes -->
 				<footer class="map-synthesis" aria-labelledby="synthesis-title">
@@ -175,6 +211,83 @@ const pageDescription =
 	/* Styles de la page Goriot ---------------------------------------------- */
 	.goriot-page {
 		max-width: 1100px;
+	}
+
+	/* Navigation rapide entre visualisations */
+	.goriot-visualizations-nav {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.85rem;
+		margin: 1.75rem 0 0;
+	}
+
+	.viz-nav-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.65rem 1.15rem;
+		border-radius: 8px;
+		border: 1px solid var(--map-border);
+		background: #ffffff;
+		color: var(--map-ink);
+		font-size: 0.92rem;
+		font-weight: 600;
+		text-decoration: none;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+		transition: all 0.15s ease;
+	}
+
+	.viz-nav-btn:hover {
+		border-color: var(--map-accent);
+		background: #faf8f5;
+		color: var(--map-accent);
+		transform: translateY(-1px);
+	}
+
+	.viz-nav-highlight {
+		border-color: #8b5a2b;
+		background: #fdfaf6;
+		color: #8b5a2b;
+	}
+
+	.viz-nav-icon {
+		font-size: 1.1rem;
+	}
+
+	/* En-têtes de sections éditoriales */
+	.goriot-section {
+		margin-top: 3.5rem;
+		scroll-margin-top: 2rem;
+	}
+
+	.section-editorial-header {
+		text-align: center;
+		max-width: 820px;
+		margin: 0 auto 1.75rem;
+	}
+
+	.section-tag {
+		font-size: 0.76rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.12em;
+		color: #8b5a2b;
+		margin: 0 0 0.35rem;
+	}
+
+	.section-title {
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.85rem;
+		color: var(--map-ink);
+		margin: 0 0 0.65rem;
+	}
+
+	.section-lead {
+		font-size: 0.98rem;
+		line-height: 1.55;
+		color: var(--map-ink-soft);
+		margin: 0;
 	}
 
 	.intro-context {
