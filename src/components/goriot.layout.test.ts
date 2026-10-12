@@ -291,9 +291,8 @@ describe.skipIf(!BUILT)('Carte interactive du Père Goriot (/goriot) — E2E & I
 			expect(await page.locator('#credit-modern-map').isVisible()).toBe(true);
 			expect(await page.locator('#credit-historical-map').isVisible()).toBe(false);
 
-			// Vérifier l'attribution moderne CARTO / OSM
+			// Vérifier l'attribution moderne OpenStreetMap
 			const modernCredit = await page.locator('#credit-modern-map').textContent();
-			expect(modernCredit).toContain('CARTO');
 			expect(modernCredit).toContain('OpenStreetMap');
 
 			// Tous les 11 marqueurs doivent rester disponibles et le lieu sélectionné conservé

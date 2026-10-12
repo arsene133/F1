@@ -120,9 +120,8 @@ describe('Données géographiques et littéraires du Père Goriot', () => {
 		expect(HISTORICAL_MAP_CONFIG.geoBounds.center[1]).toBeCloseTo(2.344, 2);
 		expect(HISTORICAL_MAP_CONFIG.zoomOffsetToEPSG3857).toBeCloseTo(15.08, 1);
 
-		expect(MODERN_MAP_CONFIG.tileUrl).toContain('cartocdn.com');
+		expect(MODERN_MAP_CONFIG.tileUrl).toContain('openstreetmap.org');
 		expect(MODERN_MAP_CONFIG.attribution).toContain('OpenStreetMap');
-		expect(MODERN_MAP_CONFIG.attribution).toContain('CARTO');
 		expect(MODERN_MAP_CONFIG.defaultCenter[0]).toBeCloseTo(48.858, 2);
 		expect(MODERN_MAP_CONFIG.defaultCenter[1]).toBeCloseTo(2.348, 2);
 	});
