@@ -212,4 +212,29 @@ describe.skipIf(!BUILT)('Carte interactive du Père Goriot (/goriot) — E2E & I
 			await page.close();
 		}
 	});
+
+	test('affiche le fond de carte historique de 1821 et son attribution complète', async () => {
+		const page = await openPage();
+		try {
+			// Vérifier que le calque image historique est présent dans Leaflet
+			const overlayImg = page.locator('.leaflet-image-layer');
+			expect(await overlayImg.count()).toBe(1);
+			const imgSrc = await overlayImg.getAttribute('src');
+			expect(imgSrc).toContain('plan-maire-paris-1821.webp');
+
+			// Vérifier la présence de l'alternative textuelle sur l'image
+			const imgAlt = await overlayImg.getAttribute('alt');
+			expect(imgAlt).toContain('N. M. Maire');
+
+			// Vérifier la notice historique et le bloc d'attribution
+			const creditNotice = page.locator('.map-historical-credit');
+			expect(await creditNotice.isVisible()).toBe(true);
+			const creditText = await creditNotice.textContent();
+			expect(creditText).toContain('N. M. Maire, 1821');
+			expect(creditText).toContain('David Rumsey Historical Map Collection');
+			expect(creditText).toContain('1819');
+		} finally {
+			await page.close();
+		}
+	});
 });

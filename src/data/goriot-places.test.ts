@@ -80,4 +80,32 @@ describe('Données géographiques et littéraires du Père Goriot', () => {
 		expect(firstStep?.id).toBe('pension-vauquer');
 		expect(lastStep?.id).toBe('cimetiere-pere-lachaise');
 	});
+
+	it('valide que chaque lieu possède des coordonnées historiques vérifiées sur le plan Maire de 1821', () => {
+		for (const place of goriotPlaces) {
+			const { pixelOrig, pixel3200, percent, leafletCoords } = place.historicalCoordinates;
+
+			// Coordonnées originales sur 9760 × 7480
+			expect(pixelOrig[0]).toBeGreaterThan(0);
+			expect(pixelOrig[0]).toBeLessThanOrEqual(9760);
+			expect(pixelOrig[1]).toBeGreaterThan(0);
+			expect(pixelOrig[1]).toBeLessThanOrEqual(7480);
+
+			// Coordonnées dérivées sur 3200 × 2452
+			expect(pixel3200[0]).toBeGreaterThan(0);
+			expect(pixel3200[0]).toBeLessThanOrEqual(3200);
+			expect(pixel3200[1]).toBeGreaterThan(0);
+			expect(pixel3200[1]).toBeLessThanOrEqual(2452);
+
+			// Pourcentages
+			expect(percent[0]).toBeGreaterThan(0);
+			expect(percent[0]).toBeLessThanOrEqual(100);
+			expect(percent[1]).toBeGreaterThan(0);
+			expect(percent[1]).toBeLessThanOrEqual(100);
+
+			// Coordonnées Leaflet CRS.Simple [Y, X] où Y = 2452 - Y_pixel
+			expect(leafletCoords[0]).toBeCloseTo(2452 - pixel3200[1], 1);
+			expect(leafletCoords[1]).toBeCloseTo(pixel3200[0], 1);
+		}
+	});
 });

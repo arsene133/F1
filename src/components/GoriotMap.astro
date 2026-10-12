@@ -1,5 +1,6 @@
 ---
 import {
+	HISTORICAL_MAP_CONFIG,
 	goriotCategories,
 	goriotPlaces,
 	precisionLabels,
@@ -13,7 +14,16 @@ const initialPlace = goriotPlaces[0];
 
 <div class="goriot-map-interactive" id="goriot-interactive-app" data-goriot-app>
 	<!-- Données JSON sérialisées pour hydratation client côté script -->
-	<script type="application/json" id="goriot-places-data" set:html={JSON.stringify({ places: goriotPlaces, categories: goriotCategories, precisionLabels })} />
+	<script
+		type="application/json"
+		id="goriot-places-data"
+		set:html={JSON.stringify({
+			places: goriotPlaces,
+			categories: goriotCategories,
+			precisionLabels,
+			mapConfig: HISTORICAL_MAP_CONFIG,
+		})}
+	/>
 
 	<!-- Barre de contrôle des modes : Mode A (Exploration libre) vs Mode B (Parcours narratif) -->
 	<section class="map-controls" aria-label="Modes de navigation et filtres">
@@ -155,7 +165,7 @@ const initialPlace = goriotPlaces[0];
 				id="balzac-paris-map"
 				class="leaflet-map-element"
 				role="region"
-				aria-label="Carte interactive de Paris en 1819"
+				aria-label="Carte interactive historique de Paris (1821)"
 				tabindex="0"
 			>
 				<noscript>
@@ -166,6 +176,17 @@ const initialPlace = goriotPlaces[0];
 						</p>
 					</div>
 				</noscript>
+			</div>
+
+			<!-- Notice historique et crédit cartographique -->
+			<div class="map-historical-credit" aria-label="Crédit et repère historique du plan">
+				<p class="historical-credit-caption">
+					<strong>Repère historique :</strong> Plan dressé en 1821, immédiatement contemporain du cadre temporel du roman (novembre 1819 – février 1820). Les douze anciens arrondissements, barrières de l’octroi et tracés d’époque matérialisent l’espace urbain parcouru par Rastignac et Goriot.
+				</p>
+				<p class="historical-credit-source">
+					<span class="credit-icon" aria-hidden="true">📜</span>
+					<span><strong>Source :</strong> Plan lavé topographiquement de Paris, N. M. Maire, 1821 — David Rumsey Historical Map Collection.</span>
+				</p>
 			</div>
 
 			<!-- Légende cartographique interprétative -->
@@ -619,6 +640,37 @@ const initialPlace = goriotPlaces[0];
 		text-align: center;
 	}
 
+	/* Notice historique et attribution */
+	.map-historical-credit {
+		padding: 0.75rem 1rem;
+		background: #fbf9f4;
+		border-top: 1px solid var(--map-border-soft, #ece7de);
+		font-size: 0.81rem;
+		line-height: 1.45;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	.historical-credit-caption {
+		margin: 0 0 0.35rem;
+	}
+
+	.historical-credit-caption strong {
+		color: var(--map-ink, #172b3a);
+	}
+
+	.historical-credit-source {
+		margin: 0;
+		font-size: 0.78rem;
+		color: var(--map-muted, #5e6d7a);
+		display: flex;
+		align-items: baseline;
+		gap: 0.35rem;
+	}
+
+	.credit-icon {
+		font-size: 0.9rem;
+	}
+
 	/* Légende sous la carte */
 	.map-legend {
 		padding: 0.75rem 1rem;
@@ -983,12 +1035,20 @@ const initialPlace = goriotPlaces[0];
 	import L from 'leaflet';
 	import 'leaflet/dist/leaflet.css';
 
+	interface HistoricalPoint {
+		pixelOrig: [number, number];
+		pixel3200: [number, number];
+		percent: [number, number];
+		leafletCoords: [number, number];
+	}
+
 	interface PlaceData {
 		id: string;
 		name: string;
 		subtitle: string;
 		category: string;
 		coordinates: [number, number];
+		historicalCoordinates: HistoricalPoint;
 		locationPrecision: 'exact' | 'approximate' | 'district';
 		historicalAddress: string;
 		modernLocation: string;
@@ -1003,10 +1063,26 @@ const initialPlace = goriotPlaces[0];
 		quotationReference: string;
 	}
 
+	interface MapConfig {
+		title: string;
+		author: string;
+		publicationYear: number;
+		sourceWork: string;
+		collection: string;
+		attribution: string;
+		altText: string;
+		imageSrc: string;
+		width: number;
+		height: number;
+		originalWidth: number;
+		originalHeight: number;
+	}
+
 	interface AppData {
 		places: PlaceData[];
 		categories: Record<string, { id: string; label: string; color: string }>;
 		precisionLabels: Record<string, { label: string; description: string }>;
+		mapConfig: MapConfig;
 	}
 
 	function initGoriotMap() {
@@ -1021,29 +1097,44 @@ const initialPlace = goriotPlaces[0];
 			return;
 		}
 
-		const { places, categories, precisionLabels } = appData;
+		const { places, categories, precisionLabels, mapConfig } = appData;
 		const mapContainer = document.getElementById('balzac-paris-map');
 		if (!mapContainer) return;
 
-		// Initialisation de Leaflet
-		// Centre initial : Paris (entre le Quartier Latin et l'Opéra)
+		// Dimensions de l'image historique (3200 × 2452 px)
+		const imgW = mapConfig?.width || 3200;
+		const imgH = mapConfig?.height || 2452;
+		const mapBounds: L.LatLngBoundsExpression = [
+			[0, 0],
+			[imgH, imgW],
+		];
+
+		// Initialisation de Leaflet avec projection plane CRS.Simple pour document historique
 		const map = L.map(mapContainer, {
-			center: [48.858, 2.348],
-			zoom: 13,
+			crs: L.CRS.Simple,
+			minZoom: -2,
+			maxZoom: 2,
+			zoomSnap: 0.25,
+			zoomDelta: 0.5,
 			zoomControl: true,
 			scrollWheelZoom: false, // Empêche le défilement intempestif sur mobile
+			attributionControl: true,
+			maxBounds: [
+				[-imgH * 0.2, -imgW * 0.2],
+				[imgH * 1.2, imgW * 1.2],
+			],
+			maxBoundsViscosity: 0.8,
 		});
 
-		// Fond de carte CartoDB Positron sobre et élégant avec clé API officielle
-		L.tileLayer(
-			'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key=cb1_4hbo_1_0764a6788a577c5a3bff641e',
-			{
-				attribution:
-					'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>',
-				subdomains: 'abcd',
-				maxZoom: 19,
-			}
-		).addTo(map);
+		// Fond de carte : image historique locale haute résolution (Plan Maire 1821)
+		const historicalOverlay = L.imageOverlay(mapConfig?.imageSrc || '/images/plan-maire-paris-1821.webp', mapBounds, {
+			attribution: mapConfig?.attribution || 'Plan lavé topographiquement de Paris, N. M. Maire, 1821 — David Rumsey Historical Map Collection',
+			alt: mapConfig?.altText || 'Plan historique de Paris par N. M. Maire (1821)',
+			interactive: false,
+		}).addTo(map);
+
+		// Ajuster initialement la vue pour afficher l'ensemble du plan de Paris
+		map.fitBounds(mapBounds, { padding: [10, 10] });
 
 		// État de l'application
 		let currentMode: 'explore' | 'narrative' = 'explore';
@@ -1073,7 +1164,13 @@ const initialPlace = goriotPlaces[0];
 				popupAnchor: [0, -16],
 			});
 
-			const marker = L.marker(place.coordinates, {
+			// Utiliser les coordonnées historiques CRS.Simple [Y, X]
+			const markerCoords: L.LatLngExpression = place.historicalCoordinates?.leafletCoords || [
+				imgH - (place.coordinates[0] - 48.81) * (imgH / 0.1),
+				(place.coordinates[1] - 2.24) * (imgW / 0.19),
+			];
+
+			const marker = L.marker(markerCoords, {
 				icon: customIcon,
 				zIndexOffset: place.eventOrder * 10,
 			});
@@ -1086,7 +1183,7 @@ const initialPlace = goriotPlaces[0];
 					</strong>
 					<h4 style="margin: 0.2rem 0 0.3rem; font-size: 1.05rem;">${place.name}</h4>
 					<p style="margin: 0 0 0.4rem; color: #555; font-size: 0.85rem;">${place.subtitle}</p>
-					<p style="margin: 0; font-size: 0.8rem;"><strong>Lieu :</strong> ${place.historicalAddress}</p>
+					<p style="margin: 0; font-size: 0.8rem;"><strong>Lieu (1821) :</strong> ${place.historicalAddress}</p>
 				</div>
 			`);
 
@@ -1185,7 +1282,8 @@ const initialPlace = goriotPlaces[0];
 
 			// Recentrage si demandé
 			if (options.centerMap) {
-				map.setView(place.coordinates, options.zoom || 14, { animate: true });
+				const targetZoom = options.zoom !== undefined ? options.zoom : Math.max(map.getZoom(), 0.5);
+				map.setView(marker.getLatLng(), targetZoom, { animate: true });
 			}
 
 			// Si en mode narratif, ajuster l'index du stepper
@@ -1200,7 +1298,7 @@ const initialPlace = goriotPlaces[0];
 		function applyFilter(filterId: string) {
 			activeFilter = filterId;
 			let visibleCount = 0;
-			const visibleLatLngs: L.LatLngExpression[] = [];
+			const visibleLatLngs: L.LatLng[] = [];
 
 			places.forEach((place) => {
 				const item = markersById[place.id];
@@ -1211,7 +1309,7 @@ const initialPlace = goriotPlaces[0];
 					if (!map.hasLayer(item.marker)) {
 						map.addLayer(item.marker);
 					}
-					visibleLatLngs.push(place.coordinates);
+					visibleLatLngs.push(item.marker.getLatLng());
 					visibleCount++;
 				} else {
 					if (map.hasLayer(item.marker)) {
@@ -1245,7 +1343,7 @@ const initialPlace = goriotPlaces[0];
 			}
 
 			if (visibleLatLngs.length > 0) {
-				map.fitBounds(L.latLngBounds(visibleLatLngs), { padding: [40, 40], maxZoom: 14 });
+				map.fitBounds(L.latLngBounds(visibleLatLngs), { padding: [40, 40], maxZoom: 0.5 });
 			}
 		}
 
@@ -1310,7 +1408,7 @@ const initialPlace = goriotPlaces[0];
 				updateNarrativeStepperUI();
 				const target = places[currentStepIndex];
 				if (target) {
-					selectPlace(target.id, { centerMap: true, zoom: 14 });
+					selectPlace(target.id, { centerMap: true, zoom: 0.5 });
 				}
 			}
 		}
@@ -1332,7 +1430,7 @@ const initialPlace = goriotPlaces[0];
 			if (currentStepIndex > 0) {
 				currentStepIndex--;
 				const p = places[currentStepIndex];
-				selectPlace(p.id, { centerMap: true, zoom: 14 });
+				selectPlace(p.id, { centerMap: true, zoom: 0.5 });
 			}
 		});
 
@@ -1340,7 +1438,7 @@ const initialPlace = goriotPlaces[0];
 			if (currentStepIndex < places.length - 1) {
 				currentStepIndex++;
 				const p = places[currentStepIndex];
-				selectPlace(p.id, { centerMap: true, zoom: 14 });
+				selectPlace(p.id, { centerMap: true, zoom: 0.5 });
 			}
 		});
 
@@ -1348,14 +1446,14 @@ const initialPlace = goriotPlaces[0];
 		document.getElementById('btn-recenter-places')?.addEventListener('click', () => {
 			const visibleMarkers = Object.values(markersById)
 				.filter(({ marker }) => map.hasLayer(marker))
-				.map(({ place }) => place.coordinates);
+				.map(({ marker }) => marker.getLatLng());
 			if (visibleMarkers.length > 0) {
-				map.fitBounds(L.latLngBounds(visibleMarkers), { padding: [40, 40], maxZoom: 14 });
+				map.fitBounds(L.latLngBounds(visibleMarkers), { padding: [40, 40], maxZoom: 0.5 });
 			}
 		});
 
 		document.getElementById('btn-reset-paris')?.addEventListener('click', () => {
-			map.setView([48.858, 2.348], 12, { animate: true });
+			map.fitBounds(mapBounds, { padding: [10, 10] });
 		});
 
 		// Événements boutons de sélection depuis l'alternative textuelle
@@ -1363,7 +1461,7 @@ const initialPlace = goriotPlaces[0];
 			btn.addEventListener('click', () => {
 				const placeId = btn.getAttribute('data-select-place-id');
 				if (placeId) {
-					selectPlace(placeId, { centerMap: true, zoom: 15 });
+					selectPlace(placeId, { centerMap: true, zoom: 0.5 });
 					mapContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
 				}
 			});

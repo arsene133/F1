@@ -7,12 +7,20 @@ export type PlaceCategory =
 
 export type LocationPrecision = 'exact' | 'approximate' | 'district';
 
+export interface HistoricalMapPoint {
+	pixelOrig: [number, number]; // [X, Y] sur le scan original haute résolution (9760 × 7480 px)
+	pixel3200: [number, number]; // [X, Y] sur le dérivé optimisé WebP (3200 × 2452 px)
+	percent: [number, number]; // [X%, Y%] depuis le coin supérieur gauche
+	leafletCoords: [number, number]; // [Y, X] en CRS.Simple Leaflet (Y = 2452 - Y_pixel, X = X_pixel)
+}
+
 export interface GoriotPlace {
 	id: string;
 	name: string;
 	subtitle: string;
 	category: PlaceCategory;
-	coordinates: [number, number]; // [lat, lng]
+	coordinates: [number, number]; // [lat, lng] géographique moderne (WGS84 conservé pour référence)
+	historicalCoordinates: HistoricalMapPoint; // Coordonnées vérifiées sur le plan Maire de 1821
 	locationPrecision: LocationPrecision;
 	historicalAddress: string;
 	modernLocation: string;
@@ -27,6 +35,22 @@ export interface GoriotPlace {
 	quotationReference: string;
 	relatedSection?: string;
 }
+
+export const HISTORICAL_MAP_CONFIG = {
+	title: 'Plan lavé topographiquement de la ville de Paris',
+	author: 'N. M. Maire',
+	publicationYear: 1821,
+	sourceWork: 'Atlas administratif de la ville de Paris (1821)',
+	collection: 'David Rumsey Historical Map Collection',
+	attribution: 'Plan lavé topographiquement de Paris, N. M. Maire, 1821 — David Rumsey Historical Map Collection',
+	altText:
+		'Plan historique lavé topographiquement de la ville de Paris par N. M. Maire (1821), représentant les douze anciens arrondissements, les rues, monuments, cours de la Seine et le mur des Fermiers généraux sous la Restauration.',
+	imageSrc: '/images/plan-maire-paris-1821.webp',
+	width: 3200,
+	height: 2452,
+	originalWidth: 9760,
+	originalHeight: 7480,
+};
 
 export interface CategoryMetadata {
 	id: PlaceCategory;
@@ -75,6 +99,12 @@ export const goriotPlaces: GoriotPlace[] = [
 		subtitle: 'Le creuset de la misère et le point de départ de Rastignac',
 		category: 'pension',
 		coordinates: [48.8427, 2.3486],
+		historicalCoordinates: {
+			pixelOrig: [5195, 5690],
+			pixel3200: [1703.3, 1865.2],
+			percent: [53.23, 76.07],
+			leafletCoords: [586.8, 1703.3],
+		},
 		locationPrecision: 'approximate',
 		historicalAddress: 'Bas de la rue Neuve-Sainte-Geneviève (secteur en pente vers la rue de l’Arbalète ; n° 24 présumé par la tradition critique)',
 		modernLocation: 'Rue Tournefort (vers les n° 22-26), 5e arrondissement',
@@ -94,6 +124,12 @@ export const goriotPlaces: GoriotPlace[] = [
 		subtitle: 'L’alibi universitaire et la vertu laborieuse délaissée',
 		category: 'sociabilite',
 		coordinates: [48.8465, 2.3444],
+		historicalCoordinates: {
+			pixelOrig: [4880, 5045],
+			pixel3200: [1600.0, 1653.8],
+			percent: [50.0, 67.45],
+			leafletCoords: [798.2, 1600.0],
+		},
 		locationPrecision: 'exact',
 		historicalAddress: 'Place du Panthéon (bâtiment édifié par Soufflot)',
 		modernLocation: '12, place du Panthéon, Faculté de droit de Paris (Paris-Panthéon-Assas), 5e arrondissement',
@@ -113,6 +149,12 @@ export const goriotPlaces: GoriotPlace[] = [
 		subtitle: 'Le premier faux pas mondain de Rastignac',
 		category: 'bourgeoisie',
 		coordinates: [48.8715, 2.3342],
+		historicalCoordinates: {
+			pixelOrig: [4090, 2000],
+			pixel3200: [1341.0, 655.6],
+			percent: [41.91, 26.74],
+			leafletCoords: [1796.4, 1341.0],
+		},
 		locationPrecision: 'district',
 		historicalAddress: 'Rue du Helder (numéro non précisé par Balzac)',
 		modernLocation: 'Rue du Helder (secteur Opéra / boulevard des Italiens), 9e arrondissement',
@@ -132,6 +174,12 @@ export const goriotPlaces: GoriotPlace[] = [
 		subtitle: 'Le sanctuaire du grand monde et l’école du cynisme',
 		category: 'aristocratie',
 		coordinates: [48.8562, 2.3195],
+		historicalCoordinates: {
+			pixelOrig: [3380, 4070],
+			pixel3200: [1108.2, 1334.2],
+			percent: [34.63, 54.41],
+			leafletCoords: [1117.8, 1108.2],
+		},
 		locationPrecision: 'district',
 		historicalAddress: 'Rue de Grenelle, faubourg Saint-Germain (numéro non précisé par Balzac)',
 		modernLocation: 'Rue de Grenelle, 7e arrondissement',
@@ -151,6 +199,12 @@ export const goriotPlaces: GoriotPlace[] = [
 		subtitle: 'La vitrine de l’élégance et la rencontre avec Delphine',
 		category: 'sociabilite',
 		coordinates: [48.8708, 2.3375],
+		historicalCoordinates: {
+			pixelOrig: [4350, 2050],
+			pixel3200: [1426.2, 672.0],
+			percent: [44.57, 27.41],
+			leafletCoords: [1780.0, 1426.2],
+		},
 		locationPrecision: 'approximate',
 		historicalAddress: 'Place Boieldieu / Salle Favart (résidence du Théâtre-Italien en 1819 déduite du contexte historique)',
 		modernLocation: 'Opéra-Comique, place Boieldieu, 2e arrondissement',
@@ -170,6 +224,12 @@ export const goriotPlaces: GoriotPlace[] = [
 		subtitle: 'Le gouffre du hasard et la roulette initiatique',
 		category: 'sociabilite',
 		coordinates: [48.8638, 2.337],
+		historicalCoordinates: {
+			pixelOrig: [4400, 2830],
+			pixel3200: [1442.6, 927.7],
+			percent: [45.08, 37.83],
+			leafletCoords: [1524.3, 1442.6],
+		},
 		locationPrecision: 'exact',
 		historicalAddress: 'Galeries du Palais-Royal, maison de jeu au n° 9 (mention textuelle explicite)',
 		modernLocation: 'Domaine du Palais-Royal (galerie de Valois n° 9), 1er arrondissement',
@@ -189,6 +249,12 @@ export const goriotPlaces: GoriotPlace[] = [
 		subtitle: 'Le palais de la haute banque et du faux luxe',
 		category: 'bourgeoisie',
 		coordinates: [48.8756, 2.3315],
+		historicalCoordinates: {
+			pixelOrig: [4050, 1370],
+			pixel3200: [1327.9, 449.1],
+			percent: [41.5, 18.32],
+			leafletCoords: [2002.9, 1327.9],
+		},
 		locationPrecision: 'district',
 		historicalAddress: 'Rue Saint-Lazare (numéro non précisé par Balzac)',
 		modernLocation: 'Rue Saint-Lazare (secteur Trinité / Chaussée-d’Antin), 9e arrondissement',
@@ -208,6 +274,12 @@ export const goriotPlaces: GoriotPlace[] = [
 		subtitle: 'L’asile des confidences et des cas de conscience',
 		category: 'sociabilite',
 		coordinates: [48.8462, 2.3371],
+		historicalCoordinates: {
+			pixelOrig: [4300, 5020],
+			pixel3200: [1409.8, 1645.6],
+			percent: [44.06, 67.11],
+			leafletCoords: [806.4, 1409.8],
+		},
 		locationPrecision: 'approximate',
 		historicalAddress: 'Jardin du Luxembourg (allées devant le palais ; emplacement romanesque indicatif)',
 		modernLocation: 'Jardin du Luxembourg, 6e arrondissement',
@@ -227,6 +299,12 @@ export const goriotPlaces: GoriotPlace[] = [
 		subtitle: 'Le pied-à-terre meublé par le sacrifice ultime de Goriot',
 		category: 'bourgeoisie',
 		coordinates: [48.8745, 2.3388],
+		historicalCoordinates: {
+			pixelOrig: [4240, 1870],
+			pixel3200: [1390.2, 613.0],
+			percent: [43.44, 25.0],
+			leafletCoords: [1839.0, 1390.2],
+		},
 		locationPrecision: 'approximate',
 		historicalAddress: 'Rue d’Artois (actuelle rue Laffitte, appartement au 3e étage sur cour)',
 		modernLocation: 'Rue Laffitte, 9e arrondissement',
@@ -246,6 +324,12 @@ export const goriotPlaces: GoriotPlace[] = [
 		subtitle: 'L’office funèbre des indigents',
 		category: 'denouement',
 		coordinates: [48.8465, 2.3481],
+		historicalCoordinates: {
+			pixelOrig: [5240, 5130],
+			pixel3200: [1718.0, 1681.7],
+			percent: [53.69, 68.58],
+			leafletCoords: [770.3, 1718.0],
+		},
 		locationPrecision: 'exact',
 		historicalAddress: 'Paroisse de Saint-Étienne-du-Mont (place Sainte-Geneviève)',
 		modernLocation: 'Place Sainte-Geneviève, 5e arrondissement',
@@ -265,6 +349,12 @@ export const goriotPlaces: GoriotPlace[] = [
 		subtitle: 'La tombe solitaire et le défi à la Société',
 		category: 'denouement',
 		coordinates: [48.8615, 2.394],
+		historicalCoordinates: {
+			pixelOrig: [8750, 3370],
+			pixel3200: [2868.9, 1104.7],
+			percent: [89.65, 45.05],
+			leafletCoords: [1347.3, 2868.9],
+		},
 		locationPrecision: 'approximate',
 		historicalAddress: 'Cimetière de l’Est (Père-Lachaise, secteur sommital vers le belvédère dominant Paris)',
 		modernLocation: 'Cimetière du Père-Lachaise, 20e arrondissement',
