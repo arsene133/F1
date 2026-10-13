@@ -45,6 +45,26 @@ const pageDescription =
 						Sélectionnez un personnage ou une relation pour en afficher l’analyse détaillée ; les
 						flèches du clavier parcourent les personnages, Échap réinitialise la vue.
 					</p>
+
+					<!-- Navigation rapide vers les sections clés -->
+					<nav class="page-quicklinks" aria-label="Accès rapide aux sections">
+						<a href="#coupe-immeuble" class="quicklink-item">
+							<span class="quicklink-icon" aria-hidden="true">🏢</span>
+							<span>Coupe architecturale</span>
+						</a>
+						<a href="#pot-bouille" class="quicklink-item">
+							<span class="quicklink-icon" aria-hidden="true">👥</span>
+							<span>Réseau des personnages</span>
+						</a>
+						<a href="#history-note-title" class="quicklink-item">
+							<span class="quicklink-icon" aria-hidden="true">⏳</span>
+							<span>Repères historiques</span>
+						</a>
+						<a href="#sources-iconographiques" class="quicklink-item">
+							<span class="quicklink-icon" aria-hidden="true">🖼️</span>
+							<span>Documents iconographiques</span>
+						</a>
+					</nav>
 				</header>
 
 				<ol class="mechanism" aria-label="Mécanisme du roman">
@@ -175,14 +195,14 @@ const pageDescription =
 								<article class="milestone-item">
 									<header class="milestone-header">
 										<span class="milestone-date">1853–1870</span>
-										<h4 class="milestone-title">Les grands travaux d’Haussmann à Paris</h4>
-										<span class="milestone-status status-widespread">Déjà en place dans le roman</span>
+										<h4 class="milestone-title">Les transformations de Paris et l’essor de l’habitat bourgeois sous le Second Empire</h4>
+										<span class="milestone-status status-widespread">Cadre urbain et architectural du roman</span>
 									</header>
 									<p class="milestone-desc">
-										Le préfet Haussmann perce de grandes avenues et impose des immeubles réguliers en pierre de taille, avec des balcons au deuxième étage et des chambres de bonnes sous le toit.
+										Sous le Second Empire, les grands travaux dirigés par le préfet Haussmann percent de larges artères rectilignes et généralisent des immeubles de rapport en pierre de taille aux façades alignées et réglementées. Mais dans les rues déjà tracées du centre parisien (comme la rue de Choiseul, ouverte à la fin du XVII<sup>e</sup> siècle), des immeubles bourgeois récents ou reconstruits adoptent ce nouveau standing sans pour autant résulter d'une percée haussmannienne directe.
 									</p>
 									<p class="milestone-linkage">
-										<strong>Ce que cela éclaire dans le roman :</strong> L’immeuble de la rue de Choiseul est un parfait exemple de cette architecture. Zola montre le contraste entre la belle façade extérieure, propre et respectable, et l’intérieur des appartements où se cachent les conflits et les mensonges.
+										<strong>Ce que cela éclaire dans le roman :</strong> L’immeuble fictif du n° 28 illustre cette architecture bourgeoise du Second Empire : façade imposante de pierre blanche, imitation du marbre, portes d’acajou et conciergerie solennelle créent une illusion de grandeur, masquant la promiscuité d'une parcelle resserrée sur cour et l'étroitesse des cuisines.
 									</p>
 								</article>
 
@@ -264,6 +284,463 @@ const pageDescription =
 							</footer>
 						</div>
 					</details>
+
+					<!-- Section iconographique patrimoniale : L’immeuble bourgeois vu par Zola -->
+					<section class="potbouille-iconography-section" id="sources-iconographiques" aria-labelledby="iconography-section-title">
+						<header class="iconography-header">
+							<p class="iconography-tag">Sources historiques & Archives patrimoniales</p>
+							<h2 id="iconography-section-title" class="iconography-heading">
+								Documents iconographiques — L’immeuble bourgeois vu par Zola
+							</h2>
+							<p class="iconography-lead">
+								Pour un élève de seconde étudiant <em>Pot-Bouille</em> et le naturalisme, observer des documents visuels du XIX<sup>e</sup> siècle permet de comprendre comment l’architecture parisienne reflète et façonne la hiérarchie sociale. Loin d’être de simples illustrations décoratives, ces estampes satiriques, photographies urbaines de Charles Marville et portraits d’époque constituent des <strong>sources historiques et littéraires qu’il convient d’interroger avec rigueur</strong> : qui est l’auteur de l’image ? À quelle date précise a-t-elle été conçue ? Que documente-t-elle avec certitude et quelles sont les limites de son interprétation ?
+							</p>
+
+							<!-- Cadre méthodologique des statuts documentaires -->
+							<div class="iconography-method-banner">
+								<span class="method-banner-title">Méthode d’observation : les quatre statuts documentaires</span>
+								<ul class="method-banner-list">
+									<li><span class="status-badge status-roman">Illustration & édition du roman (1882–1883)</span> Témoigne de la mise en images contemporaine du texte de Zola.</li>
+									<li><span class="status-badge status-historique">Témoignage historique de comparaison (1845–1878)</span> Documente l’architecture, la voirie et la stratification sociale réelle.</li>
+									<li><span class="status-badge status-reception">Document de réception & satire (1882)</span> Révèle le scandale suscité par la critique naturaliste de la bourgeoisie.</li>
+									<li><span class="status-badge status-mediation">Repère contemporain de médiation (XXIᵉ siècle)</span> Aide à visualiser le quartier actuel sans valeur de preuve pour le Second Empire.</li>
+								</ul>
+							</div>
+						</header>
+
+						<div class="iconography-cards-grid">
+							<!-- Fiche 1 : Bertall, Les cinq étages du monde parisien (1845) -->
+							<article class="iconography-card" id="doc-bertall-cinq-etages">
+								<header class="iconography-card-header">
+									<span class="status-badge status-historique">Document historique de comparaison (1845)</span>
+									<h3 class="iconography-card-title">1. La pyramide sociale verticale : les cinq étages de l’immeuble parisien (Bertall)</h3>
+								</header>
+
+								<figure class="iconography-figure">
+									<img
+										src="/images/pot-bouille/bertall-cinq-etages-1845.jpg"
+										alt="Gravure en coupe d'un immeuble parisien de cinq étages par Bertall en 1845 montrant les contrastes sociaux entre les étages"
+										class="iconography-img"
+										loading="lazy"
+										width="731"
+										height="1141"
+									/>
+									<figcaption class="iconography-caption">
+										Bertall (dessin) et Lavieille (gravure), <em>Cinq étages du monde parisien</em> (1845), BnF Gallica / Hetzel.
+									</figcaption>
+								</figure>
+
+								<div class="iconography-meta-box">
+									<ul class="iconography-meta-list">
+										<li><strong>Titre de la planche :</strong> <cite>Cinq étages du monde parisien</cite> (ou <cite>Coupe d’une maison parisienne le 1er janvier 1845</cite>)</li>
+										<li><strong>Dessinateur & graveur :</strong> Bertall (Charles-Albert d'Arnoux, 1820–1882) et Jacques-Adrien Lavieille (1818–1862)</li>
+										<li><strong>Date de publication :</strong> 11 janvier 1845 (dans <em>L’Illustration</em>, reprise dans <em>Le Diable à Paris</em> chez Hetzel en 1845–1846)</li>
+										<li><strong>Institution conservatrice :</strong> Bibliothèque nationale de France (département Réserve des livres rares et Estampes)</li>
+										<li><strong>Identifiant pérenne :</strong> <a href="https://gallica.bnf.fr/ark:/12148/bpt6k1059f" target="_blank" rel="noopener noreferrer" class="meta-permalink">Gallica ark:/12148/bpt6k1059f</a> (recueil Hetzel)</li>
+										<li><strong>Licence :</strong> Domaine public</li>
+									</ul>
+								</div>
+
+								<div class="iconography-evaluation-box">
+									<h4>Évaluation documentaire & analyse critique</h4>
+									<p>
+										<strong>Que montre réellement le document ?</strong> Une coupe transversale pionnière montrant la répartition sociale par étage sous la monarchie de Juillet : concierge au rez-de-chaussée, noblesse oisive au premier étage haut de plafond, bourgeoisie familiale au deuxième, gêne financière et huissier au troisième, ouvriers et artistes dans les mansardes sous le toit.
+									</p>
+									<p>
+										<strong>Rapprochement avec <em>Pot-Bouille</em> :</strong> Zola reprend cette formule de la coupe pour l’immeuble de la rue de Choiseul, mais la durcit. Alors que chez Bertall la pauvreté du haut reste pittoresque ou poétique, Zola montre que sous le Second Empire, la bourgeoisie du 28 rue de Choiseul rejette impitoyablement ses domestiques dans des « trous étouffants » sous les combles.
+									</p>
+									<p>
+										<strong>Limite de la comparaison :</strong> Le dessin de Bertall date de 1845, soit dix ans avant les règlements d’urbanisme d’Haussmann et l’uniformisation de la pierre de taille. C’est un archétype satirique, non le plan architectural réel d’un immeuble particulier.
+									</p>
+								</div>
+
+								<div class="iconography-question-box">
+									<strong>Questions d’observation pour les élèves :</strong>
+									<p>1. Comment la hauteur sous plafond et la taille des fenêtres varient-elles entre le premier étage et les combles ?</p>
+									<p>2. En quoi la coupe révèle-t-elle la hiérarchie sociale de manière plus frappante qu’une simple vue de façade extérieure ?</p>
+								</div>
+							</article>
+
+							<!-- Fiche 2 : Charles Marville, La rue de Choiseul (vers 1866) -->
+							<article class="iconography-card" id="doc-marville-rue-choiseul">
+								<header class="iconography-card-header">
+									<span class="status-badge status-historique">Témoignage historique de comparaison (v. 1866)</span>
+									<h3 class="iconography-card-title">2. Le décor réel du roman : la rue de Choiseul photographiée par Charles Marville</h3>
+								</header>
+
+								<figure class="iconography-figure">
+									<img
+										src="/images/pot-bouille/marville-rue-de-choiseul-1866.jpg"
+										alt="Photographie historique de la rue de Choiseul prise par Charles Marville vers 1866 depuis le débouché du passage Choiseul"
+										class="iconography-img"
+										loading="lazy"
+										width="1359"
+										height="1007"
+									/>
+									<figcaption class="iconography-caption">
+										Charles Marville, <em>Rue de Choiseul, du passage Choiseul</em> (v. 1866), Musée Carnavalet, Histoire de Paris. Vue de la rue prise depuis le débouché de la galerie marchande du passage Choiseul.
+									</figcaption>
+								</figure>
+
+								<div class="iconography-meta-box">
+									<ul class="iconography-meta-list">
+										<li><strong>Titre de la notice :</strong> <cite>Rue de Choiseul, du passage Choiseul (Paris IIe)</cite></li>
+										<li><strong>Photographe :</strong> Charles Marville (Charles-François Bossu, 1813–1879), photographe officiel de la Ville de Paris</li>
+										<li><strong>Date de prise de vue :</strong> Vers 1866 (campagne de documentation photographique du Paris du Second Empire)</li>
+										<li><strong>Institution conservatrice :</strong> Musée Carnavalet — Histoire de Paris (Paris Musées)</li>
+										<li><strong>Cote d’inventaire :</strong> <a href="https://parismuseescollections.paris.fr/fr/musee-carnavalet/oeuvres/rue-de-choiseul-du-passage-choiseul" target="_blank" rel="noopener noreferrer" class="meta-permalink">Musée Carnavalet CARPH000461 / PH83501</a></li>
+										<li><strong>Licence :</strong> Domaine public (Paris Musées CC0)</li>
+									</ul>
+								</div>
+
+								<div class="iconography-evaluation-box">
+									<h4>Évaluation documentaire & analyse critique</h4>
+									<p>
+										<strong>Que montre réellement le document ?</strong> L’alignement de la <em>rue de Choiseul</em>, voie carrossable de plein air, photographiée depuis le débouché du <em>passage Choiseul</em> (galerie marchande couverte voisine). On y observe les pavés, les trottoirs étroits, les façades d’immeubles bourgeois en pierre et les rez-de-chaussée occupés par des artisans et horlogers.
+									</p>
+									<p>
+										<strong>Rapprochement avec <em>Pot-Bouille</em> :</strong> Dès l’incipit, Octave Mouret commet précisément l’hésitation entre les deux voies : <em>« Octave, qui venait de descendre à la gare Saint-Lazare... s'était arrêté au passage Choiseul, croyant être arrivé, lorsqu'en levant les yeux il lut au coin d'une maison neuve : rue de Choiseul. »</em> L’immeuble fictif du n° 28 est situé par Zola dans cette rue, mais son standing s’inspire de la reconstruction bourgeoise du quartier sous le Second Empire.
+									</p>
+									<p>
+										<strong>Règle critique & distinction spatiale :</strong> Ne pas confondre la <strong>rue de Choiseul</strong> (artère résidentielle extérieure où Zola implante son immeuble fictif) et le <strong>passage Choiseul</strong> (galerie commerçante couverte de 1827). Ce cliché documente l’aspect réel de la rue sous Napoléon III, non le n° 28 dont la cour et les appartements sont une création romanesque.
+									</p>
+								</div>
+
+								<div class="iconography-question-box">
+									<strong>Questions d’observation pour les élèves :</strong>
+									<p>1. Pourquoi Octave Mouret hésite-t-il entre la rue et le passage Choiseul en arrivant de province ? Que révèle cette méprise sur la complexité du quartier ?</p>
+									<p>2. Quels indices sur la photographie de Marville (voitures à cheval, boutiques du rez-de-chaussée, fenêtres à persiennes) montrent le statut bourgeois mais industrieux de ce quartier du 2<sup>e</sup> arrondissement ?</p>
+								</div>
+							</article>
+
+							<!-- Fiche 3 : Charles Marville, Candélabre et éclairage au gaz (1878) -->
+							<article class="iconography-card" id="doc-marville-gaz">
+								<header class="iconography-card-header">
+									<span class="status-badge status-historique">Témoignage historique de comparaison (1878)</span>
+									<h3 class="iconography-card-title">3. Le confort moderne et le faux luxe : l’éclairage au gaz dans le Paris haussmannien</h3>
+								</header>
+
+								<figure class="iconography-figure">
+									<img
+										src="/images/pot-bouille/marville-candelabre-gaz-1878.jpg"
+										alt="Photographie d'un candélabre mural à gaz par Charles Marville en 1878 illustrant l'équipement technique de la voirie parisienne"
+										class="iconography-img"
+										loading="lazy"
+										width="952"
+										height="1248"
+									/>
+									<figcaption class="iconography-caption">
+										Charles Marville, <em>Candélabre console d’éclairage au gaz</em> (1878), Ville de Paris / BnF.
+									</figcaption>
+								</figure>
+
+								<div class="iconography-meta-box">
+									<ul class="iconography-meta-list">
+										<li><strong>Titre de la planche :</strong> <cite>Collection des appareils d'éclairage au gaz établis sur la voie publique</cite></li>
+										<li><strong>Photographe :</strong> Charles Marville (1813–1879)</li>
+										<li><strong>Date de réalisation :</strong> 1878 (commandé pour l’Exposition universelle de 1878)</li>
+										<li><strong>Institution conservatrice :</strong> Bibliothèque historique de la Ville de Paris / Metropolitan Museum of Art</li>
+										<li><strong>Identifiant pérenne :</strong> <a href="https://commons.wikimedia.org/wiki/File:Charles_Marville,_Cand%C3%A9labre_console,_1878.jpg" target="_blank" rel="noopener noreferrer" class="meta-permalink">Wikimedia Commons / Ville de Paris (Domaine public)</a></li>
+										<li><strong>Licence :</strong> Domaine public</li>
+									</ul>
+								</div>
+
+								<div class="iconography-evaluation-box">
+									<h4>Évaluation documentaire & analyse critique</h4>
+									<p>
+										<strong>Que montre réellement le document ?</strong> Les appareils d'éclairage au gaz en fonte ouvragée qui équipent Paris à la fin du Second Empire. Le gaz de ville représentait le comble de la modernité technique, remplaçant les réverbères à huile.
+									</p>
+									<p>
+										<strong>Rapprochement avec <em>Pot-Bouille</em> :</strong> Dès le vestibule d’entrée, Zola insiste sur cette modernité trompeuse : <em>« Une figure de femme en fonte bronzée, une sorte de statue drapée portant un candélabre d’où s’échappaient trois becs de gaz... Le gaz brûlait clair, l’escalier tiédissait doucement sous la chaleur du calorifère. »</em> Ce luxe s’interrompt brusquement dès que l’on s’élève vers les combles.
+									</p>
+									<p>
+										<strong>Limite de la comparaison :</strong> Cette console en fonte était fixée sur les murs extérieurs de la voirie publique ; Zola transpose ce goût du bronze et de la fonte décorative dans l’espace privé du hall d’immeuble pour séduire les visiteurs.
+									</p>
+								</div>
+
+								<div class="iconography-question-box">
+									<strong>Questions d’observation pour les élèves :</strong>
+									<p>1. Pourquoi le gaz et le chauffage central constituent-ils pour Zola des emblèmes d’une « respectabilité de façade » ?</p>
+									<p>2. Que suggère le fait que les tuyaux de gaz et les calorifères s’arrêtent au troisième étage sans desservir les chambres de bonnes ?</p>
+								</div>
+							</article>
+
+							<!-- Fiche 4 : Émile Zola, Portrait par Nadar et la méthode naturaliste -->
+							<article class="iconography-card" id="doc-zola-nadar">
+								<header class="iconography-card-header">
+									<span class="status-badge status-roman">Document d'auteur & méthode d'enquête (v. 1880–1885)</span>
+									<h3 class="iconography-card-title">4. L’écrivain naturaliste en observateur scientifique : Émile Zola par Nadar</h3>
+								</header>
+
+								<figure class="iconography-figure">
+									<img
+										src="/images/pot-bouille/emile-zola-nadar.jpg"
+										alt="Portrait photographique en buste d'Émile Zola par l'atelier Nadar montrant le romancier avec barbe et lunettes"
+										class="iconography-img"
+										loading="lazy"
+										width="829"
+										height="1131"
+									/>
+									<figcaption class="iconography-caption">
+										Atelier Nadar, <em>Portrait d’Émile Zola</em> (v. 1880–1885), BnF Estampes et photographie.
+									</figcaption>
+								</figure>
+
+								<div class="iconography-meta-box">
+									<ul class="iconography-meta-list">
+										<li><strong>Titre du portrait :</strong> <cite>Émile Zola en buste, de face</cite></li>
+										<li><strong>Photographe :</strong> Atelier Nadar (Félix et Paul Nadar)</li>
+										<li><strong>Date de création :</strong> Vers 1880–1885 (période de parution de <em>Nana</em> et <em>Pot-Bouille</em>)</li>
+										<li><strong>Institution conservatrice :</strong> Bibliothèque nationale de France (département des Estampes et de la photographie)</li>
+										<li><strong>Identifiant pérenne :</strong> <a href="https://gallica.bnf.fr/ark:/12148/btv1b53112461n" target="_blank" rel="noopener noreferrer" class="meta-permalink">Gallica ark:/12148/btv1b53112461n</a></li>
+										<li><strong>Licence :</strong> Domaine public</li>
+									</ul>
+								</div>
+
+								<div class="iconography-evaluation-box">
+									<h4>Évaluation documentaire & analyse critique</h4>
+									<p>
+										<strong>Que montre réellement le document ?</strong> Zola à l’époque de la rédaction de <em>Pot-Bouille</em> : regard perçant, lunettes de myope, pose sobre sans emphase romantique. Cette image illustre la posture de l’écrivain naturaliste qui se veut « greffier du réel » et physiologiste des passions humaines.
+									</p>
+									<p>
+										<strong>Méthode d’enquête pour <em>Pot-Bouille</em> :</strong> Pour concevoir l’immeuble, Zola a constitué un imposant dossier préparatoire (conservé à la BnF, NAF 10320-10321) comprenant des plans d’appartements dessinés de sa main, des fiches de température sociale et des notes d’observation fournies par ses amis Henry Céard et J.-K. Huysmans sur les petits bourgeois parisiens.
+									</p>
+									<p>
+										<strong>Limite de l’interprétation :</strong> La photographie de studio est elle-même une mise en scène soignée destinée à forger l’image publique du chef de file du naturalisme, alors violemment attaqué dans la presse.
+									</p>
+								</div>
+
+								<div class="iconography-question-box">
+									<strong>Questions d’observation pour les élèves :</strong>
+									<p>1. En quoi la pose austère de Zola s’oppose-t-elle aux portraits romantiques chevelus et exaltés de la première moitié du siècle ?</p>
+									<p>2. Comment la méthode des carnets préparatoires rapproche-t-elle l’écriture de Zola d’une enquête de sociologue ?</p>
+								</div>
+							</article>
+
+							<!-- Fiche 5 : André Gill, « Le Pot-Bouille à Zola » (La Nouvelle Lune, 23 avril 1882) -->
+							<article class="iconography-card" id="doc-gill-nouvelle-lune">
+								<header class="iconography-card-header">
+									<span class="status-badge status-reception">Document de réception & satire contemporaine (1882)</span>
+									<h3 class="iconography-card-title">5. La réception polémique : « Le Pot-Bouille à Zola » par André Gill</h3>
+								</header>
+
+								<figure class="iconography-figure">
+									<img
+										src="/images/pot-bouille/andre-gill-pot-bouille-1882.jpg"
+										alt="Caricature en couleur d'André Gill dans La Nouvelle Lune du 23 avril 1882 représentant Émile Zola en cuisinier soulevant une marmite fumante"
+										class="iconography-img"
+										loading="lazy"
+										width="682"
+										height="1000"
+									/>
+									<figcaption class="iconography-caption">
+										André Gill, <em>Le Pot-Bouille à Zola (« Ce que ça sent bon !!! »)</em>, une de <em>La Nouvelle Lune</em> du 23 avril 1882, BnF Gallica.
+									</figcaption>
+								</figure>
+
+								<div class="iconography-meta-box">
+									<ul class="iconography-meta-list">
+										<li><strong>Titre exact de la une :</strong> <cite>Le Pot-Bouille à Zola — Ce que ça sent bon !!!</cite></li>
+										<li><strong>Caricaturiste :</strong> André Gill (Louis-Alexandre Gosset de Guînes, 1840–1885)</li>
+										<li><strong>Date de parution :</strong> 23 avril 1882 (n° 99 de <em>La Nouvelle Lune</em>)</li>
+										<li><strong>Institution conservatrice :</strong> Bibliothèque nationale de France (collection de presse satirique)</li>
+										<li><strong>Identifiant pérenne :</strong> <a href="https://gallica.bnf.fr/ark:/12148/bpt6k10688269/f1" target="_blank" rel="noopener noreferrer" class="meta-permalink">Gallica ark:/12148/bpt6k10688269</a></li>
+										<li><strong>Licence :</strong> Domaine public</li>
+									</ul>
+								</div>
+
+								<div class="iconography-evaluation-box">
+									<h4>Évaluation documentaire & analyse critique</h4>
+									<p>
+										<strong>Que montre réellement le document ?</strong> Émile Zola représenté en cuisinier coiffé d'un tablier blanc, tenant une plume géante comme cuillère et soulevant le couvercle d’une marmite en fonte d'où s'échappent des fumées méphitiques. Le dessinateur joue sur le double sens du mot « pot-bouille » (repas ordinaire et cuisine morale douteuse).
+									</p>
+									<p>
+										<strong>Réception du roman en 1882 :</strong> Dès sa parution, <em>Pot-Bouille</em> soulève une tempête d’indignation dans la presse bourgeoise : les critiques accusent Zola de calomnier les familles respectables, de « salir les foyers » et de se complaire dans la pornographie et l’ordure. Cette caricature traduit visuellement cette accusation d’immoralité portée contre le naturalisme.
+									</p>
+									<p>
+										<strong>Statut documentaire :</strong> Ce document ne représente pas une scène du roman. C’est une <strong>pièce de réception journalistique</strong> qui éclaire la violence des débats littéraires et moraux sous la Troisième République naissante.
+									</p>
+								</div>
+
+								<div class="iconography-question-box">
+									<strong>Questions d’observation pour les élèves :</strong>
+									<p>1. Pourquoi le caricaturiste transforme-t-il la plume de l’écrivain en louche de cuisinier ? Quel reproche fait-il au naturalisme ?</p>
+									<p>2. Pourquoi la description réaliste de l’adultère bourgeois choquait-elle davantage la critique que la misère ouvrière décrite dans <em>L’Assommoir</em> ?</p>
+								</div>
+							</article>
+
+							<!-- Fiche 6 : Albert Robida, « La Maison de Pot-Bouille » (La Caricature, 13 mai 1882) -->
+							<article class="iconography-card" id="doc-robida-pot-bouille">
+								<header class="iconography-card-header">
+									<span class="status-badge status-reception">Illustration satirique & coupe parodique (1882)</span>
+									<h3 class="iconography-card-title">6. L’immeuble parodié : « La Maison de Pot-Bouille » d’Albert Robida</h3>
+								</header>
+
+								<figure class="iconography-figure">
+									<div class="iconography-notice-fallback">
+										<span class="fallback-icon" aria-hidden="true">📜</span>
+										<div class="fallback-text">
+											<strong>Planche satirique originale consultable sur Gallica / Passerelles BnF :</strong>
+											<p>Albert Robida, <em>La Maison de Pot-Bouille (ou tous détraqués mais tous vertueux)</em>, double page parue dans <em>La Caricature</em> n° 124 le 13 mai 1882.</p>
+											<a href="https://gallica.bnf.fr/ark:/12148/mm320200274d" target="_blank" rel="noopener noreferrer" class="meta-permalink">Consulter la notice haute résolution BnF ark:/12148/mm320200274d ↗</a>
+										</div>
+									</div>
+									<figcaption class="iconography-caption">
+										Albert Robida, <em>La Maison de Pot-Bouille</em> (1882), BnF Estampes et photographie, cote fol. Lc 13247.
+									</figcaption>
+								</figure>
+
+								<div class="iconography-meta-box">
+									<ul class="iconography-meta-list">
+										<li><strong>Titre exact de l’estampe :</strong> <cite>Pot-Bouille ou tous détraqués mais tous vertueux — La Maison de Pot-Bouille</cite></li>
+										<li><strong>Auteur & caricaturiste :</strong> Albert Robida (1848–1926)</li>
+										<li><strong>Date de publication :</strong> 13 mai 1882 (revue hebdomadaire <em>La Caricature</em>, n° 124)</li>
+										<li><strong>Institution conservatrice :</strong> Bibliothèque nationale de France (département des Estampes et de la photographie)</li>
+										<li><strong>Identifiant pérenne :</strong> <a href="https://gallica.bnf.fr/ark:/12148/mm320200274d" target="_blank" rel="noopener noreferrer" class="meta-permalink">BnF Passerelles / Gallica ark:/12148/mm320200274d</a></li>
+										<li><strong>Licence :</strong> Domaine public</li>
+									</ul>
+								</div>
+
+								<div class="iconography-evaluation-box">
+									<h4>Évaluation documentaire & analyse critique</h4>
+									<p>
+										<strong>Que montre réellement le document ?</strong> Robida reprend la formule classique de la coupe d’immeuble à la Bertall mais l'adapte fidèlement aux personnages de Zola sous la forme d’un gaufrier d’intérieurs : Octave Mouret séduisant les épouses de l’immeuble, les Josserand négociant la dot de Berthe, les crises d’hystérie de Mme Vabre et les domestiques complotant dans la cour des cuisines.
+									</p>
+									<p>
+										<strong>Rapprochement avec le texte de Zola :</strong> Le sous-titre de Robida (<em>« tous détraqués mais tous vertueux »</em>) résume parfaitement la leçon morale du roman : chacun enfreint la morale en secret tout en affichant une pudibonderie intransigeante sur le palier.
+									</p>
+									<p>
+										<strong>Intérêt pour les élèves :</strong> Ce document prouve l’impact immédiat du roman sur l’imaginaire collectif de 1882. La coupe architecturale y devient un dispositif de bande dessinée avant la lettre, où chaque case donne à voir la simultanéité des secrets d’alcôve.
+									</p>
+								</div>
+
+								<div class="iconography-question-box">
+									<strong>Questions d’observation pour les élèves :</strong>
+									<p>1. Comparez cette coupe satirique de Robida (1882) avec celle de Bertall (1845) : qu’est-ce qui a changé dans la manière de représenter la respectabilité bourgeoise ?</p>
+									<p>2. Pourquoi la simultanéité offerte par une coupe d’immeuble est-elle impossible à traduire sur une scène de théâtre classique ?</p>
+								</div>
+							</article>
+
+							<!-- Fiche 7 : L’édition originale de 1882 chez Charpentier -->
+							<article class="iconography-card" id="doc-edition-originale">
+								<header class="iconography-card-header">
+									<span class="status-badge status-roman">Document éditorial d'époque (1882)</span>
+									<h3 class="iconography-card-title">7. L'acte de publication : la page de titre de l’édition originale (G. Charpentier)</h3>
+								</header>
+
+								<figure class="iconography-figure">
+									<img
+										src="/images/pot-bouille/zola-pot-bouille-edition-originale-1882.jpg"
+										alt="Page de titre imprimée de l'édition originale de Pot-Bouille publiée en 1882 chez Georges Charpentier éditeur"
+										class="iconography-img"
+										loading="lazy"
+										width="950"
+										height="1630"
+									/>
+									<figcaption class="iconography-caption">
+										Émile Zola, page de titre de l’édition originale de <em>Pot-Bouille</em> (1882), G. Charpentier éditeur, Paris.
+									</figcaption>
+								</figure>
+
+								<div class="iconography-meta-box">
+									<ul class="iconography-meta-list">
+										<li><strong>Titre complet imprimé :</strong> <cite>Les Rougon-Macquart : Histoire naturelle et sociale d'une famille sous le Second Empire — Pot-Bouille</cite></li>
+										<li><strong>Auteur & éditeur :</strong> Émile Zola / Georges Charpentier éditeur (13, rue de Grenelle, Paris)</li>
+										<li><strong>Date d'achèvement d'imprimerie :</strong> Avril 1882</li>
+										<li><strong>Institution conservatrice :</strong> Bibliothèque nationale de France / Université de Toronto</li>
+										<li><strong>Identifiant pérenne :</strong> <a href="https://commons.wikimedia.org/wiki/File:Pot_Bouille.jpg" target="_blank" rel="noopener noreferrer" class="meta-permalink">Wikimedia Commons / Archive.org (Domaine public)</a></li>
+										<li><strong>Licence :</strong> Domaine public</li>
+									</ul>
+								</div>
+
+								<div class="iconography-evaluation-box">
+									<h4>Évaluation documentaire & analyse critique</h4>
+									<p>
+										<strong>Que montre réellement le document ?</strong> La sobriété typographique caractéristique des volumes de la collection Charpentier à 3 fr. 50 sous couverture jaune. Le sous-titre monumental (« Histoire naturelle et sociale d'une famille sous le Second Empire ») rappelle que <em>Pot-Bouille</em> n'est pas une satire isolée, mais le 10<sup>e</sup> maillon d'une fresque biologique et héréditaire.
+									</p>
+									<p>
+										<strong>La place de <em>Pot-Bouille</em> dans le cycle :</strong> Après la peinture du monde ouvrier dans <em>L'Assommoir</em> (1877) et du demi-monde dans <em>Nana</em> (1880), Zola s'attaque frontalement au cœur du pouvoir sous le Second Empire : la bourgeoisie d'affaires et de robe. Le roman prépare directement <em>Au Bonheur des Dames</em> (1883), où Octave Mouret révolutionnera le commerce parisien.
+									</p>
+									<p>
+										<strong>Rapprochement critique :</strong> Cette édition originale ne comporte aucune illustration : Zola souhaitait que son texte impose sa rigueur descriptive par la seule force du vocabulaire clinique et des contrastes spatiaux.
+									</p>
+								</div>
+
+								<div class="iconography-question-box">
+									<strong>Questions d’observation pour les élèves :</strong>
+									<p>1. Pourquoi le sous-titre utilise-t-il le terme d'« Histoire naturelle » aux côtés d'« Histoire sociale » ?</p>
+									<p>2. En quoi la sobriété de cette page de titre contraste-t-elle avec les caricatures féroces parues au même moment dans les journaux satiriques ?</p>
+								</div>
+							</article>
+
+							<!-- Fiche 8 : Le Passage Choiseul aujourd’hui (Médiation contemporaine) -->
+							<article class="iconography-card" id="doc-passage-choiseul">
+								<header class="iconography-card-header">
+									<span class="status-badge status-mediation">Repère contemporain de médiation (XXIᵉ siècle)</span>
+									<h3 class="iconography-card-title">8. Topographie contemporaine : le passage Choiseul et la verrière marchande</h3>
+								</header>
+
+								<figure class="iconography-figure">
+									<img
+										src="/images/pot-bouille/passage-choiseul-paris.jpg"
+										alt="Photographie contemporaine de la nef couverte et de la verrière du passage Choiseul dans le 2e arrondissement de Paris par Gzen92 (2010)"
+										class="iconography-img"
+										loading="lazy"
+										width="1296"
+										height="972"
+									/>
+									<figcaption class="iconography-caption">
+										Le passage Choiseul (Paris 2<sup>e</sup>) : nef commerçante couverte d’une verrière métallique, conçue par François Mazois (1825–1827). Photographie contemporaine par Gzen92 (2010).
+									</figcaption>
+								</figure>
+
+								<div class="iconography-meta-box">
+									<ul class="iconography-meta-list">
+										<li><strong>Édifice représenté :</strong> Passage Choiseul (inscrit monument historique), galerie marchande couverte reliant la rue Saint-Augustin à la rue des Petits-Champs</li>
+										<li><strong>Conception architecturale historique :</strong> Plans d’origine par François Mazois (1783–1826), achevé par Antoine Tavernier en 1827</li>
+										<li><strong>Auteur de la photographie :</strong> Gzen92 (photographe contributeur Wikimedia Commons)</li>
+										<li><strong>Date de prise de vue :</strong> 7 août 2010 (vers 17h50, métadonnées EXIF vérifiées)</li>
+										<li><strong>Statut du document :</strong> Repère photographique contemporain sous licence libre (Creative Commons CC BY-SA 4.0)</li>
+										<li><strong>Identifiant pérenne :</strong> <a href="https://commons.wikimedia.org/wiki/File:Passage_Choiseul_(Paris).jpg" target="_blank" rel="noopener noreferrer" class="meta-permalink">Wikimedia Commons File:Passage Choiseul (Paris).jpg</a></li>
+										<li><strong>Licence de l'image :</strong> Creative Commons Attribution - Partage dans les Mêmes Conditions 4.0 International (CC BY-SA 4.0)</li>
+									</ul>
+								</div>
+
+								<div class="iconography-evaluation-box">
+									<h4>Évaluation documentaire & analyse critique</h4>
+									<p>
+										<strong>Que montre réellement le document ?</strong> L’intérieur du <em>passage Choiseul</em>, galerie commerçante couverte parallèle à la <em>rue de Choiseul</em>. On observe la verrière zénithale à ossature métallique, l'enfilade de boutiques en rez-de-chaussée et les étages d'habitation surplombant la nef.
+									</p>
+									<p>
+										<strong>Rapprochement avec l'incipit de <em>Pot-Bouille</em> :</strong> C'est ici même qu'Octave Mouret s'arrête par erreur au chapitre I, croyant être arrivé à destination : il confond le <em>passage</em> couvert avec la <em>rue</em> à ciel ouvert. Cette méprise spatiale a un sens littéraire : le passage annonce le bouillonnement commercial et moderne qu'Octave exploitera au magasin <em>Au Bonheur des Dames</em> (rue de la Michodière voisine), tandis que l'immeuble du 28, rue de Choiseul incarne la forteresse hypocrite des convenances domestiques.
+									</p>
+									<p>
+										<strong>Règle critique pour les élèves :</strong> Il faut soigneusement distinguer :
+										<strong>1. L'œuvre architecturale :</strong> édifiée sous la Restauration (1825–1827) par François Mazois ;
+										<strong>2. La prise de vue :</strong> captée en août 2010 par le photographe Gzen92 ;
+										<strong>3. La fiction de Zola :</strong> située sous le Second Empire. Cette photographie est une <em>médiation visuelle du XXI<sup>e</sup> siècle</em> qui permet d'appréhender le volume d'un passage couvert, mais ne témoigne pas de l'état des boutiques ou de l'éclairage à l'époque de Napoléon III.
+									</p>
+								</div>
+
+								<div class="iconography-question-box">
+									<strong>Questions d’observation pour les élèves :</strong>
+									<p>1. Pourquoi la confusion initiale d'Octave entre la <em>rue de Choiseul</em> et le <em>passage Choiseul</em> est-elle symbolique de son destin entre vie domestique bourgeoise et conquête commerciale ?</p>
+									<p>2. En observant cette photographie contemporaine, quels éléments (verrière, structure de fer) expliquent que les passages parisiens soient considérés comme les ancêtres directs des grands magasins ?</p>
+								</div>
+							</article>
+						</div>
+
+						<!-- Synthèse finale pour la classe de Seconde -->
+						<footer class="iconography-synthesis-box">
+							<div class="iconography-synthesis-header">
+								<span class="iconography-synthesis-badge">Bilan méthodologique · Seconde</span>
+								<h3 class="iconography-synthesis-title">Comment lire l'espace social dans le roman naturaliste</h3>
+							</div>
+							<p class="iconography-synthesis-text">
+								Confronter le texte de Zola à des documents iconographiques montre que le réalisme naturaliste ne se résume pas à copier fidèlement un bâtiment existant. Zola procède par <strong>synthèse critique</strong> : il observe l'essor des immeubles de rapport bourgeois sous le Second Empire et leur confort moderne (gaz, calorifère, façade en pierre blanche), mais les réactive à travers le dispositif satirique de la coupe (Bertall, Robida) pour déchirer le voile des convenances. L’immeuble fictif du 28, rue de Choiseul devient ainsi un <em>espace-piège</em> : sa façade ordonnée et son vestibule d’apparat masquent une cour intérieure resserrée, des boyaux de service insalubres et des combles étouffants, matérialisant dans la pierre l'hypocrisie morale d'une classe sociale obsédée par le paraître.
+							</p>
+						</footer>
+					</section>
 
 					<div class="synthesis-axioms">
 						<blockquote>
@@ -776,6 +1253,394 @@ const pageDescription =
 			gap: 0.5rem;
 			align-items: flex-start;
 			text-align: left;
+		}
+	}
+
+	/* ==========================================================================
+	   Accès rapide aux sections (quicklinks)
+	   ========================================================================== */
+	.page-quicklinks {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.6rem 0.85rem;
+		margin: 1.25rem 0 2rem;
+		padding: 0;
+	}
+
+	.quicklink-item {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		padding: 0.4rem 0.85rem;
+		background: #fdfbf7;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 999px;
+		font-size: 0.82rem;
+		font-weight: 500;
+		color: var(--map-ink, #172b3a);
+		text-decoration: none;
+		transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+	}
+
+	.quicklink-item:hover {
+		background: #ffffff;
+		border-color: #be185d;
+		color: #be185d;
+		transform: translateY(-1px);
+	}
+
+	.quicklink-icon {
+		font-size: 0.95rem;
+		line-height: 1;
+	}
+
+	/* ==========================================================================
+	   Section iconographique patrimoniale : sources & archives
+	   ========================================================================== */
+	.potbouille-iconography-section {
+		margin: 4.5rem 0 3rem;
+		padding-top: 2.25rem;
+		border-top: 1px solid var(--map-border, #dcd6cb);
+	}
+
+	.iconography-header {
+		text-align: center;
+		max-width: 880px;
+		margin: 0 auto 2.5rem;
+	}
+
+	.iconography-tag {
+		font-size: 0.78rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.12em;
+		color: #be185d;
+		margin: 0 0 0.4rem;
+	}
+
+	.iconography-heading {
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: clamp(1.6rem, 3.2vw, 2.3rem);
+		font-weight: normal;
+		line-height: 1.25;
+		color: var(--map-ink, #172b3a);
+		margin: 0 0 1rem;
+	}
+
+	.iconography-lead {
+		font-size: 1.02rem;
+		line-height: 1.65;
+		color: var(--map-ink-soft, #2d3e4d);
+		margin: 0 0 1.75rem;
+	}
+
+	.iconography-method-banner {
+		background: #fdfbf7;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 8px;
+		padding: 1.1rem 1.4rem;
+		text-align: left;
+	}
+
+	.method-banner-title {
+		display: block;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.05rem;
+		font-weight: 600;
+		color: var(--map-ink, #172b3a);
+		margin-bottom: 0.6rem;
+	}
+
+	.method-banner-list {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 0.6rem;
+		font-size: 0.86rem;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	@media (min-width: 768px) {
+		.method-banner-list {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	.status-badge {
+		display: inline-block;
+		font-size: 0.72rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		padding: 0.15rem 0.5rem;
+		border-radius: 4px;
+		margin-right: 0.4rem;
+	}
+
+	.status-roman {
+		background: rgba(190, 24, 93, 0.1);
+		color: #be185d;
+		border: 1px solid rgba(190, 24, 93, 0.25);
+	}
+
+	.status-historique {
+		background: rgba(180, 83, 9, 0.1);
+		color: #b45309;
+		border: 1px solid rgba(180, 83, 9, 0.25);
+	}
+
+	.status-reception {
+		background: rgba(185, 28, 28, 0.1);
+		color: #b91c1c;
+		border: 1px solid rgba(185, 28, 28, 0.25);
+	}
+
+	.status-mediation {
+		background: rgba(2, 132, 199, 0.1);
+		color: #0284c7;
+		border: 1px solid rgba(2, 132, 199, 0.25);
+	}
+
+	.iconography-cards-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 2rem;
+	}
+
+	@media (min-width: 820px) {
+		.iconography-cards-grid {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	.iconography-card {
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 10px;
+		padding: 1.5rem 1.6rem;
+		box-shadow: 0 3px 12px rgba(23, 43, 58, 0.04);
+		display: flex;
+		flex-direction: column;
+		gap: 1.1rem;
+	}
+
+	.iconography-card-header {
+		display: flex;
+		flex-direction: column;
+		gap: 0.45rem;
+		padding-bottom: 0.6rem;
+		border-bottom: 1px solid var(--map-border-soft, #ece7de);
+	}
+
+	.iconography-card-title {
+		margin: 0;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.15rem;
+		font-weight: 600;
+		color: var(--map-ink, #172b3a);
+		line-height: 1.35;
+	}
+
+	.iconography-figure {
+		margin: 0;
+		padding: 0;
+		background: #faf8f5;
+		border: 1px solid var(--map-border-soft, #ece7de);
+		border-radius: 6px;
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.iconography-img {
+		display: block;
+		width: 100%;
+		height: auto;
+		max-height: 320px;
+		object-fit: contain;
+		background: #f2ede4;
+	}
+
+	.iconography-caption {
+		padding: 0.5rem 0.75rem;
+		font-size: 0.78rem;
+		line-height: 1.4;
+		color: var(--map-ink-soft, #2d3e4d);
+		background: #ffffff;
+		border-top: 1px solid var(--map-border-soft, #ece7de);
+	}
+
+	.iconography-notice-fallback {
+		display: flex;
+		align-items: flex-start;
+		gap: 1rem;
+		padding: 1.25rem 1.4rem;
+		background: #fbf9f5;
+		border-bottom: 1px solid var(--map-border-soft, #ece7de);
+	}
+
+	.fallback-icon {
+		font-size: 2rem;
+		line-height: 1;
+		flex-shrink: 0;
+	}
+
+	.fallback-text strong {
+		display: block;
+		font-size: 0.88rem;
+		color: var(--map-ink, #172b3a);
+		margin-bottom: 0.35rem;
+	}
+
+	.fallback-text p {
+		margin: 0 0 0.5rem;
+		font-size: 0.82rem;
+		line-height: 1.45;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	.iconography-meta-box {
+		background: #faf8f5;
+		border: 1px solid var(--map-border-soft, #ece7de);
+		border-radius: 6px;
+		padding: 0.85rem 1rem;
+	}
+
+	.iconography-meta-list {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		font-size: 0.82rem;
+		line-height: 1.5;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	.iconography-meta-list li {
+		margin-bottom: 0.35rem;
+	}
+
+	.iconography-meta-list li:last-child {
+		margin-bottom: 0;
+	}
+
+	.meta-permalink {
+		color: #be185d;
+		text-decoration: underline;
+		font-weight: 600;
+	}
+
+	.meta-permalink:hover {
+		color: #831843;
+	}
+
+	.iconography-evaluation-box {
+		font-size: 0.88rem;
+		line-height: 1.6;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	.iconography-evaluation-box h4 {
+		margin: 0 0 0.5rem;
+		font-size: 0.82rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.iconography-evaluation-box p {
+		margin: 0 0 0.6rem;
+	}
+
+	.iconography-evaluation-box p:last-child {
+		margin: 0;
+	}
+
+	.iconography-question-box {
+		padding: 0.85rem 1rem;
+		background: rgba(190, 24, 93, 0.05);
+		border-left: 3px solid #be185d;
+		border-radius: 0 6px 6px 0;
+		font-size: 0.86rem;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.iconography-question-box strong {
+		display: block;
+		font-size: 0.74rem;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: #be185d;
+		margin-bottom: 0.25rem;
+	}
+
+	.iconography-question-box p {
+		margin: 0 0 0.35rem;
+		line-height: 1.5;
+	}
+
+	.iconography-question-box p:last-child {
+		margin: 0;
+	}
+
+	.iconography-synthesis-box {
+		margin-top: 2.5rem;
+		background: #fdfbf7;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-left: 4px solid #be185d;
+		border-radius: 8px;
+		padding: 1.4rem 1.6rem;
+	}
+
+	.iconography-synthesis-header {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		margin-bottom: 0.6rem;
+	}
+
+	.iconography-synthesis-badge {
+		font-size: 0.72rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		padding: 0.2rem 0.55rem;
+		border-radius: 4px;
+		background: rgba(190, 24, 93, 0.1);
+		color: #be185d;
+		border: 1px solid rgba(190, 24, 93, 0.25);
+	}
+
+	.iconography-synthesis-title {
+		margin: 0;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.15rem;
+		font-weight: 600;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.iconography-synthesis-text {
+		margin: 0;
+		font-size: 0.92rem;
+		line-height: 1.6;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	@media (max-width: 600px) {
+		.iconography-card {
+			padding: 1.2rem 1.1rem;
+		}
+
+		.iconography-notice-fallback {
+			flex-direction: column;
+			gap: 0.6rem;
+		}
+
+		.page-quicklinks {
+			justify-content: flex-start;
 		}
 	}
 </style>

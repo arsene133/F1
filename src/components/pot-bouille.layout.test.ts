@@ -279,5 +279,107 @@ describe.skipIf(!BUILT)('Carte relationnelle de Pot-Bouille (/pot-bouille) — r
 			await page.close();
 		}
 	});
+
+	test('dossier iconographique patrimonial : présence de la section, des 8 fiches et de leurs métadonnées', async () => {
+		const page = await openPage();
+		try {
+			// Vérifier la présence des liens rapides en haut de page
+			const quicklinks = page.locator('.page-quicklinks .quicklink-item');
+			expect(await quicklinks.count()).toBe(4);
+			const quicklinkTexts = await quicklinks.allTextContents();
+			expect(quicklinkTexts.some((t) => t.includes('Documents iconographiques'))).toBe(true);
+
+			// Vérifier la présence de la section iconographique
+			const section = page.locator('#sources-iconographiques');
+			expect(await section.count()).toBe(1);
+
+			// Vérifier le titre et le chapeau méthodologique
+			const heading = await section.locator('.iconography-heading').textContent();
+			expect(heading).toContain('Documents iconographiques');
+
+			const methodBanner = section.locator('.iconography-method-banner');
+			expect(await methodBanner.count()).toBe(1);
+
+			// Vérifier les 8 fiches documentaires
+			const cards = section.locator('.iconography-card');
+			expect(await cards.count()).toBe(8);
+
+			// 7 images réelles + 1 notice d'estampe fallback (Robida)
+			const images = section.locator('.iconography-img');
+			expect(await images.count()).toBe(7);
+
+			// Vérifier les attributs alt non vides et descriptifs
+			for (let i = 0; i < 7; i++) {
+				const alt = await images.nth(i).getAttribute('alt');
+				expect(alt).toBeTruthy();
+				expect(alt!.length).toBeGreaterThan(25);
+			}
+
+			// Vérifier la présence des documents majeurs
+			const docBertall = section.locator('#doc-bertall-cinq-etages');
+			expect(await docBertall.count()).toBe(1);
+			expect(await docBertall.textContent()).toContain('Bertall');
+
+			const docMarvilleRue = section.locator('#doc-marville-rue-choiseul');
+			expect(await docMarvilleRue.count()).toBe(1);
+			expect(await docMarvilleRue.textContent()).toContain('rue de Choiseul');
+
+			const docMarvilleGaz = section.locator('#doc-marville-gaz');
+			expect(await docMarvilleGaz.count()).toBe(1);
+			expect(await docMarvilleGaz.textContent()).toContain('éclairage au gaz');
+
+			const docZolaNadar = section.locator('#doc-zola-nadar');
+			expect(await docZolaNadar.count()).toBe(1);
+			expect(await docZolaNadar.textContent()).toContain('Nadar');
+
+			const docGill = section.locator('#doc-gill-nouvelle-lune');
+			expect(await docGill.count()).toBe(1);
+			expect(await docGill.textContent()).toContain('André Gill');
+
+			const docRobida = section.locator('#doc-robida-pot-bouille');
+			expect(await docRobida.count()).toBe(1);
+			expect(await docRobida.textContent()).toContain('Albert Robida');
+			const robidaFallback = docRobida.locator('.iconography-notice-fallback');
+			expect(await robidaFallback.count()).toBe(1);
+
+			const docEO = section.locator('#doc-edition-originale');
+			expect(await docEO.count()).toBe(1);
+			expect(await docEO.textContent()).toContain('Charpentier');
+
+			const docPassage = section.locator('#doc-passage-choiseul');
+			expect(await docPassage.count()).toBe(1);
+			expect(await docPassage.textContent()).toContain('Passage Choiseul');
+
+			// Vérifier la présence des liens pérennes vers Gallica / Musées / Commons
+			const permalinks = section.locator('.meta-permalink');
+			expect(await permalinks.count()).toBeGreaterThanOrEqual(8);
+
+			// Vérifier la synthèse pédagogique de fin de dossier
+			const synthesis = section.locator('.iconography-synthesis-box');
+			expect(await synthesis.count()).toBe(1);
+			expect(await synthesis.textContent()).toContain('Bilan méthodologique · Seconde');
+		} finally {
+			await page.close();
+		}
+	});
+
+	test('dossier iconographique en version mobile (375×812) : lisibilité et disposition', async () => {
+		const page = await openPage(375, 812);
+		try {
+			const section = page.locator('#sources-iconographiques');
+			expect(await section.isVisible()).toBe(true);
+
+			const cards = section.locator('.iconography-card');
+			expect(await cards.count()).toBe(8);
+
+			// Vérifier qu'aucune carte ne déborde de la largeur de l'écran mobile
+			const box = await cards.first().boundingBox();
+			expect(box).toBeTruthy();
+			expect(box!.width).toBeLessThanOrEqual(375);
+		} finally {
+			await page.close();
+		}
+	});
 });
+
 
