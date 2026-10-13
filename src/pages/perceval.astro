@@ -1,0 +1,236 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import RelationshipMap from '../components/RelationshipMap.astro';
+import {
+	didacticNotes,
+	percevalCharacters,
+	percevalEdgeTypes,
+	percevalFunctions,
+	percevalRelationships,
+	percevalSequences,
+} from '../data/perceval';
+import '../styles/editorial-map.css';
+
+const pageTitle = 'Le Conte du Graal (Perceval) de Chrétien de Troyes — Réseau des personnages et des relations';
+const pageDescription =
+	'Réseau interactif des personnages et des relations du Conte du Graal (Perceval) de Chrétien de Troyes pour la classe de seconde : famille, chevalerie, Graal, Gauvain et question non posée.';
+---
+
+<!doctype html>
+<html lang="fr">
+	<head>
+		<BaseHead title={pageTitle} description={pageDescription} />
+		<style>
+			.perceval-page .mechanism-step {
+				display: flex;
+				flex-direction: column;
+				gap: 0.25rem;
+			}
+			.mechanism-cycle {
+				font-size: 0.72rem;
+				font-weight: 700;
+				text-transform: uppercase;
+				letter-spacing: 0.08em;
+				color: var(--map-muted);
+			}
+			.cycle-perceval {
+				color: #235284;
+			}
+			.cycle-gauvain {
+				color: #5b347b;
+			}
+			.mechanism-verses {
+				font-size: 0.8rem;
+				color: var(--map-muted);
+				font-style: italic;
+			}
+			.perceval-page .didactic-section {
+				margin-top: 3.5rem;
+				border-top: 1px solid var(--map-border);
+				padding-top: 2.5rem;
+			}
+			.perceval-page .didactic-section h2 {
+				font-family: var(--map-serif);
+				font-size: 1.5rem;
+				margin: 0 0 1rem;
+				color: var(--map-ink);
+				text-align: center;
+			}
+			.didactic-lead {
+				text-align: center;
+				max-width: 760px;
+				margin: 0 auto 2rem;
+				color: var(--map-muted);
+				font-size: 0.98rem;
+				line-height: 1.5;
+			}
+			.didactic-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+				gap: 1.5rem;
+				margin-bottom: 2rem;
+			}
+			.didactic-card {
+				background: var(--map-surface);
+				border: 1px solid var(--map-border);
+				border-radius: 8px;
+				padding: 1.35rem 1.5rem;
+				box-sizing: border-box;
+				min-width: 0;
+			}
+			.didactic-card h3 {
+				font-family: var(--map-serif);
+				font-size: 1.15rem;
+				margin: 0 0 0.65rem;
+				color: var(--map-ink);
+			}
+			.didactic-card p {
+				margin: 0;
+				font-size: 0.92rem;
+				line-height: 1.55;
+				color: var(--map-ink-soft);
+			}
+			.sources-block {
+				background: var(--map-bg);
+				border: 1px solid var(--map-border-soft);
+				border-radius: 8px;
+				padding: 1.25rem 1.5rem;
+				margin-top: 2rem;
+				font-size: 0.88rem;
+				line-height: 1.5;
+				color: var(--map-muted);
+				box-sizing: border-box;
+			}
+			.sources-block strong {
+				color: var(--map-ink);
+			}
+			.sources-block ul {
+				margin: 0.5rem 0 0;
+				padding-left: 1.25rem;
+			}
+			@media (max-width: 640px) {
+				.perceval-page .rm-anchor {
+					display: none;
+				}
+				.didactic-card {
+					padding: 1rem 1.15rem;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+
+		<main class="page-container perceval-page">
+			<article aria-labelledby="page-title">
+				<header class="map-intro">
+					<p class="intro-eyebrow">Chrétien de Troyes · Fin du XII<sup>e</sup> siècle (vers 1181–1190) · Roman de chevalerie en vers</p>
+					<h1 id="page-title"><cite>Le Conte du Graal</cite> — Réseau des personnages et de leurs relations</h1>
+					<p class="intro-desc">
+						<strong>Qui sont les personnages ? Quels liens de famille, d’amitié, de chevalerie et de foi les unissent ?</strong>
+					</p>
+					<p class="intro-lead">
+						Perceval grandit seul dans la forêt sans rien savoir des chevaliers. Devenu chevalier à son tour, il découvre le monde de la cour, secourt Blanchefleur et assiste au mystérieux cortège du Graal où il n’ose poser aucune question. Découvrez ses aventures, celles de son compagnon Gauvain et le secret de son silence expliqué par un saint ermite.
+					</p>
+					<p class="intro-instructions">
+						Cliquez ou appuyez sur un personnage, un objet ou une relation pour lire sa fiche. Vous pouvez aussi filtrer les liens par couleur et utiliser le tableau récapitulatif sous le réseau.
+					</p>
+				</header>
+
+				<!-- Trajectoire narrative en 8 séquences -->
+				<ol class="mechanism" aria-label="Trajectoire de l’histoire en huit étapes">
+					{percevalSequences.map((s) => (
+						<li class="mechanism-step">
+							<span class:list={['mechanism-cycle', s.cycle === 'perceval' ? 'cycle-perceval' : 'cycle-gauvain']}>
+								{s.cycle === 'perceval' ? 'Aventures de Perceval' : 'Aventures de Gauvain'}
+							</span>
+							<strong>{s.title}</strong>
+							<span class="mechanism-verses">{s.verses} · {s.keyFigure}</span>
+							<span>{s.summary}</span>
+						</li>
+					))}
+				</ol>
+
+				<!-- Carte relationnelle interactive -->
+				<RelationshipMap
+					id="perceval"
+					ariaLabel="Carte des relations entre les personnages et objets du Conte du Graal"
+					nodesLabel="Personnages et objets du Conte du Graal"
+					nodes={percevalCharacters}
+					relationships={percevalRelationships}
+					edgeTypes={percevalEdgeTypes}
+					layout={{ width: 920, height: 640 }}
+					mobileLayout={{ width: 360, height: 860 }}
+					anchor={{
+						x: 450,
+						y: 20,
+						label: 'La Cour d’Arthur & le cortège du Graal',
+						sub: 'Le monde des chevaliers et des châteaux mystérieux',
+					}}
+					hint="Cliquez ou appuyez sur un personnage ou un objet pour afficher sa fiche et ses relations, ou sur une étiquette pour expliquer un lien."
+					pointsLabel="Dans le roman de Chrétien :"
+					relationsLabel="Ses relations directes :"
+					resetLabel="Fermer la fiche"
+					indexLabel="Toutes les relations du roman, en texte (alternative accessible)"
+					filters
+					filtersResetLabel="Toutes les relations"
+				/>
+
+				<!-- Synthèse pédagogique des figures du roman -->
+				<footer class="map-synthesis" aria-labelledby="synthesis-title">
+					<h2 id="synthesis-title">Tableau récapitulatif des personnages et objets</h2>
+					<div class="synthesis-table-wrapper">
+						<table class="synthesis-table">
+							<thead>
+								<tr>
+									<th scope="col">Personnage ou objet</th>
+									<th scope="col">Identité & rôle</th>
+									<th scope="col">Ce qu’il fait dans l’histoire</th>
+								</tr>
+							</thead>
+							<tbody>
+								{percevalCharacters.map((c) => (
+									<tr>
+										<th scope="row">{c.label}</th>
+										<td>{c.meta?.join(' · ')}</td>
+										<td>{percevalFunctions[c.id]}</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+
+					<!-- Repères didactiques pour les élèves -->
+					<section class="didactic-section" aria-labelledby="didactic-title">
+						<h2 id="didactic-title">Repères de lecture : bien comprendre le texte médiéval</h2>
+						<p class="didactic-lead">
+							Quelques repères simples pour bien lire <em>Le Conte du Graal</em> sans le confondre avec les films ou les légendes plus tardives :
+						</p>
+
+						<div class="didactic-grid">
+							{didacticNotes.map((note) => (
+								<article class="didactic-card">
+									<h3>{note.title}</h3>
+									<p>{note.text}</p>
+								</article>
+							))}
+						</div>
+
+						<div class="sources-block">
+							<strong>Éditions de référence et sources textuelles :</strong>
+							<ul>
+								<li>Chrétien de Troyes, <em>Le Conte du Graal (Perceval)</em>, édition d’après le manuscrit BnF fr. 794 (copie de Guiot) par Félix Lecoy, Paris, Champion (CFMA), 2 tomes, 1973–1975.</li>
+								<li>Chrétien de Troyes, <em>Œuvres complètes</em>, sous la direction de Daniel Poirion, avec Anne Berthelot, Peter F. Dembowski, Sylvie Lefèvre, Karl D. Uitti et Philippe Walter, Paris, Gallimard, coll. « Bibliothèque de la Pléiade », 1994.</li>
+								<li>Chrétien de Troyes, <em>Le Conte du Graal ou le Roman de Perceval</em>, édition bilingue et traduction par Charles Méla, Paris, Le Livre de Poche, coll. « Lettres gothiques », 1990.</li>
+							</ul>
+						</div>
+					</section>
+				</footer>
+			</article>
+		</main>
+
+		<Footer />
+	</body>
+</html>

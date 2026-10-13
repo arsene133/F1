@@ -1,0 +1,281 @@
+// Tests E2E et d'intégration pour la page Le Conte du Graal (/perceval) :
+// rendu, accessibilité, filtres, sélection, alternatives textuelles et responsive.
+// S'exécute sur le site construit : `pnpm build` d'abord, sinon la suite est ignorée.
+import { spawn, type ChildProcess } from 'node:child_process';
+import { existsSync } from 'node:fs';
+import { afterAll, beforeAll, describe, expect, test } from 'vitest';
+import { chromium, type Browser, type Page } from 'playwright';
+import { percevalCharacters, percevalEdgeTypes, percevalRelationships } from '../data/perceval';
+
+const BUILT = existsSync('dist/perceval/index.html');
+const PORT = 4399;
+const BASE = `http://localhost:${PORT}`;
+
+let server: ChildProcess | undefined;
+let browser: Browser;
+
+async function waitForServer(url: string, timeoutMs = 20_000) {
+	const start = Date.now();
+	while (Date.now() - start < timeoutMs) {
+		try {
+			if ((await fetch(url)).ok) return;
+		} catch {
+			// Attente du serveur preview
+		}
+		await new Promise((r) => setTimeout(r, 200));
+	}
+	throw new Error(`Serveur de prévisualisation injoignable : ${url}`);
+}
+
+async function openPage(width = 1280, height = 900): Promise<{ page: Page; errors: string[] }> {
+	const page = await browser.newPage({
+		viewport: { width, height },
+		hasTouch: width < 700,
+		isMobile: width < 700,
+	});
+	const errors: string[] = [];
+	page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
+	page.on('pageerror', (e) => errors.push(String(e)));
+	await page.goto(`${BASE}/perceval/`);
+	await page.waitForSelector('.perceval-page .rm-canvas');
+	return { page, errors };
+}
+
+describe.skipIf(!BUILT)('Page Perceval (/perceval) — Réseau des personnages et de leurs relations', () => {
+	beforeAll(async () => {
+		server = spawn('pnpm', ['astro', 'preview', '--port', String(PORT)], { stdio: 'ignore' });
+		await waitForServer(`${BASE}/perceval/`);
+		browser = await chromium.launch();
+	}, 30_000);
+
+	afterAll(async () => {
+		await browser?.close();
+		server?.kill();
+	});
+
+	test('rendu initial : titre, méta, H1 unique et structure sans saut de titre', async () => {
+		const { page, errors } = await openPage();
+		try {
+			expect(errors).toEqual([]);
+			expect(await page.title()).toContain('Conte du Graal');
+			expect(await page.title()).toContain('Perceval');
+
+			const h1 = page.locator('h1');
+			expect(await h1.count()).toBe(1);
+			expect(await h1.textContent()).toContain('Le Conte du Graal');
+
+			// Vérification hiérarchie des titres H1 -> H2 -> H3
+			const levels = await page.$$eval('main h1, main h2, main h3, main h4', (els) =>
+				els.filter((e) => !e.closest('[hidden]')).map((e) => Number(e.tagName[1])),
+			);
+			expect(levels[0]).toBe(1);
+			for (let i = 1; i < levels.length; i++) {
+				expect(levels[i] - levels[i - 1]).toBeLessThanOrEqual(1);
+			}
+
+			// Nœuds et arêtes
+			const nodeCount = await page.locator('.rm-node').count();
+			expect(nodeCount).toBe(percevalCharacters.length);
+
+			const edgeCount = await page.locator('.rm-lines--desktop .rm-edge').count();
+			expect(edgeCount).toBe(percevalRelationships.length);
+		} finally {
+			await page.close();
+		}
+	});
+
+	test('sélection d’un personnage : met en évidence le nœud et ses relations directes, affiche la fiche', async () => {
+		const { page } = await openPage();
+		try {
+			const percevalBtn = page.locator('.rm-node[data-node-id="perceval"]');
+			await percevalBtn.click();
+
+			// Nœud actif
+			expect(await percevalBtn.getAttribute('aria-pressed')).toBe('true');
+			expect(await percevalBtn.getAttribute('class')).toContain('is-active');
+
+			// Panneau de détails ouvert
+			const panel = page.locator('#perceval-panel [data-panel-detail]');
+			expect(await panel.isVisible()).toBe(true);
+
+			const title = await page.locator('#perceval-panel [data-detail-title]').textContent();
+			expect(title).toBe('Perceval le Gallois');
+
+			// Description et relations directes listées
+			const desc = await page.locator('#perceval-panel [data-detail-description]').textContent();
+			expect(desc?.length).toBeGreaterThan(50);
+
+			const relItems = await page.locator('#perceval-panel [data-detail-relations] li').count();
+			expect(relItems).toBeGreaterThanOrEqual(8);
+
+			// Fermer la fiche avec le bouton réinitialise
+			const resetBtn = page.locator('#perceval-panel [data-panel-reset]');
+			await resetBtn.click();
+			expect(await panel.isVisible()).toBe(false);
+			expect(await percevalBtn.getAttribute('aria-pressed')).toBe('false');
+		} finally {
+			await page.close();
+		}
+	});
+
+	test('sélection d’une relation : affiche son explication et son contexte', async () => {
+		const { page } = await openPage();
+		try {
+			// Bouton d'étiquette pour la relation Gornemant -> Perceval
+			const labelBtn = page.locator('.rm-label[data-edge-id="gornemant-perceval-initiation"]');
+			await labelBtn.click();
+
+			expect(await labelBtn.getAttribute('aria-pressed')).toBe('true');
+
+			const panel = page.locator('#perceval-panel [data-panel-detail]');
+			expect(await panel.isVisible()).toBe(true);
+
+			const eyebrow = await page.locator('#perceval-panel [data-detail-eyebrow]').textContent();
+			expect(eyebrow).toBe('Relation · Lien chevaleresque (armes, adoubement, cour)');
+
+			const title = await page.locator('#perceval-panel [data-detail-title]').textContent();
+			expect(title).toContain('Gornemant de Goort');
+			expect(title).toContain('Perceval');
+
+			const desc = await page.locator('#perceval-panel [data-detail-description]').textContent();
+			expect(desc).toContain('trop bavard');
+
+			// Échap ferme la sélection
+			await page.keyboard.press('Escape');
+			expect(await panel.isVisible()).toBe(false);
+		} finally {
+			await page.close();
+		}
+	});
+
+	test('sélection du Roi Pêcheur et du Graal : met en lumière la dimension mystique et le silence', async () => {
+		const { page } = await openPage();
+		try {
+			const roiBtn = page.locator('.rm-node[data-node-id="roi-pecheur"]');
+			await roiBtn.click();
+
+			const title = await page.locator('#perceval-panel [data-detail-title]').textContent();
+			expect(title).toBe('Le Roi Pêcheur');
+
+			const relText = await page.locator('#perceval-panel [data-detail-relations]').innerText();
+			expect(relText).toContain('Graal');
+			expect(relText).toContain('cousin germain');
+
+			// Sélectionner ensuite l'objet Graal
+			const graalBtn = page.locator('.rm-node[data-node-id="graal"]');
+			await graalBtn.click();
+
+			const graalTitle = await page.locator('#perceval-panel [data-detail-title]').textContent();
+			expect(graalTitle).toBe('Le Graal');
+			const graalDesc = await page.locator('#perceval-panel [data-detail-description]').textContent();
+			expect(graalDesc).toContain('hostie');
+		} finally {
+			await page.close();
+		}
+	});
+
+	test('filtres par type de relation : masque/affiche les arêtes et réinitialisation', async () => {
+		const { page } = await openPage();
+		try {
+			const filterBtns = page.locator('.rm-legend--filters .rm-filter');
+			expect(await filterBtns.count()).toBe(Object.keys(percevalEdgeTypes).length);
+
+			// Cliquer sur le filtre familial pour le désactiver
+			const familialBtn = page.locator('.rm-filter[data-filter-type="familial"]');
+			expect(await familialBtn.getAttribute('aria-pressed')).toBe('true');
+			await familialBtn.click();
+			expect(await familialBtn.getAttribute('aria-pressed')).toBe('false');
+
+			// Les arêtes familiales reçoivent la classe .is-filtered
+			const filteredEdges = page.locator('.rm-edge--familial.is-filtered');
+			expect(await filteredEdges.count()).toBeGreaterThan(0);
+
+			// Le bouton réinitialiser les filtres est actif
+			const resetFiltersBtn = page.locator('.rm-filter-reset');
+			expect(await resetFiltersBtn.isEnabled()).toBe(true);
+
+			// Réinitialisation
+			await resetFiltersBtn.click();
+			expect(await familialBtn.getAttribute('aria-pressed')).toBe('true');
+			expect(await resetFiltersBtn.isDisabled()).toBe(true);
+		} finally {
+			await page.close();
+		}
+	});
+
+	test('alternative textuelle : liste accessible de toutes les relations dépliable', async () => {
+		const { page } = await openPage();
+		try {
+			const detailsIndex = page.locator('details.rm-index');
+			expect(await detailsIndex.count()).toBe(1);
+
+			const summary = detailsIndex.locator('summary');
+			expect(await summary.textContent()).toContain('Toutes les relations du roman, en texte');
+
+			// Ouvrir le bloc
+			await summary.click();
+			expect(await detailsIndex.getAttribute('open')).not.toBeNull();
+
+			// Contient les relations textuelles
+			const items = detailsIndex.locator('li');
+			expect(await items.count()).toBe(percevalRelationships.length);
+			expect(await items.first().innerText()).toContain('La mère de Perceval');
+		} finally {
+			await page.close();
+		}
+	});
+
+	test('responsive mobile (320px, 375px, 390px, 430px) : aucun débordement horizontal, canvas mobile actif', async () => {
+		const viewports = [
+			{ width: 320, height: 640 },
+			{ width: 375, height: 812 },
+			{ width: 390, height: 844 },
+			{ width: 430, height: 932 },
+		];
+
+		for (const vp of viewports) {
+			const { page } = await openPage(vp.width, vp.height);
+			try {
+				const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+				const clientWidth = await page.evaluate(() => document.documentElement.clientWidth);
+				expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
+
+				// Canvas mobile présent
+				const mobileSvg = page.locator('.rm-lines--mobile');
+				expect(await mobileSvg.count()).toBe(1);
+
+				// Clic tactile sur Perceval
+				const percevalBtn = page.locator('.rm-node[data-node-id="perceval"]');
+				await percevalBtn.click();
+
+				const panel = page.locator('#perceval-panel [data-panel-detail]');
+				expect(await panel.isVisible()).toBe(true);
+
+				// Pas de débordement provoqué par le panneau
+				const postScrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+				expect(postScrollWidth).toBeLessThanOrEqual(clientWidth + 1);
+			} finally {
+				await page.close();
+			}
+		}
+	});
+
+	test('responsive tablette et bureau (768px, 1024px, 1280px, 1440px) : pas de débordement, intégrité du graphe', async () => {
+		const widths = [768, 1024, 1280, 1440];
+
+		for (const width of widths) {
+			const { page } = await openPage(width, 900);
+			try {
+				const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+				const clientWidth = await page.evaluate(() => document.documentElement.clientWidth);
+				expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
+
+				// Présence du graphe desktop
+				const desktopSvg = page.locator('.rm-lines--desktop');
+				expect(await desktopSvg.isVisible()).toBe(true);
+			} finally {
+				await page.close();
+			}
+		}
+	});
+});
