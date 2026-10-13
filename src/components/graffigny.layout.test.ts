@@ -665,5 +665,81 @@ describe.skipIf(!BUILT)('Page Graffigny (/graffigny) — cartographie interactiv
 			await page.close();
 		}
 	});
+
+	test.each([320, 375, 768, 1024, 1440])(
+		'vue 2 · carte des relations (%ipx) : absence de défilement vertical interne et intégrité du graphe',
+		async (width) => {
+			const { page, errors } = await openPage(width, 800);
+			try {
+				const checkViewport = async () => {
+					return page.evaluate(() => {
+						const vp = document.querySelector('#vue-personnages .rm-viewport');
+						if (!vp) return { found: false, diffY: 0, hasVScroll: false, clippedNodes: [] };
+						const vpRect = vp.getBoundingClientRect();
+						const nodes = [...document.querySelectorAll('#vue-personnages .rm-node')];
+						const clippedNodes = nodes.filter((n) => {
+							const r = n.getBoundingClientRect();
+							return r.bottom > vpRect.bottom + 1 || r.top < vpRect.top - 1;
+						}).map((n) => (n as HTMLElement).dataset.nodeId);
+						const cs = window.getComputedStyle(vp);
+						return {
+							found: true,
+							diffY: vp.scrollHeight - vp.clientHeight,
+							hasVScroll: (cs.overflowY === 'scroll' || cs.overflowY === 'auto') && vp.scrollHeight > vp.clientHeight,
+							clippedNodes,
+						};
+					});
+				};
+
+				// 1. État initial au chargement
+				const initial = await checkViewport();
+				expect(initial.found).toBe(true);
+				expect(initial.hasVScroll).toBe(false);
+				expect(initial.diffY).toBeLessThanOrEqual(0);
+				expect(initial.clippedNodes).toEqual([]);
+
+				// 2. Vérifier que tous les personnages et arêtes restent visibles
+				expect(await page.locator('#vue-personnages .rm-node').count()).toBe(graffignyCharacters.length);
+				if (width > 640) {
+					expect(await page.locator('#vue-personnages .rm-lines--desktop').isVisible()).toBe(true);
+				} else {
+					expect(await page.locator('#vue-personnages .rm-lines--mobile').isVisible()).toBe(true);
+				}
+
+				// 3. Navigation entre vues et retour à la vue 2
+				await page.locator('a[href="#vue-geographie"]').click();
+				await page.waitForTimeout(100);
+				await page.locator('a[href="#vue-personnages"]').click();
+				await page.waitForTimeout(100);
+
+				const afterNav = await checkViewport();
+				expect(afterNav.hasVScroll).toBe(false);
+				expect(afterNav.diffY).toBeLessThanOrEqual(0);
+				expect(afterNav.clippedNodes).toEqual([]);
+
+				// 4. Interaction (sélection puis réinitialisation)
+				await node(page, 'zilia').click();
+				await page.waitForTimeout(150);
+				expect(await page.locator('#vue-personnages [data-panel-detail]').isVisible()).toBe(true);
+				await page.locator('#vue-personnages [data-panel-reset]').click();
+				await page.waitForTimeout(150);
+
+				const afterInteraction = await checkViewport();
+				expect(afterInteraction.hasVScroll).toBe(false);
+				expect(afterInteraction.diffY).toBeLessThanOrEqual(0);
+				expect(afterInteraction.clippedNodes).toEqual([]);
+
+				// 5 Les autres vues restent conformes
+				expect(await page.locator('#vue-geographie').isVisible()).toBe(true);
+				expect(await page.locator('#vue-parcours').isVisible()).toBe(true);
+				expect(await page.locator('#vue-idees').isVisible()).toBe(true);
+
+				expect(errors).toEqual([]);
+			} finally {
+				await page.close();
+			}
+		},
+		25_000,
+	);
 });
 
