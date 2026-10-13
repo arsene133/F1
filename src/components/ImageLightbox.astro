@@ -367,6 +367,9 @@
 		const parentLink = img.closest('a');
 		if (parentLink && parentLink.closest('.blog-posts-list')) return false;
 
+		// Exclure l'image interne de la lightbox elle-même
+		if (img.hasAttribute('data-lightbox-img') || img.closest('#image-lightbox')) return false;
+
 		// Exclure les tuiles de cartes Leaflet
 		if (img.closest('.leaflet-pane') || img.classList.contains('leaflet-tile')) return false;
 
