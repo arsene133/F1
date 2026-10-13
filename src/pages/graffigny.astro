@@ -75,10 +75,10 @@ const pageDescription =
 				<!-- Barre commune aux quatre vues : navigation, sélection en cours, réinitialisation -->
 				<div class="selection-bar" data-selection-bar>
 					<nav class="selection-nav" aria-label="Les quatre vues de la cartographie">
+						<a href="#vue-geographie">Géographie du récit</a>
 						<a href="#vue-personnages">Personnages</a>
 						<a href="#vue-parcours">Parcours de Zilia</a>
 						<a href="#vue-idees">Carte des idées</a>
-						<a href="#vue-geographie">Géographie du récit</a>
 					</nav>
 					<p class="selection-status" aria-live="polite" data-selection-status>Rien n’est sélectionné : explorez librement.</p>
 					<button type="button" class="selection-reset" data-global-reset disabled>Tout afficher</button>
@@ -89,11 +89,26 @@ const pageDescription =
 				</p>
 
 				<!-- ======================================================
-				     VUE 1 : personnages et relations
+				     VUE 1 : géographie du récit
+				     ====================================================== -->
+				<section class="carto-section" id="vue-geographie" aria-labelledby="vue-geographie-title">
+					<header class="carto-header">
+						<p class="carto-eyebrow">Vue 1 · Géographie du récit</p>
+						<h2 id="vue-geographie-title">L’espace du roman : du Pérou des Incas à la France des Lumières</h2>
+						<p class="carto-lead">
+							Comprendre les déplacements de Zilia, l’arrachement au Nouveau Monde, la traversée transatlantique et la découverte de l’espace français. Distinguez les lieux attestés dans le texte, les repères historiques contextuels et les trajets narratifs indicatifs.
+						</p>
+					</header>
+
+					<GraffignyGeoMap />
+				</section>
+
+				<!-- ======================================================
+				     VUE 2 : personnages et relations
 				     ====================================================== -->
 				<section class="carto-section" id="vue-personnages" aria-labelledby="vue-personnages-title">
 					<header class="carto-header">
-						<p class="carto-eyebrow">Vue 1 · Carte des relations</p>
+						<p class="carto-eyebrow">Vue 2 · Carte des relations</p>
 						<h2 id="vue-personnages-title">Les personnages et leurs liens</h2>
 						<p class="carto-lead">
 							Les flèches indiquent le sens d’une relation à sens unique : l’amour de Déterville pour Zilia, par exemple, n’est pas réciproque. Les filtres sous la carte masquent ou affichent chaque type de lien.
@@ -121,11 +136,11 @@ const pageDescription =
 				</section>
 
 				<!-- ======================================================
-				     VUE 2 : parcours narratif
+				     VUE 3 : parcours narratif
 				     ====================================================== -->
 				<section class="carto-section" id="vue-parcours" aria-labelledby="vue-parcours-title">
 					<header class="carto-header">
-						<p class="carto-eyebrow">Vue 2 · Parcours narratif</p>
+						<p class="carto-eyebrow">Vue 3 · Parcours narratif</p>
 						<h2 id="vue-parcours-title">Le parcours de Zilia, de la captivité à l’indépendance</h2>
 						<p class="carto-lead">
 							Le roman n’est pas un journal régulier : il avance au rythme des lettres, écrites après coup, parfois après de longs silences. Les sept étapes ci-dessous regroupent ces lettres pour faire apparaître l’évolution de Zilia.
@@ -136,11 +151,11 @@ const pageDescription =
 				</section>
 
 				<!-- ======================================================
-				     VUE 3 : carte des idées
+				     VUE 4 : carte des idées
 				     ====================================================== -->
 				<section class="carto-section" id="vue-idees" aria-labelledby="vue-idees-title">
 					<header class="carto-header">
-						<p class="carto-eyebrow">Vue 3 · Carte des idées</p>
+						<p class="carto-eyebrow">Vue 4 · Carte des idées</p>
 						<h2 id="vue-idees-title">Ce que le regard de Zilia met en question</h2>
 						<p class="carto-lead">
 							Chaque axe part du même point : une étrangère qui observe la France sans en partager les habitudes. Choisissez un axe pour l’expliquer, le relier aux personnages et aux étapes du récit.
@@ -148,21 +163,6 @@ const pageDescription =
 					</header>
 
 					<GraffignyThemesMap themes={graffignyThemes} steps={narrativeSteps} characters={graffignyCharacters} />
-				</section>
-
-				<!-- ======================================================
-				     VUE 4 : géographie du récit
-				     ====================================================== -->
-				<section class="carto-section" id="vue-geographie" aria-labelledby="vue-geographie-title">
-					<header class="carto-header">
-						<p class="carto-eyebrow">Vue 4 · Géographie du récit</p>
-						<h2 id="vue-geographie-title">L’espace du roman : du Pérou des Incas à la France des Lumières</h2>
-						<p class="carto-lead">
-							Comprendre les déplacements de Zilia, l’arrachement au Nouveau Monde, la traversée transatlantique et la découverte de l’espace français. Distinguez les lieux attestés dans le texte, les repères historiques contextuels et les trajets narratifs indicatifs.
-						</p>
-					</header>
-
-					<GraffignyGeoMap />
 				</section>
 
 				<!-- ======================================================
