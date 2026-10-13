@@ -31,7 +31,7 @@ export interface PercevalSpatialStage {
 }
 
 export const PERCEVAL_SPATIAL_CATEGORIES: Record<
-	PercevalSpatialCategory,
+	Exclude<PercevalSpatialCategory, 'continuation'>,
 	{ label: string; color: string; description: string; badgeClass: string }
 > = {
 	reel: {
@@ -51,12 +51,6 @@ export const PERCEVAL_SPATIAL_CATEGORIES: Record<
 		color: '#5f6b2f',
 		description: 'Forêt déserte, rivière ou lande qui sert de cadre aux épreuves de Perceval.',
 		badgeClass: 'status-natural',
-	},
-	continuation: {
-		label: 'Lieu ajouté par les continuations',
-		color: '#6a4c93',
-		description: 'Lieu inventé par d’autres auteurs après la mort de Chrétien pour continuer le roman.',
-		badgeClass: 'status-continuation',
 	},
 };
 

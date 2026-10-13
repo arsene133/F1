@@ -55,10 +55,10 @@ export interface PercevalIconographyDocument {
 export const percevalSequences: NarrativeSequence[] = [
 	{
 		id: 'enfance-foret',
-		title: '1. L’enfance dans la « Gaste Forêt »',
+		title: '1. L’enfance dans la « Gaste Forêt » (la forêt déserte)',
 		cycle: 'perceval',
 		summary:
-			'Perceval grandit seul dans la forêt avec sa mère, sans rien connaître du monde ni des chevaliers. Un jour, il croise des chevaliers en armure et les prend pour des anges de Dieu. Il décide aussitôt de partir vers la cour du roi Arthur, malgré les larmes de sa mère qui tente de le retenir.',
+			'Perceval grandit avec sa mère dans une forêt isolée, sans rien savoir du monde ni des chevaliers. Un jour, il croise des chevaliers en armure et les prend pour des anges de Dieu. Il décide aussitôt de partir à la cour du roi Arthur, malgré les larmes de sa mère qui tente de le retenir.',
 		verses: 'vers 69–634',
 		keyFigure: 'La mère de Perceval',
 	},
@@ -67,7 +67,7 @@ export const percevalSequences: NarrativeSequence[] = [
 		title: '2. L’arrivée chez le roi Arthur et le Chevalier Vermeil',
 		cycle: 'perceval',
 		summary:
-			'Perceval arrive à la cour du roi Arthur habillé comme un paysan naïf. Il réclame l’armure rouge du Chevalier Vermeil, un ennemi qui vient d’insulter le roi. Sans connaître le combat des chevaliers, Perceval tue son adversaire avec un javelot de chasse et enfile ses armes de fer.',
+			'Perceval arrive à la cour du roi Arthur habillé comme un paysan. Il réclame l’armure rouge du Chevalier Vermeil, un ennemi qui vient d’insulter le roi. Perceval ne sait pas encore se battre comme un chevalier : il tue pourtant son adversaire avec un javelot de chasse et prend son armure.',
 		verses: 'vers 865–1304',
 		keyFigure: 'Le Chevalier Vermeil & le roi Arthur',
 	},
@@ -76,7 +76,7 @@ export const percevalSequences: NarrativeSequence[] = [
 		title: '3. L’apprentissage des armes chez Gornemant de Goort',
 		cycle: 'perceval',
 		summary:
-			'Un noble seigneur, Gornemant de Goort, accueille Perceval dans son château. En une journée, il lui apprend à monter à cheval, manier l’épée et respecter les règles des chevaliers : épargner un ennemi vaincu, protéger les femmes et ne pas trop parler. Il l’adoube chevalier.',
+			'Un noble seigneur, Gornemant de Goort, accueille Perceval dans son château. En une journée, il lui apprend à monter à cheval, à manier l’épée et à respecter les règles des chevaliers : épargner un ennemi vaincu qui demande grâce, protéger les dames et ne pas trop parler. Puis il l’adoube : au cours d’une cérémonie, il le fait chevalier.',
 		verses: 'vers 1357–1698',
 		keyFigure: 'Gornemant de Goort',
 	},
@@ -85,7 +85,7 @@ export const percevalSequences: NarrativeSequence[] = [
 		title: '4. La défense de Blanchefleur au château de Beaurepaire',
 		cycle: 'perceval',
 		summary:
-			'Perceval arrive au château de Beaurepaire, assiégé par des ennemis. La jeune châtelaine, Blanchefleur, lui demande son aide. Perceval combat ses agresseurs, sauve le domaine de la famine et s’attache tendrement à la jeune femme avant de repartir pour revoir sa mère.',
+			'Perceval arrive au château de Beaurepaire. Une armée ennemie l’encercle pour obliger ses habitants à se rendre : le château est assiégé. La jeune dame du château, Blanchefleur, demande l’aide de Perceval. Il bat ses ennemis, sauve le château de la famine et tombe amoureux de Blanchefleur. Puis il repart pour revoir sa mère.',
 		verses: 'vers 1699–2975',
 		keyFigure: 'Blanchefleur',
 	},
@@ -103,16 +103,16 @@ export const percevalSequences: NarrativeSequence[] = [
 		title: '6. Les reproches de la cousine et de la Demoiselle hideuse',
 		cycle: 'perceval',
 		summary:
-			'Dans la forêt, une cousine en larmes lui apprend que sa mère est morte de chagrin au moment de son départ, et lui reproche son silence au château. Plus tard, à la cour d’Arthur, une messagère au visage très laid maudit publiquement Perceval : sa question aurait pu guérir le roi. Perceval jure alors de retrouver le Graal.',
+			'Dans la forêt, une cousine en larmes lui apprend que sa mère est morte de chagrin au moment de son départ. Elle lui reproche son silence au château. Plus tard, à la cour d’Arthur, une messagère très laide (la « Demoiselle hideuse ») accuse Perceval devant tout le monde : sa question aurait pu guérir le roi. Perceval jure alors de partir à la recherche du Graal : c’est le début de sa quête.',
 		verses: 'vers 3422–4746',
 		keyFigure: 'La cousine germaine & la Demoiselle hideuse',
 	},
 	{
 		id: 'aventures-gauvain',
-		title: '7. Les aventures parallèles de Monseigneur Gauvain',
+		title: '7. Pendant ce temps : les aventures de Monseigneur Gauvain',
 		cycle: 'gauvain',
 		summary:
-			'Pendant que Perceval cherche le Graal, le roman raconte les aventures de Gauvain, le meilleur chevalier d’Arthur. Accusé à tort de trahison, Gauvain voyage pour prouver son honneur : il combat dans des tournois, surmonte des épreuves magiques et montre son courage dans le monde des nobles.',
+			'Pendant que Perceval cherche le Graal, le roman raconte les aventures de Gauvain, le chevalier le plus célèbre de la cour d’Arthur. Un seigneur l’accuse d’avoir tué son maître par trahison : Gauvain part pour se défendre. En chemin, il combat dans des tournois, réussit des épreuves magiques et montre son courage et sa politesse.',
 		verses: 'vers 4747–6216 & 6519–9234',
 		keyFigure: 'Gauvain',
 	},
@@ -121,7 +121,7 @@ export const percevalSequences: NarrativeSequence[] = [
 		title: '8. La rencontre avec l’ermite le Vendredi saint',
 		cycle: 'perceval',
 		summary:
-			'Après cinq années d’errance sans prier Dieu, Perceval rencontre des pèlerins qui le conduisent chez un ermite dans les bois. Cet homme saint est son oncle maternel : il lui explique que son péché d’avoir causé la mort de sa mère lui a fermé la bouche devant le Graal. L’ermite lui pardonne et le réconcilie avec Dieu.',
+			'Pendant cinq ans, Perceval va d’aventure en aventure et oublie Dieu. Le Vendredi saint (le jour où les chrétiens se souviennent de la mort du Christ), des pèlerins le conduisent chez un ermite, un homme qui vit seul dans les bois pour prier. Cet ermite est son oncle. Il lui explique qu’un péché, c’est-à-dire une faute envers Dieu, l’a empêché de parler devant le Graal : son départ a fait mourir sa mère de chagrin. Perceval se confesse et se réconcilie avec Dieu.',
 		verses: 'vers 6217–6518',
 		keyFigure: 'L’oncle ermite',
 	},
@@ -135,7 +135,7 @@ export const percevalCharacters: MapNode[] = [
 		eyebrow: 'Personnage principal · apprentissage et quête du Graal',
 		meta: ['fils de la Veuve Dame', 'neveu de l’ermite · cousin du Roi Pêcheur', 'adoubé par Gornemant'],
 		description:
-			'Héros du roman. Sa mère l’a élevé seul dans une forêt sauvage pour lui cacher l’existence des chevaliers, après la mort au combat de son père et de ses deux frères. Très naïf au départ, il apprend le métier des armes auprès de Gornemant et libère le château de Blanchefleur. Invité chez le Roi Pêcheur, il voit passer le Graal et la lance qui saigne mais n’ose poser aucune question, car il craint de paraître impoli. L’ermite lui apprendra plus tard que son silence est lié à la faute d’avoir causé la mort de sa mère.',
+			'Héros du roman. Son père et ses deux frères, tous chevaliers, sont morts. Pour le protéger, sa mère l’élève dans une forêt sauvage, sans lui parler des chevaliers. Très naïf au départ, il apprend le métier des armes auprès de Gornemant, puis libère le château de Blanchefleur. Chez le Roi Pêcheur, il voit passer la lance qui saigne et le Graal, mais n’ose poser aucune question : il a peur de paraître impoli. Plus tard, l’ermite lui explique que ce silence vient d’une faute : son départ a fait mourir sa mère de chagrin.',
 		points: [
 			'Quitte sa mère évanouie de douleur pour devenir chevalier auprès du roi Arthur (vers 620–634)',
 			'Tue le Chevalier Vermeil avec son javelot et prend son armure (vers 1110–1135)',
@@ -159,7 +159,7 @@ export const percevalCharacters: MapNode[] = [
 		eyebrow: 'Famille de Perceval · tente de protéger son fils',
 		meta: ['noble dame veuve', 'sœur de l’ermite et du père du Roi Pêcheur', 'morte de chagrin'],
 		description:
-			'Veuve d’un vaillant chevalier et endeuillée par la mort de ses deux fils aînés à la guerre, elle élève Perceval à l’écart de tous les dangers. Elle lui donne des conseils de sagesse avant son départ. Quand Perceval s’éloigne au galop sans se retourner, elle s’effondre de chagrin et meurt. L’ermite explique plus tard que cette douleur causée à sa mère a pesé sur Perceval et l’a empêché de parler devant le Graal.',
+			'Son mari, un chevalier courageux, et ses deux fils aînés sont morts. Elle élève donc Perceval loin de tous les dangers. Avant son départ, elle lui donne des conseils pour bien se conduire. Quand Perceval s’éloigne au galop sans se retourner, elle s’effondre de chagrin et en meurt. Plus tard, l’ermite explique que cette faute envers sa mère a empêché Perceval de parler devant le Graal.',
 		points: [
 			'Raconte la mort tragique du père et des deux frères aînés (vers 400–488)',
 			'Donne à Perceval ses derniers conseils de conduite avant son départ (vers 527–590)',
@@ -180,7 +180,7 @@ export const percevalCharacters: MapNode[] = [
 		eyebrow: 'Mémoire familiale · la mort des chevaliers de la famille',
 		meta: ['figures défuntes', 'morts à la guerre', 'sans nom dans le texte'],
 		description:
-			'Le roman ne leur donne aucun prénom. Le père, un très vaillant chevalier, a été blessé aux jambes pendant des guerres féodales, a perdu ses biens et est mort de douleur dans la forêt. Les deux frères aînés de Perceval ont été armés chevaliers puis ont été tués au combat le même jour. Cette disparition tragique explique pourquoi la mère a voulu cacher Perceval dans les bois.',
+			'Le roman ne leur donne pas de nom. Le père, un chevalier très courageux, a été blessé aux jambes pendant des guerres entre seigneurs et a perdu ses terres. Les deux frères aînés de Perceval sont devenus chevaliers, puis ont été tués au combat le même jour. Le père en est mort de chagrin. Voilà pourquoi la mère a voulu cacher Perceval dans les bois.',
 		points: [
 			'Le père est blessé aux jambes et se réfugie dans la forêt (vers 416–434)',
 			'Les deux frères aînés meurent les armes à la main le même jour (vers 459–478)',
@@ -200,11 +200,11 @@ export const percevalCharacters: MapNode[] = [
 		eyebrow: 'Apprentissage · montre les règles et les combats',
 		meta: ['seigneur de Goort', 'oncle de Blanchefleur', 'maître de Perceval'],
 		description:
-			'Noble seigneur expérimenté, il accueille Perceval et comprend vite que le jeune homme possède une force extraordinaire mais ne sait pas se battre. En une seule journée, il lui montre comment monter à cheval, tenir son bouclier et manier l’épée. Il le fait officiellement chevalier (adoubement) et lui donne des conseils moraux : faire grâce à un ennemi qui demande pardon, secourir les dames en danger et ne pas parler à tort et à travers.',
+			'Seigneur âgé et expérimenté. Il accueille Perceval et voit vite que le jeune homme est très fort, mais ne sait pas se battre. En une seule journée, il lui apprend à monter à cheval, à tenir son bouclier et à manier l’épée. Puis il le fait chevalier au cours d’une cérémonie : c’est l’adoubement. Il lui donne aussi des conseils de conduite : épargner un ennemi vaincu qui demande grâce, secourir les dames en danger et ne pas parler à tort et à travers.',
 		points: [
-			'Enseigne à Perceval le combat à cheval et l’escrime médiévale (vers 1420–1530)',
+			'Enseigne à Perceval le combat à cheval et le maniement de l’épée (vers 1420–1530)',
 			'Adoube Perceval en lui attachant son éperon et en lui remettant son épée (vers 1630–1640)',
-			'Lui donne le conseil de modération : « gardez-vous de trop parler » (vers 1648–1656)',
+			'Lui conseille de ne pas trop parler : « gardez-vous de trop parler » (vers 1648–1656)',
 			'Propose à Perceval d’épouser sa nièce Blanchefleur (vers 1880–1900)',
 		],
 		color: '#3f6b3a',
@@ -218,15 +218,15 @@ export const percevalCharacters: MapNode[] = [
 		id: 'arthur',
 		label: 'Le roi Arthur',
 		caption: 'le grand roi · chef respecté des chevaliers',
-		eyebrow: 'Cour royale · modèle de la royauté chevaleresque',
+		eyebrow: 'Cour royale · le roi des chevaliers',
 		meta: ['roi des Bretons', 'cour de Carduel', 'accueille les chevaliers'],
 		description:
-			'Souverain légendaire autour duquel se réunissent les meilleurs chevaliers. Quand Perceval arrive à la cour, Arthur est attristé par l’insolence du Chevalier Vermeil qui a renversé une coupe de vin sur la reine. Malgré les habits de paysan de Perceval, Arthur devine sa valeur et le traite avec gentillesse. Plus tard, admiratif des exploits de Perceval, Arthur fait lever toute sa cour pour partir à sa recherche.',
+			'Roi légendaire entouré des meilleurs chevaliers. Quand Perceval arrive à la cour, Arthur est triste et pensif : le Chevalier Vermeil vient de l’insulter en renversant une coupe de vin sur la reine. Malgré les habits de paysan de Perceval, Arthur devine sa valeur et le traite avec gentillesse. Plus tard, impressionné par ses exploits, Arthur part avec toute sa cour à sa recherche.',
 		points: [
 			'Reçoit Perceval avec bienveillance à la cour de Carduel (vers 910–960)',
 			'Reproche à Keu de s’être moqué du jeune homme et d’avoir giflé une servante (vers 1010–1040)',
-			'Part avec ses barons à la recherche de Perceval dans la neige (vers 4140–4450)',
-			'Accueille la Demoiselle hideuse lors de la grande fête de la Pentecôte (vers 4610–4750)',
+			'Part avec les seigneurs de sa cour à la recherche de Perceval, dans la neige (vers 4140–4450)',
+			'Reçoit la Demoiselle hideuse devant toute sa cour réunie (vers 4610–4750)',
 		],
 		color: '#8b572a',
 		tier: 'standard',
@@ -242,7 +242,7 @@ export const percevalCharacters: MapNode[] = [
 		eyebrow: 'Cour royale · le chevalier provocateur',
 		meta: ['sénéchal d’Arthur', 'langue méchante', 'détesté des autres'],
 		description:
-			'Sénéchal du roi Arthur (chargé de l’intendance du château), connu pour son caractère agressif et ses moqueries. Il se rit de la naïveté de Perceval et l’envoie affronter le Chevalier Vermeil en espérant qu’il s’y fasse tuer. Plus tard, Perceval le combat lors d’un tournoi improvisé sur la neige et lui brise le bras, vengeant ainsi les moqueries passées.',
+			'Keu est le sénéchal du roi Arthur : il dirige le service du palais. Il est connu pour son caractère agressif et ses moqueries. Il se moque de la naïveté de Perceval et l’envoie affronter le Chevalier Vermeil en espérant qu’il se fasse tuer. Plus tard, Keu attaque Perceval, plongé dans ses pensées devant des gouttes de sang sur la neige. Perceval le fait tomber et lui casse le bras : c’est sa revanche sur les moqueries passées.',
 		points: [
 			'Se moque de l’allure paysanne de Perceval à son arrivée (vers 1000–1015)',
 			'Gifle une jeune fille qui avait annoncé que Perceval deviendrait un grand chevalier (vers 1035–1060)',
@@ -259,15 +259,15 @@ export const percevalCharacters: MapNode[] = [
 		id: 'gauvain',
 		label: 'Monseigneur Gauvain',
 		caption: 'neveu du roi Arthur · modèle du chevalier parfait',
-		eyebrow: 'Parcours parallèle · les exploits du héros courtois',
-		meta: ['neveu d’Arthur', 'héros de la seconde moitié du roman', 'champion exemplaire'],
+		eyebrow: 'Le deuxième héros · les exploits du chevalier courtois',
+		meta: ['neveu d’Arthur', 'héros de la seconde moitié du roman', 'chevalier modèle'],
 		description:
-			'Neveu d’Arthur et champion le plus courtois de la Table ronde. Alors que Keu se bat avec violence contre Perceval, Gauvain use de douceur et de diplomatie pour lui parler. Chrétien de Troyes accorde une très grande place aux aventures de Gauvain dans la seconde moitié du livre : accusé à tort de trahison, Gauvain accomplit de nombreux exploits dans les tournois et les châteaux enchantés. Son parcours montre la gloire des chevaliers dans le monde, en contraste avec la quête plus spirituelle et religieuse de Perceval.',
+			'Neveu du roi Arthur. C’est le chevalier le plus courtois de la Table ronde : il est poli, loyal et respectueux envers les dames. Ces qualités forment ce qu’on appelle la courtoisie. Keu attaque Perceval avec violence ; Gauvain, lui, vient lui parler avec douceur. Chrétien de Troyes consacre une grande partie de la seconde moitié du livre à Gauvain. Accusé d’avoir tué un seigneur par trahison, il part se défendre et accomplit de nombreux exploits dans des tournois et des châteaux enchantés. Ses aventures montrent la gloire des chevaliers dans le monde, alors que celles de Perceval prennent un sens plus religieux.',
 		points: [
 			'Parle avec politesse à Perceval lors de la scène des gouttes de sang sur la neige (vers 4430–4550)',
 			'Accusé publiquement de trahison, il part défendre son honneur (vers 4750–4790)',
 			'Multiplie les combats d’armes et les exploits au fil de ses voyages',
-			'Triomphe des épreuves du Château des Reines (le Lit de la Merveille)',
+			'Réussit l’épreuve du Lit de la Merveille, un lit magique, dans le Château des Reines',
 		],
 		color: '#5b347b',
 		tier: 'major',
@@ -283,9 +283,9 @@ export const percevalCharacters: MapNode[] = [
 		eyebrow: 'Lien amoureux · la jeune dame secourue',
 		meta: ['dame de Beaurepaire', 'nièce de Gornemant', 'amour de Perceval'],
 		description:
-			'Jeune dame assiégée dans sa forteresse de Beaurepaire par des chevaliers ennemis. En larmes, elle vient demander secours à Perceval pendant la nuit. Perceval relève le défi, combat ses ennemis un par un et délivre le château. Un amour sincère et délicat naît entre eux. Plus tard, en voyant trois gouttes de sang rouge tombées sur la neige blanche, Perceval reste immobile à penser au visage éclatant de Blanchefleur.',
+			'Jeune dame du château de Beaurepaire, encerclé par des chevaliers ennemis. En larmes, elle vient demander secours à Perceval pendant la nuit. Perceval accepte, combat ses ennemis un par un et délivre le château. Un amour sincère naît entre eux. Plus tard, devant trois gouttes de sang rouge tombées sur la neige blanche, Perceval reste immobile : il pense au visage de Blanchefleur, blanc et rose.',
 		points: [
-			'Vient implorer en larmes l’aide de Perceval dans sa chambre (vers 1960–2050)',
+			'Vient en larmes demander l’aide de Perceval dans sa chambre (vers 1960–2050)',
 			'Délivrée de ses ennemis par les victoires de Perceval en combat (vers 2240–2600)',
 			'Perceval lui promet de revenir après être allé voir comment va sa mère (vers 2910–2935)',
 			'Son visage est rappelé par les trois gouttes de sang sur la neige (vers 4195–4215)',
@@ -304,12 +304,12 @@ export const percevalCharacters: MapNode[] = [
 		eyebrow: 'Le mystère du Graal · le roi qui attend sa guérison',
 		meta: ['cousin de Perceval', 'blessé aux hanches', 'maître du château du Graal'],
 		description:
-			'Mystérieux seigneur que Perceval rencontre d’abord sur une rivière, en train de pêcher depuis une barque parce qu’une blessure entre les cuisses l’empêche de monter à cheval. Il invite Perceval dans son riche château, lui offre une épée magnifique et préside le repas du soir. Pendant ce repas défile le cortège avec la lance qui saigne et le plat précieux (« un graal »). Si Perceval avait posé la question sur ce cortège, le roi aurait été guéri.',
+			'Seigneur mystérieux. Perceval le rencontre d’abord sur une rivière, en train de pêcher depuis une barque. Une blessure aux hanches l’empêche de monter à cheval : la pêche est le seul plaisir qui lui reste, d’où son nom de « Roi Pêcheur ». Il invite Perceval dans son riche château, lui offre une épée magnifique et partage avec lui le repas du soir. Pendant ce repas défile un cortège, c’est-à-dire une procession de personnes qui portent des objets : la lance qui saigne, puis un plat précieux (« un graal »). Selon la cousine de Perceval, si le héros avait posé des questions sur ce cortège, le roi aurait été guéri.',
 		points: [
 			'Indique à Perceval le chemin de son château depuis sa barque (vers 3000–3060)',
 			'Accueille le jeune homme allongé près d’un grand feu et lui fait cadeau d’une épée (vers 3080–3180)',
 			'Regarde passer le cortège sans que Perceval ne pose la moindre question (vers 3190–3310)',
-			'Son père, retiré dans une pièce voisine, est nourri grâce à une hostie apportée dans le Graal (vers 6420–6430)',
+			'Son père, qui ne quitte plus sa chambre, est nourri d’une hostie (le pain de la messe) apportée dans le Graal (vers 6420–6430)',
 		],
 		color: '#4d5b66',
 		tier: 'major',
@@ -321,16 +321,16 @@ export const percevalCharacters: MapNode[] = [
 	{
 		id: 'ermite',
 		label: 'L’oncle ermite',
-		caption: 'frère de la mère · guide spirituel dans les bois',
+		caption: 'frère de la mère · guide religieux dans les bois',
 		eyebrow: 'Pardon et foi · explique le secret du silence',
 		meta: ['oncle maternel de Perceval', 'homme saint vivant en ermite', 'frère de la mère'],
 		description:
-			'Homme saint qui vit retiré dans les bois pour prier Dieu. C’est le frère de la mère de Perceval. Quand Perceval, après cinq années passées loin de la foi, vient le voir le jour du Vendredi saint, l’ermite lui révèle la vérité : c’est le péché d’avoir causé la mort de sa mère qui l’a empêché de parler devant le Graal. L’ermite confesse Perceval, lui enseigne des prières et le réconcilie avec Dieu.',
+			'Un ermite est un homme qui vit seul, loin du monde, pour prier Dieu. Celui-ci est le frère de la mère de Perceval. Après cinq ans loin de Dieu, Perceval vient le voir le jour du Vendredi saint. L’ermite lui révèle la vérité : son péché, c’est-à-dire sa faute envers Dieu, est d’avoir causé la mort de sa mère. C’est ce péché qui l’a empêché de parler devant le Graal. L’ermite écoute sa confession, lui enseigne une prière et le réconcilie avec Dieu.',
 		points: [
 			'Accueille Perceval conduit par des pèlerins le Vendredi saint (vers 6330–6370)',
 			'Révèle à Perceval qu’il est son oncle et que le Roi Pêcheur est son cousin (vers 6415–6434)',
 			'Explique que la faute envers sa mère est la cause religieuse de son silence au château (vers 6392–6414)',
-			'Lui donne des conseils chrétiens et lui fait faire pénitence (vers 6480–6515)',
+			'Lui donne des conseils chrétiens et lui fait faire pénitence, c’est-à-dire des actions pour réparer sa faute (vers 6480–6515)',
 		],
 		color: '#5f6b2f',
 		tier: 'standard',
@@ -343,15 +343,15 @@ export const percevalCharacters: MapNode[] = [
 		id: 'graal',
 		label: 'Le Graal',
 		caption: 'plat ou vase précieux · éclat d’or et de pierres précieuses',
-		eyebrow: 'Élément narratif mystérieux · l’objet de la question non posée',
+		eyebrow: 'Élément narratif mystérieux · l’objet de la question que Perceval ne pose pas',
 		meta: ['plat ou vase précieux', 'en or fin · porte une hostie', 'clarté éblouissante'],
 		description:
-			'Dans le roman de Chrétien de Troyes, le mot désigne un plat large ou un vase en or pur, orné de pierres précieuses éclatantes. Porté par une jeune fille lors du repas chez le Roi Pêcheur, il brille tellement qu’il efface la lumière des bougies. Il sert à porter une hostie (le pain consacré lors de la messe) au père du Roi Pêcheur. La question que Perceval ne pose pas (« À qui sert-on le Graal ? ») est l’épreuve principale de son aventure.',
+			'Chez Chrétien de Troyes, « graal » est d’abord un nom commun : c’est un plat large ou un vase en or pur, orné de pierres précieuses. Une jeune fille le porte pendant le repas chez le Roi Pêcheur. Il brille si fort que la lumière des bougies semble pâlir. Il sert à apporter une hostie (le pain de la messe) au père du Roi Pêcheur. La question que Perceval ne pose pas (« À qui sert-on le Graal ? ») est l’épreuve principale de son aventure.',
 		points: [
 			'Apparaît dans le repas avec une lumière extraordinaire (vers 3220–3240)',
 			'Fait d’or pur et orné de joyaux très rares (vers 3232–3239)',
 			'Contient une hostie qui nourrit le vieux roi depuis douze ans (vers 6422–6428)',
-			'Dans le texte de Chrétien, on dit d’abord « un graal » avant que les légendes tardives n’en fassent une coupe unique',
+			'Chrétien écrit « un graal », comme on dirait « un plat » : ce sont des auteurs venus après lui qui en feront une coupe sacrée unique',
 		],
 		color: '#b4502f',
 		tier: 'major',
@@ -367,12 +367,12 @@ export const percevalCharacters: MapNode[] = [
 		eyebrow: 'Élément narratif symbolique · signe de douleur et de mystère',
 		meta: ['lance blanche étincelante', 'goutte de sang vermeil au fer', 'portée par un valet'],
 		description:
-			'Arme portée par un jeune valet au début du cortège chez le Roi Pêcheur. Une goutte de sang rouge coule sans interruption de sa pointe en fer blanc jusqu’à la main du porteur. Perceval est fasciné par ce spectacle, mais il garde le silence et n’ose pas demander pourquoi cette arme saigne.',
+			'Arme portée par un jeune serviteur (un valet) au début du cortège chez le Roi Pêcheur. Une goutte de sang rouge coule sans arrêt de sa pointe en fer blanc jusqu’à la main du porteur. Perceval est fasciné, mais il garde le silence et n’ose pas demander pourquoi cette arme saigne.',
 		points: [
 			'Ouvre la marche du cortège, portée par les deux mains d’un valet (vers 3190–3200)',
 			'Une goutte de sang rouge coule en continu de la pointe blanche (vers 3198–3205)',
-			'Étonne Perceval, qui s’abstient d’interroger son hôte par respect des consignes (vers 3206–3215)',
-			'Deviendra dans des récits plus tardifs la lance du centurion ayant blessé le Christ',
+			'Étonne Perceval, qui n’ose pas questionner son hôte car il se souvient du conseil de Gornemant (vers 3206–3215)',
+			'Dans des récits écrits plus tard, elle deviendra la lance du soldat romain qui a blessé le Christ sur la croix',
 		],
 		color: '#8a1f1a',
 		tier: 'minor',
@@ -384,13 +384,13 @@ export const percevalCharacters: MapNode[] = [
 	{
 		id: 'cousine-germaine',
 		label: 'La cousine germaine',
-		caption: 'jeune fille rencontrée sous un chêne · révèle le nom de Perceval',
+		caption: 'jeune fille rencontrée sous un chêne · annonce la mort de la mère',
 		eyebrow: 'Rencontre dans la forêt · premiers reproches sur le silence',
-		meta: ['cousine de Perceval', 'pleure son ami mort', 'lui dit son vrai nom'],
+		meta: ['cousine de Perceval', 'pleure son ami mort', 'élevée avec lui chez sa mère'],
 		description:
-			'Perceval la rencontre dans les bois le lendemain de sa visite au château du Graal. Elle pleure son ami chevalier qui vient d’être tué. Elle devine le nom de Perceval (« Perceval le Gallois ») et lui annonce la mort de sa mère. Quand elle découvre que Perceval a vu le cortège sans poser de question, elle lui reproche très sévèrement son silence et annonce de grands malheurs pour le royaume.',
+			'Perceval la rencontre dans les bois le lendemain de sa visite au château du Graal. Elle pleure son ami chevalier qui vient d’être tué. Quand elle lui demande son nom, Perceval, qui ne le connaissait pas, le devine : « Perceval le Gallois ». Elle lui annonce la mort de sa mère. Elle apprend qu’il a vu le cortège sans poser de question : elle lui reproche très sévèrement son silence et lui annonce que de grands malheurs en viendront.',
 		points: [
-			'Révèle à Perceval son véritable nom : « Perceval le Gallois » (vers 3570–3575)',
+			'Lui demande son nom : Perceval devine alors qu’il s’appelle « Perceval le Gallois » (vers 3570–3575)',
 			'Lui apprend que sa mère est morte de chagrin au moment de son départ (vers 3590–3595)',
 			'Lui reproche d’avoir gardé le silence devant le Graal et la lance (vers 3583–3589)',
 			'Met en garde Perceval contre l’épée donnée par le roi, qui risque de se briser au combat (vers 3650–3685)',
@@ -409,9 +409,9 @@ export const percevalCharacters: MapNode[] = [
 		eyebrow: 'Annonce publique · relance la quête de tous les chevaliers',
 		meta: ['messagère sur une mule', 'visage très laid', 'venue à la cour d’Arthur'],
 		description:
-			'Messagère au visage monstrueux qui surgit à la cour du roi Arthur montée sur une mule. Devant tous les chevaliers réunis, elle accuse Perceval de lâcheté : s’il avait posé les questions au château, le Roi Pêcheur aurait retrouvé sa santé et ses terres la prospérité. Ses reproches relancent Perceval dans une longue quête pour retrouver le Graal.',
+			'Messagère au visage effrayant, qui arrive à la cour du roi Arthur sur une mule. Devant tous les chevaliers réunis, elle reproche durement son silence à Perceval : s’il avait posé les questions au château, le Roi Pêcheur aurait été guéri et son pays serait resté en paix. Ses reproches lancent Perceval dans une longue quête pour retrouver le Graal.',
 		points: [
-			'Fait irruption devant le roi Arthur et ses chevaliers (vers 4610–4645)',
+			'Arrive brusquement devant le roi Arthur et ses chevaliers (vers 4610–4645)',
 			'Accuse publiquement Perceval de n’avoir posé aucune question au Roi Pêcheur (vers 4650–4715)',
 			'Annonce que le silence de Perceval causera la guerre et la désolation (vers 4675–4690)',
 			'Pousse Perceval et les autres chevaliers à repartir en quête d’aventures (vers 4725–4746)',
@@ -427,7 +427,7 @@ export const percevalCharacters: MapNode[] = [
 
 export const percevalEdgeTypes: Record<string, EdgeType> = {
 	familial: {
-		legend: 'Lien familial (parenté)',
+		legend: 'Lien de famille',
 		stroke: '#8b572a',
 		activeStroke: '#5a3517',
 		width: 2.2,
@@ -435,7 +435,7 @@ export const percevalEdgeTypes: Record<string, EdgeType> = {
 		arrow: 'end',
 	},
 	chevaleresque: {
-		legend: 'Lien chevaleresque (armes, adoubement, cour)',
+		legend: 'Lien de chevalerie (combat, adoubement, cour du roi)',
 		stroke: '#235284',
 		activeStroke: '#172b3a',
 		width: 2.2,
@@ -443,7 +443,7 @@ export const percevalEdgeTypes: Record<string, EdgeType> = {
 		arrow: 'end',
 	},
 	affectif: {
-		legend: 'Lien affectif (amour courtois)',
+		legend: 'Lien d’amour',
 		stroke: '#c98a84',
 		activeStroke: '#a2312b',
 		width: 2.2,
@@ -451,7 +451,7 @@ export const percevalEdgeTypes: Record<string, EdgeType> = {
 		arrow: 'end',
 	},
 	narratif: {
-		legend: 'Rencontre narrative (épreuve, crise, reproche)',
+		legend: 'Rencontre importante (moquerie, épreuve, reproche)',
 		stroke: '#6a4c93',
 		activeStroke: '#462b66',
 		width: 2,
@@ -459,7 +459,7 @@ export const percevalEdgeTypes: Record<string, EdgeType> = {
 		arrow: 'end',
 	},
 	spirituel: {
-		legend: 'Lien spirituel ou initiatique (confession, révélation)',
+		legend: 'Lien religieux (confession, pardon)',
 		stroke: '#5f6b2f',
 		activeStroke: '#3a441a',
 		width: 2.4,
@@ -467,7 +467,7 @@ export const percevalEdgeTypes: Record<string, EdgeType> = {
 		arrow: 'end',
 	},
 	mystique: {
-		legend: 'Lien à un élément ou objet sacré (Graal, lance)',
+		legend: 'Lien avec les objets mystérieux (Graal, lance)',
 		stroke: '#b4502f',
 		activeStroke: '#7a3118',
 		width: 2.4,
@@ -500,7 +500,7 @@ export const percevalRelationships: MapRelationship[] = [
 		label: 'mari & fils disparus',
 		direction: 'none',
 		description:
-			'Le mari blessé à la guerre et mort de douleur, et les deux fils aînés tués le même jour après être devenus chevaliers. Ce drame familial explique pourquoi la mère a voulu cacher Perceval dans une forêt isolée.',
+			'Son mari a été blessé à la guerre, puis il est mort de chagrin. Ses deux fils aînés ont été tués le même jour, juste après être devenus chevaliers. Ce malheur explique pourquoi la mère a voulu cacher Perceval dans une forêt isolée.',
 		labelDx: 0,
 		labelDy: -15,
 		mLabelDx: 0,
@@ -525,7 +525,7 @@ export const percevalRelationships: MapRelationship[] = [
 		label: 'cousine germaine',
 		direction: 'none',
 		description:
-			'Elle est la fille du frère de la mère de Perceval. Ils ont grandi un temps ensemble. Elle le reconnaît dans la forêt, lui apprend son vrai nom (« Perceval le Gallois ») et lui annonce la mort de sa mère.',
+			'Elle est la cousine germaine de Perceval et a été élevée un temps avec lui, chez sa mère. Elle le reconnaît dans la forêt et lui annonce la mort de sa mère.',
 		labelDx: -45,
 		labelDy: -15,
 	},
@@ -537,7 +537,7 @@ export const percevalRelationships: MapRelationship[] = [
 		label: 'oncle maternel',
 		direction: 'none',
 		description:
-			'L’ermite est le frère de la mère de Perceval. Cette parenté familiale lui permet d’accueillir son neveu avec douceur, d’écouter sa confession et de lui accorder le pardon de Dieu.',
+			'L’ermite est le frère de la mère de Perceval. Il accueille son neveu avec douceur, écoute sa confession et l’aide à obtenir le pardon de Dieu.',
 		labelDx: 40,
 		labelDy: -20,
 		mLabelDx: 20,
@@ -581,7 +581,7 @@ export const percevalRelationships: MapRelationship[] = [
 		type: 'chevaleresque',
 		label: 'sénéchal du roi Arthur',
 		description:
-			'Keu est un officier important du roi Arthur chargé du service du palais. Mais il est violent et désagréable : il blesse les invités avec ses paroles méchantes et provoque des disputes à la cour.',
+			'Keu est un officier important du roi Arthur : il dirige le service du palais. Mais il est violent et désagréable : il blesse les invités avec ses paroles méchantes et provoque des disputes à la cour.',
 		labelDx: 25,
 		labelDy: -15,
 	},
@@ -603,7 +603,7 @@ export const percevalRelationships: MapRelationship[] = [
 		type: 'chevaleresque',
 		label: 'lui apprend le métier des armes',
 		description:
-			'Gornemant apprend à Perceval comment se battre à cheval et manier l’épée. Il le fait officiellement chevalier et lui conseille de ne pas être trop bavard (« gardez-vous de trop parler »). Perceval appliquera ce conseil sans nuance chez le Roi Pêcheur.',
+			'Gornemant apprend à Perceval comment se battre à cheval et manier l’épée. Il le fait officiellement chevalier et lui conseille de ne pas être trop bavard (« gardez-vous de trop parler »). Chez le Roi Pêcheur, Perceval suivra ce conseil trop à la lettre.',
 		labelDx: -50,
 		labelDy: -20,
 		mLabelDx: -30,
@@ -627,10 +627,10 @@ export const percevalRelationships: MapRelationship[] = [
 		source: 'gauvain',
 		target: 'perceval',
 		type: 'chevaleresque',
-		label: 'amitié & aventures en miroir',
+		label: 'amitié & aventures côte à côte',
 		direction: 'both',
 		description:
-			'Gauvain parle à Perceval avec beaucoup de politesse et le ramène en ami auprès du roi Arthur. Chrétien de Troyes raconte ensuite les aventures des deux héros côte à côte : Perceval cherche le sens du Graal tandis que Gauvain accomplit de brillants exploits de chevalier.',
+			'Gauvain parle à Perceval avec beaucoup de politesse et le ramène en ami auprès du roi Arthur. Chrétien de Troyes raconte ensuite les aventures des deux héros l’une après l’autre : Perceval cherche le sens du Graal, tandis que Gauvain accomplit de brillants exploits de chevalier.',
 		labelDx: 45,
 		labelDy: 15,
 		mLabelDx: 30,
@@ -686,7 +686,7 @@ export const percevalRelationships: MapRelationship[] = [
 		type: 'narratif',
 		label: 'se tait au passage du Graal',
 		description:
-			'Par peur de paraître impoli et parce qu’il se souvient du conseil de Gornemant (« ne parlez pas trop »), Perceval ne demande rien sur la lance qui saigne ni sur le Graal. Ce silence laisse le roi infirme, ce que la cousine et la Demoiselle hideuse lui reprocheront ensuite très durement.',
+			'Par peur de paraître impoli et parce qu’il se souvient du conseil de Gornemant (« ne parlez pas trop »), Perceval ne demande rien sur la lance qui saigne ni sur le Graal. À cause de ce silence, le roi n’est pas guéri : la cousine et la Demoiselle hideuse le lui reprocheront très durement.',
 		labelDx: -45,
 		labelDy: 25,
 		mLabelDx: -25,
@@ -701,7 +701,7 @@ export const percevalRelationships: MapRelationship[] = [
 		label: 'nourrit son vieux père au Graal',
 		direction: 'none',
 		description:
-			'Pendant le repas, le Graal passe pour porter une hostie (pain consacré) au père du Roi Pêcheur, qui vit retiré dans une pièce voisine depuis douze ans. Cet aliment le maintient en vie.',
+			'Pendant le repas, le Graal passe pour porter une hostie (le pain de la messe) au père du Roi Pêcheur. Ce vieux roi ne quitte plus sa chambre depuis douze ans : cette hostie suffit à le maintenir en vie.',
 		labelDx: -35,
 		labelDy: 20,
 	},
@@ -726,7 +726,7 @@ export const percevalRelationships: MapRelationship[] = [
 		type: 'mystique',
 		label: 'regarde la lance sans poser de question',
 		description:
-			'Perceval voit un valet porter une lance blanche dont la pointe laisse couler une goutte de sang rouge. Trop timide, il n’ose pas demander pourquoi cette arme saigne.',
+			'Perceval voit un valet porter une lance blanche dont la pointe laisse couler une goutte de sang rouge. Il n’ose pas demander pourquoi cette arme saigne.',
 		labelDx: 35,
 		labelDy: 30,
 	},
@@ -737,9 +737,9 @@ export const percevalRelationships: MapRelationship[] = [
 		source: 'cousine-germaine',
 		target: 'perceval',
 		type: 'narratif',
-		label: 'lui dit son nom & le dispute',
+		label: 'lui reproche son silence',
 		description:
-			'La cousine apprend à Perceval son véritable nom et lui annonce la mort de sa mère. Elle lui reproche amèrement d’être resté muet au château du Graal, lui prédisant de grands malheurs.',
+			'La cousine annonce à Perceval la mort de sa mère. Elle lui reproche durement d’être resté muet au château du Graal et lui annonce de grands malheurs.',
 		labelDx: -25,
 		labelDy: -20,
 	},
@@ -750,7 +750,7 @@ export const percevalRelationships: MapRelationship[] = [
 		type: 'narratif',
 		label: 'l’accuse devant toute la cour',
 		description:
-			'Devant tous les chevaliers d’Arthur, la Demoiselle hideuse crie que Perceval a commis une faute impardonnable en ne posant pas de question : le Roi Pêcheur reste malade et le pays connaîtra la guerre.',
+			'Devant tous les chevaliers d’Arthur, la Demoiselle hideuse crie que Perceval a commis une grave faute en ne posant pas de question : le Roi Pêcheur reste blessé et le pays connaîtra la guerre.',
 		labelDx: 40,
 		labelDy: 15,
 		mLabelDx: 20,
@@ -764,7 +764,7 @@ export const percevalRelationships: MapRelationship[] = [
 		type: 'spirituel',
 		label: 'le confesse & lui pardonne',
 		description:
-			'Le jour du Vendredi saint, l’ermite explique à Perceval pourquoi il n’a pas pu parler : le péché d’avoir causé la mort de sa mère l’a paralysé au château. L’ermite le confesse, lui apprend à prier et lui redonne la paix avec Dieu.',
+			'Le jour du Vendredi saint, l’ermite explique à Perceval pourquoi il n’a pas pu parler : le péché d’avoir causé la mort de sa mère l’a empêché de parler au château. L’ermite écoute sa confession, lui apprend une prière et le réconcilie avec Dieu.',
 		labelDx: 35,
 		labelDy: -15,
 		mLabelDx: 20,
@@ -774,50 +774,50 @@ export const percevalRelationships: MapRelationship[] = [
 ];
 
 export const percevalFunctions: Record<string, string> = {
-	perceval: 'Héros de l’histoire · jeune homme ignorant qui devient chevalier puis cherche le pardon de Dieu',
+	perceval: 'Héros de l’histoire · jeune homme naïf qui devient chevalier puis cherche le pardon de Dieu',
 	'mere-perceval': 'Mère aimante et protectrice · tente de cacher le monde à son fils et meurt de douleur à son départ',
 	'pere-et-freres': 'Mémoire de la famille · vaillants chevaliers tués à la guerre avant le début de l’histoire',
 	gornemant: 'Maître d’armes · apprend à Perceval à manier l’épée et lui conseille de ne pas trop parler',
 	arthur: 'Le grand roi légendaire · accueille Perceval avec bienveillance et maintient l’honneur de la cour',
 	keu: 'Provocateur de la cour · officier moqueur qui insulte Perceval avant d’être puni en combat',
-	gauvain: 'Chevalier modèle · neveu d’Arthur dont les exploits brillants complètent le parcours de Perceval',
+	gauvain: 'Chevalier modèle · neveu d’Arthur dont les aventures sont racontées après celles de Perceval',
 	blanchefleur: 'Amie et amour de Perceval · jeune châtelaine secourue dont le souvenir inspire le héros',
 	'roi-pecheur': 'Seigneur blessé · maître du château mystérieux qui attend d’être guéri par une question',
-	ermite: 'Guide spirituel dans les bois · oncle qui explique la cause religieuse du silence et réconcilie Perceval avec Dieu',
+	ermite: 'Guide religieux dans les bois · oncle qui explique pourquoi Perceval s’est tu et le réconcilie avec Dieu',
 	graal: 'Objet précieux et mystérieux · plat d’or brillant portant une hostie, au cœur de la question non posée',
 	'lance-qui-saigne': 'Arme extraordinaire · lance blanche dont le fer laisse couler une goutte de sang sans s’arrêter',
-	'cousine-germaine': 'Jeune fille sous un chêne · révèle à Perceval son vrai nom et lui reproche son silence au château',
+	'cousine-germaine': 'Jeune fille sous un chêne · annonce à Perceval la mort de sa mère et lui reproche son silence au château',
 	'demoiselle-hideuse': 'Messagère à la cour · accuse publiquement Perceval devant les chevaliers et relance la quête',
 };
 
 export const didacticNotes: DidacticNote[] = [
 	{
-		title: 'Un roman inachevé et une œuvre pionnière',
-		text: 'Chrétien de Troyes a composé ce roman à la fin du XIIᵉ siècle (les spécialistes proposent vers 1181–1190, sans certitude absolue), pour son protecteur Philippe d’Alsace, comte de Flandre. Le texte s’arrête brusquement au vers 9234 en plein milieu d’une aventure de Gauvain, probablement parce que l’auteur est mort avant d’avoir pu le terminer. Chrétien n’a donc jamais écrit la fin des aventures de Perceval ni la guérison du Roi Pêcheur. D’autres écrivains du XIIIᵉ siècle ont imaginé la suite de l’histoire : ce sont les continuations, écrites après sa mort.',
+		title: 'Un roman inachevé : pourquoi l’histoire n’a-t-elle pas de fin ?',
+		text: 'Chrétien de Troyes écrit ce roman à la fin du XIIᵉ siècle, sans doute entre 1181 et 1190 : la date exacte n’est pas connue. Il l’écrit pour son protecteur, Philippe d’Alsace, comte de Flandre. Le texte s’arrête brusquement au vers 9234, au milieu d’une aventure de Gauvain. Chrétien est probablement mort avant de pouvoir le terminer. Il n’a donc jamais raconté la fin des aventures de Perceval, ni la guérison du Roi Pêcheur. Après sa mort, d’autres écrivains ont imaginé la suite : on appelle ces suites les continuations. Elles ne sont pas de Chrétien. Son roman est aussi le plus ancien texte connu qui parle du Graal.',
 	},
 	{
-		title: 'Nature du Graal chez Chrétien de Troyes',
-		text: 'Dans ce livre, le mot « graal » est d’abord un nom commun : Chrétien écrit « un graal ». Il s’agit d’un plat large ou d’un récipient précieux en or pur, orné de pierres brillantes, porté par une jeune fille. Il sert à porter une hostie (le pain de la messe) au père du Roi Pêcheur, ce qui lui donne un rôle religieux sans que l’auteur ne propose d’explication complète ou définitive dans le roman. Le mot vient très probablement du latin médiéval gradalis (un plat de table pour les mets de choix). Ce n’est que vers 1200 que Robert de Boron assimilera le Graal à la coupe du Christ (le calice de la Cène). Chez Chrétien, l’objet conserve une part essentielle de mystère poétique et spirituel.',
+		title: 'Qu’est-ce que le Graal chez Chrétien de Troyes ?',
+		text: 'Chez Chrétien, « graal » est d’abord un nom commun : il écrit « un graal », comme on dirait « un plat ». C’est un plat large ou un récipient précieux en or pur, orné de pierres brillantes, porté par une jeune fille. Le mot vient très probablement du latin du Moyen Âge gradalis, qui désignait un plat pour servir des mets raffinés. Le graal sert à porter une hostie (le pain de la messe) au père du Roi Pêcheur : il a donc un sens religieux. Mais Chrétien n’explique jamais complètement ce mystère. Vers 1200, un autre écrivain, Robert de Boron, fera du Graal le récipient utilisé par le Christ lors de son dernier repas avec ses disciples (la Cène). Chez Chrétien, ce n’est pas encore le cas : le Graal reste un objet mystérieux.',
 	},
 	{
-		title: 'La dialectique des deux héros : Perceval et Gauvain',
-		text: 'Le roman met en scène deux héros très différents. D’un côté, Perceval part de l’ignorance complète : il fait des erreurs, traverse le doute et apprend peu à peu ce que signifient la foi en Dieu et le mystère du Graal. De l’autre côté, Monseigneur Gauvain est déjà le chevalier parfait de la cour : il accomplit de brillants exploits, gagne des tournois et délivre des dames, mais son aventure reste liée au monde des chevaliers sans atteindre le secret religieux du Graal.',
+		title: 'Perceval et Gauvain : deux façons d’être chevalier',
+		text: 'Le roman suit deux héros très différents. Perceval part de zéro : il ne sait rien, fait des erreurs et connaît le doute. Peu à peu, il apprend ce que signifient la foi en Dieu et le mystère du Graal. Gauvain, lui, est déjà un chevalier admiré à la cour. Il accomplit de brillants exploits, combat dans des tournois et secourt des dames, mais il affronte lui aussi des accusations et des épreuves difficiles. Il promet même de chercher la lance qui saigne. Pourtant, dans la partie écrite par Chrétien, ses aventures restent surtout liées au monde des chevaliers et ne le conduisent pas au secret religieux du Graal.',
 	},
 	{
-		title: 'La question non posée : conseil de courtoisie et interprétation spirituelle',
-		text: 'Pourquoi Perceval garde-t-il le silence au château du Roi Pêcheur ? Le récit donne deux explications successives. Pendant le repas, Perceval se souvient simplement du conseil de Gornemant (« gardez-vous de trop parler ») et craint de paraître impoli en posant des questions indiscrètes. Bien plus tard, le jour du Vendredi saint, son oncle l’ermite lui donne une explication religieuse : sa faute d’avoir fait mourir sa mère de chagrin en partant a pesé sur son cœur et l’a empêché de parler. Chrétien associe ainsi une maladresse de politesse et une faute morale révélée après coup.',
+		title: 'La question non posée : pourquoi Perceval se tait-il devant le Graal ?',
+		text: 'Le récit donne deux explications, à deux moments différents. D’abord, pendant le repas, Perceval se souvient du conseil de Gornemant : « gardez-vous de trop parler ». Il a peur d’être impoli en posant des questions. Bien plus tard, le Vendredi saint, son oncle l’ermite lui donne une explication religieuse : en partant, Perceval a fait mourir sa mère de chagrin, et cette faute l’a empêché de parler. Chrétien mêle donc une erreur de politesse et une faute morale, qui n’est révélée qu’après coup.',
 	},
 ];
 
 export const percevalIconography: PercevalIconographyDocument[] = [
 	{
 		id: 'doc-perceval-roi-pecheur',
-		title: 'Perceval reçu au château du Roi Pêcheur (manuscrit de 1330)',
+		title: 'Perceval reçu au château du Roi Pêcheur (manuscrit copié vers 1330)',
 		badge: 'Témoignage médiéval · Manuscrit du Conte du Graal (vers 1330)',
 		badgeClass: 'status-medieval',
 		image: {
 			src: '/images/perceval/perceval-roi-pecheur-bnf-fr12577.jpg',
-			alt: 'Enluminure médiévale en deux scènes : Perceval à cheval devant la porte du château et Perceval assis à table avec le Roi Pêcheur',
+			alt: 'Peinture de manuscrit en deux scènes : à gauche, Perceval à cheval devant la porte du château ; à droite, Perceval assis à table avec le Roi Pêcheur',
 			caption: 'Perceval arrivant au château et reçu à table par le Roi Pêcheur. Manuscrit du Conte du Graal et ses continuations, vers 1330. BnF, Français 12577, folio 18 verso.',
 			width: 1640,
 			height: 2507,
@@ -833,26 +833,26 @@ export const percevalIconography: PercevalIconographyDocument[] = [
 		},
 		pedagogicalAnalysis: {
 			whatItShows:
-				'Sur cette page de manuscrit, on observe le texte en deux colonnes surmontant une peinture divisée en deux compartiments. À gauche, un chevalier en armure arrive à cheval devant une tour où un personnage lui tend une épée. À droite, le chevalier partage un repas avec un seigneur couronné devant un foyer ardent, tandis qu’une servante apporte des récipients de table.',
+				'En haut de cette page de manuscrit, le texte est écrit en deux colonnes. En dessous, une peinture est divisée en deux scènes. À gauche, un chevalier en armure arrive à cheval devant une tour ; un personnage lui tend une épée. À droite, le chevalier mange avec un seigneur couronné, devant un grand feu, pendant qu’une servante apporte de la vaisselle.',
 			textualLink:
-				'Cette miniature représente une scène directement associée au récit de Chrétien de Troyes (vers 3080–3180) : le jeune Perceval est accueilli au château par le Roi Pêcheur, qui souffre d’une blessure et ne peut pas se lever, avant que commence le repas mystérieux.',
+				'Cette petite peinture (on dit une miniature) illustre un passage du roman de Chrétien de Troyes (vers 3080–3180). Perceval est accueilli au château par le Roi Pêcheur. Blessé, le roi ne peut pas se lever. Le repas mystérieux va bientôt commencer.',
 			criticalLimitation:
-				'Mise en garde historique : cette enluminure a été peinte vers 1330, soit environ 140 ans après l’écriture du roman par Chrétien de Troyes (vers 1181–1190). L’artiste habille les personnages et décore la salle selon les modes du XIVᵉ siècle, et non selon la réalité du XIIᵉ siècle.',
+				'Cette enluminure a été peinte vers 1330, environ 140 ans après l’écriture du roman (vers 1181–1190). Le peintre habille les personnages et décore la salle à la mode de son époque, le XIVᵉ siècle, et non comme au temps de Chrétien de Troyes.',
 		},
 		questions: [
-			'Regarde bien les deux parties de la peinture : que fait Perceval à gauche sur son cheval, puis à droite autour de la table avec le roi ?',
-			'Observe l’écriture au-dessus de l’image : pourquoi le copiste a-t-il tracé les lettres à la main sur deux colonnes régulières ?',
+			'Observe les deux scènes de la peinture : que fait Perceval à gauche, sur son cheval ? Et à droite, à table avec le roi ?',
+			'Observe le texte au-dessus de l’image : comment est-il disposé sur la page ? À ton avis, pourquoi a-t-il été écrit à la main ? (Indice : l’imprimerie n’existe pas encore en Europe.)',
 		],
 	},
 	{
 		id: 'doc-cortege-graal',
-		title: 'Le banquet et le cortège du Graal dans une continuation (manuscrit de 1330)',
+		title: 'Le cortège du Graal raconté par une continuation (manuscrit copié vers 1330)',
 		badge: 'Témoignage médiéval · Cortège mystérieux (vers 1330)',
 		badgeClass: 'status-medieval',
 		image: {
 			src: '/images/perceval/cortege-graal-bnf-fr12577.jpg',
-			alt: 'Miniature médiévale montrant le cortège du Graal : quatre porteurs avec une bière funéraire portant une épée brisée, un valet avec la lance et une demoiselle avec le Graal',
-			caption: 'Le repas chez le Roi Pêcheur et le défilé du Graal. Première Continuation du Conte du Graal, vers 1330. BnF, Français 12577, folio 74 verso.',
+			alt: 'Peinture de manuscrit montrant le cortège du Graal : quatre porteurs avec un brancard funéraire sur lequel repose une épée brisée, un jeune homme avec la lance et une jeune fille avec le Graal',
+			caption: 'Le repas chez le Roi Pêcheur et le défilé du Graal, dans la Première Continuation (une suite du Conte du Graal). Manuscrit copié vers 1330. BnF, Français 12577, folio 74 verso.',
 			width: 2463,
 			height: 1354,
 		},
@@ -867,26 +867,26 @@ export const percevalIconography: PercevalIconographyDocument[] = [
 		},
 		pedagogicalAnalysis: {
 			whatItShows:
-				'La peinture montre deux groupes de personnages. À gauche, quatre valets portent sur leurs épaules un lit funéraire (une bière) tendu d’étoffe rouge où repose une épée brisée. Au centre et à droite, un jeune homme tient une lance dressée, une jeune fille élève un vase doré à couvercle, et des convives sont assis à table les mains jointes.',
+				'La peinture montre deux groupes de personnages. À gauche, quatre serviteurs portent sur leurs épaules un brancard funéraire (une bière), couvert de tissu rouge, sur lequel repose une épée brisée. Au centre et à droite, un jeune homme tient une lance dressée et une jeune fille lève un vase doré à couvercle. Des invités sont assis à table, les mains jointes.',
 			textualLink:
-				'Cette image permet de comprendre la célèbre scène du cortège vue par Perceval (vers 3190–3310). Chez Chrétien, le héros regarde défiler un objet appelé « un graal », porté par une demoiselle, sans oser demander à quoi il sert ni à qui on le porte, par réserve et timidité.',
+				'Cette image aide à imaginer la célèbre scène du cortège vue par Perceval (vers 3190–3310). Chez Chrétien, le héros regarde passer un objet appelé « un graal », porté par une jeune fille. Par timidité, il n’ose pas demander à qui on le sert.',
 			criticalLimitation:
-				'Précision littéraire essentielle : ce feuillet 74v n’illustre pas le texte original de Chrétien de Troyes, mais la « Première Continuation », une suite anonyme ajoutée après sa mort. C’est cette continuation qui ajoute au cortège le lit funéraire et l’épée brisée. Chez Chrétien, le cortège comprend des chandeliers, la lance qui saigne, un graal précieux et un tailloir d’argent, sans lit mortuaire.',
+				'Attention : cette page n’illustre pas le texte de Chrétien de Troyes, mais la « Première Continuation », une suite écrite après sa mort par un auteur resté inconnu. C’est cette suite qui ajoute au cortège le brancard funéraire et l’épée brisée. Chez Chrétien, le cortège comprend des chandeliers, la lance qui saigne, un graal précieux et un tailloir d’argent (un plateau pour couper la viande), mais pas de brancard funéraire.',
 		},
 		questions: [
-			'Quels objets mystérieux sont transportés dans ce défilé : que vois-tu sur le lit funéraire à gauche et dans les mains des jeunes gens ?',
-			'Pourquoi l’attitude des personnages assis à table, les mains jointes comme à la messe, montre-t-elle le caractère sacré du cortège ?',
+			'Quels objets sont transportés dans ce défilé ? Que vois-tu sur le brancard, à gauche, et dans les mains des jeunes gens ?',
+			'Observe les invités assis à table : que font-ils avec leurs mains ? Que montre ce geste sur les objets qui passent devant eux ?',
 		],
 	},
 	{
 		id: 'doc-chevalier-westminster',
-		title: 'Un chevalier en hommage : équipement militaire du XIIIᵉ siècle (Psautier de Westminster)',
-		badge: 'Témoignage médiéval · Équipement militaire (vers 1250)',
+		title: 'L’équipement d’un chevalier au XIIIᵉ siècle (Psautier de Westminster)',
+		badge: 'Témoignage médiéval · Équipement du chevalier (vers 1250)',
 		badgeClass: 'status-medieval',
 		image: {
 			src: '/images/perceval/chevalier-psautier-westminster.jpg',
-			alt: 'Dessin médiéval d’un chevalier en cotte de mailles agenouillé en geste d’hommage devant son cheval, avec un écuyer tenant son heaume depuis les créneaux d’une tour',
-			caption: 'Chevalier en cotte de mailles agenouillé en geste d’hommage. Psautier de Westminster, Angleterre, vers 1250. British Library, Royal MS 2 A XXII, folio 220 recto.',
+			alt: 'Dessin médiéval d’un chevalier en cotte de mailles, agenouillé devant son cheval ; en haut, depuis les créneaux d’une tour, un écuyer tient son casque',
+			caption: 'Chevalier en cotte de mailles, à genoux pour promettre fidélité à son seigneur. Psautier de Westminster, Angleterre, vers 1250. British Library, Royal MS 2 A XXII, folio 220 recto.',
 			width: 977,
 			height: 1500,
 		},
@@ -901,25 +901,25 @@ export const percevalIconography: PercevalIconographyDocument[] = [
 		},
 		pedagogicalAnalysis: {
 			whatItShows:
-				'Sur l’image, on observe un homme d’armes agenouillé sur un genou, tendant les mains ouvertes en avant. Il porte une protection de mailles recouvrant le corps et la tête, un vêtement orné de croix, une épée et des éperons pointus. Un cheval harnaché se tient derrière lui, et en haut à droite, depuis des créneaux, un personnage tend un grand casque métallique. La notice institutionnelle de la British Library identifie cette scène comme un chevalier rendant hommage à un roi (peint sur le feuillet précédent), avec un écuyer lui tendant son heaume.',
+				'On voit un chevalier à genoux, les mains tendues en avant. Il porte un haubert : une cotte de mailles, c’est-à-dire un vêtement fait de petits anneaux de fer, qui protège son corps et sa tête. Il a aussi une tunique ornée de croix, une épée et des éperons pointus. Son cheval se tient derrière lui. En haut à droite, depuis les créneaux d’une tour, un écuyer (le jeune serviteur d’un chevalier) lui tend son heaume, un grand casque de métal. D’après la British Library, qui conserve ce document, le chevalier rend hommage à un roi peint sur la page précédente : il lui promet sa fidélité.',
 			textualLink:
-				'Cette image ne représente pas Perceval, mais elle permet de comparer le texte du roman avec des armes réelles du Moyen Âge. Quand Perceval rencontre pour la première fois des chevaliers dans la forêt (vers 110–180), l’éclat de ce métal et de ces casques le frappe tellement qu’il les prend pour des anges de Dieu.',
+				'Cette image ne représente pas Perceval. Elle permet de comparer le roman avec l’équipement réel des chevaliers du Moyen Âge. Quand Perceval voit des chevaliers pour la première fois dans la forêt (vers 110–180), leurs armes et leurs casques brillent tellement qu’il les prend pour des anges de Dieu.',
 			criticalLimitation:
-				'Mise en garde historique : ce document provient d’un livre de prières anglais (un psautier) et montre une relation féodale d’hommage à un roi. Il sert d’exemple concret pour observer l’armement des chevaliers au XIIIᵉ siècle, sans prétendre raconter l’histoire de Perceval.',
+				'Ce dessin vient d’un livre de prières anglais (un psautier, qui rassemble les psaumes de la Bible). Il montre un chevalier qui promet fidélité à un roi, et non une scène du roman. Réalisé plus de 60 ans après le roman de Chrétien, il donne une idée concrète de l’équipement des chevaliers, sans raconter l’histoire de Perceval.',
 		},
 		questions: [
-			'Retrouve les éléments de l’équipement militaire : où sont le haubert en mailles, l’épée au côté, les éperons et le grand heaume tenu par l’écuyer ?',
-			'Pourquoi le geste des deux mains ouvertes tendues en avant montre-t-elle la fidélité et le respect d’un chevalier envers son seigneur ?',
+			'Retrouve sur l’image l’équipement du chevalier : le haubert (la cotte de mailles), l’épée, les éperons et le heaume tenu par l’écuyer.',
+			'Observe la position du chevalier : il est à genoux, les mains tendues en avant. Que montre ce geste envers son seigneur ?',
 		],
 	},
 	{
 		id: 'doc-adoubement-bnf-fr73',
-		title: 'La cérémonie de l’adoubement : la colée et la remise des armes (début du XVᵉ siècle)',
-		badge: 'Témoignage médiéval · Rituel chevaleresque (vers 1400–1405)',
+		title: 'Comment devient-on chevalier ? Une cérémonie d’adoubement (début du XVᵉ siècle)',
+		badge: 'Témoignage médiéval · Cérémonie de chevalerie (vers 1400–1405)',
 		badgeClass: 'status-medieval',
 		image: {
 			src: '/images/perceval/adoubement-chevaliers-bnf-fr73.jpg',
-			alt: 'Miniature médiévale montrant le roi Jean II le Bon adoubant des chevaliers agenouillés par le coup d’épée (la colée)',
+			alt: 'Peinture de manuscrit montrant le roi Jean II le Bon qui fait chevaliers des jeunes hommes agenouillés en les touchant de son épée (la colée)',
 			caption: 'Le roi de France Jean II le Bon adoubant des chevaliers avec son épée. Grandes Chroniques de France, vers 1400–1405. BnF, Français 73, folio 386.',
 			width: 2048,
 			height: 2479,
@@ -935,25 +935,25 @@ export const percevalIconography: PercevalIconographyDocument[] = [
 		},
 		pedagogicalAnalysis: {
 			whatItShows:
-				'Cette miniature royale des Grandes Chroniques de France montre le roi Jean II le Bon le jour de son sacre en 1350. Vêtu d’un manteau bleu semé de fleurs de lys dorées, le souverain tient une épée levée pour donner le coup rituel (la colée) sur l’épaule de trois nouveaux chevaliers agenouillés devant lui en robe bleue.',
+				'Cette peinture vient des Grandes Chroniques de France, un livre qui raconte l’histoire des rois de France. Elle montre le roi Jean II le Bon le jour de son sacre, en 1350. Il porte un manteau bleu couvert de fleurs de lys dorées. Il lève son épée pour donner un coup symbolique (la colée) sur l’épaule de trois nouveaux chevaliers, agenouillés devant lui en robe bleue.',
 			textualLink:
-				'Cette image permet de comprendre concrètement la cérémonie d’entrée dans la chevalerie que Perceval reçoit de son maître Gornemant de Goort (vers 1630–1645) : attacher les éperons, ceindre l’épée et prêter le serment d’épargner les vaincus qui demandent merci.',
+				'Cette image aide à comprendre l’adoubement, la cérémonie qui fait d’un jeune homme un chevalier. Perceval la reçoit de son maître Gornemant de Goort (vers 1630–1645). Gornemant lui attache l’éperon, lui attache l’épée à la ceinture et lui conseille d’épargner un ennemi vaincu qui demande grâce.',
 			criticalLimitation:
-				'Mise en garde historique : cette scène ne représente pas Perceval, mais une cérémonie de la cour des rois de France peinte au début du XVᵉ siècle. Plus de deux siècles après Chrétien de Troyes, le rituel est devenu plus politique et fastueux que l’adoubement simple décrit dans le roman du XIIᵉ siècle.',
+				'Cette scène ne représente pas Perceval. C’est une cérémonie à la cour des rois de France, peinte plus de deux siècles après le roman de Chrétien de Troyes. À cette époque, l’adoubement royal est devenu une grande fête politique, bien plus riche que l’adoubement simple raconté dans le roman.',
 		},
 		questions: [
-			'Quel geste spectaculaire le roi fait-il avec son épée au-dessus des jeunes seigneurs agenouillés devant lui ?',
-			'Pourquoi l’adoubement est-il une étape capitale qui transforme un jeune homme ordinaire en un véritable chevalier ?',
+			'Quel geste le roi fait-il avec son épée au-dessus des jeunes hommes agenouillés devant lui ?',
+			'Relis la fiche de Gornemant : quels gestes fait-il pour adouber Perceval ? Lesquels retrouves-tu, ou non, sur cette image ?',
 		],
 	},
 	{
 		id: 'doc-graal-table-ronde-bnf-fr112',
-		title: 'L’apparition du Graal à la Table ronde : la tradition romanesque ultérieure (1470)',
-		badge: 'Tradition postérieure du Graal · Légende de la Table ronde (1470)',
+		title: 'Le Graal apparaît à la Table ronde : une version de la légende écrite plus tard (image de 1470)',
+		badge: 'Légende du Graal écrite plus tard · Table ronde (1470)',
 		badgeClass: 'status-tardif',
 		image: {
 			src: '/images/perceval/graal-table-ronde-bnf-fr112.jpg',
-			alt: 'Grande miniature du XVe siècle montrant les chevaliers de la Table ronde réunis autour du roi Arthur, voyant le Graal descendre sous la forme d’un calice doré porté par deux anges',
+			alt: 'Grande peinture de manuscrit de 1470 : les chevaliers de la Table ronde, réunis autour du roi Arthur, voient apparaître le Graal, un vase doré porté par deux anges',
 			caption: 'Apparition du Saint Graal aux compagnons de la Table ronde. Enluminure d’Évrard d’Espinques, 1470. BnF, Français 112, tome III, folio 5 recto.',
 			width: 4996,
 			height: 7138,
@@ -969,26 +969,26 @@ export const percevalIconography: PercevalIconographyDocument[] = [
 		},
 		pedagogicalAnalysis: {
 			whatItShows:
-				'Sur l’image, on aperçoit le roi Arthur et ses chevaliers assis autour d’une grande table ronde couverte d’une nappe blanche, chacun ayant son nom peint au-dessus de sa place. Au centre, entouré de rayons d’or, deux anges portent un vase d’or surmonté d’un voile blanc. La notice de la BnF rattache ce feuillet à l’apparition du Saint Graal lors de la fête de la Pentecôte.',
+				'On voit le roi Arthur et ses chevaliers assis autour d’une grande table ronde couverte d’une nappe blanche. Le nom de chaque chevalier est peint au-dessus de sa place. Au centre, entourés de rayons d’or, deux anges portent un vase d’or couvert d’un voile blanc. Selon la BnF, qui conserve ce manuscrit, cette page montre le Graal qui apparaît aux chevaliers le jour de la Pentecôte, une fête chrétienne.',
 			textualLink:
-				'Cette image témoigne d’une tradition romanesque postérieure : la Quête du Saint Graal en prose (composée vers 1225–1230). Dans ce roman plus tardif, tous les compagnons d’Arthur font le serment de partir en quête pour voir le Graal découvert, ce qui transforme la quête personnelle de Perceval en une mission spirituelle collective.',
+				'Cette image illustre un autre roman, écrit plus tard : la Quête du Saint Graal, en prose (vers 1225–1230). Dans ce roman, tous les compagnons d’Arthur jurent de partir à la recherche du Graal. La quête personnelle de Perceval devient alors une mission religieuse partagée par tous les chevaliers.',
 			criticalLimitation:
-				'Mise en garde historique fondamentale : cette scène de la Table ronde n’appartient pas au roman de Chrétien de Troyes. Chez Chrétien, le Graal n’apparaît jamais à la cour d’Arthur et n’est pas porté par des anges dans le ciel : c’est un objet mystérieux appelé graal, porté en procession par une jeune fille dans le château secret du Roi Pêcheur, sans explication théologique complète.',
+				'Attention : cette scène n’existe pas dans le roman de Chrétien de Troyes. Chez lui, le Graal n’apparaît jamais à la cour d’Arthur et n’est pas porté par des anges. C’est un objet mystérieux, porté par une jeune fille dans le château du Roi Pêcheur, et Chrétien n’explique pas complètement son sens religieux.',
 		},
 		questions: [
-			'Regarde bien le centre de la table : qui porte l’objet sacré et pourquoi le Graal est-il entouré de rayons de lumière d’or ?',
-			'Pourquoi la disposition en cercle parfait autour de la table montre-t-elle l’idéal d’égalité et de fraternité des chevaliers du roi Arthur ?',
+			'Regarde le centre de la table : qui porte l’objet sacré ? Comment le peintre montre-t-il que cet objet est extraordinaire ?',
+			'Compare avec le cortège raconté par Chrétien : qui porte le Graal, et où la scène se passe-t-elle dans chaque cas ?',
 		],
 	},
 	{
 		id: 'doc-wyeth-percival-1922',
-		title: 'Perceval dans un livre d’aventures illustré par N. C. Wyeth (1917–1922)',
+		title: 'Perceval imaginé au XXᵉ siècle par N. C. Wyeth (peint en 1917, publié en 1922)',
 		badge: 'Reconstitution moderne · Illustration du XXᵉ siècle (1922)',
 		badgeClass: 'status-moderne',
 		image: {
 			src: '/images/perceval/wyeth-percival-1922.jpg',
-			alt: 'Peinture de N.C. Wyeth montrant un chevalier en armure complète d’argent levant le bras vers le ciel sur son cheval noir au bord d’une mer démontée sous un ciel étoilé',
-			caption: 'Sir Percival levant le bras au bord d’une eau démontée sous un ciel d’orage étoilé. Huile sur toile de N. C. Wyeth (1917, publiée en 1922).',
+			alt: 'Peinture de N. C. Wyeth : un chevalier en armure d’argent, sur un cheval noir, lève le bras vers le ciel au bord d’une mer agitée, sous un ciel étoilé',
+			caption: 'Sir Percival levant le bras au bord d’une mer agitée, sous un ciel d’orage étoilé. Peinture à l’huile de N. C. Wyeth (1917, publiée en 1922).',
 			width: 1580,
 			height: 2004,
 		},
@@ -1003,15 +1003,15 @@ export const percevalIconography: PercevalIconographyDocument[] = [
 		},
 		pedagogicalAnalysis: {
 			whatItShows:
-				'Cette peinture à l’huile américaine met en scène un chevalier en armure d’acier étincelante et cape rouge, montant un cheval noir au bord d’un gouffre rocheux battu par des vagues écumantes. Il lève le bras ganté vers un ciel nocturne chargé d’étoiles et de nuages menaçants.',
+				'Cette peinture américaine montre un chevalier en armure d’acier brillante et en cape rouge. Monté sur un cheval noir, il se tient au bord de rochers battus par les vagues. Il lève le bras vers un ciel de nuit, plein d’étoiles et de nuages menaçants.',
 			textualLink:
-				'Cette image propose une réinterprétation moderne de la légende arthurienne inspirée du livre anglais de Thomas Malory (XVᵉ siècle). Elle fait revivre le sentiment de solitude et d’épreuve de Perceval lorsqu’il erre dans des régions inconnues et affronte la tentation du doute.',
+				'Cette image n’illustre pas le roman de Chrétien, mais une version anglaise de la légende du roi Arthur, inspirée du livre de Thomas Malory (XVᵉ siècle). Elle fait ressentir la solitude de Perceval quand il erre dans des régions inconnues et affronte ses doutes.',
 			criticalLimitation:
-				'Mise en garde historique : réalisée en 1917 pour un livre pour la jeunesse, cette œuvre est une reconstitution moderne romantique. L’armure en plaques de fer complètes et la mise en scène spectaculaire s’inspirent des romans du XIXᵉ siècle et du cinéma d’aventure, et non du XIIᵉ siècle de Chrétien de Troyes.',
+				'Cette peinture a été réalisée en 1917 pour un livre destiné aux jeunes lecteurs. C’est une reconstitution moderne : le peintre imagine le Moyen Âge. L’armure faite de plaques d’acier qui couvrent tout le corps date de la fin du Moyen Âge ; au temps de Chrétien, les chevaliers portaient le haubert de mailles. Le décor spectaculaire vient du goût des XIXᵉ et XXᵉ siècles pour les grandes aventures, et non du roman du XIIᵉ siècle.',
 		},
 		questions: [
-			'Qu’est-ce qui rend cette scène beaucoup plus impressionnante et cinématographique qu’une enluminure médiévale sur parchemin ?',
-			'En quoi cette image moderne montre-t-elle que le mythe de Perceval continue de faire rêver les artistes et les lecteurs jusqu’à aujourd’hui ?',
+			'Compare cette peinture avec l’enluminure du manuscrit de 1330 (image 1) : couleurs, décor, armure… Qu’est-ce qui rend cette scène plus spectaculaire ?',
+			'D’après la fiche, pour quels lecteurs cette image a-t-elle été peinte, et en quelle année ? Que montre-t-elle sur la célébrité de Perceval au XXᵉ siècle ?',
 		],
 	},
 ];

@@ -122,10 +122,10 @@ describe('Le Conte du Graal (Perceval) — modèle de données (src/data/perceva
 	test('les notes didactiques traitent des spécificités textuelles de Chrétien de Troyes', () => {
 		expect(didacticNotes.length).toBe(4);
 		const titles = didacticNotes.map((n) => n.title);
-		expect(titles).toContain('Un roman inachevé et une œuvre pionnière');
-		expect(titles).toContain('Nature du Graal chez Chrétien de Troyes');
-		expect(titles).toContain('La dialectique des deux héros : Perceval et Gauvain');
-		expect(titles).toContain('La question non posée : conseil de courtoisie et interprétation spirituelle');
+		expect(titles).toContain('Un roman inachevé : pourquoi l’histoire n’a-t-elle pas de fin ?');
+		expect(titles).toContain('Qu’est-ce que le Graal chez Chrétien de Troyes ?');
+		expect(titles).toContain('Perceval et Gauvain : deux façons d’être chevalier');
+		expect(titles).toContain('La question non posée : pourquoi Perceval se tait-il devant le Graal ?');
 
 		const inacheve = didacticNotes.find((n) => n.title.includes('inachevé'))!;
 		expect(inacheve.text).toContain('continuations');
@@ -184,7 +184,7 @@ describe('Le Conte du Graal (Perceval) — modèle de données (src/data/perceva
 		// Vérifier les 3 catégories documentaires distinctes
 		const badges = percevalIconography.map((d) => d.badge);
 		expect(badges.some((b) => b.includes('Témoignage médiéval'))).toBe(true);
-		expect(badges.some((b) => b.includes('Tradition postérieure du Graal'))).toBe(true);
+		expect(badges.some((b) => b.includes('Légende du Graal écrite plus tard'))).toBe(true);
 		expect(badges.some((b) => b.includes('Reconstitution moderne'))).toBe(true);
 	});
 
@@ -240,5 +240,11 @@ describe('Le Conte du Graal (Perceval) — modèle de données (src/data/perceva
 		const foret = percevalSpatialStages.find((s) => s.id === 'gaste-foret')!;
 		expect(foret.category).toBe('espace_naturel');
 		expect(foret.verses).toContain('éd. F. Lecoy');
+
+		// Vérifier que toutes les catégories exposées sont utilisées par au moins un jalon (pas de catégorie morte à 0)
+		for (const catKey of Object.keys(PERCEVAL_SPATIAL_CATEGORIES)) {
+			const count = percevalSpatialStages.filter((s) => s.category === catKey).length;
+			expect(count).toBeGreaterThan(0);
+		}
 	});
 });

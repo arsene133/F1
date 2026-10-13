@@ -136,7 +136,7 @@ describe.skipIf(!BUILT)('Page Perceval (/perceval) — Réseau des personnages e
 			expect(await panel.isVisible()).toBe(true);
 
 			const eyebrow = await page.locator('#perceval-panel [data-detail-eyebrow]').textContent();
-			expect(eyebrow).toBe('Relation · Lien chevaleresque (armes, adoubement, cour)');
+			expect(eyebrow).toBe('Relation · Lien de chevalerie (combat, adoubement, cour du roi)');
 
 			const title = await page.locator('#perceval-panel [data-detail-title]').textContent();
 			expect(title).toContain('Gornemant de Goort');
