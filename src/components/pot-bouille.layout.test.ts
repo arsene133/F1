@@ -380,6 +380,66 @@ describe.skipIf(!BUILT)('Carte relationnelle de Pot-Bouille (/pot-bouille) — r
 			await page.close();
 		}
 	});
+
+	test('lightbox universelle : zoom au clic, affichage de la légende, navigation clavier et fermeture Échap', async () => {
+		const page = await openPage();
+		try {
+			// Vérifier que le dialogue de la lightbox est présent dans la page
+			const lightbox = page.locator('#image-lightbox');
+			expect(await lightbox.count()).toBe(1);
+
+			// Vérifier qu'une image documentaire est marquée comme zoomable
+			const bertallImg = page.locator('#doc-bertall-cinq-etages img');
+			expect(await bertallImg.getAttribute('data-zoomable')).toBe('true');
+			expect(await bertallImg.getAttribute('role')).toBe('button');
+
+			// Clic sur l'image pour ouvrir la lightbox
+			await bertallImg.click();
+
+			// Vérifier que la lightbox est ouverte
+			expect(await lightbox.getAttribute('open')).not.toBeNull();
+			const lightboxImg = lightbox.locator('[data-lightbox-img]');
+			expect(await lightboxImg.getAttribute('src')).toContain('bertall-cinq-etages-1845.jpg');
+
+			// Vérifier que la légende est affichée
+			const caption = lightbox.locator('[data-lightbox-caption]');
+			expect(await caption.isVisible()).toBe(true);
+			expect(await caption.textContent()).toContain('Bertall');
+
+			// Vérifier que le défilement du corps est bloqué
+			const bodyOverflow = await page.evaluate(() => document.body.style.overflow);
+			expect(bodyOverflow).toBe('hidden');
+
+			// Navigation vers l'image suivante avec Flèche Droite
+			await page.keyboard.press('ArrowRight');
+			expect(await lightboxImg.getAttribute('src')).toContain('marville-rue-de-choiseul-1866.jpg');
+
+			// Navigation vers l'image précédente avec Flèche Gauche
+			await page.keyboard.press('ArrowLeft');
+			expect(await lightboxImg.getAttribute('src')).toContain('bertall-cinq-etages-1845.jpg');
+
+			// Fermeture avec la touche Échap
+			await page.keyboard.press('Escape');
+			expect(await lightbox.getAttribute('open')).toBeNull();
+
+			// Vérifier que le défilement du corps est restauré
+			const restoredOverflow = await page.evaluate(() => document.body.style.overflow);
+			expect(restoredOverflow).toBe('');
+
+			// Vérifier l'ouverture au clavier (touche Entrée)
+			await bertallImg.focus();
+			await page.keyboard.press('Enter');
+			expect(await lightbox.getAttribute('open')).not.toBeNull();
+
+			// Fermeture via le bouton de fermeture
+			const closeBtn = lightbox.locator('[data-lightbox-close]');
+			await closeBtn.click();
+			expect(await lightbox.getAttribute('open')).toBeNull();
+		} finally {
+			await page.close();
+		}
+	});
 });
+
 
 

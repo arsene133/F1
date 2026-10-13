@@ -1,0 +1,616 @@
+---
+// ImageLightbox.astro : Composant lightbox universel accessible et performant.
+// Permet de zoomer/agrandir toute image de contenu du site au clic/tap ou au clavier (Entrée / Espace).
+// Inclut la navigation Précédent/Suivant entre images d'une même galerie/section,
+// l'affichage de la légende et du crédit, le piège de focus accessible et la fermeture Échap / clic fond.
+---
+
+<dialog id="image-lightbox" class="image-lightbox" aria-modal="true" aria-label="Agrandissement de l'image">
+	<div class="lightbox-backdrop" data-lightbox-backdrop></div>
+	<div class="lightbox-container" data-lightbox-container role="document">
+		<header class="lightbox-toolbar">
+			<span class="lightbox-counter" data-lightbox-counter aria-live="polite"></span>
+			<button type="button" class="lightbox-close-btn" data-lightbox-close aria-label="Fermer la vue agrandie (Échap)">
+				<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+					<line x1="18" y1="6" x2="6" y2="18"></line>
+					<line x1="6" y1="6" x2="18" y2="18"></line>
+				</svg>
+			</button>
+		</header>
+
+		<div class="lightbox-content">
+			<button type="button" class="lightbox-nav-btn lightbox-prev-btn" data-lightbox-prev aria-label="Image précédente (Flèche gauche)" hidden>
+				<svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+					<polyline points="15 18 9 12 15 6"></polyline>
+				</svg>
+			</button>
+
+			<div class="lightbox-stage" data-lightbox-stage>
+				<figure class="lightbox-figure" data-lightbox-figure>
+					<img src="" alt="" class="lightbox-img" data-lightbox-img />
+					<figcaption class="lightbox-caption" data-lightbox-caption hidden></figcaption>
+				</figure>
+			</div>
+
+			<button type="button" class="lightbox-nav-btn lightbox-next-btn" data-lightbox-next aria-label="Image suivante (Flèche droite)" hidden>
+				<svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+					<polyline points="9 18 15 12 9 6"></polyline>
+				</svg>
+			</button>
+		</div>
+	</div>
+</dialog>
+
+<style>
+	/* Dialog / Lightbox styles */
+	.image-lightbox {
+		position: fixed;
+		inset: 0;
+		width: 100vw;
+		height: 100vh;
+		max-width: 100vw;
+		max-height: 100vh;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: #ffffff;
+		z-index: 99999;
+		overflow: hidden;
+		display: none;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.image-lightbox[open] {
+		display: flex;
+	}
+
+	.image-lightbox::backdrop {
+		background: rgba(10, 14, 20, 0.88);
+		backdrop-filter: blur(6px);
+		-webkit-backdrop-filter: blur(6px);
+	}
+
+	.lightbox-backdrop {
+		position: absolute;
+		inset: 0;
+		background: rgba(10, 14, 20, 0.88);
+		backdrop-filter: blur(6px);
+		-webkit-backdrop-filter: blur(6px);
+		z-index: 1;
+	}
+
+	.lightbox-container {
+		position: relative;
+		z-index: 2;
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		height: 100%;
+		max-width: 100vw;
+		max-height: 100vh;
+		padding: env(safe-area-inset-top, 0.75rem) env(safe-area-inset-right, 0.75rem) env(safe-area-inset-bottom, 0.75rem) env(safe-area-inset-left, 0.75rem);
+		box-sizing: border-box;
+		user-select: none;
+	}
+
+	/* Toolbar */
+	.lightbox-toolbar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		height: 48px;
+		padding: 0 0.5rem;
+		flex-shrink: 0;
+	}
+
+	.lightbox-counter {
+		font-size: 0.85rem;
+		font-weight: 600;
+		letter-spacing: 0.05em;
+		color: #cbd5e1;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.lightbox-close-btn,
+	.lightbox-nav-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		background: rgba(255, 255, 255, 0.12);
+		color: #ffffff;
+		border: 1px solid rgba(255, 255, 255, 0.25);
+		border-radius: 999px;
+		cursor: pointer;
+		transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+	}
+
+	.lightbox-close-btn {
+		width: 42px;
+		height: 42px;
+		margin-left: auto;
+	}
+
+	.lightbox-close-btn:hover,
+	.lightbox-nav-btn:hover {
+		background: rgba(255, 255, 255, 0.24);
+		border-color: #ffffff;
+		transform: scale(1.05);
+	}
+
+	.lightbox-close-btn:focus-visible,
+	.lightbox-nav-btn:focus-visible {
+		outline: 3px solid #38bdf8;
+		outline-offset: 2px;
+	}
+
+	/* Content & Stage */
+	.lightbox-content {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex: 1 1 auto;
+		min-height: 0;
+		overflow: hidden;
+		gap: 0.5rem;
+	}
+
+	.lightbox-stage {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex: 1 1 auto;
+		height: 100%;
+		min-width: 0;
+		min-height: 0;
+	}
+
+	.lightbox-figure {
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		max-width: 100%;
+		max-height: 100%;
+		gap: 0.65rem;
+	}
+
+	.lightbox-img {
+		display: block;
+		max-width: calc(100vw - 2.5rem);
+		max-height: calc(100vh - 130px);
+		width: auto;
+		height: auto;
+		object-fit: contain;
+		border-radius: 4px;
+		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+		background: #0f172a;
+	}
+
+	.lightbox-caption {
+		max-width: min(850px, calc(100vw - 2rem));
+		max-height: 72px;
+		overflow-y: auto;
+		font-size: 0.84rem;
+		line-height: 1.45;
+		text-align: center;
+		color: #e2e8f0;
+		padding: 0.4rem 0.85rem;
+		background: rgba(15, 23, 42, 0.75);
+		border: 1px solid rgba(255, 255, 255, 0.15);
+		border-radius: 6px;
+	}
+
+	.lightbox-caption em {
+		font-style: italic;
+	}
+
+	.lightbox-caption a {
+		color: #38bdf8;
+		text-decoration: underline;
+	}
+
+	/* Nav buttons */
+	.lightbox-nav-btn {
+		width: 48px;
+		height: 48px;
+		flex-shrink: 0;
+		z-index: 3;
+	}
+
+	.lightbox-prev-btn {
+		margin-left: 0.25rem;
+	}
+
+	.lightbox-next-btn {
+		margin-right: 0.25rem;
+	}
+
+	/* Styles des images zoomables sur la page */
+	:global(img[data-zoomable='true']) {
+		cursor: zoom-in;
+		transition: opacity 0.15s ease, filter 0.15s ease;
+	}
+
+	:global(img[data-zoomable='true']:focus-visible) {
+		outline: 3px solid #0284c7;
+		outline-offset: 3px;
+	}
+
+	/* Indicateur visuel d'agrandissement accessible sans dépendre du survol */
+	:global(figure:has(img[data-zoomable='true'])) {
+		position: relative;
+	}
+
+	:global(figure:has(img[data-zoomable='true'])::after) {
+		content: '🔍';
+		position: absolute;
+		right: 0.5rem;
+		bottom: 2.2rem;
+		width: 28px;
+		height: 28px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 0.75rem;
+		background: rgba(15, 23, 42, 0.72);
+		color: #ffffff;
+		border-radius: 999px;
+		pointer-events: none;
+		border: 1px solid rgba(255, 255, 255, 0.35);
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+		opacity: 0.85;
+	}
+
+	:global(.deepdive-figure:has(img[data-zoomable='true'])::after) {
+		bottom: 2.7rem;
+	}
+
+	:global(.overview-image-wrapper:has(img[data-zoomable='true'])::after) {
+		bottom: 2.5rem;
+	}
+
+	@media (max-width: 768px) {
+		.lightbox-img {
+			max-width: calc(100vw - 1rem);
+			max-height: calc(100vh - 150px);
+		}
+
+		.lightbox-nav-btn {
+			position: absolute;
+			top: calc(50% - 24px);
+			width: 40px;
+			height: 40px;
+			background: rgba(15, 23, 42, 0.65);
+		}
+
+		.lightbox-prev-btn {
+			left: 0.5rem;
+		}
+
+		.lightbox-next-btn {
+			right: 0.5rem;
+		}
+
+		.lightbox-caption {
+			font-size: 0.78rem;
+			max-height: 64px;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.image-lightbox,
+		.lightbox-close-btn,
+		.lightbox-nav-btn,
+		:global(img[data-zoomable='true']) {
+			transition: none !important;
+			animation: none !important;
+		}
+	}
+</style>
+
+<script>
+	// Lightbox client controller
+	interface GalleryEntry {
+		img: HTMLImageElement;
+		src: string;
+		alt: string;
+		captionHtml: string;
+		group: string;
+	}
+
+	let entries: GalleryEntry[] = [];
+	let currentIndex = -1;
+	let currentGroupEntries: GalleryEntry[] = [];
+	let currentGroupIndex = -1;
+	let lastActiveElement: HTMLElement | null = null;
+
+	const dialog = document.getElementById('image-lightbox') as HTMLDialogElement | null;
+	const backdrop = dialog?.querySelector('[data-lightbox-backdrop]') as HTMLElement | null;
+	const closeBtn = dialog?.querySelector('[data-lightbox-close]') as HTMLButtonElement | null;
+	const prevBtn = dialog?.querySelector('[data-lightbox-prev]') as HTMLButtonElement | null;
+	const nextBtn = dialog?.querySelector('[data-lightbox-next]') as HTMLButtonElement | null;
+	const lightboxImg = dialog?.querySelector('[data-lightbox-img]') as HTMLImageElement | null;
+	const captionEl = dialog?.querySelector('[data-lightbox-caption]') as HTMLElement | null;
+	const counterEl = dialog?.querySelector('[data-lightbox-counter]') as HTMLElement | null;
+
+	// Détection des images zoomables éligibles
+	function isEligibleImage(img: HTMLImageElement): boolean {
+		// Ignorer images sans source ou images cachées
+		if (!img.src || img.hidden || img.style.display === 'none') return false;
+
+		// Exclure logos, avatars, petites icônes
+		if (img.classList.contains('site-logo') || img.classList.contains('icon') || img.classList.contains('sr-only')) {
+			return false;
+		}
+
+		// Exclure images de moins de 64px (icônes d'interface)
+		const w = img.naturalWidth || img.width || 0;
+		const h = img.naturalHeight || img.height || 0;
+		if (w > 0 && h > 0 && w <= 64 && h <= 64) return false;
+
+		// Exclure les images qui sont déjà des boutons ou à l'intérieur d'un bouton d'action interactif (sauf figures)
+		const parentButton = img.closest('button');
+		if (parentButton) {
+			// Les vignettes de la frise chronologique sont des boutons pour ouvrir le panneau d'événement
+			if (parentButton.classList.contains('timeline-entry-button')) return false;
+			if (parentButton.classList.contains('details-close-btn')) return false;
+		}
+
+		// Exclure les cartes de la page d'accueil de blog qui sont des liens vers l'article
+		const parentLink = img.closest('a');
+		if (parentLink && parentLink.closest('.blog-posts-list')) return false;
+
+		// Exclure les tuiles de cartes Leaflet
+		if (img.closest('.leaflet-pane') || img.classList.contains('leaflet-tile')) return false;
+
+		return true;
+	}
+
+	function findCaption(img: HTMLImageElement): string {
+		// 1. Chercher dans un figcaption parent immédiat
+		const figure = img.closest('figure');
+		if (figure) {
+			const figcaption = figure.querySelector('figcaption');
+			if (figcaption) return figcaption.innerHTML.trim();
+		}
+
+		// 2. Chercher dans le conteneur immédiat (ex. .overview-image-wrapper)
+		const wrapper = img.parentElement;
+		if (wrapper) {
+			const wrapperCaption = wrapper.querySelector('figcaption, .image-caption, .caption');
+			if (wrapperCaption && wrapperCaption !== img) return wrapperCaption.innerHTML.trim();
+		}
+
+		// 3. Repli sur le titre ou l'alt de l'image si informatif
+		if (img.title) return img.title;
+		if (img.alt && img.alt.length > 20) return img.alt;
+
+		return '';
+	}
+
+	function resolveGroup(img: HTMLImageElement): string {
+		// Grouper les images de la même section ou grille logique
+		const section = img.closest('section[id]');
+		if (section && section.id) return section.id;
+		const grid = img.closest('.iconography-cards-grid, .deepdive-articles, .prose');
+		if (grid && grid.className) return grid.className.split(' ')[0];
+		const article = img.closest('article[id]');
+		if (article && article.id) return article.id;
+		return 'default-gallery';
+	}
+
+	function registerImages() {
+		const imgs = Array.from(document.querySelectorAll<HTMLImageElement>('img'));
+		entries = [];
+
+		imgs.forEach((img) => {
+			if (!isEligibleImage(img)) return;
+
+			img.dataset.zoomable = 'true';
+			img.setAttribute('tabindex', '0');
+			img.setAttribute('role', 'button');
+			img.setAttribute('aria-haspopup', 'dialog');
+			img.setAttribute('aria-label', `Agrandir l'image : ${img.alt || 'sans titre'}`);
+
+			const entry: GalleryEntry = {
+				img,
+				src: img.currentSrc || img.src,
+				alt: img.alt || '',
+				captionHtml: findCaption(img),
+				group: resolveGroup(img),
+			};
+			entries.push(entry);
+
+			// Clic pour zoomer
+			img.addEventListener('click', (e) => {
+				e.preventDefault();
+				openLightbox(entry);
+			});
+
+			// Accessibilité clavier (Entrée ou Espace)
+			img.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					e.preventDefault();
+					openLightbox(entry);
+				}
+			});
+		});
+	}
+
+	function openLightbox(entry: GalleryEntry) {
+		if (!dialog || !lightboxImg) return;
+
+		lastActiveElement = document.activeElement as HTMLElement | null;
+
+		// Déterminer le sous-groupe (galerie locale)
+		currentGroupEntries = entries.filter((e) => e.group === entry.group);
+		currentGroupIndex = currentGroupEntries.indexOf(entry);
+		if (currentGroupIndex === -1) {
+			currentGroupEntries = [entry];
+			currentGroupIndex = 0;
+		}
+
+		displayEntry(entry);
+
+		// Empêcher le défilement arrière-plan
+		document.body.style.overflow = 'hidden';
+
+		if (typeof dialog.showModal === 'function') {
+			dialog.showModal();
+		} else {
+			dialog.setAttribute('open', '');
+		}
+
+		// Placer le focus sur le bouton de fermeture
+		closeBtn?.focus();
+	}
+
+	function displayEntry(entry: GalleryEntry) {
+		if (!lightboxImg) return;
+
+		lightboxImg.src = entry.src;
+		lightboxImg.alt = entry.alt;
+
+		if (captionEl) {
+			if (entry.captionHtml) {
+				captionEl.innerHTML = entry.captionHtml;
+				captionEl.hidden = false;
+			} else {
+				captionEl.innerHTML = '';
+				captionEl.hidden = true;
+			}
+		}
+
+		if (counterEl) {
+			if (currentGroupEntries.length > 1) {
+				counterEl.textContent = `${currentGroupIndex + 1} / ${currentGroupEntries.length}`;
+				counterEl.hidden = false;
+			} else {
+				counterEl.textContent = '';
+				counterEl.hidden = true;
+			}
+		}
+
+		// Contrôles précédent/suivant
+		if (prevBtn && nextBtn) {
+			if (currentGroupEntries.length > 1) {
+				prevBtn.hidden = false;
+				nextBtn.hidden = false;
+			} else {
+				prevBtn.hidden = true;
+				nextBtn.hidden = true;
+			}
+		}
+	}
+
+	function closeLightbox() {
+		if (!dialog) return;
+
+		if (typeof dialog.close === 'function') {
+			dialog.close();
+		} else {
+			dialog.removeAttribute('open');
+		}
+
+		document.body.style.overflow = '';
+
+		// Restaurer le focus
+		if (lastActiveElement && typeof lastActiveElement.focus === 'function') {
+			lastActiveElement.focus();
+		}
+	}
+
+	function showPrev() {
+		if (currentGroupEntries.length <= 1) return;
+		currentGroupIndex = (currentGroupIndex - 1 + currentGroupEntries.length) % currentGroupEntries.length;
+		displayEntry(currentGroupEntries[currentGroupIndex]);
+	}
+
+	function showNext() {
+		if (currentGroupEntries.length <= 1) return;
+		currentGroupIndex = (currentGroupIndex + 1) % currentGroupEntries.length;
+		displayEntry(currentGroupEntries[currentGroupIndex]);
+	}
+
+	// Événements du dialogue
+	closeBtn?.addEventListener('click', closeLightbox);
+	backdrop?.addEventListener('click', closeLightbox);
+	prevBtn?.addEventListener('click', (e) => {
+		e.stopPropagation();
+		showPrev();
+	});
+	nextBtn?.addEventListener('click', (e) => {
+		e.stopPropagation();
+		showNext();
+	});
+
+	// Fermeture au clic sur le fond extérieur (sans fermer au clic sur l'image)
+	dialog?.addEventListener('click', (e) => {
+		if (e.target === dialog) {
+			closeLightbox();
+		}
+	});
+
+	// Raccourcis clavier globaux : Échap, Flèche gauche, Flèche droite, Piège à focus (Tab)
+	document.addEventListener('keydown', (e) => {
+		if (!dialog || !dialog.hasAttribute('open')) return;
+
+		if (e.key === 'Escape') {
+			e.preventDefault();
+			closeLightbox();
+			return;
+		}
+
+		if (e.key === 'ArrowLeft') {
+			e.preventDefault();
+			showPrev();
+			return;
+		}
+
+		if (e.key === 'ArrowRight') {
+			e.preventDefault();
+			showNext();
+			return;
+		}
+
+		if (e.key === 'Tab') {
+			// Piège de focus dans la boîte de dialogue
+			const focusableEls = dialog.querySelectorAll<HTMLElement>(
+				'button:not([hidden]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+			);
+			if (focusableEls.length === 0) return;
+			const firstEl = focusableEls[0];
+			const lastEl = focusableEls[focusableEls.length - 1];
+
+			if (e.shiftKey) {
+				if (document.activeElement === firstEl) {
+					e.preventDefault();
+					lastEl?.focus();
+				}
+			} else {
+				if (document.activeElement === lastEl) {
+					e.preventDefault();
+					firstEl?.focus();
+				}
+			}
+		}
+	});
+
+	// Initialisation au chargement du DOM et lors des mises à jour dynamiques (ex: panneau de frise)
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', registerImages);
+	} else {
+		registerImages();
+	}
+
+	// Observer les ajouts dynamiques dans le DOM (ex: panneau de détail de la frise)
+	const observer = new MutationObserver(() => {
+		registerImages();
+	});
+	observer.observe(document.body, { childList: true, subtree: true });
+</script>
