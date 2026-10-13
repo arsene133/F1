@@ -51,6 +51,10 @@ export interface MapRelationship {
 	mobileLabel?: boolean;
 	/** Renvois facultatifs affichés dans le panneau de la relation. */
 	links?: MapLink[];
+	/** Décalage perpendiculaire de l'arête (unités du layout) : sépare plusieurs liens entre deux mêmes nœuds. */
+	offset?: number;
+	/** Sens de cette relation, s'il diffère de celui du type (`none` : sans flèche). */
+	direction?: 'end' | 'both' | 'none';
 }
 
 export interface EdgeType {

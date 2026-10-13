@@ -106,7 +106,7 @@ const pageDescription =
 						relationships={graffignyRelationships}
 						edgeTypes={graffignyEdgeTypes}
 						layout={{ width: 900, height: 600 }}
-						mobileLayout={{ width: 360, height: 820 }}
+						mobileLayout={{ width: 360, height: 920 }}
 						hint="Choisissez un personnage pour afficher sa fiche, ou une étiquette pour comprendre une relation. Sur téléphone, les relations sont détaillées dans la fiche de chaque personnage."
 						pointsLabel="Dans le roman :"
 						relationsLabel="Ses relations :"
@@ -329,8 +329,10 @@ const pageDescription =
 	function reveal(el: HTMLElement | null, focusEl?: HTMLElement | null) {
 		if (!el) return;
 		const rect = el.getBoundingClientRect();
-		// Fait défiler seulement si la fiche est hors de l'écran (cas fréquent sur téléphone).
-		if (rect.top > window.innerHeight - 80 || rect.bottom < 0) {
+		const barBottom = document.querySelector('[data-selection-bar]')!.getBoundingClientRect().bottom;
+		// Fait défiler seulement si le haut de la fiche est caché : sous l'écran (cas fréquent
+		// sur téléphone), au-dessus, ou sous la barre collante.
+		if (rect.top > window.innerHeight - 80 || rect.top < barBottom) {
 			el.scrollIntoView({ block: 'start', behavior: reducedMotion ? 'auto' : 'smooth' });
 		}
 		focusEl?.focus({ preventScroll: true });
@@ -566,6 +568,11 @@ const pageDescription =
 		outline-offset: 2px;
 	}
 
+	/* Les fiches amenées à l'écran ne passent pas sous la barre collante. */
+	.graffigny-page :global(.rm-panel) {
+		scroll-margin-top: 5.5rem;
+	}
+
 	.how-to {
 		margin: 0 0 2.5rem;
 		font-size: 0.88rem;
@@ -741,21 +748,28 @@ const pageDescription =
 	@media (max-width: 640px) {
 		.selection-bar {
 			flex-wrap: wrap;
-			padding: 0.45rem 0.55rem;
+			gap: 0.15rem 0.5rem;
+			padding: 0.35rem 0.5rem;
+			font-size: 0.8rem;
 		}
 
 		.selection-nav {
 			flex: 1;
+			gap: 0;
 		}
 
 		.selection-nav a {
-			padding: 0.3rem 0.45rem;
+			padding: 0.3rem 0.35rem;
+		}
+
+		.selection-reset {
+			padding: 0.3rem 0.55rem;
 		}
 
 		.selection-status {
 			order: 3;
 			flex-basis: 100%;
-			font-size: 0.78rem;
+			font-size: 0.74rem;
 		}
 
 		.evolution {

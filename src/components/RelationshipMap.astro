@@ -57,8 +57,11 @@ const nodesById = new Map(nodes.map((n) => [n.id, n]));
 const rels = relationships.map((r, i) => ({ ...r, id: r.id ?? `${r.source}-${i}`, targets: targetsOf(r) }));
 
 const markerId = (type: string, active: boolean) => `${id}-arrow-${type}${active ? '-on' : ''}`;
-const typeStyle = (type: string) => {
-	const t = edgeTypes[type] ?? {};
+// Sens d'une relation : celui du type, sauf indication contraire sur la relation.
+const arrowOf = (r: { type: string; direction?: 'end' | 'both' | 'none' }) =>
+	r.direction ? (r.direction === 'none' ? undefined : r.direction) : edgeTypes[r.type]?.arrow;
+const typeStyle = (type: string, arrow = edgeTypes[type]?.arrow) => {
+	const t = { ...edgeTypes[type], arrow };
 	const styles = [
 		`--stroke: ${t.stroke ?? 'var(--map-border)'}`,
 		`--stroke-on: ${t.activeStroke ?? 'var(--map-accent)'}`,
@@ -77,7 +80,13 @@ const typeStyle = (type: string) => {
 
 const nameOf = (nid: string) => nodesById.get(nid)!.label;
 const relTitle = (r: (typeof rels)[number]) =>
-	`${nameOf(r.source)} ${edgeTypes[r.type]?.arrow === 'end' ? '→' : '↔'} ${r.targets.map(nameOf).join(' et ')}`;
+	`${nameOf(r.source)} ${arrowOf(r) === 'end' ? '→' : '↔'} ${r.targets.map(nameOf).join(' et ')}`;
+
+// Types dont une flèche peut être dessinée (par le type ou par une relation).
+const arrowTypes = new Set([
+	...Object.keys(edgeTypes).filter((t) => edgeTypes[t].arrow),
+	...rels.filter((r) => arrowOf(r)).map((r) => r.type),
+]);
 
 const layouts = [{ key: 'desktop', mobile: false, size: layout }];
 if (mobileLayout) layouts.push({ key: 'mobile', mobile: true, size: mobileLayout });
@@ -127,7 +136,7 @@ const canvasStyle = [
 				<!-- Définitions des flèches (une paire repos / actif par type) -->
 				<svg class="rm-defs" aria-hidden="true" focusable="false" width="0" height="0">
 					<defs>
-						{Object.entries(edgeTypes).filter(([, t]) => t.arrow).flatMap(([type, t]) =>
+						{Object.entries(edgeTypes).filter(([type]) => arrowTypes.has(type)).flatMap(([type, t]) =>
 							[false, true].map((active) => (
 								<marker
 									id={markerId(type, active)}
@@ -162,10 +171,11 @@ const canvasStyle = [
 							return (
 								<g
 									class={`rm-edge rm-edge--${r.type}`}
-									style={typeStyle(r.type)}
+									style={r.direction ? typeStyle(r.type, arrowOf(r)) : typeStyle(r.type)}
 									data-edge-id={r.id}
 									data-edge-type={r.type}
 									data-ends={[r.source, ...r.targets].join(' ')}
+									data-offset={r.offset || undefined}
 								>
 									<line x1={g.x1} y1={g.y1} x2={g.x2} y2={g.y2} class="rm-edge-line" />
 								</g>
@@ -324,7 +334,7 @@ const canvasStyle = [
 </section>
 
 <script>
-	import { segment, type Box } from './relationship-map/geometry';
+	import { segment, shift, type Box } from './relationship-map/geometry';
 
 	type MetaItem = string | { text: string; italic?: boolean };
 	type LinkData = { href: string; label: string };
@@ -638,7 +648,7 @@ const canvasStyle = [
 				};
 				for (const g of svg.querySelectorAll<SVGGElement>('.rm-edge')) {
 					const [source, ...targets] = g.dataset.ends!.split(' ');
-					const { start, end } = segment(box(source), targets.map(box));
+					const { start, end } = shift(segment(box(source), targets.map(box)), Number(g.dataset.offset ?? 0));
 					const line = g.querySelector('line')!;
 					line.setAttribute('x1', start.x.toFixed(1));
 					line.setAttribute('y1', start.y.toFixed(1));
