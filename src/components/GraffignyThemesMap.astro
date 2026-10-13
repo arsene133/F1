@@ -1,0 +1,460 @@
+---
+// Carte des idées des Lettres d'une Péruvienne : le regard de Zilia au centre,
+// sept axes thématiques autour. Sur petit écran, la carte radiale devient une
+// liste. Les fiches sont rendues côté serveur ; la coordination avec les autres
+// vues est assurée par le script de la page (/graffigny).
+import type { MapNode } from './relationship-map/types';
+import type { GraffignyTheme, NarrativeStep } from '../data/graffigny';
+
+interface Props {
+	themes: GraffignyTheme[];
+	steps: NarrativeStep[];
+	characters: MapNode[];
+}
+
+const { themes, steps, characters } = Astro.props;
+const nameOf = (id: string) => characters.find((c) => c.id === id)!.label;
+const stepOf = (id: string) => steps.find((s) => s.id === id)!;
+
+// Disposition sur une ellipse autour du centre (espace 900 × 540).
+const W = 900;
+const H = 540;
+const CX = W / 2;
+const CY = H / 2;
+const positioned = themes.map((t, i) => {
+	const angle = -Math.PI / 2 + (i * 2 * Math.PI) / themes.length;
+	return { ...t, x: Math.round(CX + 330 * Math.cos(angle)), y: Math.round(CY + 205 * Math.sin(angle)) };
+});
+---
+
+<div class="ideas" data-ideas>
+	<div class="ideas-frame">
+		<div class="ideas-canvas" style={`--cw: ${W}; --ch: ${H};`}>
+			<svg class="ideas-lines" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true" focusable="false">
+				<ellipse cx={CX} cy={CY} rx="330" ry="205" class="ideas-orbit" />
+				{positioned.map((t) => (
+					<line x1={CX} y1={CY} x2={t.x} y2={t.y} class="ideas-spoke" data-spoke={t.id} style={`--theme-color: ${t.color}`} />
+				))}
+			</svg>
+
+			<div class="ideas-center ideas-pos" style={`--x: ${CX}; --y: ${CY};`}>
+				<span class="ideas-center-eyebrow">Au centre</span>
+				<strong>Le regard de Zilia</strong>
+				<span>une étrangère observe la France</span>
+			</div>
+
+			<ul class="ideas-nodes" aria-label="Les sept axes thématiques">
+				{positioned.map((t) => (
+					<li class="ideas-pos" style={`--x: ${t.x}; --y: ${t.y};`}>
+						<button
+							type="button"
+							class="ideas-node"
+							data-theme-id={t.id}
+							aria-pressed="false"
+							aria-controls="ideas-panel"
+							style={`--theme-color: ${t.color}`}
+						>
+							<span class="ideas-node-symbol" aria-hidden="true">{t.symbol}</span>
+							<span class="ideas-node-text">
+								<strong>{t.title}</strong>
+								<span>{t.caption}</span>
+							</span>
+						</button>
+					</li>
+				))}
+			</ul>
+		</div>
+	</div>
+
+	<aside class="ideas-panel" id="ideas-panel" aria-live="polite" data-ideas-panel>
+		<p class="ideas-hint" data-ideas-hint>
+			<em>Choisissez un thème pour lire son explication, des exemples tirés du roman et des questions d’interprétation.</em>
+		</p>
+
+		{themes.map((t) => (
+			<article class="ideas-detail" id={`theme-${t.id}`} data-theme-detail={t.id} hidden aria-labelledby={`theme-${t.id}-title`} style={`--theme-color: ${t.color}`}>
+				<header class="ideas-detail-header">
+					<div>
+						<span class="ideas-detail-eyebrow"><span aria-hidden="true">{t.symbol}</span> Axe thématique</span>
+						<h3 class="ideas-detail-title" id={`theme-${t.id}-title`} tabindex="-1">{t.title}</h3>
+						<p class="ideas-detail-question">{t.question}</p>
+					</div>
+					<button type="button" class="view-close" data-view-close>Fermer la fiche</button>
+				</header>
+
+				<p class="ideas-detail-text">{t.explanation}</p>
+
+				<div class="ideas-block">
+					<strong>Dans le roman :</strong>
+					<ul class="ideas-examples">
+						{t.examples.map((ex) => (
+							<li>
+								{ex.quote ? <q>{ex.text}</q> : ex.text}
+								{ex.ref && <span class="ideas-ref"> ({ex.ref})</span>}
+							</li>
+						))}
+					</ul>
+				</div>
+
+				<div class="ideas-block ideas-questions">
+					<strong>À vous d’interpréter :</strong>
+					<ul>
+						{t.studentQuestions.map((q) => <li>{q}</li>)}
+					</ul>
+				</div>
+
+				<div class="view-detail-links">
+					<div>
+						<strong>Personnages liés :</strong>
+						<ul class="chip-list">
+							{t.characters.map((c) => (
+								<li>
+									<button type="button" class="chip chip--character" data-goto-node={c}>{nameOf(c)}</button>
+								</li>
+							))}
+						</ul>
+					</div>
+					<div>
+						<strong>Étapes du récit :</strong>
+						<ul class="chip-list">
+							{t.steps.map((s) => (
+								<li>
+									<button type="button" class="chip chip--step" data-goto-step={s}>
+										{stepOf(s).number}. {stepOf(s).title}
+									</button>
+								</li>
+							))}
+						</ul>
+					</div>
+				</div>
+			</article>
+		))}
+	</aside>
+</div>
+
+<style>
+	.ideas-frame {
+		border: 1px solid var(--map-border);
+		border-radius: 12px;
+		background:
+			radial-gradient(circle at 50% 50%, rgba(139, 87, 42, 0.06), transparent 55%),
+			var(--map-bg);
+		box-shadow: 0 4px 20px rgba(23, 43, 58, 0.04);
+		overflow: hidden;
+	}
+
+	.ideas-canvas {
+		position: relative;
+		width: 100%;
+		aspect-ratio: var(--cw) / var(--ch);
+	}
+
+	.ideas-pos {
+		position: absolute;
+		left: calc(var(--x) * 100% / var(--cw));
+		top: calc(var(--y) * 100% / var(--ch));
+		transform: translate(-50%, -50%);
+	}
+
+	.ideas-lines {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+	}
+
+	.ideas-orbit {
+		fill: none;
+		stroke: var(--map-border);
+		stroke-dasharray: 3 5;
+		vector-effect: non-scaling-stroke;
+	}
+
+	.ideas-spoke {
+		stroke: var(--map-border);
+		stroke-width: 1.5;
+		vector-effect: non-scaling-stroke;
+		transition: stroke 0.2s ease, opacity 0.2s ease;
+	}
+
+	.ideas-spoke.is-linked {
+		stroke: var(--theme-color);
+		stroke-width: 2.5;
+	}
+
+	[data-dimmed] .ideas-spoke:not(.is-linked) {
+		opacity: 0.3;
+	}
+
+	.ideas-center {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.15rem;
+		padding: 0.9rem 1.3rem;
+		border: 1px dashed var(--map-border);
+		border-radius: 50%;
+		background: rgba(255, 255, 255, 0.92);
+		text-align: center;
+		line-height: 1.25;
+	}
+
+	.ideas-center strong {
+		font-family: var(--map-serif);
+		font-size: 1.1rem;
+		color: var(--map-ink);
+	}
+
+	.ideas-center span {
+		font-size: 0.74rem;
+		font-style: italic;
+		color: var(--map-muted);
+	}
+
+	.ideas-center .ideas-center-eyebrow {
+		font-style: normal;
+		font-weight: 700;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		font-size: 0.66rem;
+	}
+
+	.ideas-nodes {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.ideas-nodes li {
+		margin: 0;
+	}
+
+	.ideas-node {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.55rem;
+		width: max-content;
+		max-width: 230px;
+		padding: 0.55rem 0.8rem;
+		border: 1px solid var(--map-border);
+		border-left: 4px solid var(--theme-color);
+		border-radius: 8px;
+		background: var(--map-surface);
+		font: inherit;
+		color: var(--map-ink);
+		text-align: left;
+		cursor: pointer;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+		transition: border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease;
+	}
+
+	.ideas-node:hover {
+		border-color: var(--map-accent);
+		border-left-color: var(--theme-color);
+	}
+
+	.ideas-node:focus-visible {
+		outline: 2px solid var(--map-accent);
+		outline-offset: 2px;
+	}
+
+	.ideas-node-symbol {
+		display: grid;
+		place-items: center;
+		flex-shrink: 0;
+		width: 1.6rem;
+		height: 1.6rem;
+		border-radius: 50%;
+		background: color-mix(in srgb, var(--theme-color) 12%, white);
+		color: var(--theme-color);
+		font-size: 0.9rem;
+		font-weight: bold;
+	}
+
+	.ideas-node-text {
+		display: flex;
+		flex-direction: column;
+		line-height: 1.25;
+	}
+
+	.ideas-node-text strong {
+		font-family: var(--map-serif);
+		font-size: 0.9rem;
+	}
+
+	.ideas-node-text span {
+		font-size: 0.72rem;
+		color: var(--map-muted);
+	}
+
+	.ideas-node[aria-pressed='true'] {
+		border-color: var(--map-accent);
+		border-left-color: var(--theme-color);
+		box-shadow: 0 0 0 1px var(--map-accent), 0 6px 16px rgba(35, 55, 255, 0.12);
+	}
+
+	.ideas-node.is-linked {
+		border-color: var(--map-ink);
+		border-left-color: var(--theme-color);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	}
+
+	.ideas-node[aria-pressed='true'] .ideas-node-symbol,
+	.ideas-node.is-linked .ideas-node-symbol {
+		background: var(--theme-color);
+		color: #fff;
+	}
+
+	[data-dimmed] .ideas-node:not(.is-linked, [aria-pressed='true']) {
+		opacity: 0.4;
+	}
+
+	/* Fiche */
+	.ideas-panel {
+		margin-top: 1.25rem;
+		padding: 1.5rem 1.75rem;
+		min-height: 4.5rem;
+		background: var(--map-surface);
+		border: 1px solid var(--map-border);
+		border-radius: 10px;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+		scroll-margin-top: 4.5rem;
+	}
+
+	.ideas-hint {
+		margin: 0.5rem 0;
+		text-align: center;
+		color: var(--map-muted);
+		font-size: 0.95rem;
+	}
+
+	.ideas-detail-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 1rem;
+		margin-bottom: 1rem;
+		padding-bottom: 0.85rem;
+		border-bottom: 1px solid var(--map-border-soft);
+	}
+
+	.ideas-detail-eyebrow {
+		font-size: 0.75rem;
+		font-weight: 700;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--theme-color);
+	}
+
+	.ideas-detail-title {
+		margin: 0.25rem 0 0.35rem;
+		font-family: var(--map-serif);
+		font-size: 1.45rem;
+		color: var(--map-ink);
+	}
+
+	.ideas-detail-title:focus {
+		outline: none;
+	}
+
+	.ideas-detail-question {
+		margin: 0;
+		font-style: italic;
+		color: var(--map-muted);
+		font-size: 0.95rem;
+	}
+
+	.ideas-detail-text {
+		margin: 0 0 1rem;
+		font-size: 0.96rem;
+		line-height: 1.6;
+		color: var(--map-ink);
+	}
+
+	.ideas-block {
+		margin-bottom: 1rem;
+		font-size: 0.9rem;
+	}
+
+	.ideas-block ul {
+		margin: 0.4rem 0 0;
+		padding-left: 1.25rem;
+		line-height: 1.55;
+		color: var(--map-ink-soft);
+	}
+
+	.ideas-block li + li {
+		margin-top: 0.35rem;
+	}
+
+	.ideas-examples q {
+		font-family: var(--map-serif);
+		font-style: italic;
+	}
+
+	.ideas-ref {
+		color: var(--map-muted);
+		font-size: 0.82rem;
+	}
+
+	.ideas-questions {
+		padding: 0.75rem 1rem;
+		border-radius: 8px;
+		background: color-mix(in srgb, var(--theme-color) 7%, white);
+	}
+
+	/* Petit écran : la carte radiale devient une liste lisible */
+	@media (max-width: 760px) {
+		.ideas-canvas {
+			aspect-ratio: auto;
+			display: flex;
+			flex-direction: column;
+			align-items: stretch;
+			gap: 0.75rem;
+			padding: 1rem;
+		}
+
+		.ideas-lines {
+			display: none;
+		}
+
+		.ideas-pos {
+			position: static;
+			transform: none;
+		}
+
+		.ideas-center {
+			border-radius: 10px;
+		}
+
+		.ideas-nodes {
+			display: grid;
+			gap: 0.5rem;
+		}
+
+		.ideas-node {
+			width: 100%;
+			max-width: none;
+			min-height: 2.75rem;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.ideas-panel {
+			padding: 1.2rem 1rem;
+		}
+
+		.ideas-detail-header {
+			flex-direction: column;
+			align-items: stretch;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.ideas-node,
+		.ideas-spoke {
+			transition: none;
+		}
+	}
+</style>

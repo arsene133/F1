@@ -25,6 +25,11 @@ interface Props {
 	scrollHint?: string;
 	/** Liste textuelle de toutes les relations (repliable). */
 	indexLabel?: string;
+	/** Légende transformée en filtres par type de relation (boutons bascule). */
+	filters?: boolean;
+	filtersResetLabel?: string;
+	/** Titre du bloc de renvois (`links`) dans le panneau. */
+	linksLabel?: string;
 }
 
 const {
@@ -43,6 +48,9 @@ const {
 	resetLabel = 'Tout afficher',
 	scrollHint = '← Faites défiler horizontalement pour voir tout le graphe →',
 	indexLabel,
+	filters = false,
+	filtersResetLabel = 'Toutes les relations',
+	linksLabel = 'Voir aussi :',
 } = Astro.props;
 
 const nodesById = new Map(nodes.map((n) => [n.id, n]));
@@ -81,12 +89,12 @@ const geometry = Object.fromEntries(
 const usedTypes = [...new Set(rels.map((r) => r.type))].filter((t) => edgeTypes[t]?.legend);
 
 const clientData = {
-	nodes: nodes.map(({ id, label, caption, eyebrow, meta, description, points }) => ({
-		id, label, caption, eyebrow, meta, description, points,
+	nodes: nodes.map(({ id, label, caption, eyebrow, meta, description, points, links }) => ({
+		id, label, caption, eyebrow, meta, description, points, links,
 	})),
 	relationships: rels.map((r) => ({
 		id: r.id, source: r.source, targets: r.targets, label: r.label, description: r.description,
-		typeLabel: edgeTypes[r.type]?.legend ?? '', title: relTitle(r),
+		typeLabel: edgeTypes[r.type]?.legend ?? '', title: relTitle(r), type: r.type, links: r.links,
 	})),
 };
 
@@ -156,6 +164,7 @@ const canvasStyle = [
 									class={`rm-edge rm-edge--${r.type}`}
 									style={typeStyle(r.type)}
 									data-edge-id={r.id}
+									data-edge-type={r.type}
 									data-ends={[r.source, ...r.targets].join(' ')}
 								>
 									<line x1={g.x1} y1={g.y1} x2={g.x2} y2={g.y2} class="rm-edge-line" />
@@ -176,6 +185,7 @@ const canvasStyle = [
 									class={`rm-label rm-pos rm-label--${r.type}`}
 									data-mobile-label={r.mobileLabel ? '' : undefined}
 									data-edge-id={r.id}
+									data-edge-type={r.type}
 									data-ends={[r.source, ...r.targets].join(' ')}
 									aria-pressed="false"
 									aria-label={`Relation ${relTitle(r)} : ${r.label}`}
@@ -218,7 +228,31 @@ const canvasStyle = [
 			</div>
 		</div>
 
-		{usedTypes.length > 0 && (
+		{filters && usedTypes.length > 0 && (
+			<div class="rm-legend rm-legend--filters" role="group" aria-label="Légende et filtres des relations">
+				<ul>
+					{usedTypes.map((type) => (
+						<li style={typeStyle(type)}>
+							<button
+								type="button"
+								class="rm-filter"
+								data-filter-type={type}
+								aria-pressed="true"
+								aria-label={`Afficher les relations : ${edgeTypes[type].legend}`}
+							>
+								<svg viewBox="0 0 40 10" width="40" height="10" aria-hidden="true" focusable="false">
+									<line x1="2" y1="5" x2={edgeTypes[type].arrow ? 36 : 38} y2="5" class="rm-edge-line" />
+								</svg>
+								{edgeTypes[type].legend}
+							</button>
+						</li>
+					))}
+				</ul>
+				<button type="button" class="rm-filter-reset" data-filter-reset disabled>{filtersResetLabel}</button>
+			</div>
+		)}
+
+		{!filters && usedTypes.length > 0 && (
 			<ul class="rm-legend" aria-label="Légende des relations">
 				{usedTypes.map((type) => (
 					<li style={typeStyle(type)}>
@@ -261,6 +295,11 @@ const canvasStyle = [
 				<strong>{relationsLabel}</strong>
 				<ul class="rm-detail-relations" data-detail-relations></ul>
 			</div>
+
+			<div class="rm-detail-block" data-detail-links-wrap hidden>
+				<strong>{linksLabel}</strong>
+				<ul class="rm-detail-links" data-detail-links></ul>
+			</div>
 		</div>
 	</aside>
 
@@ -288,6 +327,7 @@ const canvasStyle = [
 	import { segment, type Box } from './relationship-map/geometry';
 
 	type MetaItem = string | { text: string; italic?: boolean };
+	type LinkData = { href: string; label: string };
 	interface NodeData {
 		id: string;
 		label: string;
@@ -296,6 +336,7 @@ const canvasStyle = [
 		meta?: MetaItem[];
 		description: string;
 		points?: string[];
+		links?: LinkData[];
 	}
 	interface RelData {
 		id: string;
@@ -305,7 +346,15 @@ const canvasStyle = [
 		description: string;
 		typeLabel: string;
 		title: string;
+		type: string;
+		links?: LinkData[];
 	}
+
+	// API par événements (facultative) pour coordonner la carte avec d'autres vues :
+	// - émis    `relmap:select`         detail : { kind, id } | null (sélection par l'utilisateur) ;
+	// - écoutés `relmap:select-request` detail : { kind, id } (sélection programmatique),
+	//           `relmap:highlight`      detail : { nodes?, edges? } | null (mise en évidence sans fiche),
+	//           `relmap:reset`          (vue initiale : sélection, mise en évidence et filtres).
 
 	function initMap(mapEl: HTMLElement) {
 		const data = JSON.parse(mapEl.querySelector('[data-map-data]')!.textContent!) as {
@@ -329,6 +378,10 @@ const canvasStyle = [
 		const pointsList = q('[data-detail-points]');
 		const relsWrap = q('[data-detail-relations-wrap]');
 		const relsList = q('[data-detail-relations]');
+		const linksWrap = q('[data-detail-links-wrap]');
+		const linksList = q('[data-detail-links]');
+		const filterButtons = [...mapEl.querySelectorAll<HTMLButtonElement>('[data-filter-type]')];
+		const filterReset = mapEl.querySelector<HTMLButtonElement>('[data-filter-reset]');
 
 		const nodeMap = new Map(data.nodes.map((n) => [n.id, n]));
 		const relMap = new Map(data.relationships.map((r) => [r.id, r]));
@@ -336,6 +389,9 @@ const canvasStyle = [
 
 		type Selection = { kind: 'node' | 'edge'; id: string } | null;
 		let selected: Selection = null;
+		// Mise en évidence demandée par une autre vue (sans fiche ouverte).
+		let external: { nodes: Set<string>; edges: Set<string> } | null = null;
+		const hiddenTypes = new Set<string>();
 
 		const endsOf = (r: RelData) => [r.source, ...r.targets];
 		const relsOfNode = (nodeId: string) => data.relationships.filter((r) => endsOf(r).includes(nodeId));
@@ -356,6 +412,10 @@ const canvasStyle = [
 				const r = relMap.get(sel.id)!;
 				activeEdges.add(r.id);
 				relatedNodes = new Set(endsOf(r));
+			} else if (external) {
+				mapEl.toggleAttribute('data-active', true);
+				relatedNodes = external.nodes;
+				activeEdges = external.edges;
 			}
 
 			for (const btn of nodeButtons) {
@@ -426,6 +486,7 @@ const canvasStyle = [
 				const related = relsOfNode(n.id);
 				related.forEach((r) => relsList.append(relationItem(r, n.id)));
 				relsWrap.hidden = related.length === 0;
+				setLinks(n.links);
 			} else {
 				const r = relMap.get(sel.id)!;
 				detailEyebrow.textContent = r.typeLabel ? `Relation · ${r.typeLabel}` : 'Relation';
@@ -434,11 +495,26 @@ const canvasStyle = [
 				detailDesc.textContent = r.description;
 				pointsWrap.hidden = true;
 				relsWrap.hidden = true;
+				setLinks(r.links);
 			}
 		}
 
-		function select(sel: Selection) {
+		function setLinks(links: LinkData[] | undefined) {
+			linksList.replaceChildren();
+			for (const l of links ?? []) {
+				const li = document.createElement('li');
+				const a = document.createElement('a');
+				a.href = l.href;
+				a.textContent = l.label;
+				li.append(a);
+				linksList.append(li);
+			}
+			linksWrap.hidden = !links?.length;
+		}
+
+		function select(sel: Selection, silent = false) {
 			selected = sel;
+			if (sel) external = null;
 			for (const btn of nodeButtons) {
 				btn.setAttribute('aria-pressed', String(sel?.kind === 'node' && btn.dataset.nodeId === sel.id));
 			}
@@ -447,6 +523,7 @@ const canvasStyle = [
 			}
 			highlight(sel);
 			populate(sel);
+			if (!silent) mapEl.dispatchEvent(new CustomEvent('relmap:select', { bubbles: true, detail: sel }));
 		}
 
 		function clear() {
@@ -485,6 +562,49 @@ const canvasStyle = [
 		});
 
 		q('[data-panel-reset]').addEventListener('click', clear);
+
+		// Filtres par type de relation (option `filters`).
+		function applyFilters() {
+			for (const el of [...edges, ...labelButtons]) {
+				el.classList.toggle('is-filtered', hiddenTypes.has(el.dataset.edgeType!));
+			}
+			for (const btn of filterButtons) {
+				btn.setAttribute('aria-pressed', String(!hiddenTypes.has(btn.dataset.filterType!)));
+			}
+			if (filterReset) filterReset.disabled = hiddenTypes.size === 0;
+			// Une relation masquée ne reste pas sélectionnée.
+			if (selected?.kind === 'edge' && hiddenTypes.has(relMap.get(selected.id)!.type)) select(null);
+		}
+
+		filterButtons.forEach((btn) =>
+			btn.addEventListener('click', () => {
+				const type = btn.dataset.filterType!;
+				if (hiddenTypes.has(type)) hiddenTypes.delete(type);
+				else hiddenTypes.add(type);
+				applyFilters();
+			}),
+		);
+		filterReset?.addEventListener('click', () => {
+			hiddenTypes.clear();
+			applyFilters();
+		});
+
+		// Coordination avec d'autres vues de la page.
+		mapEl.addEventListener('relmap:select-request', (e) => {
+			const sel = (e as CustomEvent<Selection>).detail;
+			if (sel && (sel.kind === 'node' ? nodeMap.has(sel.id) : relMap.has(sel.id))) select(sel);
+		});
+		mapEl.addEventListener('relmap:highlight', (e) => {
+			const d = (e as CustomEvent<{ nodes?: string[]; edges?: string[] } | null>).detail;
+			external = d ? { nodes: new Set(d.nodes ?? []), edges: new Set(d.edges ?? []) } : null;
+			select(null, true);
+		});
+		mapEl.addEventListener('relmap:reset', () => {
+			external = null;
+			hiddenTypes.clear();
+			applyFilters();
+			select(null, true);
+		});
 
 		mapEl.addEventListener('keydown', (e) => {
 			if (e.key === 'Escape' && selected) {
@@ -900,6 +1020,106 @@ const canvasStyle = [
 		marker-end: var(--m-end-on, none);
 		marker-start: var(--m-start-on, none);
 		vector-effect: none;
+	}
+
+	/* Filtres par type (option `filters`) */
+	.rm-edge.is-filtered,
+	.rm-label.is-filtered {
+		display: none;
+	}
+
+	.rm-legend--filters {
+		flex-direction: column;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.rm-legend--filters ul {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.35rem 0.5rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.rm-filter {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		min-height: 2rem;
+		padding: 0.2rem 0.6rem;
+		border: 1px solid var(--map-border);
+		border-radius: 999px;
+		background: var(--map-surface);
+		font: inherit;
+		font-size: 0.76rem;
+		color: var(--map-ink-soft);
+		cursor: pointer;
+	}
+
+	.rm-filter[aria-pressed='false'] {
+		background: transparent;
+		border-style: dashed;
+		color: var(--map-muted);
+		text-decoration: line-through;
+	}
+
+	.rm-filter[aria-pressed='false'] svg {
+		opacity: 0.35;
+	}
+
+	.rm-filter-reset {
+		padding: 0.25rem 0.75rem;
+		border: 1px solid var(--map-border);
+		border-radius: 6px;
+		background: transparent;
+		font: inherit;
+		font-size: 0.76rem;
+		font-weight: 600;
+		color: var(--map-ink-soft);
+		cursor: pointer;
+	}
+
+	.rm-filter-reset:disabled {
+		opacity: 0.45;
+		cursor: default;
+	}
+
+	.rm-filter:focus-visible,
+	.rm-filter-reset:focus-visible,
+	.rm-detail-links :global(a:focus-visible) {
+		outline: 2px solid var(--map-accent);
+		outline-offset: 2px;
+	}
+
+	.rm-detail-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		margin: 0.5rem 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.rm-detail-links li {
+		margin: 0;
+	}
+
+	.rm-detail-links :global(a) {
+		display: inline-block;
+		padding: 0.25rem 0.65rem;
+		border: 1px solid var(--map-border);
+		border-radius: 999px;
+		font-size: 0.82rem;
+		color: var(--map-ink);
+		text-decoration: none;
+		background: var(--map-bg);
+	}
+
+	.rm-detail-links :global(a:hover) {
+		border-color: var(--map-accent);
 	}
 
 	.rm-scroll-hint {

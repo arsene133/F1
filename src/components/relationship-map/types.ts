@@ -4,6 +4,12 @@
 
 export type MetaItem = string | { text: string; italic?: boolean };
 
+/** Lien de renvoi affiché dans le panneau (ex. vers une autre vue de la page). */
+export interface MapLink {
+	href: string;
+	label: string;
+}
+
 export interface MapNode {
 	id: string;
 	label: string;
@@ -15,6 +21,8 @@ export interface MapNode {
 	meta?: MetaItem[];
 	description: string;
 	points?: string[];
+	/** Renvois facultatifs affichés en bas du panneau. */
+	links?: MapLink[];
 	color?: string;
 	/** major : nœud central · standard · minor : nœud périphérique. */
 	tier?: 'major' | 'standard' | 'minor';
@@ -41,6 +49,8 @@ export interface MapRelationship {
 	mLabelDy?: number;
 	/** Affiche l'étiquette dans le graphe sur mobile (sinon : panneau seulement). */
 	mobileLabel?: boolean;
+	/** Renvois facultatifs affichés dans le panneau de la relation. */
+	links?: MapLink[];
 }
 
 export interface EdgeType {
