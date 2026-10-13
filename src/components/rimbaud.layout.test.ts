@@ -305,4 +305,62 @@ describe.skipIf(!BUILT)('Cartographie littéraire des Cahiers de Douai (/rimbaud
 			await page.close();
 		}
 	});
+
+	test('la section des sources iconographiques historiques est affichée avec ses 6 fiches d’archives et sa méthode critique', async () => {
+		const page = await openPage();
+		try {
+			const section = page.locator('#sources-iconographiques');
+			expect(await section.count()).toBe(1);
+
+			// Vérifier le titre et le cadrage méthodologique
+			const heading = await section.locator('#iconography-section-title').textContent();
+			expect(heading).toContain('documents iconographiques et critique des sources');
+
+			// Vérifier la présence des 6 documents iconographiques
+			const cards = section.locator('.iconography-card');
+			expect(await cards.count()).toBe(6);
+
+			// Vérifier les statuts documentaires obligatoires
+			const badges = section.locator('.status-badge');
+			expect(await badges.count()).toBeGreaterThanOrEqual(6);
+
+			// Vérifier la présence des métadonnées archivistiques (auteur, dates, institution, identifiant)
+			const firstCard = cards.first();
+			const metaList = firstCard.locator('.iconography-meta-list');
+			expect(await metaList.isVisible()).toBe(true);
+			const metaText = await metaList.textContent();
+			expect(metaText).toContain('Institution conservatrice');
+
+			// Vérifier la présence du questionnement pédagogique
+			const observationBox = firstCard.locator('.iconography-question-box');
+			expect(await observationBox.isVisible()).toBe(true);
+
+			// Vérifier la boîte de synthèse méthodologique finale
+			const synthesis = section.locator('.iconography-synthesis-box');
+			expect(await synthesis.isVisible()).toBe(true);
+			const synthesisText = await synthesis.textContent();
+			expect(synthesisText).toContain('L’image comme document historique');
+		} finally {
+			await page.close();
+		}
+	});
+
+	test('sur mobile (375x812), la section des sources iconographiques reste lisible sans débordement horizontal', async () => {
+		const page = await openPage(375, 812);
+		try {
+			const section = page.locator('#sources-iconographiques');
+			expect(await section.isVisible()).toBe(true);
+
+			const box = await section.boundingBox();
+			expect(box).not.toBeNull();
+			expect(box!.width).toBeLessThanOrEqual(375);
+
+			// Vérifier qu'une fiche iconographique ne déborde pas
+			const cardBox = await section.locator('.iconography-card').first().boundingBox();
+			expect(cardBox).not.toBeNull();
+			expect(cardBox!.width).toBeLessThanOrEqual(375);
+		} finally {
+			await page.close();
+		}
+	});
 });
