@@ -1,6 +1,7 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
+import GraffignyGeoMap from '../components/GraffignyGeoMap.astro';
 import GraffignyJourney from '../components/GraffignyJourney.astro';
 import GraffignyThemesMap from '../components/GraffignyThemesMap.astro';
 import Header from '../components/Header.astro';
@@ -71,19 +72,20 @@ const pageDescription =
 					))}
 				</dl>
 
-				<!-- Barre commune aux trois vues : navigation, sélection en cours, réinitialisation -->
+				<!-- Barre commune aux quatre vues : navigation, sélection en cours, réinitialisation -->
 				<div class="selection-bar" data-selection-bar>
-					<nav class="selection-nav" aria-label="Les trois vues de la cartographie">
+					<nav class="selection-nav" aria-label="Les quatre vues de la cartographie">
 						<a href="#vue-personnages">Personnages</a>
-						<a href="#vue-parcours">Parcours</a>
-						<a href="#vue-idees">Idées</a>
+						<a href="#vue-parcours">Parcours de Zilia</a>
+						<a href="#vue-idees">Carte des idées</a>
+						<a href="#vue-geographie">Géographie du récit</a>
 					</nav>
 					<p class="selection-status" aria-live="polite" data-selection-status>Rien n’est sélectionné : explorez librement.</p>
 					<button type="button" class="selection-reset" data-global-reset disabled>Tout afficher</button>
 				</div>
 
 				<p class="how-to">
-					<strong>Mode d’emploi.</strong> Les trois vues sont reliées : choisir un personnage, une relation, une étape ou un thème met en évidence ce qui lui correspond dans les deux autres vues. « Tout afficher » rétablit la vue initiale ; Échap ferme la fiche ouverte.
+					<strong>Mode d’emploi.</strong> Les quatre vues sont reliées : choisir un personnage, une relation, une étape, un thème ou un lieu géographique met en évidence ce qui lui correspond dans les autres vues. « Tout afficher » rétablit la vue initiale ; Échap ferme la fiche ouverte.
 				</p>
 
 				<!-- ======================================================
@@ -146,6 +148,21 @@ const pageDescription =
 					</header>
 
 					<GraffignyThemesMap themes={graffignyThemes} steps={narrativeSteps} characters={graffignyCharacters} />
+				</section>
+
+				<!-- ======================================================
+				     VUE 4 : géographie du récit
+				     ====================================================== -->
+				<section class="carto-section" id="vue-geographie" aria-labelledby="vue-geographie-title">
+					<header class="carto-header">
+						<p class="carto-eyebrow">Vue 4 · Géographie du récit</p>
+						<h2 id="vue-geographie-title">L’espace du roman : du Pérou des Incas à la France des Lumières</h2>
+						<p class="carto-lead">
+							Comprendre les déplacements de Zilia, l’arrachement au Nouveau Monde, la traversée transatlantique et la découverte de l’espace français. Distinguez les lieux attestés dans le texte, les repères historiques contextuels et les trajets narratifs indicatifs.
+						</p>
+					</header>
+
+					<GraffignyGeoMap />
 				</section>
 
 				<!-- ======================================================
@@ -230,14 +247,15 @@ const pageDescription =
 </html>
 
 <script>
-	// Coordination des trois vues : une seule sélection pour toute la page.
-	type Kind = 'node' | 'edge' | 'step' | 'theme';
+	// Coordination des quatre vues : une seule sélection pour toute la page.
+	type Kind = 'node' | 'edge' | 'step' | 'theme' | 'place';
 	type Selection = { kind: Kind; id: string } | null;
 	interface Linked {
 		characters: string[];
 		relationships: string[];
 		steps: string[];
 		themes: string[];
+		places: string[];
 	}
 	interface Index {
 		names: Record<Kind, Record<string, string>>;
@@ -245,12 +263,14 @@ const pageDescription =
 		edges: Record<string, Linked>;
 		steps: Record<string, Linked>;
 		themes: Record<string, Linked>;
+		places: Record<string, Linked>;
 	}
 
 	const index = JSON.parse(document.getElementById('graffigny-index')!.textContent!) as Index;
 	const mapEl = document.querySelector<HTMLElement>('[data-rel-map]')!;
 	const journey = document.querySelector<HTMLElement>('[data-journey]')!;
 	const ideas = document.querySelector<HTMLElement>('[data-ideas]')!;
+	const geoApp = document.querySelector<HTMLElement>('[data-geo-app]');
 	const stepButtons = [...journey.querySelectorAll<HTMLButtonElement>('[data-step-id]')];
 	const themeButtons = [...ideas.querySelectorAll<HTMLButtonElement>('[data-theme-id]')];
 	const spokes = [...ideas.querySelectorAll<SVGLineElement>('[data-spoke]')];
@@ -260,8 +280,20 @@ const pageDescription =
 	const globalReset = document.querySelector<HTMLButtonElement>('[data-global-reset]')!;
 	const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-	const KIND_LABEL: Record<Kind, string> = { node: 'personnage', edge: 'relation', step: 'étape', theme: 'thème' };
-	const INDEX_KEY = { node: 'nodes', edge: 'edges', step: 'steps', theme: 'themes' } as const;
+	const KIND_LABEL: Record<Kind, string> = {
+		node: 'personnage',
+		edge: 'relation',
+		step: 'étape',
+		theme: 'thème',
+		place: 'lieu',
+	};
+	const INDEX_KEY = {
+		node: 'nodes',
+		edge: 'edges',
+		step: 'steps',
+		theme: 'themes',
+		place: 'places',
+	} as const;
 
 	let current: Selection = null;
 
@@ -300,29 +332,41 @@ const pageDescription =
 			status.textContent = 'Rien n’est sélectionné : explorez librement.';
 		} else {
 			const parts = [];
-			if (current.kind !== 'step') parts.push(plural(linked.steps.length, 'étape'));
-			if (current.kind !== 'theme') parts.push(plural(linked.themes.length, 'thème'));
-			if (current.kind === 'step' || current.kind === 'theme') parts.push(plural(linked.characters.length, 'personnage'));
+			if (current.kind !== 'step' && linked.steps.length > 0) parts.push(plural(linked.steps.length, 'étape'));
+			if (current.kind !== 'theme' && linked.themes.length > 0) parts.push(plural(linked.themes.length, 'thème'));
+			if (current.kind !== 'node' && linked.characters.length > 0) parts.push(plural(linked.characters.length, 'personnage'));
+			if (current.kind !== 'place' && linked.places && linked.places.length > 0) parts.push(plural(linked.places.length, 'lieu'));
 			status.replaceChildren(
 				`Sélection (${KIND_LABEL[current.kind]}) : `,
 				Object.assign(document.createElement('strong'), { textContent: index.names[current.kind][current.id] }),
-				` · ${parts.join(', ')} en lien`,
+				parts.length > 0 ? ` · ${parts.join(', ')} en lien` : '',
 			);
 		}
 	}
 
 	function setSelection(sel: Selection) {
 		current = sel;
+		const linked = sel ? index[INDEX_KEY[sel.kind]][sel.id] : null;
+
 		// La carte des relations gère elle-même la sélection d'un personnage ou d'une relation ;
-		// pour une étape ou un thème, elle met seulement en évidence les éléments liés.
-		if (!sel || sel.kind === 'step' || sel.kind === 'theme') {
-			const linked = sel ? index[INDEX_KEY[sel.kind]][sel.id] : null;
+		// pour une étape, un thème ou un lieu, elle met en évidence les éléments liés.
+		if (!sel || sel.kind === 'step' || sel.kind === 'theme' || sel.kind === 'place') {
 			mapEl.dispatchEvent(
 				new CustomEvent('relmap:highlight', {
 					detail: linked ? { nodes: linked.characters, edges: linked.relationships } : null,
 				}),
 			);
 		}
+
+		// La carte géographique reçoit la notification de surbrillance
+		if (geoApp) {
+			geoApp.dispatchEvent(
+				new CustomEvent('geomap:highlight', {
+					detail: linked ? { places: linked.places } : null,
+				}),
+			);
+		}
+
 		render();
 	}
 
@@ -389,12 +433,13 @@ const pageDescription =
 		});
 	}
 
-	// Renvois depuis les fiches : vers un personnage, une étape, un thème.
+	// Renvois depuis les fiches : vers un personnage, une étape, un thème, un lieu.
 	document.addEventListener('click', (e) => {
 		const target = e.target as Element;
 		const nodeChip = target.closest<HTMLElement>('[data-goto-node]');
 		const stepChip = target.closest<HTMLElement>('[data-goto-step]');
 		const themeChip = target.closest<HTMLElement>('[data-goto-theme]');
+		const placeChip = target.closest<HTMLElement>('[data-goto-place]');
 		const anchor = target.closest<HTMLAnchorElement>('.rm-detail-links a[href^="#"]');
 
 		if (nodeChip) {
@@ -408,11 +453,23 @@ const pageDescription =
 			openView('step', stepChip.dataset.gotoStep!, true);
 		} else if (themeChip) {
 			openView('theme', themeChip.dataset.gotoTheme!, true);
+		} else if (placeChip) {
+			const id = placeChip.dataset.gotoPlace!;
+			setSelection({ kind: 'place', id });
+			geoApp?.dispatchEvent(new CustomEvent('geomap:select-request', { detail: { id } }));
+			const section = document.getElementById('vue-geographie')!;
+			section.scrollIntoView({ block: 'start', behavior: reducedMotion ? 'auto' : 'smooth' });
 		} else if (anchor) {
-			const [, kind, id] = anchor.getAttribute('href')!.match(/^#(etape|theme)-(.+)$/) ?? [];
+			const [, kind, id] = anchor.getAttribute('href')!.match(/^#(etape|theme|lieu)-(.+)$/) ?? [];
 			if (!kind) return;
 			e.preventDefault();
-			openView(kind === 'etape' ? 'step' : 'theme', id, true);
+			if (kind === 'lieu') {
+				setSelection({ kind: 'place', id });
+				geoApp?.dispatchEvent(new CustomEvent('geomap:select-request', { detail: { id } }));
+				document.getElementById('vue-geographie')!.scrollIntoView({ block: 'start', behavior: reducedMotion ? 'auto' : 'smooth' });
+			} else {
+				openView(kind === 'etape' ? 'step' : 'theme', id, true);
+			}
 		}
 	});
 
@@ -420,20 +477,30 @@ const pageDescription =
 	mapEl.addEventListener('relmap:select', (e) => {
 		const sel = (e as CustomEvent<{ kind: 'node' | 'edge'; id: string } | null>).detail;
 		if (sel) {
-			current = sel;
-			render();
+			setSelection(sel);
 			// Sur téléphone, la fiche est sous la carte : on l'amène à l'écran.
 			if (window.matchMedia('(max-width: 640px)').matches) reveal(mapEl.querySelector<HTMLElement>('.rm-panel'));
 		} else if (current?.kind === 'node' || current?.kind === 'edge') {
-			current = null;
-			render();
+			setSelection(null);
+		}
+	});
+
+	// Sélection faite dans la carte géographique par l'utilisateur.
+	geoApp?.addEventListener('geomap:select', (e) => {
+		const sel = (e as CustomEvent<{ kind: 'place'; id: string } | null>).detail;
+		if (sel) {
+			setSelection(sel);
+			if (window.matchMedia('(max-width: 960px)').matches) {
+				reveal(geoApp.querySelector<HTMLElement>('.geo-card-panel'));
+			}
+		} else if (current?.kind === 'place') {
+			setSelection(null);
 		}
 	});
 
 	globalReset.addEventListener('click', () => {
-		current = null;
+		setSelection(null);
 		mapEl.dispatchEvent(new CustomEvent('relmap:reset'));
-		render();
 		document.getElementById('vue-personnages')!.scrollIntoView({ block: 'start', behavior: reducedMotion ? 'auto' : 'smooth' });
 	});
 

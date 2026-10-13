@@ -54,6 +54,14 @@
 	--chip-color: #235284;
 }
 
+.chip--theme {
+	--chip-color: #7a2f6f;
+}
+
+.chip--place {
+	--chip-color: #4d5b66;
+}
+
 .view-close {
 	align-self: flex-start;
 	padding: 0.4rem 0.85rem;

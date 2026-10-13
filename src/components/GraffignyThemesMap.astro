@@ -4,7 +4,7 @@
 // liste. Les fiches sont rendues côté serveur ; la coordination avec les autres
 // vues est assurée par le script de la page (/graffigny).
 import type { MapNode } from './relationship-map/types';
-import type { GraffignyTheme, NarrativeStep } from '../data/graffigny';
+import { graffignyPlaces, type GraffignyTheme, type NarrativeStep } from '../data/graffigny';
 
 interface Props {
 	themes: GraffignyTheme[];
@@ -15,6 +15,7 @@ interface Props {
 const { themes, steps, characters } = Astro.props;
 const nameOf = (id: string) => characters.find((c) => c.id === id)!.label;
 const stepOf = (id: string) => steps.find((s) => s.id === id)!;
+const placeOf = (id: string) => graffignyPlaces.find((p) => p.id === id)!;
 
 // Disposition sur une ellipse autour du centre (espace 900 × 540).
 const W = 900;
@@ -121,6 +122,18 @@ const positioned = themes.map((t, i) => {
 								<li>
 									<button type="button" class="chip chip--step" data-goto-step={s}>
 										{stepOf(s).number}. {stepOf(s).title}
+									</button>
+								</li>
+							))}
+						</ul>
+					</div>
+					<div>
+						<strong>Lieux associés :</strong>
+						<ul class="chip-list">
+							{t.places?.map((pId) => (
+								<li>
+									<button type="button" class="chip chip--place" data-goto-place={pId}>
+										{placeOf(pId)?.name ?? pId}
 									</button>
 								</li>
 							))}

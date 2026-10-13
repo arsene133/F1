@@ -1,0 +1,1250 @@
+---
+// Composant Vue 4 : Carte géographique interactive des Lettres d'une Péruvienne
+// Déplacements de Zilia, rupture transatlantique entre l'Empire inca et la France,
+// repères spatiaux attestés, historiques et incertains.
+import {
+	GRAFFIGNY_MAP_CONFIG,
+	GRAFFIGNY_PLACE_CATEGORIES,
+	graffignyPlaces,
+	type GraffignyPlace,
+	type PlaceCategoryMeta,
+} from '../data/graffigny-places';
+
+const initialPlace = graffignyPlaces[0];
+const categoriesList: PlaceCategoryMeta[] = Object.values(GRAFFIGNY_PLACE_CATEGORIES);
+---
+
+<div class="graffigny-geo-app" id="graffigny-geo-app" data-geo-app>
+	<!-- Données sérialisées pour hydratation client -->
+	<script
+		type="application/json"
+		id="graffigny-places-data"
+		set:html={JSON.stringify({
+			places: graffignyPlaces,
+			categories: GRAFFIGNY_PLACE_CATEGORIES,
+			mapConfig: GRAFFIGNY_MAP_CONFIG,
+		})}
+	/>
+
+	<!-- En-tête pédagogique et filtres -->
+	<div class="geo-controls-bar">
+		<div class="geo-filters-group" role="group" aria-label="Filtrer les lieux par catégorie">
+			<span class="geo-filters-label">Filtrer par catégorie :</span>
+			<div class="geo-filter-buttons">
+				<button
+					type="button"
+					class="geo-filter-btn is-active"
+					data-geo-filter="all"
+					aria-pressed="true"
+				>
+					<span class="geo-filter-dot dot-all" aria-hidden="true"></span>
+					<span>Tous les lieux ({graffignyPlaces.length})</span>
+				</button>
+				{categoriesList.map((cat) => {
+					const count = graffignyPlaces.filter((p) => p.category === cat.id).length;
+					return (
+						<button
+							type="button"
+							class="geo-filter-btn"
+							data-geo-filter={cat.id}
+							aria-pressed="false"
+							style={`--cat-color: ${cat.color};`}
+						>
+							<span class="geo-filter-dot" aria-hidden="true"></span>
+							<span>{cat.label} ({count})</span>
+						</button>
+					);
+				})}
+			</div>
+		</div>
+
+		<div class="geo-actions-group">
+			<button
+				type="button"
+				class="geo-action-btn"
+				id="btn-recenter-geo"
+				title="Recentrer la carte sur l’ensemble des lieux"
+			>
+				Recentrer la carte
+			</button>
+			<button
+				type="button"
+				class="geo-action-btn"
+				id="btn-view-transatlantique"
+				title="Vue globale montrant la distance entre le Pérou et la France"
+			>
+				Vue transatlantique
+			</button>
+		</div>
+	</div>
+
+	<!-- Grille principale : Carte Leaflet à gauche, Fiche détaillée à droite -->
+	<div class="geo-main-grid">
+		<div class="geo-map-wrapper">
+			<div
+				id="graffigny-leaflet-map"
+				class="geo-map-element"
+				role="region"
+				aria-label="Carte géographique interactive des Lettres d’une Péruvienne"
+				tabindex="0"
+			>
+				<noscript>
+					<div class="geo-noscript-box">
+						<p>
+							<strong>La carte interactive nécessite l’activation de JavaScript.</strong>
+							Consultez la liste textuelle détaillée des lieux ci-dessous.
+						</p>
+					</div>
+				</noscript>
+			</div>
+
+			<!-- Légende cartographique interprétative -->
+			<div class="geo-map-legend" aria-label="Légende des catégories documentaires">
+				<span class="geo-legend-title">Statut des repères :</span>
+				<ul class="geo-legend-list">
+					{categoriesList.map((cat) => (
+						<li class="geo-legend-item" style={`--cat-color: ${cat.color};`}>
+							<span class="geo-legend-sample" aria-hidden="true"></span>
+							<span class="geo-legend-text">
+								<strong>{cat.label}</strong>
+								<span class="geo-legend-desc"> — {cat.description}</span>
+							</span>
+						</li>
+					))}
+				</ul>
+				<p class="geo-legend-note">
+					<em>Note cartographique :</em> La ligne en pointillés bleutés représente la trajectoire narrative approximative du trajet transatlantique raconté dans les lettres, sans prétendre reconstituer une route nautique historique exacte.
+				</p>
+			</div>
+
+			<!-- Attribution cartographique -->
+			<div class="geo-attribution-bar">
+				<span>Fond de carte &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors.</span>
+			</div>
+		</div>
+
+		<!-- Fiche d'information du lieu sélectionné -->
+		<aside
+			class="geo-card-panel"
+			id="geo-card-panel"
+			aria-labelledby="geo-card-title"
+			aria-live="polite"
+		>
+			<article class="geo-place-card" id="geo-active-place-card">
+				<header class="geo-card-header">
+					<div class="geo-card-badges">
+						<span
+							class="geo-badge geo-badge-cat"
+							id="geo-card-badge-cat"
+							style={`background-color: ${GRAFFIGNY_PLACE_CATEGORIES[initialPlace.category].color};`}
+						>
+							{GRAFFIGNY_PLACE_CATEGORIES[initialPlace.category].label}
+						</span>
+						<span
+							class={`geo-badge geo-badge-status status-${initialPlace.status}`}
+							id="geo-card-badge-status"
+						>
+							{initialPlace.status === 'atteste' ? 'Lieu attesté' : initialPlace.status === 'contextuel' ? 'Repère contextuel' : 'Localisation incertaine'}
+						</span>
+					</div>
+					<h3 class="geo-card-title" id="geo-card-title">{initialPlace.name}</h3>
+					<p class="geo-card-subtitle" id="geo-card-subtitle">{initialPlace.subtitle}</p>
+					<button type="button" class="view-close geo-card-close" id="geo-card-close-btn" aria-label="Fermer la fiche">
+						Fermer la fiche
+					</button>
+				</header>
+
+				<div class="geo-card-body">
+					<!-- Résumé pédagogique accessible aux lycéens -->
+					<div class="geo-card-section">
+						<h4 class="geo-section-heading">Enjeu littéraire et humain</h4>
+						<p class="geo-section-text" id="geo-card-summary">{initialPlace.pedagogicalSummary}</p>
+					</div>
+
+					<!-- Rôle dans le récit -->
+					<div class="geo-card-section">
+						<h4 class="geo-section-heading">Rôle dans le récit</h4>
+						<p class="geo-section-text" id="geo-card-role">{initialPlace.narrativeRole}</p>
+					</div>
+
+					<!-- Analyse littéraire critique -->
+					<div class="geo-card-section">
+						<h4 class="geo-section-heading">Portée critique des Lumières</h4>
+						<p class="geo-section-text" id="geo-card-analysis">{initialPlace.literaryAnalysis}</p>
+					</div>
+
+					<!-- Citation vérifiée -->
+					<blockquote class="geo-card-quote" id="geo-card-quote-box">
+						<p id="geo-card-quote-text">« {initialPlace.quotation} »</p>
+						<cite id="geo-card-quote-ref">— {initialPlace.quotationReference}</cite>
+					</blockquote>
+
+					<!-- Source / note documentaire -->
+					<div class="geo-card-section geo-source-box">
+						<h4 class="geo-section-heading">Repère documentaire & historique</h4>
+						<p class="geo-section-text geo-source-note" id="geo-card-source">{initialPlace.historicalSourceNote}</p>
+					</div>
+
+					<!-- Liens vers les autres vues (personnages, étapes, thèmes) -->
+					<div class="view-detail-links geo-card-links">
+						<div>
+							<strong>Personnages associés :</strong>
+							<ul class="chip-list" id="geo-card-characters">
+								{initialPlace.characters.map((c) => (
+									<li>
+										<button type="button" class="chip chip--character" data-goto-node={c}>{c}</button>
+									</li>
+								))}
+							</ul>
+						</div>
+						<div>
+							<strong>Étapes narratives :</strong>
+							<ul class="chip-list" id="geo-card-steps">
+								{initialPlace.steps.map((s) => (
+									<li>
+										<button type="button" class="chip chip--step" data-goto-step={s}>{s}</button>
+									</li>
+								))}
+							</ul>
+						</div>
+						<div>
+							<strong>Thèmes associés :</strong>
+							<ul class="chip-list" id="geo-card-themes">
+								{initialPlace.themes.map((t) => (
+									<li>
+										<button type="button" class="chip chip--theme" data-goto-theme={t}>{t}</button>
+									</li>
+								))}
+							</ul>
+						</div>
+					</div>
+				</div>
+			</article>
+		</aside>
+	</div>
+
+	<!-- Liste textuelle accessible de tous les lieux (conformité accessibilité & noscript) -->
+	<section class="geo-text-alternative" aria-labelledby="geo-alt-title">
+		<details class="geo-alt-details">
+			<summary class="geo-alt-summary">
+				<h3 class="geo-alt-title" id="geo-alt-title">
+					Consulter tous les repères géographiques sous forme de liste textuelle accessible
+				</h3>
+				<span class="geo-alt-hint">({graffignyPlaces.length} repères documentés et analysés)</span>
+			</summary>
+			<div class="geo-alt-content">
+				<p class="geo-alt-intro">
+					Cette liste retranscrit intégralement les lieux, trajets narratifs et repères historiques du roman pour les lecteurs utilisant un lecteur d'écran ou ne souhaitant pas utiliser la carte interactive.
+				</p>
+				<ol class="geo-alt-list">
+					{graffignyPlaces.map((place) => (
+						<li class="geo-alt-item" id={`lieu-${place.id}`}>
+							<article>
+								<header class="geo-alt-item-header">
+									<h4>{place.name}</h4>
+									<span class="geo-alt-item-meta">
+										[{GRAFFIGNY_PLACE_CATEGORIES[place.category].label} · {place.status === 'atteste' ? 'Lieu attesté' : place.status === 'contextuel' ? 'Repère contextuel' : 'Localisation incertaine'}]
+									</span>
+									<p class="geo-alt-subtitle"><em>{place.subtitle}</em></p>
+								</header>
+								<div class="geo-alt-item-body">
+									<p><strong>Enjeu :</strong> {place.pedagogicalSummary}</p>
+									<p><strong>Rôle narratif :</strong> {place.narrativeRole}</p>
+									<p><strong>Portée critique :</strong> {place.literaryAnalysis}</p>
+									{place.quotation && (
+										<blockquote>
+											« {place.quotation} » <cite>({place.quotationReference})</cite>
+										</blockquote>
+									)}
+									{place.historicalSourceNote && (
+										<p class="geo-alt-source-note">
+											<small><strong>Source :</strong> {place.historicalSourceNote}</small>
+										</p>
+									)}
+								</div>
+								<button
+									type="button"
+									class="btn-select-place-text"
+									data-select-place-btn={place.id}
+								>
+									Voir sur la carte ↗
+								</button>
+							</article>
+						</li>
+					))}
+				</ol>
+			</div>
+		</details>
+	</section>
+</div>
+
+<style>
+	.graffigny-geo-app {
+		margin: 1.5rem 0 2rem;
+		font-family: inherit;
+		color: var(--map-ink, #172b3a);
+	}
+
+	/* Contrôles et filtres */
+	.geo-controls-bar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 10px;
+		padding: 0.9rem 1.2rem;
+		margin-bottom: 1.25rem;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+	}
+
+	.geo-filters-group {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.geo-filters-label {
+		font-size: 0.85rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.geo-filter-buttons {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+	}
+
+	.geo-filter-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.4rem 0.8rem;
+		font-family: inherit;
+		font-size: 0.85rem;
+		font-weight: 500;
+		color: var(--map-ink, #172b3a);
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 20px;
+		cursor: pointer;
+		transition: all 0.15s ease;
+	}
+
+	.geo-filter-btn:hover {
+		background: #f8f6f0;
+	}
+
+	.geo-filter-btn.is-active {
+		background: var(--map-accent-soft, rgba(35, 82, 132, 0.1));
+		border-color: #235284;
+		color: #235284;
+		font-weight: 700;
+	}
+
+	.geo-filter-btn:focus-visible,
+	.geo-action-btn:focus-visible,
+	.btn-select-place-text:focus-visible {
+		outline: 2px solid var(--map-accent, #235284);
+		outline-offset: 2px;
+	}
+
+	.geo-filter-dot {
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		background-color: var(--cat-color, #235284);
+		flex-shrink: 0;
+	}
+
+	.dot-all {
+		background: #5e6d7a;
+	}
+
+	.geo-actions-group {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.geo-action-btn {
+		padding: 0.45rem 0.85rem;
+		font-family: inherit;
+		font-size: 0.84rem;
+		font-weight: 600;
+		background: #f8f6f0;
+		color: var(--map-ink, #172b3a);
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 6px;
+		cursor: pointer;
+		transition: all 0.15s ease;
+	}
+
+	.geo-action-btn:hover {
+		background: #172b3a;
+		color: #ffffff;
+		border-color: #172b3a;
+	}
+
+	/* Grille principale */
+	.geo-main-grid {
+		display: grid;
+		grid-template-columns: 1.35fr 1fr;
+		gap: 1.5rem;
+		align-items: start;
+	}
+
+	.geo-map-wrapper {
+		display: flex;
+		flex-direction: column;
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 10px;
+		overflow: hidden;
+		box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+	}
+
+	.geo-map-element {
+		width: 100%;
+		height: 560px;
+		background: #e5edf4;
+		position: relative;
+		z-index: 1;
+	}
+
+	.geo-noscript-box {
+		padding: 2rem;
+		text-align: center;
+		color: var(--map-muted);
+	}
+
+	/* Légende sous la carte */
+	.geo-map-legend {
+		padding: 0.9rem 1.1rem;
+		border-top: 1px solid var(--map-border-soft, #ece7de);
+		background: #faf8f5;
+		font-size: 0.82rem;
+	}
+
+	.geo-legend-title {
+		display: block;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--map-muted, #5e6d7a);
+		margin-bottom: 0.5rem;
+	}
+
+	.geo-legend-list {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0.5rem 1rem;
+	}
+
+	.geo-legend-item {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.5rem;
+	}
+
+	.geo-legend-sample {
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		background-color: var(--cat-color);
+		flex-shrink: 0;
+		margin-top: 0.2rem;
+	}
+
+	.geo-legend-text {
+		line-height: 1.35;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	.geo-legend-desc {
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.geo-legend-note {
+		margin: 0.6rem 0 0;
+		padding-top: 0.5rem;
+		border-top: 1px dashed var(--map-border-soft, #ece7de);
+		font-size: 0.78rem;
+		color: var(--map-muted, #5e6d7a);
+		line-height: 1.4;
+	}
+
+	.geo-attribution-bar {
+		padding: 0.4rem 0.9rem;
+		background: #f1ede4;
+		font-size: 0.74rem;
+		color: var(--map-muted, #5e6d7a);
+		text-align: right;
+		border-top: 1px solid var(--map-border-soft, #ece7de);
+	}
+
+	.geo-attribution-bar a {
+		color: inherit;
+		text-decoration: underline;
+	}
+
+	/* Fiche lieu à droite */
+	.geo-card-panel {
+		position: sticky;
+		top: 4.5rem;
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 10px;
+		box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+		overflow: hidden;
+		max-height: calc(100vh - 5.5rem);
+		overflow-y: auto;
+		scroll-margin-top: 5.5rem;
+	}
+
+	.geo-place-card {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.geo-card-header {
+		position: relative;
+		padding: 1.25rem 1.4rem 0.9rem;
+		background: #faf8f5;
+		border-bottom: 1px solid var(--map-border-soft, #ece7de);
+	}
+
+	.geo-card-badges {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		margin-bottom: 0.6rem;
+	}
+
+	.geo-badge {
+		display: inline-block;
+		padding: 0.2rem 0.6rem;
+		border-radius: 4px;
+		font-size: 0.72rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: #ffffff;
+	}
+
+	.geo-badge-status {
+		background: #4d5b66;
+	}
+
+	.geo-badge-status.status-atteste {
+		background: #2e6047;
+	}
+
+	.geo-badge-status.status-contextuel {
+		background: #235284;
+	}
+
+	.geo-badge-status.status-incertain {
+		background: #8b572a;
+	}
+
+	.geo-card-title {
+		margin: 0;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.35rem;
+		line-height: 1.25;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.geo-card-subtitle {
+		margin: 0.35rem 0 0;
+		font-size: 0.88rem;
+		font-style: italic;
+		color: var(--map-muted, #5e6d7a);
+		line-height: 1.4;
+	}
+
+	.geo-card-close {
+		position: absolute;
+		top: 1rem;
+		right: 1rem;
+		padding: 0.3rem 0.6rem;
+		font-size: 0.78rem;
+	}
+
+	.geo-card-body {
+		padding: 1.25rem 1.4rem;
+		display: flex;
+		flex-direction: column;
+		gap: 1.1rem;
+	}
+
+	.geo-card-section {
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+	}
+
+	.geo-section-heading {
+		margin: 0;
+		font-size: 0.8rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.geo-section-text {
+		margin: 0;
+		font-size: 0.92rem;
+		line-height: 1.55;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	.geo-card-quote {
+		margin: 0.2rem 0;
+		padding: 0.8rem 1rem;
+		background: #faf8f5;
+		border-left: 3px solid #8b572a;
+		border-radius: 0 6px 6px 0;
+		font-family: var(--map-serif, Georgia, serif);
+		font-style: italic;
+		font-size: 0.92rem;
+		line-height: 1.5;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.geo-card-quote cite {
+		display: block;
+		margin-top: 0.4rem;
+		font-family: inherit;
+		font-style: normal;
+		font-size: 0.78rem;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.geo-source-box {
+		padding: 0.7rem 0.9rem;
+		background: #f4f7f9;
+		border-left: 3px solid #235284;
+		border-radius: 0 6px 6px 0;
+	}
+
+	.geo-source-note {
+		font-size: 0.85rem;
+		color: #172b3a;
+	}
+
+	.geo-card-links {
+		display: flex;
+		flex-direction: column;
+		gap: 0.8rem;
+		padding-top: 0.8rem;
+		border-top: 1px solid var(--map-border-soft, #ece7de);
+		font-size: 0.85rem;
+	}
+
+	/* Liste textuelle accessible */
+	.geo-text-alternative {
+		margin-top: 2rem;
+		border-top: 1px solid var(--map-border, #dcd6cb);
+		padding-top: 1.25rem;
+	}
+
+	.geo-alt-details {
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 8px;
+		padding: 0.5rem;
+	}
+
+	.geo-alt-summary {
+		padding: 0.75rem 1rem;
+		cursor: pointer;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.5rem;
+	}
+
+	.geo-alt-summary:focus-visible {
+		outline: 2px solid var(--map-accent, #235284);
+	}
+
+	.geo-alt-title {
+		display: inline;
+		margin: 0;
+		font-size: 1.05rem;
+		font-family: var(--map-serif, Georgia, serif);
+		color: var(--map-ink, #172b3a);
+	}
+
+	.geo-alt-hint {
+		font-size: 0.85rem;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.geo-alt-content {
+		padding: 1rem 1.25rem 1.5rem;
+		border-top: 1px solid var(--map-border-soft, #ece7de);
+	}
+
+	.geo-alt-intro {
+		margin: 0 0 1.2rem;
+		font-size: 0.9rem;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	.geo-alt-list {
+		margin: 0;
+		padding-left: 1.5rem;
+	}
+
+	.geo-alt-item {
+		margin-bottom: 1.5rem;
+		padding-bottom: 1.5rem;
+		border-bottom: 1px dashed var(--map-border-soft, #ece7de);
+	}
+
+	.geo-alt-item:last-child {
+		border-bottom: none;
+		margin-bottom: 0;
+		padding-bottom: 0;
+	}
+
+	.geo-alt-item-header h4 {
+		display: inline;
+		margin: 0 0.5rem 0 0;
+		font-size: 1.15rem;
+		font-family: var(--map-serif, Georgia, serif);
+		color: var(--map-ink, #172b3a);
+	}
+
+	.geo-alt-item-meta {
+		font-size: 0.82rem;
+		font-weight: 600;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.geo-alt-subtitle {
+		margin: 0.25rem 0 0.6rem;
+		font-size: 0.88rem;
+		color: var(--map-ink-soft);
+	}
+
+	.geo-alt-item-body p {
+		margin: 0.4rem 0;
+		font-size: 0.9rem;
+		line-height: 1.55;
+	}
+
+	.geo-alt-item-body blockquote {
+		margin: 0.5rem 0;
+		padding-left: 0.8rem;
+		border-left: 2px solid #8b572a;
+		font-style: italic;
+		font-size: 0.88rem;
+	}
+
+	.geo-alt-source-note {
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.btn-select-place-text {
+		margin-top: 0.5rem;
+		padding: 0.35rem 0.75rem;
+		font-family: inherit;
+		font-size: 0.82rem;
+		color: #172b3a;
+		background: #f5f2eb;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 4px;
+		cursor: pointer;
+	}
+
+	.btn-select-place-text:hover {
+		background: #172b3a;
+		color: #ffffff;
+	}
+
+	/* Marqueurs Leaflet stylés */
+	:global(.graffigny-custom-pin) {
+		background: transparent;
+		border: none;
+	}
+
+	:global(.graffigny-pin-body) {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 30px;
+		height: 30px;
+		border-radius: 50%;
+		background: var(--pin-color, #235284);
+		border: 2px solid #ffffff;
+		box-shadow: 0 2px 7px rgba(0, 0, 0, 0.35);
+		color: #ffffff;
+		font-size: 13px;
+		cursor: pointer;
+		user-select: none;
+		transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
+	}
+
+	:global(.graffigny-pin-body:hover) {
+		transform: scale(1.18);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+		z-index: 900 !important;
+	}
+
+	:global(.graffigny-pin-body.is-selected) {
+		transform: scale(1.3);
+		border-color: #ffd700;
+		box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.6), 0 5px 15px rgba(0, 0, 0, 0.5);
+		z-index: 1000 !important;
+	}
+
+	:global(.graffigny-pin-body.is-dimmed) {
+		opacity: 0.35;
+		transform: scale(0.9);
+	}
+
+	/* Responsive */
+	@media (max-width: 960px) {
+		.geo-main-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.geo-map-element {
+			height: 480px;
+		}
+
+		.geo-card-panel {
+			position: static;
+			max-height: none;
+		}
+
+		.geo-legend-list {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.geo-controls-bar {
+			padding: 0.75rem;
+		}
+
+		.geo-map-element {
+			height: 380px;
+		}
+
+		.geo-card-header {
+			padding: 1rem 1.1rem 0.8rem;
+		}
+
+		.geo-card-body {
+			padding: 1rem 1.1rem;
+		}
+	}
+
+	@media (max-width: 380px) {
+		.geo-map-element {
+			height: 320px;
+		}
+
+		.geo-filter-btn {
+			padding: 0.3rem 0.6rem;
+			font-size: 0.8rem;
+		}
+	}
+</style>
+
+<script>
+	import L from 'leaflet';
+	import 'leaflet/dist/leaflet.css';
+
+	interface PlaceData {
+		id: string;
+		name: string;
+		subtitle: string;
+		category: string;
+		status: string;
+		precision: string;
+		coordinates?: [number, number];
+		trajectoryCoordinates?: [number, number][];
+		pedagogicalSummary: string;
+		narrativeRole: string;
+		literaryAnalysis: string;
+		quotation?: string;
+		quotationReference?: string;
+		historicalSourceNote?: string;
+		characters: string[];
+		steps: string[];
+		themes: string[];
+	}
+
+	interface CategoryMeta {
+		id: string;
+		label: string;
+		color: string;
+		symbol: string;
+		description: string;
+	}
+
+	interface AppData {
+		places: PlaceData[];
+		categories: Record<string, CategoryMeta>;
+		mapConfig: {
+			tileUrl: string;
+			attribution: string;
+			minZoom: number;
+			maxZoom: number;
+			defaultCenter: [number, number];
+			defaultZoom: number;
+		};
+	}
+
+	function initGraffignyMap() {
+		const dataScript = document.getElementById('graffigny-places-data');
+		if (!dataScript) return;
+
+		let appData: AppData;
+		try {
+			appData = JSON.parse(dataScript.textContent || '{}');
+		} catch (e) {
+			console.error('Erreur parsing données géographiques de Graffigny', e);
+			return;
+		}
+
+		const { places, categories, mapConfig } = appData;
+		const mapContainer = document.getElementById('graffigny-leaflet-map');
+		if (!mapContainer) return;
+
+		let selectedPlaceId: string | null = null;
+		let activeFilter: string = 'all';
+
+		// Initialisation Leaflet
+		const map = L.map(mapContainer, {
+			center: mapConfig.defaultCenter,
+			zoom: mapConfig.defaultZoom,
+			minZoom: mapConfig.minZoom,
+			maxZoom: mapConfig.maxZoom,
+			scrollWheelZoom: false,
+		});
+
+		L.tileLayer(mapConfig.tileUrl, {
+			attribution: mapConfig.attribution,
+			maxZoom: mapConfig.maxZoom,
+		}).addTo(map);
+
+		// Dictionnaire des marqueurs et tracé de trajectoire
+		const markersById: Record<string, { marker: L.Marker; el: HTMLElement; place: PlaceData }> = {};
+		let trajectoryLine: L.Polyline | null = null;
+
+		// Création des marqueurs et de la ligne
+		places.forEach((place) => {
+			if (place.category === 'trajet' && place.trajectoryCoordinates) {
+				trajectoryLine = L.polyline(place.trajectoryCoordinates, {
+					color: categories[place.category]?.color || '#4d5b66',
+					weight: 3.5,
+					dashArray: '6, 8',
+					opacity: 0.85,
+				}).addTo(map);
+
+				trajectoryLine.on('click', () => {
+					selectPlace(place.id, { centerMap: false, notify: true });
+				});
+			}
+
+			if (place.coordinates) {
+				const cat = categories[place.category];
+				const pinEl = document.createElement('div');
+				pinEl.className = 'graffigny-pin-body';
+				pinEl.style.setProperty('--pin-color', cat?.color || '#235284');
+				pinEl.setAttribute('role', 'button');
+				pinEl.setAttribute('tabindex', '0');
+				pinEl.setAttribute('aria-label', `${place.name} (${cat?.label})`);
+				pinEl.innerHTML = `<span aria-hidden="true">${cat?.symbol || '📍'}</span>`;
+
+				const customIcon = L.divIcon({
+					html: pinEl,
+					className: 'graffigny-custom-pin',
+					iconSize: [30, 30],
+					iconAnchor: [15, 15],
+				});
+
+				const marker = L.marker(place.coordinates, {
+					icon: customIcon,
+					title: place.name,
+					keyboard: true,
+				}).addTo(map);
+
+				marker.bindPopup(`
+					<div style="font-family: inherit; font-size: 0.9rem; min-width: 200px;">
+						<strong style="color: #172b3a; font-size: 1rem;">${place.name}</strong>
+						<p style="margin: 0.25rem 0 0.4rem; color: #5e6d7a; font-size: 0.82rem;">${place.subtitle}</p>
+						<span style="display: inline-block; padding: 0.15rem 0.5rem; background: ${cat?.color || '#235284'}; color: #fff; border-radius: 3px; font-size: 0.72rem; font-weight: bold;">${cat?.label || ''}</span>
+					</div>
+				`);
+
+				marker.on('click', () => {
+					selectPlace(place.id, { centerMap: false, notify: true });
+				});
+
+				pinEl.addEventListener('click', (e) => {
+					e.stopPropagation();
+					selectPlace(place.id, { centerMap: false, notify: true });
+				});
+
+				pinEl.addEventListener('keydown', (e) => {
+					if (e.key === 'Enter' || e.key === ' ') {
+						e.preventDefault();
+						selectPlace(place.id, { centerMap: true, notify: true });
+					}
+				});
+
+				markersById[place.id] = { marker, el: pinEl, place };
+			}
+		});
+
+		// Mise à jour de la fiche latérale
+		function updateCard(place: PlaceData) {
+			const cat = categories[place.category];
+			const badgeCat = document.getElementById('geo-card-badge-cat');
+			if (badgeCat) {
+				badgeCat.textContent = cat?.label || place.category;
+				badgeCat.style.backgroundColor = cat?.color || '#235284';
+			}
+
+			const badgeStatus = document.getElementById('geo-card-badge-status');
+			if (badgeStatus) {
+				badgeStatus.className = `geo-badge geo-badge-status status-${place.status}`;
+				badgeStatus.textContent =
+					place.status === 'atteste'
+						? 'Lieu attesté'
+						: place.status === 'contextuel'
+							? 'Repère contextuel'
+							: 'Localisation incertaine';
+			}
+
+			const titleEl = document.getElementById('geo-card-title');
+			if (titleEl) titleEl.textContent = place.name;
+
+			const subEl = document.getElementById('geo-card-subtitle');
+			if (subEl) subEl.textContent = place.subtitle;
+
+			const sumEl = document.getElementById('geo-card-summary');
+			if (sumEl) sumEl.textContent = place.pedagogicalSummary;
+
+			const roleEl = document.getElementById('geo-card-role');
+			if (roleEl) roleEl.textContent = place.narrativeRole;
+
+			const anaEl = document.getElementById('geo-card-analysis');
+			if (anaEl) anaEl.textContent = place.literaryAnalysis;
+
+			const quoteBox = document.getElementById('geo-card-quote-box');
+			const quoteText = document.getElementById('geo-card-quote-text');
+			const quoteRef = document.getElementById('geo-card-quote-ref');
+			if (quoteBox && quoteText && quoteRef) {
+				if (place.quotation) {
+					quoteBox.hidden = false;
+					quoteText.textContent = `« ${place.quotation} »`;
+					quoteRef.textContent = `— ${place.quotationReference || ''}`;
+				} else {
+					quoteBox.hidden = true;
+				}
+			}
+
+			const sourceEl = document.getElementById('geo-card-source');
+			if (sourceEl) sourceEl.textContent = place.historicalSourceNote || '';
+
+			// Puces liées (personnages, étapes, thèmes)
+			const charList = document.getElementById('geo-card-characters');
+			if (charList) {
+				charList.innerHTML = place.characters
+					.map(
+						(c) =>
+							`<li><button type="button" class="chip chip--character" data-goto-node="${c}">${c}</button></li>`
+					)
+					.join('');
+			}
+
+			const stepList = document.getElementById('geo-card-steps');
+			if (stepList) {
+				stepList.innerHTML = place.steps
+					.map(
+						(s) =>
+							`<li><button type="button" class="chip chip--step" data-goto-step="${s}">${s}</button></li>`
+					)
+					.join('');
+			}
+
+			const themeList = document.getElementById('geo-card-themes');
+			if (themeList) {
+				themeList.innerHTML = place.themes
+					.map(
+						(t) =>
+							`<li><button type="button" class="chip chip--theme" data-goto-theme="${t}">${t}</button></li>`
+					)
+					.join('');
+			}
+		}
+
+		// Sélection d'un lieu
+		function selectPlace(
+			id: string | null,
+			options: { centerMap?: boolean; notify?: boolean } = {}
+		) {
+			const { centerMap = false, notify = true } = options;
+			selectedPlaceId = id;
+
+			// Marqueurs visuels
+			Object.entries(markersById).forEach(([pId, { el }]) => {
+				const isSelected = pId === id;
+				el.classList.toggle('is-selected', isSelected);
+				el.classList.toggle('is-dimmed', !!id && !isSelected);
+			});
+
+			if (id) {
+				const place = places.find((p) => p.id === id);
+				if (place) {
+					updateCard(place);
+					if (centerMap && place.coordinates) {
+						map.setView(place.coordinates, Math.max(map.getZoom(), 5), { animate: true });
+					}
+				}
+			} else {
+				// Désélection : réinitialiser l'opacité
+				Object.values(markersById).forEach(({ el }) => {
+					el.classList.remove('is-selected');
+					el.classList.remove('is-dimmed');
+				});
+			}
+
+			// Notifier la page globale graffigny.astro pour synchronisation
+			if (notify) {
+				document.getElementById('graffigny-geo-app')?.dispatchEvent(
+					new CustomEvent('geomap:select', {
+						bubbles: true,
+						detail: id ? { kind: 'place', id } : null,
+					})
+				);
+			}
+		}
+
+		// Filtrage des marqueurs par catégorie
+		function applyFilter(catId: string) {
+			activeFilter = catId;
+			document.querySelectorAll<HTMLButtonElement>('[data-geo-filter]').forEach((btn) => {
+				const match = btn.dataset.geoFilter === catId;
+				btn.classList.toggle('is-active', match);
+				btn.setAttribute('aria-pressed', String(match));
+			});
+
+			places.forEach((p) => {
+				const shouldShow = catId === 'all' || p.category === catId;
+				const entry = markersById[p.id];
+				if (entry) {
+					if (shouldShow) {
+						if (!map.hasLayer(entry.marker)) entry.marker.addTo(map);
+					} else {
+						if (map.hasLayer(entry.marker)) map.removeLayer(entry.marker);
+					}
+				}
+			});
+
+			if (trajectoryLine) {
+				const showTrajet = catId === 'all' || catId === 'trajet';
+				if (showTrajet && !map.hasLayer(trajectoryLine)) trajectoryLine.addTo(map);
+				else if (!showTrajet && map.hasLayer(trajectoryLine)) map.removeLayer(trajectoryLine);
+			}
+		}
+
+		// Boutons filtres
+		document.querySelectorAll<HTMLButtonElement>('[data-geo-filter]').forEach((btn) => {
+			btn.addEventListener('click', () => applyFilter(btn.dataset.geoFilter!));
+		});
+
+		// Boutons de recentrage
+		document.getElementById('btn-recenter-geo')?.addEventListener('click', () => {
+			const coords = places.filter((p) => p.coordinates).map((p) => p.coordinates as [number, number]);
+			if (coords.length > 0) {
+				map.fitBounds(L.latLngBounds(coords), { padding: [40, 40] });
+			}
+		});
+
+		document.getElementById('btn-view-transatlantique')?.addEventListener('click', () => {
+			map.setView(mapConfig.defaultCenter, mapConfig.defaultZoom, { animate: true });
+		});
+
+		// Bouton de fermeture de la fiche
+		document.getElementById('geo-card-close-btn')?.addEventListener('click', () => {
+			selectPlace(null, { notify: true });
+		});
+
+		// Clic depuis la liste textuelle
+		document.querySelectorAll<HTMLButtonElement>('[data-select-place-btn]').forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const id = btn.dataset.selectPlaceBtn!;
+				selectPlace(id, { centerMap: true, notify: true });
+				document.getElementById('graffigny-leaflet-map')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			});
+		});
+
+		// Écoute de l'événement de surbrillance venant d'une autre vue (sélection de personnage, étape, thème)
+		const appEl = document.getElementById('graffigny-geo-app')!;
+		appEl.addEventListener('geomap:highlight', ((e: CustomEvent<{ places: string[] } | null>) => {
+			const highlightPlaces = e.detail?.places;
+			if (!highlightPlaces || highlightPlaces.length === 0) {
+				Object.values(markersById).forEach(({ el }) => {
+					el.classList.remove('is-selected');
+					el.classList.remove('is-dimmed');
+				});
+				return;
+			}
+
+			Object.entries(markersById).forEach(([pId, { el }]) => {
+				const isLinked = highlightPlaces.includes(pId);
+				el.classList.toggle('is-selected', isLinked);
+				el.classList.toggle('is-dimmed', !isLinked);
+			});
+
+			// Si un seul lieu est lié, on met à jour la fiche
+			if (highlightPlaces.length === 1) {
+				const single = places.find((p) => p.id === highlightPlaces[0]);
+				if (single) updateCard(single);
+			}
+		}) as EventListener);
+
+		// Écoute de la demande de sélection explicite venant d'une autre vue
+		appEl.addEventListener('geomap:select-request', ((e: CustomEvent<{ id: string }>) => {
+			const id = e.detail?.id;
+			if (id) {
+				selectPlace(id, { centerMap: true, notify: false });
+			}
+		}) as EventListener);
+
+		// Invalidation de la taille lors des transitions de visibilité
+		window.addEventListener('resize', () => map.invalidateSize());
+		document.addEventListener('visibilitychange', () => {
+			if (!document.hidden) map.invalidateSize();
+		});
+
+		// Initialisation avec la fiche du premier lieu sans état forcé sélectionné
+		updateCard(places[0]);
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initGraffignyMap);
+	} else {
+		initGraffignyMap();
+	}
+</script>

@@ -122,7 +122,7 @@ describe('Lettres d’une Péruvienne — modèle de données (src/data/graffign
 		// Chaque personnage a des renvois vers les autres vues dans sa fiche.
 		for (const c of graffignyCharacters) {
 			expect(c.links?.length, c.id).toBeGreaterThan(0);
-			for (const l of c.links!) expect(l.href).toMatch(/^#(etape|theme)-/);
+			for (const l of c.links!) expect(l.href).toMatch(/^#(etape|theme|lieu)-/);
 		}
 	});
 

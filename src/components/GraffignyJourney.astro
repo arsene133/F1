@@ -4,7 +4,7 @@
 // sont rendues côté serveur ; la coordination avec la carte des personnages et
 // la carte des idées est assurée par le script de la page (/graffigny).
 import type { MapNode } from './relationship-map/types';
-import type { GraffignyTheme, NarrativeStep } from '../data/graffigny';
+import { graffignyPlaces, type GraffignyTheme, type NarrativeStep } from '../data/graffigny';
 
 interface Props {
 	steps: NarrativeStep[];
@@ -15,6 +15,7 @@ interface Props {
 const { steps, characters, themes } = Astro.props;
 const nameOf = (id: string) => characters.find((c) => c.id === id)!.label;
 const themeOf = (id: string) => themes.find((t) => t.id === id)!;
+const placeOf = (id: string) => graffignyPlaces.find((p) => p.id === id)!;
 ---
 
 <div class="journey" data-journey>
@@ -90,6 +91,18 @@ const themeOf = (id: string) => themes.find((t) => t.id === id)!;
 								<li>
 									<button type="button" class="chip chip--theme" data-goto-theme={t} style={`--chip-color: ${themeOf(t).color}`}>
 										{themeOf(t).title}
+									</button>
+								</li>
+							))}
+						</ul>
+					</div>
+					<div>
+						<strong>Lieux associés :</strong>
+						<ul class="chip-list">
+							{s.places?.map((pId) => (
+								<li>
+									<button type="button" class="chip chip--place" data-goto-place={pId}>
+										{placeOf(pId)?.name ?? pId}
 									</button>
 								</li>
 							))}

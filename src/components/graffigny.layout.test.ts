@@ -5,7 +5,7 @@ import { spawn, type ChildProcess } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { chromium, type Browser, type Page } from 'playwright';
-import { graffignyCharacters, graffignyRelationships, graffignySources } from '../data/graffigny';
+import { graffignyCharacters, graffignyRelationships, graffignySources, placesOfCharacter } from '../data/graffigny';
 
 const BUILT = existsSync('dist/graffigny/index.html');
 const PORT = 4397;
@@ -80,7 +80,7 @@ describe.skipIf(!BUILT)('Page Graffigny (/graffigny) — cartographie interactiv
 			// Repères essentiels et vues annoncées
 			const facts = await page.locator('.key-facts dt').allTextContents();
 			expect(facts).toEqual(['Autrice', 'Publication', 'Genre', 'Mouvement', 'Parcours']);
-			for (const id of ['vue-personnages', 'vue-parcours', 'vue-idees', 'evolution-zilia', 'revision', 'sources']) {
+			for (const id of ['vue-personnages', 'vue-parcours', 'vue-idees', 'vue-geographie', 'evolution-zilia', 'revision', 'sources']) {
 				expect(await page.locator(`#${id}`).count(), id).toBe(1);
 			}
 			expect(errors).toEqual([]);
@@ -120,8 +120,16 @@ describe.skipIf(!BUILT)('Page Graffigny (/graffigny) — cartographie interactiv
 			expect(await page.locator('[data-selection-status]').textContent()).toContain('Zilia');
 			expect(await page.locator('[data-global-reset]').isEnabled()).toBe(true);
 
-			// Renvois de la fiche vers les autres vues
-			expect(await page.locator('.rm-detail-links a').count()).toBe(14);
+			// Renvois de la fiche vers les autres vues : ses 7 étapes, ses 7 thèmes et ses lieux (carte géographique),
+			// chacun une seule fois et vers une ancre présente dans la page
+			const hrefs = await page.$$eval('.rm-detail-links a', (as) => as.map((a) => a.getAttribute('href')!));
+			expect(hrefs).toEqual(graffignyCharacters.find((c) => c.id === 'zilia')!.links!.map((l) => l.href));
+			expect(new Set(hrefs).size, 'aucun doublon').toBe(hrefs.length);
+			expect(hrefs.filter((h) => h.startsWith('#etape-'))).toHaveLength(7);
+			expect(hrefs.filter((h) => h.startsWith('#theme-'))).toHaveLength(7);
+			expect(hrefs.filter((h) => h.startsWith('#lieu-'))).toEqual(placesOfCharacter('zilia').map((id) => `#lieu-${id}`));
+			expect(hrefs).toHaveLength(14 + placesOfCharacter('zilia').length);
+			for (const href of hrefs) expect(await page.locator(href).count(), href).toBe(1);
 
 			await page.locator('[data-panel-reset]').click();
 			expect(await pressed(page, '.rm-node')).toEqual([]);
@@ -286,6 +294,80 @@ describe.skipIf(!BUILT)('Page Graffigny (/graffigny) — cartographie interactiv
 			const ideaWidth = (await theme(page, 'regard').boundingBox())!.width;
 			expect(ideaWidth).toBeGreaterThan(width * 0.7);
 			expect(errors).toEqual([]);
+		} finally {
+			await page.close();
+		}
+	});
+
+	test('quatrième vue : présence de la carte Leaflet, des filtres, des boutons de vue et de la légende', async () => {
+		const { page, errors } = await openPage();
+		try {
+			expect(await page.locator('#vue-geographie').isVisible()).toBe(true);
+			expect(await page.locator('#graffigny-leaflet-map').isVisible()).toBe(true);
+			expect(await page.locator('.geo-filter-btn').count()).toBe(5); // all + 4 categories
+			expect(await page.locator('#btn-recenter-geo').isVisible()).toBe(true);
+			expect(await page.locator('#btn-view-transatlantique').isVisible()).toBe(true);
+			expect(await page.locator('.geo-legend-item').count()).toBe(4);
+			expect(await page.locator('.geo-alt-item').count()).toBe(9);
+			expect(errors).toEqual([]);
+		} finally {
+			await page.close();
+		}
+	});
+
+	test('géographie : sélection d’un lieu, mise à jour de la fiche, synchronisation globale et fermeture', async () => {
+		const { page, errors } = await openPage();
+		try {
+			// Déplier la liste accessible si fermée
+			await page.locator('.geo-alt-summary').click();
+			// Clic sur le marqueur dans la liste textuelle accessible
+			await page.locator('[data-select-place-btn="temple-du-soleil"]').click();
+			expect(await page.locator('#geo-card-title').textContent()).toContain('Le Temple du Soleil');
+			expect(await page.locator('#geo-card-badge-status').textContent()).toContain('Lieu attesté');
+			expect(await page.locator('[data-selection-status]').textContent()).toContain('Le Temple du Soleil');
+			expect(await page.locator('[data-global-reset]').isEnabled()).toBe(true);
+
+			// Synchronisation vers les autres vues : étape 'arrachement' et thème 'cultures' mis en évidence
+			expect((await linked(page, '[data-step-id]', 'data-step-id'))).toContain('arrachement');
+			expect((await linked(page, '[data-theme-id]', 'data-theme-id'))).toContain('cultures');
+
+			// Fermer la fiche depuis le bouton fermer
+			await page.locator('#geo-card-close-btn').click();
+			expect(await page.locator('[data-global-reset]').isEnabled()).toBe(false);
+			expect(errors).toEqual([]);
+		} finally {
+			await page.close();
+		}
+	});
+
+	test('géographie : filtrage par catégorie masque et affiche les marqueurs', async () => {
+		const { page } = await openPage();
+		try {
+			const trajetBtn = page.locator('[data-geo-filter="trajet"]');
+			await trajetBtn.click();
+			expect(await trajetBtn.getAttribute('aria-pressed')).toBe('true');
+			expect(await page.locator('[data-geo-filter="all"]').getAttribute('aria-pressed')).toBe('false');
+
+			// Réinitialisation par 'all'
+			await page.locator('[data-geo-filter="all"]').click();
+			expect(await page.locator('[data-geo-filter="all"]').getAttribute('aria-pressed')).toBe('true');
+		} finally {
+			await page.close();
+		}
+	});
+
+	test('synchronisation bidirectionnelle : sélectionner un thème ou une étape met en valeur ses lieux géographiques', async () => {
+		const { page } = await openPage();
+		try {
+			await step(page, 'arrachement').click();
+			expect(await page.locator('[data-selection-status]').textContent()).toContain('L’arrachement au Pérou');
+			// Vérifier que le statut mentionne les lieux liés
+			expect(await page.locator('[data-selection-status]').textContent()).toContain('lieu');
+
+			// « Tout afficher » réinitialise l'ensemble des 4 vues
+			await page.locator('[data-global-reset]').click();
+			expect(await page.locator('[data-global-reset]').isEnabled()).toBe(false);
+			expect(await page.locator('[data-selection-status]').textContent()).toContain('Rien n’est sélectionné');
 		} finally {
 			await page.close();
 		}

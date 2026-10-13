@@ -181,6 +181,7 @@ export interface NarrativeStep {
 	characters: string[];
 	relationships: string[];
 	themes: string[];
+	places?: string[];
 	quote?: { text: string; ref: string };
 }
 
@@ -328,11 +329,12 @@ export interface GraffignyTheme {
 	relationships: string[];
 	/** Étapes liées : déduites des étapes (voir `stepsOfTheme`). */
 	steps: string[];
+	places?: string[];
 }
 
 const ex = (quote: Quote): ThemeExample => ({ text: quote.text, quote: true, ref: quoteRef(quote) });
 
-type ThemeInput = Omit<GraffignyTheme, 'steps'>;
+type ThemeInput = Omit<GraffignyTheme, 'steps' | 'places'>;
 
 const themeInputs: ThemeInput[] = [
 	{
@@ -957,13 +959,29 @@ export const graffignyRelationships: MapRelationship[] = [
 ];
 
 // --------------------------------------------------------------------------
+import { graffignyPlaces, type GraffignyPlace } from './graffigny-places';
+
+export * from './graffigny-places';
+
 // Correspondances entre les vues
 // --------------------------------------------------------------------------
 
 /** Étapes liées à un thème : celles qui le mentionnent (source unique : les étapes). */
 export const stepsOfTheme = (themeId: string) => narrativeSteps.filter((s) => s.themes.includes(themeId)).map((s) => s.id);
 
-export const graffignyThemes: GraffignyTheme[] = themeInputs.map((t) => ({ ...t, steps: stepsOfTheme(t.id) }));
+export const placesOfStep = (id: string) => graffignyPlaces.filter((p) => p.steps.includes(id)).map((p) => p.id);
+export const placesOfTheme = (id: string) => graffignyPlaces.filter((p) => p.themes.includes(id)).map((p) => p.id);
+export const placesOfCharacter = (id: string) => graffignyPlaces.filter((p) => p.characters.includes(id)).map((p) => p.id);
+
+for (const s of narrativeSteps) {
+	s.places = placesOfStep(s.id);
+}
+
+export const graffignyThemes: GraffignyTheme[] = themeInputs.map((t) => ({
+	...t,
+	steps: stepsOfTheme(t.id),
+	places: placesOfTheme(t.id),
+}));
 
 const stepsOfCharacter = (id: string) => narrativeSteps.filter((s) => s.characters.includes(id));
 const themesOfCharacter = (id: string) => graffignyThemes.filter((t) => t.characters.includes(id));
@@ -971,23 +989,31 @@ const endsOf = (r: MapRelationship) => [r.source, ...(Array.isArray(r.target) ? 
 
 const stepLink = (s: NarrativeStep): MapLink => ({ href: `#etape-${s.id}`, label: `Étape ${s.number} : ${s.title}` });
 const themeLink = (t: GraffignyTheme): MapLink => ({ href: `#theme-${t.id}`, label: `Thème : ${t.title}` });
+const placeLink = (p: GraffignyPlace): MapLink => ({ href: `#lieu-${p.id}`, label: `Lieu : ${p.name}` });
 
 export const graffignyCharacters: MapNode[] = characterInputs.map((c) => ({
 	...c,
-	links: [...stepsOfCharacter(c.id).map(stepLink), ...themesOfCharacter(c.id).map(themeLink)],
+	links: [
+		...stepsOfCharacter(c.id).map(stepLink),
+		...themesOfCharacter(c.id).map(themeLink),
+		...graffignyPlaces.filter((p) => p.characters.includes(c.id)).map(placeLink),
+	],
 }));
 
 for (const r of graffignyRelationships) {
 	const steps = narrativeSteps.filter((s) => s.relationships.includes(r.id!));
 	const themes = graffignyThemes.filter((t) => t.relationships.includes(r.id!));
-	r.links = [...steps.map(stepLink), ...themes.map(themeLink)];
+	const ends = endsOf(r);
+	const places = graffignyPlaces.filter((p) => ends.some((c) => p.characters.includes(c)));
+	r.links = [...steps.map(stepLink), ...themes.map(themeLink), ...places.map(placeLink)];
 }
 
-interface Linked {
+export interface LinkedElements {
 	characters: string[];
 	relationships: string[];
 	steps: string[];
 	themes: string[];
+	places: string[];
 }
 
 /** Index transmis au script de la page : ce que chaque élément met en évidence ailleurs. */
@@ -1002,39 +1028,60 @@ export const crossLinkIndex = {
 		),
 		step: Object.fromEntries(narrativeSteps.map((s) => [s.id, `${s.number}. ${s.title}`])),
 		theme: Object.fromEntries(graffignyThemes.map((t) => [t.id, t.title])),
+		place: Object.fromEntries(graffignyPlaces.map((p) => [p.id, p.name])),
 	},
 	nodes: Object.fromEntries(
-		characterInputs.map((c): [string, Linked] => [
+		characterInputs.map((c): [string, LinkedElements] => [
 			c.id,
 			{
 				characters: [c.id],
 				relationships: graffignyRelationships.filter((r) => endsOf(r).includes(c.id)).map((r) => r.id!),
 				steps: stepsOfCharacter(c.id).map((s) => s.id),
 				themes: themesOfCharacter(c.id).map((t) => t.id),
+				places: placesOfCharacter(c.id),
 			},
 		]),
 	),
 	edges: Object.fromEntries(
-		graffignyRelationships.map((r): [string, Linked] => [
-			r.id!,
-			{
-				characters: endsOf(r),
-				relationships: [r.id!],
-				steps: narrativeSteps.filter((s) => s.relationships.includes(r.id!)).map((s) => s.id),
-				themes: graffignyThemes.filter((t) => t.relationships.includes(r.id!)).map((t) => t.id),
-			},
-		]),
+		graffignyRelationships.map((r): [string, LinkedElements] => {
+			const ends = endsOf(r);
+			const linkedPlaces = Array.from(new Set(ends.flatMap(placesOfCharacter)));
+			return [
+				r.id!,
+				{
+					characters: ends,
+					relationships: [r.id!],
+					steps: narrativeSteps.filter((s) => s.relationships.includes(r.id!)).map((s) => s.id),
+					themes: graffignyThemes.filter((t) => t.relationships.includes(r.id!)).map((t) => t.id),
+					places: linkedPlaces,
+				},
+			];
+		}),
 	),
 	steps: Object.fromEntries(
-		narrativeSteps.map((s): [string, Linked] => [
+		narrativeSteps.map((s): [string, LinkedElements] => [
 			s.id,
-			{ characters: s.characters, relationships: s.relationships, steps: [s.id], themes: s.themes },
+			{ characters: s.characters, relationships: s.relationships, steps: [s.id], themes: s.themes, places: placesOfStep(s.id) },
 		]),
 	),
 	themes: Object.fromEntries(
-		graffignyThemes.map((t): [string, Linked] => [
+		graffignyThemes.map((t): [string, LinkedElements] => [
 			t.id,
-			{ characters: t.characters, relationships: t.relationships, steps: t.steps, themes: [t.id] },
+			{ characters: t.characters, relationships: t.relationships, steps: t.steps, themes: [t.id], places: placesOfTheme(t.id) },
+		]),
+	),
+	places: Object.fromEntries(
+		graffignyPlaces.map((p): [string, LinkedElements] => [
+			p.id,
+			{
+				characters: p.characters,
+				relationships: graffignyRelationships
+					.filter((r) => endsOf(r).some((c) => p.characters.includes(c)))
+					.map((r) => r.id!),
+				steps: p.steps,
+				themes: p.themes,
+				places: [p.id],
+			},
 		]),
 	),
 };
