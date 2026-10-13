@@ -1211,6 +1211,31 @@ export const montesquieuComparison = {
 	},
 };
 
+export const peruKnowledgeNote = {
+	title: 'Que savait vraiment Graffigny du Pérou ?',
+	badge: 'Contexte historique & Sources',
+	intro:
+		'Françoise de Graffigny n’a jamais visité le Pérou. Elle s’appuie notamment sur les récits de l’Inca Garcilaso de la Vega, qu’elle lit avant la publication de l’édition augmentée des Lettres d’une Péruvienne en 1752. Son portrait de la civilisation inca mêle ainsi des informations historiques, les représentations européennes de son époque et un idéal moral qui lui permet de critiquer la société française.',
+	sections: [
+		{
+			title: 'Des connaissances historiques',
+			text: 'Graffigny évoque notamment le culte du Soleil, les institutions incas, la conquête espagnole et les quipos, des cordons noués qui servaient notamment à conserver et traiter des informations.',
+		},
+		{
+			title: 'Une connaissance indirecte',
+			text: 'Son savoir passe par des récits et des ouvrages. Son introduction historique de 1752 donne au roman une apparence documentaire, mais ne constitue pas une enquête ethnographique menée sur place.',
+		},
+		{
+			title: 'Une transformation romanesque',
+			text: 'Dans le roman, Zilia utilise les quipos pour transmettre ses sentiments à Aza. Cet usage épistolaire intime relève de la fiction : il ne faut pas le confondre avec les usages historiques documentés des quipos.',
+		},
+		{
+			title: 'Pourquoi est-ce important ?',
+			text: 'Le Pérou imaginé par Graffigny sert aussi à interroger les valeurs de la société française. Il faut donc distinguer les informations historiques, les représentations héritées des sources de l’époque et les choix littéraires de l’autrice.',
+		},
+	],
+};
+
 export const graffignySources = {
 	editionNote:
 		'Édition suivie : le texte original de 1747 (38 lettres), transcription validée de Wikisource ; les citations en conservent l’orthographe (« François » pour « Français », « connoissance », etc.). L’édition augmentée de 1752 (41 lettres), au programme avec l’Introduction historique et les lettres XXVIII, XXIX, XXX et XXXIV, a été consultée sur le fac-similé numérisé : après la lettre XXVII, sa numérotation est décalée, et les deux numéros sont alors indiqués. Les ajouts de 1752 sont résumés, non cités.',

@@ -17,6 +17,7 @@ import {
 	keyFacts,
 	montesquieuComparison,
 	narrativeSteps,
+	peruKnowledgeNote,
 	revisionQuestions,
 	ziliaEvolution,
 } from '../data/graffigny';
@@ -291,6 +292,29 @@ const pageDescription =
 							<span class="status-badge status-societe">Histoire sociale</span> et
 							<span class="status-badge status-lumieres">Débat des Lumières</span> éclairent la condition féminine et les cercles philosophiques.
 						</div>
+
+						<!-- Note repliée : Ce que Graffigny savait du Pérou -->
+						<details class="peru-knowledge-note" id="note-sources-perou" aria-labelledby="peru-knowledge-title">
+							<summary class="peru-knowledge-summary">
+								<span class="peru-knowledge-badge">{peruKnowledgeNote.badge}</span>
+								<h3 class="peru-knowledge-title" id="peru-knowledge-title">{peruKnowledgeNote.title}</h3>
+								<span class="peru-knowledge-toggle" aria-hidden="true">
+									<span class="toggle-more">Déplier ▾</span>
+									<span class="toggle-less">Replier ▴</span>
+								</span>
+							</summary>
+							<div class="peru-knowledge-content">
+								<p class="peru-knowledge-intro">{peruKnowledgeNote.intro}</p>
+								<div class="peru-knowledge-grid">
+									{peruKnowledgeNote.sections.map((sec) => (
+										<div class="peru-knowledge-item">
+											<h4 class="peru-knowledge-item-title">{sec.title}</h4>
+											<p>{sec.text}</p>
+										</div>
+									))}
+								</div>
+							</div>
+						</details>
 					</header>
 
 					<div class="iconography-cards-grid">
@@ -1627,7 +1651,149 @@ const pageDescription =
 		color: var(--map-ink);
 	}
 
+	/* Note pédagogique repliable : sources et connaissances du Pérou */
+	.peru-knowledge-note {
+		margin: 1.5rem auto 0;
+		max-width: 960px;
+		background: #ffffff;
+		border: 1px solid var(--map-border);
+		border-left: 4px solid #235284;
+		border-radius: 8px;
+		box-shadow: 0 2px 8px rgba(23, 43, 58, 0.04);
+		transition: box-shadow 0.2s ease, border-color 0.2s ease;
+		text-align: left;
+	}
+
+	.peru-knowledge-note[open] {
+		box-shadow: 0 4px 14px rgba(23, 43, 58, 0.08);
+	}
+
+	.peru-knowledge-summary {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.6rem 0.85rem;
+		padding: 1.1rem 1.35rem;
+		cursor: pointer;
+		user-select: none;
+		list-style: none;
+		background: #fbf9f4;
+		border-radius: 4px;
+		transition: background-color 0.15s ease;
+	}
+
+	.peru-knowledge-summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.peru-knowledge-summary:hover {
+		background: rgba(35, 82, 132, 0.06);
+	}
+
+	.peru-knowledge-summary:focus-visible {
+		outline: 2px solid #235284;
+		outline-offset: 2px;
+	}
+
+	.peru-knowledge-badge {
+		font-size: 0.72rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		padding: 0.2rem 0.55rem;
+		border-radius: 4px;
+		background: rgba(35, 82, 132, 0.1);
+		color: #235284;
+		border: 1px solid rgba(35, 82, 132, 0.25);
+	}
+
+	.peru-knowledge-title {
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.15rem;
+		font-weight: 600;
+		color: var(--map-ink);
+		margin: 0;
+		flex: 1 1 auto;
+	}
+
+	.peru-knowledge-toggle {
+		font-size: 0.82rem;
+		font-weight: 600;
+		color: var(--map-muted);
+		transition: color 0.15s ease;
+	}
+
+	.peru-knowledge-note[open] .peru-knowledge-toggle {
+		color: #235284;
+	}
+
+	.peru-knowledge-note .toggle-less {
+		display: none;
+	}
+
+	.peru-knowledge-note[open] .toggle-more {
+		display: none;
+	}
+
+	.peru-knowledge-note[open] .toggle-less {
+		display: inline;
+	}
+
+	.peru-knowledge-content {
+		padding: 1.25rem 1.4rem 1.5rem;
+		border-top: 1px solid var(--map-border-soft);
+	}
+
+	.peru-knowledge-intro {
+		margin: 0 0 1.25rem;
+		font-size: 0.95rem;
+		line-height: 1.65;
+		color: var(--map-ink);
+	}
+
+	.peru-knowledge-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1.15rem;
+	}
+
+	@media (min-width: 720px) {
+		.peru-knowledge-grid {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	.peru-knowledge-item {
+		background: #fbf9f4;
+		border: 1px solid var(--map-border-soft);
+		border-radius: 6px;
+		padding: 1rem 1.15rem;
+	}
+
+	.peru-knowledge-item-title {
+		margin: 0 0 0.45rem;
+		font-size: 0.95rem;
+		font-weight: 700;
+		color: #235284;
+		font-family: var(--map-serif, Georgia, serif);
+	}
+
+	.peru-knowledge-item p {
+		margin: 0;
+		font-size: 0.88rem;
+		line-height: 1.55;
+		color: var(--map-ink-soft);
+	}
+
 	@media (max-width: 640px) {
+		.peru-knowledge-summary {
+			padding: 0.9rem 1rem;
+		}
+
+		.peru-knowledge-content {
+			padding: 1rem 1rem 1.25rem;
+		}
+
 		.iconography-card {
 			padding: 1.1rem 1rem;
 		}

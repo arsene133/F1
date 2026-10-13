@@ -496,4 +496,54 @@ describe.skipIf(!BUILT)('Page Graffigny (/graffigny) — cartographie interactiv
 			await page.close();
 		}
 	});
+
+	test('note pédagogique repliée sur les connaissances de Graffigny concernant le Pérou', async () => {
+		const { page, errors } = await openPage();
+		try {
+			const note = page.locator('details.peru-knowledge-note');
+			expect(await note.count()).toBe(1);
+
+			// Titre et badge
+			const title = page.locator('#peru-knowledge-title');
+			expect(await title.textContent()).toBe('Que savait vraiment Graffigny du Pérou ?');
+
+			// Repliée par défaut
+			const isOpenByDefault = await note.evaluate((el: HTMLDetailsElement) => el.open);
+			expect(isOpenByDefault).toBe(false);
+
+			const content = note.locator('.peru-knowledge-content');
+			expect(await content.isVisible()).toBe(false);
+
+			// Ouverture au clic sur le summary
+			const summary = note.locator('summary.peru-knowledge-summary');
+			await summary.click();
+
+			const isOpenAfterClick = await note.evaluate((el: HTMLDetailsElement) => el.open);
+			expect(isOpenAfterClick).toBe(true);
+			expect(await content.isVisible()).toBe(true);
+
+			// Vérification des 3 niveaux de contenu + pourquoi est-ce important
+			const text = await content.textContent();
+			expect(text).toContain('Des connaissances historiques');
+			expect(text).toContain('Une connaissance indirecte');
+			expect(text).toContain('Une transformation romanesque');
+			expect(text).toContain('Pourquoi est-ce important ?');
+
+			// Vérification des éléments textuels clés
+			expect(text).toContain('culte du Soleil');
+			expect(text).toContain('quipos');
+			expect(text).toContain('Garcilaso de la Vega');
+			expect(text).toContain('Aza');
+
+			// Fermeture au second clic
+			await summary.click();
+			const isOpenAfterSecondClick = await note.evaluate((el: HTMLDetailsElement) => el.open);
+			expect(isOpenAfterSecondClick).toBe(false);
+			expect(await content.isVisible()).toBe(false);
+
+			expect(errors).toEqual([]);
+		} finally {
+			await page.close();
+		}
+	});
 });

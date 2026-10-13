@@ -11,6 +11,7 @@ import {
 	letterRef,
 	montesquieuComparison,
 	narrativeSteps,
+	peruKnowledgeNote,
 	quotes,
 	revisionQuestions,
 	roman,
@@ -240,6 +241,39 @@ describe('Lettres d’une Péruvienne — modèle de données (src/data/graffign
 		expect(ids).toContain('doc-quipucamayoc-guaman-poma'); // Source indigène (Guaman Poma)
 		expect(ids).toContain('doc-chardin-institutrice'); // Éducation des filles au XVIIIe siècle
 		expect(ids).toContain('doc-salon-geoffrin-lemonnier'); // Sociabilité des salons
+	});
+
+	test('note pédagogique sur les connaissances de Graffigny concernant le Pérou', () => {
+		expect(peruKnowledgeNote.title).toBe('Que savait vraiment Graffigny du Pérou ?');
+		expect(peruKnowledgeNote.badge).toBeTruthy();
+		expect(peruKnowledgeNote.intro).toContain('n’a jamais visité le Pérou');
+		expect(peruKnowledgeNote.intro).toContain('Garcilaso de la Vega');
+
+		// Présence des sous-parties requises
+		const titles = peruKnowledgeNote.sections.map((s) => s.title);
+		expect(titles).toContain('Des connaissances historiques');
+		expect(titles).toContain('Une connaissance indirecte');
+		expect(titles).toContain('Une transformation romanesque');
+		expect(titles).toContain('Pourquoi est-ce important ?');
+
+		// Contenu historique
+		const hist = peruKnowledgeNote.sections.find((s) => s.title === 'Des connaissances historiques')!;
+		expect(hist.text).toContain('culte du Soleil');
+		expect(hist.text).toContain('quipos');
+
+		// Contenu indirect
+		const indir = peruKnowledgeNote.sections.find((s) => s.title === 'Une connaissance indirecte')!;
+		expect(indir.text).toContain('récits et des ouvrages');
+		expect(indir.text).toContain('1752');
+
+		// Transformation romanesque
+		const trans = peruKnowledgeNote.sections.find((s) => s.title === 'Une transformation romanesque')!;
+		expect(trans.text).toContain('fiction');
+		expect(trans.text).toContain('Aza');
+
+		// Portée critique
+		const why = peruKnowledgeNote.sections.find((s) => s.title === 'Pourquoi est-ce important ?')!;
+		expect(why.text).toContain('interroger les valeurs de la société française');
 	});
 });
 
