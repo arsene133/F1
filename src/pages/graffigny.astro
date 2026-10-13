@@ -19,6 +19,7 @@ import {
 	narrativeSteps,
 	peruKnowledgeNote,
 	revisionQuestions,
+	sevigneComparisonNote,
 	ziliaEvolution,
 } from '../data/graffigny';
 import '../styles/graffigny.css';
@@ -270,6 +271,65 @@ const pageDescription =
 								</details>
 							</div>
 						</div>
+
+						<!-- E. Note pédagogique repliée : Sévigné et Graffigny (de la correspondance au roman épistolaire) -->
+						<details class="peru-knowledge-note sevigne-epistolary-note" id="note-sevigne-graffigny" aria-labelledby="sevigne-epistolary-title">
+							<summary class="peru-knowledge-summary">
+								<span class="peru-knowledge-badge">{sevigneComparisonNote.badge}</span>
+								<h3 class="peru-knowledge-title" id="sevigne-epistolary-title">{sevigneComparisonNote.title}</h3>
+								<span class="peru-knowledge-toggle" aria-hidden="true">
+									<span class="toggle-more">Déplier ▾</span>
+									<span class="toggle-less">Replier ▴</span>
+								</span>
+							</summary>
+							<div class="peru-knowledge-content">
+								<p class="peru-knowledge-intro">{sevigneComparisonNote.intro}</p>
+
+								<div class="peru-knowledge-grid">
+									<!-- Deux autrices, deux statuts de la lettre -->
+									{sevigneComparisonNote.authors.map((author) => (
+										<div class="peru-knowledge-item">
+											<h4 class="peru-knowledge-item-title">{author.name}</h4>
+											<p>{author.text}</p>
+										</div>
+									))}
+
+									<!-- Ce qui les rapproche -->
+									<div class="peru-knowledge-item">
+										<h4 class="peru-knowledge-item-title">{sevigneComparisonNote.similarities.title}</h4>
+										<ul class="epistolary-note-list">
+											{sevigneComparisonNote.similarities.points.map((pt) => (
+												<li>{pt}</li>
+											))}
+										</ul>
+									</div>
+
+									<!-- Ce qui les distingue -->
+									<div class="peru-knowledge-item">
+										<h4 class="peru-knowledge-item-title">{sevigneComparisonNote.differences.title}</h4>
+										<ul class="epistolary-note-list">
+											{sevigneComparisonNote.differences.points.map((pt) => (
+												<li>
+													<strong>{pt.label} :</strong> {pt.text}
+												</li>
+											))}
+										</ul>
+									</div>
+								</div>
+
+								<!-- Utilité de la comparaison -->
+								<div class="epistolary-note-utility">
+									<h4 class="peru-knowledge-item-title">{sevigneComparisonNote.utility.title}</h4>
+									<p>{sevigneComparisonNote.utility.text}</p>
+								</div>
+
+								<!-- Question de lecture finale -->
+								<div class="epistolary-note-question">
+									<strong>{sevigneComparisonNote.readingQuestion.label} :</strong>
+									<p>« {sevigneComparisonNote.readingQuestion.question} »</p>
+								</div>
+							</div>
+						</details>
 					</div>
 				</section>
 
@@ -1783,6 +1843,64 @@ const pageDescription =
 		font-size: 0.88rem;
 		line-height: 1.55;
 		color: var(--map-ink-soft);
+	}
+
+	.epistolary-note-list {
+		margin: 0;
+		padding-left: 1.2rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.45rem;
+		font-size: 0.88rem;
+		line-height: 1.5;
+		color: var(--map-ink-soft);
+	}
+
+	.epistolary-note-list strong {
+		color: var(--map-ink);
+	}
+
+	.epistolary-note-utility {
+		margin-top: 1.25rem;
+		padding: 1rem 1.15rem;
+		background: #fbf9f4;
+		border: 1px solid var(--map-border-soft);
+		border-radius: 6px;
+	}
+
+	.epistolary-note-utility p {
+		margin: 0;
+		font-size: 0.88rem;
+		line-height: 1.55;
+		color: var(--map-ink-soft);
+	}
+
+	.epistolary-note-question {
+		margin-top: 1.25rem;
+		background: #f5f8fa;
+		border: 1px solid #d8e3eb;
+		border-left: 4px solid #235284;
+		border-radius: 6px;
+		padding: 0.95rem 1.1rem;
+		font-size: 0.92rem;
+		line-height: 1.55;
+	}
+
+	.epistolary-note-question strong {
+		color: #235284;
+		font-size: 0.82rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		display: block;
+		margin-bottom: 0.35rem;
+	}
+
+	.epistolary-note-question p {
+		margin: 0;
+		color: var(--map-ink);
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1rem;
+		font-style: italic;
 	}
 
 	@media (max-width: 640px) {

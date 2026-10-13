@@ -15,6 +15,7 @@ import {
 	quotes,
 	revisionQuestions,
 	roman,
+	sevigneComparisonNote,
 } from './graffigny';
 
 const characterIds = new Set(graffignyCharacters.map((c) => c.id));
@@ -274,6 +275,70 @@ describe('Lettres d’une Péruvienne — modèle de données (src/data/graffign
 		// Portée critique
 		const why = peruKnowledgeNote.sections.find((s) => s.title === 'Pourquoi est-ce important ?')!;
 		expect(why.text).toContain('interroger les valeurs de la société française');
+	});
+
+	test('note pédagogique comparant Madame de Sévigné et Françoise de Graffigny', () => {
+		// Titre et badge
+		expect(sevigneComparisonNote.title).toBe(
+			'De Madame de Sévigné à Graffigny : de la correspondance au roman épistolaire',
+		);
+		expect(sevigneComparisonNote.badge).toBeTruthy();
+
+		// Distinction explicite entre correspondance réelle et fictive
+		expect(sevigneComparisonNote.intro).toContain('correspondance personnelle réelle');
+		expect(sevigneComparisonNote.intro).toContain('roman épistolaire');
+
+		// Présence des deux autrices avec dates et titres d'œuvres
+		const sevigne = sevigneComparisonNote.authors.find((a) => a.name.includes('Sévigné'))!;
+		expect(sevigne).toBeDefined();
+		expect(sevigne.name).toContain('1626–1696');
+		expect(sevigne.text).toContain('correspondance réelle');
+		expect(sevigne.text).toContain('Madame de Grignan');
+		expect(sevigne.text).toContain('sans avoir été conçues initialement comme un roman');
+
+		const graffigny = sevigneComparisonNote.authors.find((a) => a.name.includes('Graffigny'))!;
+		expect(graffigny).toBeDefined();
+		expect(graffigny.name).toContain('1695–1758');
+		expect(graffigny.text).toContain('Lettres d’une Péruvienne');
+		expect(graffigny.text).toContain('1747');
+		expect(graffigny.text).toContain('1752');
+		expect(graffigny.text).toContain('correspondance fictive');
+		expect(graffigny.text).toContain('Zilia');
+		expect(graffigny.text).toContain('Aza');
+
+		// Ce qui les rapproche
+		expect(sevigneComparisonNote.similarities.title).toBe('Ce qui les rapproche');
+		expect(sevigneComparisonNote.similarities.points.length).toBeGreaterThanOrEqual(4);
+		const similaritiesText = sevigneComparisonNote.similarities.points.join(' ');
+		expect(similaritiesText).toContain('voix féminine');
+		expect(similaritiesText).toContain('sentiments');
+
+		// Ce qui les distingue
+		expect(sevigneComparisonNote.differences.title).toBe('Ce qui les distingue');
+		const diffLabels = sevigneComparisonNote.differences.points.map((p) => p.label);
+		expect(diffLabels).toContain('Sévigné');
+		expect(diffLabels).toContain('Graffigny');
+		expect(diffLabels).toContain('Le point de vue');
+
+		const diffSevigne = sevigneComparisonNote.differences.points.find((p) => p.label === 'Sévigné')!;
+		expect(diffSevigne.text).toContain('correspondance réelle');
+
+		const diffGraffigny = sevigneComparisonNote.differences.points.find((p) => p.label === 'Graffigny')!;
+		expect(diffGraffigny.text).toContain('correspondance fictive');
+
+		const diffPdv = sevigneComparisonNote.differences.points.find((p) => p.label === 'Le point de vue')!;
+		expect(diffPdv.text).toContain('propre milieu social');
+		expect(diffPdv.text).toContain('étrangère');
+
+		// Pourquoi cette comparaison est-elle utile
+		expect(sevigneComparisonNote.utility.title).toBe('Pourquoi cette comparaison est-elle utile ?');
+		expect(sevigneComparisonNote.utility.text).toContain('forme épistolaire');
+		expect(sevigneComparisonNote.utility.text).toContain('critique sociale');
+
+		// Question de lecture finale
+		expect(sevigneComparisonNote.readingQuestion.question).toBe(
+			'Comment le fait de confier le récit à une personne étrangère transforme-t-il notre regard sur la société française dans Lettres d’une Péruvienne ?',
+		);
 	});
 });
 

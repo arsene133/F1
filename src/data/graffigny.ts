@@ -1236,6 +1236,58 @@ export const peruKnowledgeNote = {
 	],
 };
 
+export const sevigneComparisonNote = {
+	title: 'De Madame de Sévigné à Graffigny : de la correspondance au roman épistolaire',
+	badge: 'Genre épistolaire & Histoire littéraire',
+	intro:
+		'Pour des élèves de seconde, comparer Madame de Sévigné et Françoise de Graffigny permet de comprendre la distinction essentielle entre la lettre vécue, issue d’une correspondance personnelle réelle, et la lettre inventée, matrice du roman épistolaire au siècle des Lumières.',
+	authors: [
+		{
+			name: 'Madame de Sévigné (1626–1696)',
+			text: 'Sa correspondance réelle, notamment avec sa fille Madame de Grignan, évoque les relations familiales, les événements et la vie sociale de son époque. Ses lettres sont devenues une œuvre littéraire par leur style et la richesse de leurs observations, sans avoir été conçues initialement comme un roman.',
+		},
+		{
+			name: 'Françoise de Graffigny (1695–1758)',
+			text: 'Dans Lettres d’une Péruvienne, publié en 1747 puis augmenté en 1752, Graffigny construit une correspondance fictive. Zilia, jeune Péruvienne arrachée à son pays, écrit notamment à Aza et découvre progressivement la société française.',
+		},
+	],
+	similarities: {
+		title: 'Ce qui les rapproche',
+		points: [
+			'Une voix féminine occupe le centre de l’écriture.',
+			'Les sentiments, l’absence et les relations humaines ont une place importante.',
+			'Les lettres donnent à voir les usages et les contradictions de leur époque.',
+			'Le destinataire influence le ton et le contenu de ce qui est écrit.',
+		],
+	},
+	differences: {
+		title: 'Ce qui les distingue',
+		points: [
+			{
+				label: 'Sévigné',
+				text: 'Une correspondance réelle, adressée à des proches et inscrite dans son expérience personnelle.',
+			},
+			{
+				label: 'Graffigny',
+				text: 'Une correspondance fictive qui permet de construire un personnage, de raconter une évolution et de porter un regard critique sur la société française.',
+			},
+			{
+				label: 'Le point de vue',
+				text: 'Sévigné écrit depuis son propre milieu social ; Graffigny imagine une étrangère qui découvre ce milieu et en interroge les normes.',
+			},
+		],
+	},
+	utility: {
+		title: 'Pourquoi cette comparaison est-elle utile ?',
+		text: 'Faire comprendre aux élèves que la forme épistolaire n’a pas une fonction unique. Elle peut transmettre une expérience vécue et des nouvelles personnelles, mais aussi servir de dispositif romanesque et de moyen de critique sociale.',
+	},
+	readingQuestion: {
+		label: 'Question de lecture',
+		question:
+			'Comment le fait de confier le récit à une personne étrangère transforme-t-il notre regard sur la société française dans Lettres d’une Péruvienne ?',
+	},
+};
+
 export const graffignySources = {
 	editionNote:
 		'Édition suivie : le texte original de 1747 (38 lettres), transcription validée de Wikisource ; les citations en conservent l’orthographe (« François » pour « Français », « connoissance », etc.). L’édition augmentée de 1752 (41 lettres), au programme avec l’Introduction historique et les lettres XXVIII, XXIX, XXX et XXXIV, a été consultée sur le fac-similé numérisé : après la lettre XXVII, sa numérotation est décalée, et les deux numéros sont alors indiqués. Les ajouts de 1752 sont résumés, non cités.',
@@ -1269,6 +1321,11 @@ export const graffignySources = {
 			title: 'Voltaire Foundation — The Correspondence of Françoise de Graffigny',
 			url: 'https://www.voltaire.ox.ac.uk/graffigny-correspondence/',
 			note: 'édition savante de la correspondance (Université de Toronto, Voltaire Foundation)',
+		},
+		{
+			title: 'Madame de Sévigné, Lettres — Bibliothèque nationale de France (Gallica / BnF Essentiels)',
+			url: 'https://gallica.bnf.fr/essentiels/sevigne/lettres',
+			note: 'édition et repères patrimoniaux sur la correspondance réelle du XVIIe siècle',
 		},
 	],
 	internal: [

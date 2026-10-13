@@ -500,7 +500,7 @@ describe.skipIf(!BUILT)('Page Graffigny (/graffigny) — cartographie interactiv
 	test('note pédagogique repliée sur les connaissances de Graffigny concernant le Pérou', async () => {
 		const { page, errors } = await openPage();
 		try {
-			const note = page.locator('details.peru-knowledge-note');
+			const note = page.locator('details#note-sources-perou');
 			expect(await note.count()).toBe(1);
 
 			// Titre et badge
@@ -546,4 +546,103 @@ describe.skipIf(!BUILT)('Page Graffigny (/graffigny) — cartographie interactiv
 			await page.close();
 		}
 	});
+
+	test('note pédagogique repliée comparant Madame de Sévigné et Graffigny', async () => {
+		const { page, errors } = await openPage();
+		try {
+			const note = page.locator('details#note-sevigne-graffigny');
+			expect(await note.count()).toBe(1);
+
+			// Titre et badge
+			const title = page.locator('#sevigne-epistolary-title');
+			expect(await title.textContent()).toBe(
+				'De Madame de Sévigné à Graffigny : de la correspondance au roman épistolaire',
+			);
+
+			// Repliée par défaut (sans attribut open)
+			const isOpenByDefault = await note.evaluate((el: HTMLDetailsElement) => el.open);
+			expect(isOpenByDefault).toBe(false);
+
+			const content = note.locator('.peru-knowledge-content');
+			expect(await content.isVisible()).toBe(false);
+
+			// Ouverture au clic sur le summary
+			const summary = note.locator('summary.peru-knowledge-summary');
+			await summary.click();
+
+			const isOpenAfterClick = await note.evaluate((el: HTMLDetailsElement) => el.open);
+			expect(isOpenAfterClick).toBe(true);
+			expect(await content.isVisible()).toBe(true);
+
+			// Vérification du contenu pédagogique rendu
+			const text = await content.textContent();
+			expect(text).toContain('Madame de Sévigné (1626–1696)');
+			expect(text).toContain('Françoise de Graffigny (1695–1758)');
+			expect(text).toContain('correspondance réelle');
+			expect(text).toContain('correspondance fictive');
+			expect(text).toContain('Ce qui les rapproche');
+			expect(text).toContain('Ce qui les distingue');
+			expect(text).toContain('Pourquoi cette comparaison est-elle utile ?');
+			expect(text).toContain('Question de lecture');
+			expect(text).toContain(
+				'Comment le fait de confier le récit à une personne étrangère transforme-t-il notre regard sur la société française dans Lettres d’une Péruvienne ?',
+			);
+
+			// Fermeture au second clic
+			await summary.click();
+			const isOpenAfterSecondClick = await note.evaluate((el: HTMLDetailsElement) => el.open);
+			expect(isOpenAfterSecondClick).toBe(false);
+			expect(await content.isVisible()).toBe(false);
+
+			// Vérification de l'absence de régression dans les 4 vues synchronisées et la frise
+			expect(await page.locator('#vue-geographie').isVisible()).toBe(true);
+			expect(await page.locator('#vue-personnages').isVisible()).toBe(true);
+			expect(await page.locator('#vue-parcours').isVisible()).toBe(true);
+			expect(await page.locator('#vue-idees').isVisible()).toBe(true);
+			expect(await page.locator('nav.selection-nav a').count()).toBe(4);
+
+			expect(errors).toEqual([]);
+		} finally {
+			await page.close();
+		}
+	});
+
+	test.each([320, 375, 768, 960, 1280])(
+		'absence de débordement horizontal à %ipx avec la note Sévigné ouverte et fermée',
+		async (width) => {
+			const { page, errors } = await openPage(width, 800);
+			try {
+				// État fermé par défaut
+				let overflow = await page.evaluate(
+					() => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+				);
+				expect(overflow).toBe(0);
+
+				// Ouvrir la note
+				const summary = page.locator('#note-sevigne-graffigny summary');
+				await summary.click();
+				const note = page.locator('#note-sevigne-graffigny');
+				expect(await note.evaluate((el: HTMLDetailsElement) => el.open)).toBe(true);
+
+				// Pas de débordement horizontal lorsque la note est ouverte
+				overflow = await page.evaluate(
+					() => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+				);
+				expect(overflow).toBe(0);
+
+				// Refermer la note
+				await summary.click();
+				expect(await note.evaluate((el: HTMLDetailsElement) => el.open)).toBe(false);
+				overflow = await page.evaluate(
+					() => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+				);
+				expect(overflow).toBe(0);
+
+				expect(errors).toEqual([]);
+			} finally {
+				await page.close();
+			}
+		},
+		20_000,
+	);
 });
