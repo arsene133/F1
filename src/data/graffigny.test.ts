@@ -3,6 +3,7 @@ import {
 	crossLinkIndex,
 	graffignyCharacters,
 	graffignyEdgeTypes,
+	graffignyIconography,
 	graffignyRelationships,
 	graffignySources,
 	graffignyThemes,
@@ -194,4 +195,51 @@ describe('Lettres d’une Péruvienne — modèle de données (src/data/graffign
 		expect(lpRef).toBeDefined();
 		expect(lpRef?.url).toBe('https://fr.wikisource.org/wiki/Lettres_persanes/Lettre_30');
 	});
+
+	test('parcours iconographique : 6 documents authentifiés avec métadonnées rigoureuses, fichiers locaux et questions pour la classe de seconde', () => {
+		expect(graffignyIconography).toHaveLength(6);
+		const ids = graffignyIconography.map((d) => d.id);
+		expect(new Set(ids).size).toBe(6);
+
+		for (const doc of graffignyIconography) {
+			expect(doc.title).toBeTruthy();
+			expect(doc.badge).toBeTruthy();
+			expect(doc.badgeClass).toBeTruthy();
+
+			// Image
+			expect(doc.image.src).toMatch(/^\/images\/graffigny\/.+\.(jpg|webp|png)$/);
+			expect(doc.image.alt.length).toBeGreaterThan(25);
+			expect(doc.image.caption.length).toBeGreaterThan(20);
+			expect(doc.image.width).toBeGreaterThan(300);
+			expect(doc.image.height).toBeGreaterThan(300);
+
+			// Métadonnées
+			expect(doc.meta.title).toBeTruthy();
+			expect(doc.meta.author).toBeTruthy();
+			expect(doc.meta.date).toBeTruthy();
+			expect(doc.meta.institution).toBeTruthy();
+			expect(doc.meta.identifier).toBeTruthy();
+			expect(doc.meta.identifierUrl).toMatch(/^https?:\/\//);
+			expect(doc.meta.license).toBeTruthy();
+
+			// Analyse pédagogique
+			expect(doc.analysis.whatItShows.length).toBeGreaterThan(50);
+			expect(doc.analysis.textualLink.length).toBeGreaterThan(50);
+			expect(doc.analysis.criticalLimitation.length).toBeGreaterThan(50);
+
+			// Questions
+			expect(doc.questions).toHaveLength(2);
+			expect(doc.questions[0].length).toBeGreaterThan(20);
+			expect(doc.questions[1].length).toBeGreaterThan(20);
+		}
+
+		// Vérification des 5 thématiques demandées
+		expect(ids).toContain('doc-edition-originale-1747'); // Édition originale anonyme
+		expect(ids).toContain('doc-portrait-graffigny-1771'); // Autrice & salonnière
+		expect(ids).toContain('doc-quipu-brooklyn-museum'); // Objet péruvien réel (quipu)
+		expect(ids).toContain('doc-quipucamayoc-guaman-poma'); // Source indigène (Guaman Poma)
+		expect(ids).toContain('doc-chardin-institutrice'); // Éducation des filles au XVIIIe siècle
+		expect(ids).toContain('doc-salon-geoffrin-lemonnier'); // Sociabilité des salons
+	});
 });
+

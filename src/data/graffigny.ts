@@ -1259,3 +1259,246 @@ export const graffignySources = {
 		},
 	],
 };
+
+// ==========================================================================
+// Parcours iconographique et documentaire (/graffigny)
+// Documents authentifiés pour éclairer la lecture en classe de seconde :
+// édition originale, autrice, quipos incas, sociabilité des salons et éducation
+// ==========================================================================
+
+export interface IconographyDocument {
+	id: string;
+	title: string;
+	badge: string;
+	badgeClass: string;
+	image: {
+		src: string;
+		alt: string;
+		caption: string;
+		width: number;
+		height: number;
+	};
+	meta: {
+		title: string;
+		author: string;
+		date: string;
+		institution: string;
+		identifier: string;
+		identifierUrl: string;
+		license: string;
+	};
+	analysis: {
+		whatItShows: string;
+		textualLink: string;
+		criticalLimitation: string;
+	};
+	questions: [string, string];
+}
+
+export const graffignyIconography: IconographyDocument[] = [
+	{
+		id: 'doc-edition-originale-1747',
+		title: 'L’acte de publication anonyme : page de titre de l’édition originale (1747)',
+		badge: 'Document contemporain (1747) · Édition originale',
+		badgeClass: 'status-original',
+		image: {
+			src: '/images/graffigny/graffigny-edition-originale-1747.jpg',
+			alt: 'Page de titre imprimée de la première édition des Lettres d’une Péruvienne portant la fausse adresse A Peine sans nom d’auteur (1747)',
+			caption: 'Françoise de Graffigny, Lettres d’une Péruvienne, « A Peine » [Paris, 1747], in-12. Exemplaire de la Bibliothèque nationale de France.',
+			width: 1280,
+			height: 2205,
+		},
+		meta: {
+			title: 'Lettres d’une Péruvienne (première édition, in-12)',
+			author: 'Françoise de Graffigny (publié anonymement)',
+			date: '1747 (achevé d’imprimer à la fin de 1747)',
+			institution: 'Bibliothèque nationale de France (BnF, Réserve des livres rares)',
+			identifier: 'BnF Gallica ark:/12148/bpt6k9812017x',
+			identifierUrl: 'https://gallica.bnf.fr/ark:/12148/bpt6k9812017x',
+			license: 'Domaine public (BnF Gallica)',
+		},
+		analysis: {
+			whatItShows:
+				'La page de titre imprimée de la véritable édition originale de 1747. Le livre ne mentionne ni nom d’auteur ni imprimeur officiel, mais affiche une adresse fictive (« A Peine ») et un fleuron typographique centré évoquant des rayons solaires.',
+			textualLink:
+				'Cette publication anonyme concrétise la feinte éditoriale de l’« Avertissement » : le livre s’y présente comme une authentique liasse de lettres rédigées d’abord en quipos puis traduites en espagnol et en français, protégeant l’autrice tout en piquant la curiosité du lecteur.',
+			criticalLimitation:
+				'L’image de la page de titre n’indique pas par elle-même l’identité de l’autrice : l’attribution à Mme de Graffigny a été établie par la critique contemporaine et les catalogues de bibliographes (comme Barbier). Elle se distingue aussi de l’édition augmentée de 1752 (41 lettres chez Duchesne).',
+		},
+		questions: [
+			'Quelles mentions habituelles d’un livre imprimé (nom de l’auteur, privilège royal, nom d’éditeur) sont absentes de cette page de titre ?',
+			'En quoi le motif solaire ornant le centre de la page peut-il rappeler le culte inca auquel Zilia était vouée à Cuzco ?',
+		],
+	},
+	{
+		id: 'doc-portrait-graffigny-1771',
+		title: 'L’autrice et salonnière : Françoise de Graffigny gravée par Levesque (1771)',
+		badge: 'Portrait d’autrice (XVIIIe siècle) · Source patrimoniale',
+		badgeClass: 'status-auteur',
+		image: {
+			src: '/images/graffigny/portrait-francoise-de-graffigny-1771.jpg',
+			alt: 'Gravure en buste de Françoise de Graffigny de trois quarts dans un médaillon ovale portant l’inscription Mme de Grafigni (1771)',
+			caption: 'Pierre-Charles Levesque, Mme de Grafigni (1771), burin et eau-forte pour la Galerie française de J.-J. Restout. Musée Carnavalet — Histoire de Paris.',
+			width: 2136,
+			height: 3000,
+		},
+		meta: {
+			title: 'Françoise d’Issembourg d’Happoncourt, dame de Grafigny (1695-1758), Femme de lettres',
+			author: 'Pierre-Charles Levesque (1736–1812), graveur d’après modèle antérieur',
+			date: '1771 (publication dans la Galerie française de Restout)',
+			institution: 'Musée Carnavalet — Histoire de Paris (Paris Musées)',
+			identifier: 'Musée Carnavalet 2022.0.1429',
+			identifierUrl: 'https://www.parismuseescollections.paris.fr/fr/musee-carnavalet/oeuvres/francoise-d-issembourg-d-happoncourt-dame-de-grafigny-1695-1758-femme-de',
+			license: 'Domaine public (Paris Musées CC0)',
+		},
+		analysis: {
+			whatItShows:
+				'Un portrait gravé en buste de Françoise de Graffigny, coiffée d’un bonnet de dentelle sobre et vêtue d’une mante fermée. Le visage mature et serein est encadré d’un médaillon suspendu au-dessus d’un cartouche gravé « Mme DE GRAFIGNI ».',
+			textualLink:
+				'Graffigny anima à Paris un salon littéraire influent rue d’Enfer où se réunissaient Turgot, Diderot, Duclos et d’Alembert. Cette posture intellectuelle résonne avec le dénouement des Lettres d’une Péruvienne, où Zilia refuse le mariage pour fonder son indépendance sur la lecture, l’écriture et l’amitié.',
+			criticalLimitation:
+				'Cette gravure a été exécutée en 1771, soit treize ans après la mort de l’autrice (1758). Elle relève de la consécration rétrospective des grands écrivains français et ne permet pas à elle seule de documenter la vie matérielle ou les ressources financières de l’autrice, connues par sa correspondance.',
+		},
+		questions: [
+			'Comment la mise en scène (médaillon suspendu, cartouche gravé, sobriété du vêtement) met-elle en valeur le statut de femme de lettres ?',
+			'La date de gravure (1771) étant postérieure à la mort de l’autrice (1758), quel était le rôle de ce type d’estampe dans la mémoire littéraire du XVIIIe siècle ?',
+		],
+	},
+	{
+		id: 'doc-quipu-brooklyn-museum',
+		title: 'L’écriture des cordons : quipu inca authentique en fibres nouées',
+		badge: 'Témoignage archéologique · Civilisation inca',
+		badgeClass: 'status-perou',
+		image: {
+			src: '/images/graffigny/quipu-inca-brooklyn-museum.jpg',
+			alt: 'Quipu inca en cordelettes de coton tressées avec des nœuds de différentes couleurs fixés à une corde principale horizontale',
+			caption: 'Quipu inca en fibres de coton teintes et nouées (v. XVe siècle), cordons noués. Brooklyn Museum, New York.',
+			width: 1536,
+			height: 1152,
+		},
+		meta: {
+			title: 'Inca Quipu (Record system using strings and knots)',
+			author: 'Créateur inca anonyme (quipucamayoc / Empire inca)',
+			date: 'XVe siècle (période inca précolombienne)',
+			institution: 'Brooklyn Museum (New York, Arts of the Americas)',
+			identifier: 'Brooklyn Museum (Fonds précolombien, via Wikimedia Commons)',
+			identifierUrl: 'https://commons.wikimedia.org/wiki/File:Inca._Quipu.jpg',
+			license: 'Domaine public / No known copyright restrictions (Brooklyn Museum)',
+		},
+		analysis: {
+			whatItShows:
+				'Un quipu andin composé d’une corde principale horizontale soutenant des dizaines de cordelettes de coton descendantes. Des nœuds simples et complexes ainsi que des variations de teintes y sont distinctement visibles.',
+			textualLink:
+				'Dans les lettres I à XVII, Zilia utilise ses quipos pour exprimer ses pensées et son amour à Aza : « ces nœuds qui frappent mes sens, semblent donner plus de réalité à mes pensées » (Lettre IV). Les cordons constituent le support matériel de la première moitié du roman.',
+			criticalLimitation:
+				'Les quipos précolombiens servaient dans l’Empire inca à la comptabilité démographique, fiscale, agricole et calendaire. Leur emploi comme support d’une correspondance amoureuse intime est une transposition poétique et fictionnelle propre à Françoise de Graffigny.',
+		},
+		questions: [
+			'D’après la notice et l’image, de quels éléments matériels (corde, nœuds, couleurs) un quipu est-il constitué ?',
+			'En quoi l’usage de ces cordons par Zilia dans le roman diffère-t-il de leur fonction administrative réelle dans l’Empire inca ?',
+		],
+	},
+	{
+		id: 'doc-quipucamayoc-guaman-poma',
+		title: 'L’administrateur inca des quipos : le quipucamayoc par Guaman Poma (1615)',
+		badge: 'Source historique indigène (1615) · Mémoire andine',
+		badgeClass: 'status-perou',
+		image: {
+			src: '/images/graffigny/guaman-poma-quipucamayoc.jpg',
+			alt: 'Dessin à la plume de Felipe Guaman Poma de Ayala représentant un administrateur inca tenant un quipu déplié au-dessus d’une table de calcul yupana',
+			caption: 'Felipe Guaman Poma de Ayala, « Contador mayor y tesorero » tenant un quipu (1615), El primer nueva corónica y buen gobierno. Bibliothèque royale de Copenhague.',
+			width: 385,
+			height: 549,
+		},
+		meta: {
+			title: 'El primer nueva corónica y buen gobierno : Contador mayor y tesorero (p. 360)',
+			author: 'Felipe Guaman Poma de Ayala (chroniqueur d’ascendance inca, v. 1535–1616)',
+			date: '1615 (manuscrit original achevé adressé à Philippe III)',
+			institution: 'Bibliothèque royale du Danemark (Det Kongelige Bibliotek, Copenhague)',
+			identifier: 'Copenhague GKS 2232 4°, p. 360 [362]',
+			identifierUrl: 'https://www.kb.dk/permalink/2006/poma/360/es/text/',
+			license: 'Domaine public (Det Kongelige Bibliotek)',
+		},
+		analysis: {
+			whatItShows:
+				'Un dessin à la plume montrant un haut dignitaire inca debout, tenant à deux mains un faisceau de quipos dépliés. Au coin inférieur gauche figure une yupana (table à compartiments utilisée pour les calculs).',
+			textualLink:
+				'Ce document constitue un repère pour comprendre l’« Introduction historique » ajoutée en 1752 : Graffigny y résume le système des quipos d’après Garcilaso de la Vega pour convaincre son lectorat que les Incas possédaient une méthode rigoureuse de conservation de la mémoire.',
+			criticalLimitation:
+				'Il s’agit d’un rapprochement documentaire moderne : le manuscrit de Guaman Poma, demeuré inédit jusqu’au XXe siècle à Copenhague, n’était pas connu de Graffigny au XVIIIe siècle (celle-ci s’appuyait sur l’Histoire des Incas de Garcilaso de la Vega).',
+		},
+		questions: [
+			'Quels sont les deux instruments représentés sur le dessin (dans les mains du dignitaire et au sol à gauche) servant à compter et mémoriser ?',
+			'Pourquoi la notice précise-t-elle que ce dessin est un rapprochement historique documentaire et non une source directe consultée par Graffigny en 1752 ?',
+		],
+	},
+	{
+		id: 'doc-chardin-institutrice',
+		title: 'L’éducation des filles au XVIIIe siècle : La Jeune Maîtresse d’école de Chardin (v. 1737)',
+		badge: 'Représentation contemporaine (v. 1737) · Histoire sociale',
+		badgeClass: 'status-societe',
+		image: {
+			src: '/images/graffigny/chardin-jeune-institutrice-1737.jpg',
+			alt: 'Tableau de Jean Siméon Chardin montrant une jeune fille bien mise enseignant patiemment la lecture à une fillette à l’aide d’un abécédaire et d’un pointeur',
+			caption: 'Jean Siméon Chardin, La Jeune Maîtresse d’école (vers 1736–1737), huile sur toile, 61,6 × 66,7 cm. National Gallery, Londres.',
+			width: 800,
+			height: 743,
+		},
+		meta: {
+			title: 'The Young Schoolmistress (La Jeune Maîtresse d’école)',
+			author: 'Jean-Baptiste-Siméon Chardin (1699–1779)',
+			date: 'Vers 1736–1737 (Salon de 1740)',
+			institution: 'The National Gallery, Londres',
+			identifier: 'National Gallery NG4077',
+			identifierUrl: 'https://www.nationalgallery.org.uk/paintings/jean-simeon-chardin-the-young-schoolmistress',
+			license: 'Domaine public (Open Access National Gallery)',
+		},
+		analysis: {
+			whatItShows:
+				'Une jeune fille vêtue d’une robe soignée et coiffée d’un bonnet blanc désignant une lettre de l’alphabet sur une feuille de papier avec une aiguille ou un pointeur, devant une petite fille attentive accoudée à une table de bois.',
+			textualLink:
+				'Cette scène illustre l’apprentissage des rudiments de lecture dans la bourgeoisie urbaine. Elle offre un contrepoint visuel à la critique formulée par Zilia au couvent puis dans la lettre XXXIV (1752), où elle dénonce une éducation mondaine superficielle qui apprend aux filles les grâces et la dissimulation plutôt que l’exercice de la raison.',
+			criticalLimitation:
+				'Le tableau de Chardin ne résume pas à lui seul l’ensemble des pratiques éducatives du XVIIIe siècle : c’est une scène de genre intimiste et idéalisée, centrée sur la douceur domestique, à distinguer de la claustration des pensionnats conventuels évoquée dans le roman.',
+		},
+		questions: [
+			'Quels détails du tableau (geste de la main, regard de l’enfant, objet tenu) montrent la méthode d’apprentissage de la lecture ?',
+			'En quoi cette image paisible de transmission contraste-t-elle avec la critique sévère de l’éducation des filles formulée par Zilia dans le roman ?',
+		],
+	},
+	{
+		id: 'doc-salon-geoffrin-lemonnier',
+		title: 'La sociabilité des Lumières et le pouvoir des salonnières : le salon de Mme Geoffrin (Lemonnier)',
+		badge: 'Représentation rétrospective · Débat des Lumières',
+		badgeClass: 'status-lumieres',
+		image: {
+			src: '/images/graffigny/salon-madame-geoffrin-lemonnier.jpg',
+			alt: 'Tableau monumental d’Anicet Charles Gabriel Lemonnier représentant la lecture d’une pièce de Voltaire dans le grand salon de Madame Geoffrin entourée des philosophes des Lumières',
+			caption: 'Anicet Charles Gabriel Lemonnier, Une soirée chez Madame Geoffrin en 1755 (1812), huile sur toile. Musée des Beaux-Arts de Rouen.',
+			width: 1179,
+			height: 776,
+		},
+		meta: {
+			title: 'Lecture de la tragédie « L’Orphelin de la Chine » de Voltaire dans le salon de Madame Geoffrin en 1755',
+			author: 'Anicet Charles Gabriel Lemonnier (1743–1824), peintre d’histoire',
+			date: '1812 (peint sous le Premier Empire, commandé par Joséphine de Beauharnais)',
+			institution: 'Musée des Beaux-Arts de Rouen (Notice Histoire par l’image / RMN)',
+			identifier: 'Musée des Beaux-Arts de Rouen 831.33 / RMN',
+			identifierUrl: 'https://histoire-image.org/etudes/salons-xviiie-siecle',
+			license: 'Domaine public (Musée des Beaux-Arts de Rouen / Wikimedia Commons)',
+		},
+		analysis: {
+			whatItShows:
+				'Une vaste assemblée mondaine dans un salon néoclassique orné de tableaux : l’acteur Lekain lit une pièce de Voltaire (dont le buste trône au fond) sous l’autorité de la maîtresse de maison, Madame Geoffrin, entourée de savants, d’encyclopédistes et de femmes de lettres.',
+			textualLink:
+				'Cette toile célèbre le rôle central des femmes dans la régulation des conversations philosophiques et la diffusion des Lumières, univers mondain dont Graffigny était l’une des actrices et que Zilia découvre avec un œil à la fois fasciné et critique dans ses lettres.',
+			criticalLimitation:
+				'Il s’agit d’une reconstitution rétrospective peinte en 1812, soit près de soixante ans après la scène fictivement située en 1755. Lemonnier réunit anachroniquement des figures qui ne se sont jamais côtoyées au même instant (Montesquieu est mort en février 1755 avant la première de la pièce) : c’est un hommage symbolique au siècle, non un reportage pris sur le vif.',
+		},
+		questions: [
+			'D’après la notice (date de l’œuvre : 1812 ; scène représentée : 1755), pourquoi ne peut-on pas considérer cette toile comme un témoignage direct pris sur le vif ?',
+			'Quelle place la maîtresse de maison (Mme Geoffrin, assise à droite) occupe-t-elle dans cette assemblée d’hommes de lettres et de savants ?',
+		],
+	},
+];
+

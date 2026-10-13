@@ -10,6 +10,7 @@ import {
 	crossLinkIndex,
 	graffignyCharacters,
 	graffignyEdgeTypes,
+	graffignyIconography,
 	graffignyRelationships,
 	graffignySources,
 	graffignyThemes,
@@ -267,6 +268,111 @@ const pageDescription =
 									</ul>
 								</details>
 							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- ======================================================
+				     SECTION ICONOGRAPHIQUE & ARCHIVES PATRIMONIALES
+				     ====================================================== -->
+				<section class="graffigny-iconography-section carto-section" id="sources-iconographiques" aria-labelledby="iconography-section-title">
+					<header class="carto-header">
+						<p class="carto-eyebrow">Parcours iconographique & Histoire matérielle</p>
+						<h2 id="iconography-section-title">L’univers visuel et documentaire des <em>Lettres d’une Péruvienne</em></h2>
+						<p class="carto-lead">
+							Pour comprendre un roman épistolaire des Lumières, l’étude du texte gagne à être confrontée aux traces matérielles de son époque : l’édition princeps clandestine, le portrait de l’autrice en femme de lettres, les quipos incas conservés dans les musées et la vie intellectuelle des salons parisiens.
+						</p>
+
+						<div class="iconography-method-banner">
+							<strong>Guide de lecture documentaire pour la classe de seconde :</strong>
+							<span class="status-badge status-original">Édition originale (1747)</span> atteste la publication clandestine sans nom d’auteur ;
+							<span class="status-badge status-auteur">Portrait d’autrice</span> documente la reconnaissance de Françoise de Graffigny ;
+							<span class="status-badge status-perou">Mémoire inca</span> confronte la fiction aux réalités précolombiennes et andines ;
+							<span class="status-badge status-societe">Histoire sociale</span> et
+							<span class="status-badge status-lumieres">Débat des Lumières</span> éclairent la condition féminine et les cercles philosophiques.
+						</div>
+					</header>
+
+					<div class="iconography-cards-grid">
+						{graffignyIconography.map((doc, idx) => (
+							<article class="iconography-card" id={doc.id}>
+								<header class="iconography-card-header">
+									<span class={`status-badge ${doc.badgeClass}`}>{doc.badge}</span>
+									<h3 class="iconography-card-title">{idx + 1}. {doc.title}</h3>
+								</header>
+
+								<figure class="iconography-figure">
+									<img
+										src={doc.image.src}
+										alt={doc.image.alt}
+										class="iconography-img"
+										loading="lazy"
+										width={doc.image.width}
+										height={doc.image.height}
+									/>
+									<figcaption class="iconography-caption">
+										{doc.image.caption}
+									</figcaption>
+								</figure>
+
+								<div class="iconography-meta-box">
+									<ul class="iconography-meta-list">
+										<li><strong>Titre du document :</strong> {doc.meta.title}</li>
+										<li><strong>Auteur / Origine :</strong> {doc.meta.author}</li>
+										<li><strong>Datation :</strong> {doc.meta.date}</li>
+										<li><strong>Conservation :</strong> {doc.meta.institution}</li>
+										<li>
+											<strong>Référence / Cote :</strong>{' '}
+											<a href={doc.meta.identifierUrl} target="_blank" rel="noopener noreferrer" class="meta-permalink">
+												{doc.meta.identifier}
+											</a>
+										</li>
+										<li><strong>Statut juridique :</strong> {doc.meta.license}</li>
+									</ul>
+								</div>
+
+								<div class="iconography-evaluation-box">
+									<h4>Évaluation documentaire & analyse littéraire</h4>
+									<p>
+										<strong>Que montre réellement le document ?</strong> {doc.analysis.whatItShows}
+									</p>
+									<p>
+										<strong>Lien avec le texte de Graffigny :</strong> {doc.analysis.textualLink}
+									</p>
+									<p>
+										<strong>Limite critique & mise en garde historique :</strong> {doc.analysis.criticalLimitation}
+									</p>
+								</div>
+
+								<div class="iconography-question-box">
+									<strong>Questions d’observation pour les élèves :</strong>
+									<p>1. {doc.questions[0]}</p>
+									<p>2. {doc.questions[1]}</p>
+								</div>
+							</article>
+						))}
+					</div>
+
+					<div class="iconography-synthesis-box">
+						<header class="iconography-synthesis-header">
+							<span class="iconography-synthesis-badge">Bilan méthodologique · Seconde</span>
+							<h3 class="iconography-synthesis-title">Comment exploiter ces images dans une analyse littéraire ?</h3>
+						</header>
+						<div class="iconography-synthesis-content">
+							<p>
+								Une image n’est jamais une simple illustration décorative : elle constitue un document historique doté d’une intention, d’un support matériel et d’un public visé. Pour enrichir votre commentaire ou votre oral de français :
+							</p>
+							<ol class="iconography-synthesis-steps">
+								<li>
+									<strong>Identifier le statut du document :</strong> s’agit-il d’un vestige archéologique (quipu), d’un imprimé d’époque (édition originale de 1747), ou d’une reconstitution artistique rétrospective (Lemonnier peignant 1755 en 1812) ?
+								</li>
+								<li>
+									<strong>Confronter le document au texte :</strong> le texte de Graffigny confirme-t-il, idéalise-t-il ou conteste-t-il ce que montre l’image ? (Par exemple, la violence de la conquête espagnole vécue par Zilia contraste avec la dignité administrative du quipucamayoc de Guaman Poma).
+								</li>
+								<li>
+									<strong>Dégager la portée critique :</strong> montrez comment Françoise de Graffigny utilise le regard de Zilia pour interroger ce qui semble naturel aux Français de son siècle (la marchandisation du mariage, l’éducation d’apparat des filles, la tyrannie des convenances).
+								</li>
+							</ol>
 						</div>
 					</div>
 				</section>
@@ -1219,6 +1325,320 @@ const pageDescription =
 
 		.key-facts div:first-child {
 			border-top: 0;
+		}
+	}
+
+	/* ==========================================================================
+	   Styles spécifiques : Parcours iconographique et archives patrimoniales
+	   ========================================================================== */
+	.graffigny-iconography-section {
+		margin-top: 3.5rem;
+		padding-top: 2rem;
+		border-top: 1px solid var(--map-border-soft);
+	}
+
+	.iconography-method-banner {
+		margin: 1.5rem auto 0;
+		padding: 0.95rem 1.25rem;
+		background: #fbf9f4;
+		border: 1px solid var(--map-border-soft);
+		border-left: 4px solid var(--intro-eyebrow-color, #8b572a);
+		border-radius: 6px;
+		font-size: 0.88rem;
+		line-height: 1.6;
+		color: var(--map-ink-soft);
+		max-width: 960px;
+		text-align: left;
+	}
+
+	.iconography-method-banner strong {
+		color: var(--map-ink);
+		display: inline;
+		margin-right: 0.35rem;
+	}
+
+	.status-badge {
+		display: inline-block;
+		font-size: 0.72rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		padding: 0.2rem 0.55rem;
+		border-radius: 4px;
+		vertical-align: middle;
+		margin: 0 0.2rem 0.2rem 0;
+		max-width: 100%;
+		overflow-wrap: break-word;
+	}
+
+	.status-original {
+		background: rgba(139, 87, 42, 0.12);
+		color: #8b572a;
+		border: 1px solid rgba(139, 87, 42, 0.25);
+	}
+
+	.status-auteur {
+		background: rgba(122, 47, 111, 0.12);
+		color: #7a2f6f;
+		border: 1px solid rgba(122, 47, 111, 0.25);
+	}
+
+	.status-perou {
+		background: rgba(35, 82, 132, 0.12);
+		color: #235284;
+		border: 1px solid rgba(35, 82, 132, 0.25);
+	}
+
+	.status-societe {
+		background: rgba(77, 91, 102, 0.12);
+		color: #4d5b66;
+		border: 1px solid rgba(77, 91, 102, 0.25);
+	}
+
+	.status-lumieres {
+		background: rgba(63, 107, 58, 0.12);
+		color: #3f6b3a;
+		border: 1px solid rgba(63, 107, 58, 0.25);
+	}
+
+	.iconography-cards-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 2rem;
+		margin-top: 2rem;
+	}
+
+	@media (min-width: 820px) {
+		.iconography-cards-grid {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	.iconography-card {
+		background: #ffffff;
+		border: 1px solid var(--map-border);
+		border-radius: 10px;
+		padding: 1.5rem 1.6rem;
+		box-shadow: 0 3px 12px rgba(23, 43, 58, 0.04);
+		display: flex;
+		flex-direction: column;
+		gap: 1.1rem;
+		min-width: 0;
+		max-width: 100%;
+		overflow-wrap: break-word;
+	}
+
+	.iconography-card-header {
+		display: flex;
+		flex-direction: column;
+		gap: 0.45rem;
+		padding-bottom: 0.6rem;
+		border-bottom: 1px solid var(--map-border-soft);
+	}
+
+	.iconography-card-title {
+		margin: 0;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.15rem;
+		font-weight: 600;
+		color: var(--map-ink);
+		line-height: 1.35;
+	}
+
+	.iconography-figure {
+		margin: 0;
+		padding: 0;
+		background: #faf8f5;
+		border: 1px solid var(--map-border-soft);
+		border-radius: 6px;
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.iconography-img {
+		display: block;
+		width: 100%;
+		height: auto;
+		max-height: 340px;
+		object-fit: contain;
+		background: #f2ede4;
+	}
+
+	.iconography-caption {
+		padding: 0.75rem 0.95rem;
+		font-size: 0.82rem;
+		line-height: 1.45;
+		color: var(--map-ink-soft);
+		border-top: 1px solid var(--map-border-soft);
+		background: #ffffff;
+	}
+
+	.iconography-meta-box {
+		background: #fbf9f4;
+		border: 1px solid var(--map-border-soft);
+		border-radius: 6px;
+		padding: 0.85rem 1rem;
+		font-size: 0.82rem;
+		line-height: 1.5;
+	}
+
+	.iconography-meta-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+	}
+
+	.iconography-meta-list li {
+		color: var(--map-ink-soft);
+		word-break: break-word;
+	}
+
+	.meta-permalink {
+		color: var(--map-accent, #8b572a);
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+
+	.meta-permalink:hover {
+		color: var(--map-ink);
+	}
+
+	.iconography-evaluation-box {
+		border-left: 3px solid var(--intro-eyebrow-color, #8b572a);
+		padding: 0.85rem 1.1rem;
+		background: #faf8f5;
+		border-radius: 0 6px 6px 0;
+		font-size: 0.88rem;
+		line-height: 1.6;
+		display: flex;
+		flex-direction: column;
+		gap: 0.65rem;
+	}
+
+	.iconography-evaluation-box h4 {
+		margin: 0;
+		font-family: var(--map-sans, system-ui, sans-serif);
+		font-size: 0.82rem;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--intro-eyebrow-color, #8b572a);
+		font-weight: 700;
+	}
+
+	.iconography-evaluation-box p {
+		margin: 0;
+		color: var(--map-ink-soft);
+	}
+
+	.iconography-evaluation-box strong {
+		color: var(--map-ink);
+	}
+
+	.iconography-question-box {
+		background: #f5f8fa;
+		border: 1px solid #d8e3eb;
+		border-radius: 6px;
+		padding: 0.95rem 1.1rem;
+		font-size: 0.88rem;
+		line-height: 1.55;
+		display: flex;
+		flex-direction: column;
+		gap: 0.45rem;
+	}
+
+	.iconography-question-box strong {
+		color: #235284;
+		font-size: 0.82rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	.iconography-question-box p {
+		margin: 0;
+		color: var(--map-ink);
+	}
+
+	.iconography-synthesis-box {
+		margin-top: 2.5rem;
+		background: #ffffff;
+		border: 1px solid var(--map-border);
+		border-radius: 8px;
+		padding: 1.6rem 1.8rem;
+		box-shadow: 0 3px 12px rgba(23, 43, 58, 0.04);
+	}
+
+	.iconography-synthesis-header {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		margin-bottom: 1rem;
+		border-bottom: 1px solid var(--map-border-soft);
+		padding-bottom: 0.75rem;
+	}
+
+	.iconography-synthesis-badge {
+		align-self: flex-start;
+		font-size: 0.72rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		padding: 0.2rem 0.55rem;
+		border-radius: 4px;
+		background: rgba(139, 87, 42, 0.1);
+		color: var(--intro-eyebrow-color, #8b572a);
+		border: 1px solid rgba(139, 87, 42, 0.25);
+	}
+
+	.iconography-synthesis-title {
+		margin: 0;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.25rem;
+		font-weight: 600;
+		color: var(--map-ink);
+	}
+
+	.iconography-synthesis-content {
+		font-size: 0.93rem;
+		line-height: 1.65;
+		color: var(--map-ink-soft);
+	}
+
+	.iconography-synthesis-content p {
+		margin: 0 0 0.85rem;
+	}
+
+	.iconography-synthesis-steps {
+		margin: 0;
+		padding-left: 1.35rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.65rem;
+	}
+
+	.iconography-synthesis-steps li {
+		color: var(--map-ink-soft);
+	}
+
+	.iconography-synthesis-steps strong {
+		color: var(--map-ink);
+	}
+
+	@media (max-width: 640px) {
+		.iconography-card {
+			padding: 1.1rem 1rem;
+		}
+
+		.iconography-synthesis-box {
+			padding: 1.2rem 1.1rem;
+		}
+
+		.iconography-method-banner {
+			padding: 0.75rem 0.9rem;
+			font-size: 0.82rem;
 		}
 	}
 </style>

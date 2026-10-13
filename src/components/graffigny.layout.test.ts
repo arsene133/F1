@@ -453,4 +453,47 @@ describe.skipIf(!BUILT)('Page Graffigny (/graffigny) — cartographie interactiv
 			await page.close();
 		}
 	});
+
+	test('parcours iconographique : rendu des 6 fiches documentaires, métadonnées, images et questions', async () => {
+		const { page, errors } = await openPage();
+		try {
+			const section = page.locator('#sources-iconographiques');
+			expect(await section.count()).toBe(1);
+
+			// Titre et bannière
+			const title = await section.locator('#iconography-section-title').textContent();
+			expect(title).toContain('Lettres d’une Péruvienne');
+
+			// 6 cartes documentaires
+			const cards = section.locator('.iconography-card');
+			expect(await cards.count()).toBe(6);
+
+			// 6 images valides avec dimensions et alt
+			const images = section.locator('.iconography-img');
+			expect(await images.count()).toBe(6);
+			for (let i = 0; i < 6; i++) {
+				const img = images.nth(i);
+				const src = await img.getAttribute('src');
+				const alt = await img.getAttribute('alt');
+				expect(src).toMatch(/^\/images\/graffigny\/.+\.jpg$/);
+				expect(alt).toBeTruthy();
+				expect(alt!.length).toBeGreaterThan(20);
+			}
+
+			// Boîtes d'analyse critique et questions
+			expect(await section.locator('.iconography-evaluation-box').count()).toBe(6);
+			expect(await section.locator('.iconography-question-box').count()).toBe(6);
+
+			// Bilan méthodologique
+			const synthesis = section.locator('.iconography-synthesis-box');
+			expect(await synthesis.count()).toBe(1);
+			const synthText = await synthesis.textContent();
+			expect(synthText).toContain('Bilan méthodologique');
+			expect(synthText).toContain('Identifier le statut du document');
+
+			expect(errors).toEqual([]);
+		} finally {
+			await page.close();
+		}
+	});
 });
