@@ -172,6 +172,10 @@ const initialFilterStatus = timelineFilterStatusHtml(
 	sortedTimelineItems.filter((item) => matchesTimelineFilter(item.type, DEFAULT_TIMELINE_FILTER)).length,
 );
 
+// Bornes réelles de la frise, pour son nom accessible
+const firstYear = sortedTimelineItems[0].year;
+const lastYear = Math.max(...sortedTimelineItems.map((item) => item.endYear ?? item.year));
+
 // Données sérialisées pour le script client
 const clientData = {
 	items: sortedTimelineItems,
@@ -225,7 +229,7 @@ const clientData = {
 	<div class="timeline-main-layout">
 		
 		<!-- Colonne verticale centrale -->
-		<div class="vertical-timeline-container" id="vertical-timeline" aria-label="Frise chronologique verticale de 1789 à 1882">
+		<div class="vertical-timeline-container" id="vertical-timeline" role="region" aria-label={`Frise chronologique verticale de ${firstYear} à ${lastYear}`}>
 			<!-- Ligne continue d'axe vertical -->
 			<div class="vertical-spine-line" aria-hidden="true"></div>
 			<div class="timeline-flow-arrow" aria-hidden="true">▼</div>

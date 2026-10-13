@@ -155,7 +155,7 @@ describe.skipIf(!BUILT)('Filtrage de la frise : cartes complètes et lignes comp
 		expectPresentation(initial, 'literature', desktop, width);
 		const status = page.locator('#timeline-filter-status');
 		expect(await status.isHidden()).toBe(false);
-		expect(await status.textContent()).toContain('Littérature · 6 événements');
+		expect(await status.textContent()).toContain('Littérature · 9 événements');
 
 		// Passage d'une catégorie à l'autre sans repasser par « Tout », puis retour à « Littérature »
 		for (const filterId of [...CATEGORIES.filter((id) => id !== 'literature'), 'literature']) {
@@ -232,4 +232,84 @@ describe.skipIf(!BUILT)('Filtrage de la frise : cartes complètes et lignes comp
 			await page.context().close();
 		},
 	);
+
+	test('bandeaux politiques et nom accessible de la frise', async () => {
+		const page = await openPage(1280, 800, false);
+		const years = timelineItems.flatMap((it) => [it.year, it.endYear ?? it.year]);
+		const name = `Frise chronologique verticale de ${Math.min(...years)} à ${Math.max(...years)}`;
+		expect(name).toBe('Frise chronologique verticale de 1661 à 1883');
+		// Région nommée, unique, qui contient la liste ordonnée des repères
+		const region = page.getByRole('region', { name, exact: true });
+		expect(await region.count()).toBe(1);
+		expect(await region.getAttribute('id')).toBe('vertical-timeline');
+		expect(await region.locator('ol.timeline-ordered-list > li.timeline-step').count()).toBe(timelineItems.length);
+		expect(await page.getByRole('region', { name: /^Frise chronologique/ }).count()).toBe(1);
+		// Chaque repère est rangé sous le bandeau de sa propre période
+		const rows = await page.$$eval('.timeline-step', (steps) =>
+			steps.map((s) => {
+				const el = s as HTMLElement;
+				const banner = document.getElementById(el.dataset.bannerId!);
+				return [el.dataset.itemId, el.dataset.periodId, banner?.dataset.periodId];
+			}),
+		);
+		for (const [id, periodId, bannerPeriod] of rows) expect(bannerPeriod, id).toBe(periodId);
+		const bannerOf = (id: string) => rows.find(([itemId]) => itemId === id)?.[2];
+		expect(bannerOf('francoise-de-graffigny')).toBe('regne-louis-xiv');
+		expect(bannerOf('lettres-d-une-peruvienne')).toBe('regne-louis-xv');
+		expect(bannerOf('lettres-d-une-peruvienne-1752')).toBe('regne-louis-xv');
+		expect(bannerOf('machine-vapeur-watt')).toBe('regne-louis-xv');
+		expect(bannerOf('revolution-francaise')).toBe('revolution-francaise-regime');
+		await page.context().close();
+	});
+
+	// Graffigny : l'autrice (1695–1758) et les deux jalons éditoriaux (1747, 1752), cartes complètes sous « Littérature »
+	const GRAFFIGNY_IDS = ['francoise-de-graffigny', 'lettres-d-une-peruvienne', 'lettres-d-une-peruvienne-1752'];
+
+	test.each(widths)('%s %i×%i : Graffigny à sa place, lisible et reliée à /graffigny', async (_label, width, height, desktop) => {
+		const page = await openPage(width, height, !desktop);
+		const errors: string[] = [];
+		page.on('console', (msg) => msg.type() === 'error' && errors.push(msg.text()));
+		page.on('pageerror', (err) => errors.push(err.message));
+		await page.reload();
+
+		// Ordre chronologique : après Lully (1670), avant Watt (1769)
+		const order = await page.$$eval('.timeline-step', (steps) => steps.map((s) => (s as HTMLElement).dataset.itemId!));
+		const at = (id: string) => order.indexOf(id);
+		expect(at('lully-musique-de-cour')).toBeLessThan(at('francoise-de-graffigny'));
+		expect(at('francoise-de-graffigny')).toBeLessThan(at('lettres-d-une-peruvienne'));
+		expect(at('lettres-d-une-peruvienne')).toBeLessThan(at('lettres-d-une-peruvienne-1752'));
+		expect(at('lettres-d-une-peruvienne-1752')).toBeLessThan(at('machine-vapeur-watt'));
+
+		// Cartes complètes, sans chevauchement ni débordement
+		const boxes = [];
+		for (const id of GRAFFIGNY_IDS) {
+			const btn = page.locator(`#step-${id} .timeline-entry-button`);
+			expect(await page.locator(`#step-${id} .entry-title`).isVisible(), id).toBe(true);
+			const box = (await btn.boundingBox())!;
+			expect(box.x, id).toBeGreaterThanOrEqual(-0.5);
+			expect(box.x + box.width, id).toBeLessThanOrEqual(width + 0.5);
+			boxes.push(box);
+		}
+		for (let i = 1; i < boxes.length; i++) {
+			const sameSide = Math.abs(boxes[i].x - boxes[i - 1].x) < 1;
+			if (sameSide || !desktop) expect(boxes[i].y, GRAFFIGNY_IDS[i]).toBeGreaterThanOrEqual(boxes[i - 1].y + boxes[i - 1].height);
+		}
+		expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+
+		// La carte de 1747 ouvre son contexte, qui renvoie à /graffigny et à l'édition de 1752
+		const btn1747 = page.locator('#step-lettres-d-une-peruvienne .timeline-entry-button');
+		if (desktop) await btn1747.click();
+		else await btn1747.tap();
+		const link = page.locator('#timeline-panel a.details-page-link');
+		await expect.poll(() => link.getAttribute('href')).toBe('/graffigny');
+		expect(await page.locator('#timeline-panel .details-title').textContent()).toBe('Lettres d’une Péruvienne');
+		expect(await page.locator('#timeline-panel [data-target-id="lettres-d-une-peruvienne-1752"]').count()).toBe(1);
+		expect(await page.locator('#timeline-panel [data-target-id="francoise-de-graffigny"]').count()).toBe(1);
+		expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+
+		await Promise.all([page.waitForURL(/\/graffigny\/?$/), link.click()]);
+		expect(await page.locator('h1#page-title').textContent()).toContain('Lettres d’une Péruvienne');
+		expect(errors).toEqual([]);
+		await page.context().close();
+	});
 });

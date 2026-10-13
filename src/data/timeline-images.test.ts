@@ -9,8 +9,11 @@ import { timelineItems, type TimelineItemImage } from './timeline';
 
 const PUBLIC_DIR = fileURLToPath(new URL('../../public', import.meta.url));
 
-/** Repères volontairement sans illustration (périodes abstraites, transitions conceptuelles). */
-const INTENTIONALLY_WITHOUT_IMAGE: string[] = [];
+/**
+ * Repères volontairement sans illustration (périodes abstraites, transitions conceptuelles).
+ * Graffigny : pas d'image ajoutée pour remplir la carte, faute de reproduction vérifiée et documentée.
+ */
+const INTENTIONALLY_WITHOUT_IMAGE: string[] = ['francoise-de-graffigny', 'lettres-d-une-peruvienne', 'lettres-d-une-peruvienne-1752'];
 
 function imageFiles(image: TimelineItemImage): string[] {
 	const fromSrcset = (image.srcset ?? '')

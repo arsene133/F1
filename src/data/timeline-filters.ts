@@ -19,7 +19,7 @@ export const timelineFilters: FilterOption[] = [
 	{
 		id: 'literature',
 		label: 'Littérature',
-		description: 'Les œuvres de Molière, Musset, Balzac, Rimbaud et Zola dans leur époque.',
+		description: 'Les œuvres de Molière, Graffigny, Musset, Balzac, Rimbaud et Zola dans leur époque.',
 	},
 	{
 		id: 'science',

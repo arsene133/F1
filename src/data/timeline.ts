@@ -204,6 +204,15 @@ export const timelinePeriods: TimelinePeriod[] = [
 		colorTheme: 'louis-xiv',
 	},
 	{
+		id: 'regne-louis-xv',
+		title: 'Règne de Louis XV',
+		startYear: 1715,
+		endYear: 1774,
+		displayDates: '1715–1774',
+		description: 'Régence (1715–1723) puis règne de Louis XV. Siècle des Lumières : salons, essor de l’imprimé, publication de l’Encyclopédie à partir de 1751, critique des usages, des croyances et des institutions.',
+		colorTheme: 'louis-xv',
+	},
+	{
 		id: 'revolution-francaise-regime',
 		title: 'Révolution française',
 		startYear: 1789,
@@ -484,6 +493,99 @@ L’année 1665 voit naître les premières grandes revues scientifiques europé
 		importance: 'major',
 		image: musicImages.lully,
 		audio: musicAudio.lullyBourgeoisGentilhomme,
+	},
+
+	// 1695–1758 - Françoise de Graffigny (vie de l'autrice, repère de naissance)
+	{
+		id: 'francoise-de-graffigny',
+		year: 1695,
+		endYear: 1758,
+		datePrecise: '1695–1758',
+		type: 'literature',
+		category: 'novel',
+		title: 'Françoise de Graffigny',
+		subtitle: '1695–1758 · Femme de lettres des Lumières',
+		tagLabel: 'Autrice · XVIIIe siècle',
+		shortDescription: 'Femme de lettres française, autrice d’un roman épistolaire qui utilise le regard d’une étrangère pour interroger les usages de la société française et la condition des femmes.',
+		description: `Femme de lettres française, née à Nancy en 1695 et morte à Paris en 1758. Elle est l’autrice d’un roman épistolaire qui utilise le regard d’une étrangère pour interroger les usages de la société française et la condition des femmes : Lettres d’une Péruvienne (1747, édition augmentée en 1752).
+
+Ce repère situe sa vie (1695–1758) ; la publication du roman et son édition augmentée sont deux repères distincts de la frise.`,
+		historicalContext: 'Née sous Louis XIV, Françoise de Graffigny écrit sous Louis XV, au siècle des Lumières : la critique des usages, des préjugés et des institutions passe aussi par la fiction et par le regard d’un étranger sur la France.',
+		periodId: 'regne-louis-xiv',
+		periodLabel: 'XVIIIe siècle · siècle des Lumières',
+		relatedTo: ['lettres-d-une-peruvienne', 'lettres-d-une-peruvienne-1752'],
+		relatedLinks: [
+			{ id: 'lettres-d-une-peruvienne', label: '1747 : première publication, anonyme, des Lettres d’une Péruvienne' },
+			{ id: 'lettres-d-une-peruvienne-1752', label: '1752 : édition augmentée, signée par l’autrice' },
+		],
+		importance: 'medium',
+		pageLink: {
+			url: '/graffigny',
+			label: 'Explorer la carte interactive des Lettres d’une Péruvienne',
+			badge: 'Page dédiée · Cartographie littéraire',
+		},
+	},
+
+	// 1747 - Lettres d'une Péruvienne (Françoise de Graffigny), première publication
+	{
+		id: 'lettres-d-une-peruvienne',
+		year: 1747,
+		type: 'literature',
+		category: 'novel',
+		title: 'Lettres d’une Péruvienne',
+		subtitle: '1747 · Françoise de Graffigny · première publication, anonyme',
+		author: 'Françoise de Graffigny',
+		authorDates: '1695–1758',
+		dateType: 'publication',
+		tagLabel: 'Roman épistolaire · Lumières',
+		shortDescription: 'Roman épistolaire où une jeune Péruvienne, arrachée à son pays, découvre la France et en interroge les usages avec un regard d’étrangère.',
+		description: `Roman épistolaire publié anonymement en 1747. Zilia, jeune Péruvienne arrachée à son pays, découvre la France et en interroge les usages avec un regard d’étrangère.
+
+Le roman met en question les apparences de la société française, le pouvoir de l’argent et la condition faite aux femmes, et suit l’émancipation intellectuelle de son héroïne. Graffigny en donne en 1752 une édition augmentée, signée : c’est la même œuvre, à deux moments de son histoire éditoriale.`,
+		historicalContext: 'Sous Louis XV, au siècle des Lumières, le regard d’un étranger sur la France devient un procédé critique, illustré avant Graffigny par les Lettres persanes de Montesquieu (1721). Graffigny le reprend en donnant la parole à une femme.',
+		periodId: 'regne-louis-xv',
+		relatedTo: ['francoise-de-graffigny', 'lettres-d-une-peruvienne-1752'],
+		relatedLinks: [
+			{ id: 'francoise-de-graffigny', label: 'L’autrice : Françoise de Graffigny (1695–1758)' },
+			{ id: 'lettres-d-une-peruvienne-1752', label: '1752 : la même œuvre en édition augmentée, signée par l’autrice' },
+		],
+		importance: 'major',
+		pageLink: {
+			url: '/graffigny',
+			label: 'Explorer la carte interactive des personnages, du parcours de Zilia et des idées des Lettres d’une Péruvienne',
+			badge: 'Page dédiée · Cartographie littéraire',
+		},
+	},
+
+	// 1752 - Lettres d'une Péruvienne, édition augmentée (même œuvre que 1747)
+	{
+		id: 'lettres-d-une-peruvienne-1752',
+		year: 1752,
+		type: 'literature',
+		category: 'novel',
+		title: 'Lettres d’une Péruvienne : édition augmentée',
+		subtitle: '1752 · Françoise de Graffigny · édition augmentée, signée',
+		author: 'Françoise de Graffigny',
+		authorDates: '1695–1758',
+		dateType: 'publication',
+		tagLabel: 'Roman épistolaire · Lumières',
+		shortDescription: 'Nouvelle édition, signée par l’autrice, du roman paru anonymement en 1747 : même œuvre, augmentée de nouvelles lettres.',
+		description: `Nouvelle édition, signée par l’autrice, des Lettres d’une Péruvienne parues anonymement en 1747. Il ne s’agit pas d’une autre œuvre : le roman passe de 38 à 41 lettres.
+
+Les ajouts renforcent la critique sociale, avec notamment une lettre sur le luxe et une autre sur l’éducation des filles et le mariage.`,
+		historicalContext: 'Au début des années 1750, sous Louis XV, les Lumières s’affirment : le premier volume de l’Encyclopédie paraît en 1751. L’édition augmentée prolonge la réflexion du roman sur la société française et la condition des femmes.',
+		periodId: 'regne-louis-xv',
+		relatedTo: ['lettres-d-une-peruvienne', 'francoise-de-graffigny'],
+		relatedLinks: [
+			{ id: 'lettres-d-une-peruvienne', label: '1747 : première publication, anonyme, du même roman' },
+			{ id: 'francoise-de-graffigny', label: 'L’autrice : Françoise de Graffigny (1695–1758)' },
+		],
+		importance: 'medium',
+		pageLink: {
+			url: '/graffigny',
+			label: 'Explorer la carte interactive des Lettres d’une Péruvienne (éditions de 1747 et 1752)',
+			badge: 'Page dédiée · Cartographie littéraire',
+		},
 	},
 
 	// 1789 - Révolution française
@@ -962,7 +1064,7 @@ L’année 1665 voit naître les premières grandes revues scientifiques europé
 		tagLabel: 'Industrie · Énergie / Vapeur',
 		description: "James Watt perfectionne la machine à vapeur et dépose en 1769 un brevet pour son amélioration. La vapeur devient progressivement une source majeure d'énergie mécanique pour l'industrie.",
 		historicalContext: "Perfectionnement décisif des machines antérieures (Newcomen), la condensation séparée de Watt démultiplie l'efficacité énergétique et amorce la première révolution industrielle en affranchissant les manufactures des cours d'eau.",
-		periodId: 'revolution-francaise-regime',
+		periodId: 'regne-louis-xv',
 		relatedTo: ['chemin-de-fer-stockton', 'liverpool-manchester'],
 		importance: 'major',
 		image: industryImages.watt,

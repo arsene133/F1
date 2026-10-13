@@ -41,7 +41,7 @@ describe('filtres de la frise', () => {
 	});
 
 	test('Littérature : les œuvres majeures, dont Dom Juan, Pot-Bouille et Au Bonheur des Dames', () => {
-		expect(count('literature')).toBe(6);
+		expect(count('literature')).toBe(9);
 		expect(titlesFor('literature')).toEqual(
 			expect.arrayContaining([
 				'Molière crée Dom Juan ou le Festin de pierre',
@@ -50,6 +50,9 @@ describe('filtres de la frise', () => {
 				'Le Père Goriot',
 				'Cahiers de Douai',
 				"On ne badine pas avec l'amour",
+				'Françoise de Graffigny',
+				'Lettres d’une Péruvienne',
+				'Lettres d’une Péruvienne : édition augmentée',
 			]),
 		);
 	});

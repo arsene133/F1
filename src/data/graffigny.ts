@@ -1127,7 +1127,7 @@ export const graffignySources = {
 		{
 			title: 'Frise chronologique',
 			url: '/chronologie',
-			note: 'repères littéraires et historiques du XVIIe au XIXe siècle',
+			note: 'repères littéraires et historiques du XVIIe au XIXe siècle, dont les Lettres d’une Péruvienne (1747, édition augmentée en 1752)',
 		},
 		{
 			title: 'Molière, Dom Juan',
