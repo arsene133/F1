@@ -234,7 +234,7 @@ describe('Le Conte du Graal (Perceval) — modèle de données (src/data/perceva
 
 		const graal = percevalSpatialStages.find((s) => s.id === 'chateau-roi-pecheur')!;
 		expect(graal.category).toBe('fictionnel');
-		expect(graal.geographicStatus).toContain('le récit ne permet pas de lui attribuer une position géographique moderne');
+		expect(graal.geographicStatus).toContain('rien dans le récit ne permet de le placer sur une carte');
 		expect(graal.verses).toContain('éd. F. Lecoy');
 
 		const foret = percevalSpatialStages.find((s) => s.id === 'gaste-foret')!;

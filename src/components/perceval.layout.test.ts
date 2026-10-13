@@ -423,9 +423,9 @@ describe.skipIf(!BUILT)('Page Perceval (/perceval) — Réseau des personnages e
 			expect(await grailMarker.getAttribute('class')).toContain('is-active');
 			expect(await grailMarker.getAttribute('aria-pressed')).toBe('true');
 			expect(await detailTitle.textContent()).toContain('Roi Pêcheur');
-			expect(await detailStatus.textContent()).toContain('le récit ne permet pas de lui attribuer une position géographique moderne');
+			expect(await detailStatus.textContent()).toContain('rien dans le récit ne permet de le placer sur une carte');
 
-			// Filtre par catégorie : cliquer sur 'Lieu réel ou repère breton'
+			// Filtre par catégorie : cliquer sur 'Lieu réel (Grande-Bretagne)'
 			const realFilter = geoSection.locator('.geo-filter-btn[data-geo-filter="reel"]');
 			await realFilter.click();
 

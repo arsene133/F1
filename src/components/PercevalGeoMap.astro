@@ -29,7 +29,7 @@ const categoriesList = Object.entries(PERCEVAL_SPATIAL_CATEGORIES);
 	<!-- En-tête pédagogique et filtres de la carte -->
 	<div class="geo-controls-bar">
 		<div class="geo-filters-group" role="group" aria-label="Filtrer les espaces du récit">
-			<span class="geo-filters-label">Nature de l’espace :</span>
+			<span class="geo-filters-label">Afficher les lieux :</span>
 			<div class="geo-filter-buttons">
 				<button
 					type="button"
@@ -79,9 +79,9 @@ const categoriesList = Object.entries(PERCEVAL_SPATIAL_CATEGORIES);
 				type="button"
 				class="geo-action-btn"
 				id="btn-reset-geo"
-				title="Revenir au point de départ du voyage"
+				title="Revenir à la première étape et afficher tous les lieux"
 			>
-				Réinitialiser le parcours
+				Revenir au départ
 			</button>
 		</div>
 	</div>
@@ -140,7 +140,7 @@ const categoriesList = Object.entries(PERCEVAL_SPATIAL_CATEGORIES);
 						<!-- Forêt de l'ermitage -->
 						<g transform="translate(760, 280)" opacity="0.35">
 							<path d="M 10 25 L 20 8 L 30 25 Z M 25 28 L 38 10 L 51 28 Z" fill="#5f6b2f" />
-							<text x="12" y="44" font-size="11" font-family="serif" fill="#5f6b2f" font-style="italic">Bois sacrés</text>
+							<text x="12" y="44" font-size="11" font-family="serif" fill="#5f6b2f" font-style="italic">Bois de l’ermite</text>
 						</g>
 					</g>
 
@@ -166,7 +166,7 @@ const categoriesList = Object.entries(PERCEVAL_SPATIAL_CATEGORIES);
 									tabindex="0"
 									role="button"
 									aria-pressed={stage.id === initialStage.id ? 'true' : 'false'}
-									aria-label={`Étape ${stage.order} : ${stage.name}. Catégorie : ${stage.categoryLabel}.`}
+									aria-label={`Étape ${stage.order} : ${stage.name}. Type de lieu : ${stage.categoryLabel}.`}
 									style={`--stage-color: ${cat.color};`}
 								>
 									<!-- Cercle d'aura au focus/survol -->
@@ -223,8 +223,8 @@ const categoriesList = Object.entries(PERCEVAL_SPATIAL_CATEGORIES);
 			</div>
 
 			<!-- Légende didactique sous le schéma -->
-			<div class="geo-legend-box" aria-label="Légende des statuts géographiques">
-				<span class="geo-legend-heading">Statut géographique des lieux :</span>
+			<div class="geo-legend-box" aria-label="Légende : les types de lieux">
+				<span class="geo-legend-heading">Légende : réel ou inventé ?</span>
 				<ul class="geo-legend-items">
 					{categoriesList.map(([key, cat]) => (
 						<li class="geo-legend-item" style={`--cat-color: ${cat.color};`}>
@@ -236,7 +236,7 @@ const categoriesList = Object.entries(PERCEVAL_SPATIAL_CATEGORIES);
 					))}
 				</ul>
 				<p class="geo-legend-warning">
-					<strong>Règle d’or pour les élèves :</strong> cette carte ne mesure pas des kilomètres réels et ne trace pas une vraie route. La ligne en pointillés montre seulement l’ordre des événements dans le roman, entre des forteresses inventées et des forêts de contes.
+					<strong>Attention :</strong> cette carte ne montre pas les vraies distances ni une vraie route. La ligne en pointillés montre seulement l’ordre des événements dans le roman, entre des forteresses inventées et des forêts de contes.
 				</p>
 			</div>
 		</div>
@@ -276,9 +276,9 @@ const categoriesList = Object.entries(PERCEVAL_SPATIAL_CATEGORIES);
 					</div>
 
 					<div class="stage-evaluation-box">
-						<h4 class="stage-eval-title">Repère pour l’élève de 5ᵉ</h4>
+						<h4 class="stage-eval-title">À retenir</h4>
 						<p class="stage-eval-status">
-							<strong>Statut du lieu :</strong> <span id="detail-stage-status">{initialStage.geographicStatus}</span>
+							<strong>Réel ou inventé ?</strong> <span id="detail-stage-status">{initialStage.geographicStatus}</span>
 						</p>
 						<p class="stage-eval-explanation" id="detail-stage-explanation">
 							{initialStage.didacticExplanation}
@@ -292,7 +292,7 @@ const categoriesList = Object.entries(PERCEVAL_SPATIAL_CATEGORIES);
 	<!-- Alternative accessible complète : tableau chronologique détaillé -->
 	<details class="geo-accessible-details">
 		<summary class="geo-accessible-summary">
-			<span>Lire l’itinéraire complet des sept étapes sous forme de texte accessible</span>
+			<span>Lire les sept étapes du voyage sous forme de tableau</span>
 		</summary>
 		<div class="geo-accessible-content">
 			<table class="geo-accessible-table">
@@ -300,9 +300,9 @@ const categoriesList = Object.entries(PERCEVAL_SPATIAL_CATEGORIES);
 					<tr>
 						<th scope="col">N°</th>
 						<th scope="col">Nom du lieu & vers</th>
-						<th scope="col">Catégorie géographique</th>
-						<th scope="col">Rôle dans l’apprentissage du héros</th>
-						<th scope="col">Explication pour les élèves</th>
+						<th scope="col">Type de lieu</th>
+						<th scope="col">Rôle dans le voyage</th>
+						<th scope="col">À retenir</th>
 					</tr>
 				</thead>
 				<tbody>
