@@ -1,0 +1,585 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import RimbaudMap from '../components/RimbaudMap.astro';
+import { CAHIERS_DE_DOUAI_POEMS, READING_PATHS, RIMBAUD_PLACES } from '../data/rimbaud-places';
+
+const pageTitle = 'Arthur Rimbaud · Cahiers de Douai — Cartographie littéraire et géographie poétique (1870)';
+const pageDescription =
+	'Cartographie littéraire interactive des Cahiers de Douai (Recueil Demeny) d’Arthur Rimbaud : explorez les lieux réels, les fugues de 1870, les paysages ardennais et les espaces imaginaires à travers les 22 poèmes.';
+---
+
+<!doctype html>
+<html lang="fr">
+	<head>
+		<BaseHead title={pageTitle} description={pageDescription} />
+		<link
+			rel="stylesheet"
+			href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+			integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+			crossorigin=""
+		/>
+	</head>
+	<body>
+		<Header />
+
+		<main class="page-container rimbaud-page">
+			<article aria-labelledby="page-title">
+				<!-- En-tête éditorial conforme aux chartes du site -->
+				<header class="map-intro">
+					<p class="intro-eyebrow">Arthur Rimbaud · 1870 · Recueil Demeny</p>
+					<h1 id="page-title">Cartographie littéraire des <cite>Cahiers de Douai</cite></h1>
+					<p class="intro-desc">
+						<strong>Géographie réelle, fugues adolescentes et invention poétique de l’espace</strong>
+					</p>
+					<p class="intro-context">
+						À la fin de l’été et à l’automne 1870, alors que la France est envahie par la Prusse et que le Second Empire s’effondre à Sedan, Arthur Rimbaud, âgé de quinze à seize ans, compose vingt-deux poèmes qu’il confie à Douai au poète Paul Demeny. Loin d’être un décor inerte, l’espace géographique y devient le moteur même de la création : le carcan bourgeois de Charleville suscite la fuite en avant, les routes ardennaises et belges rythment l’émancipation du corps vagabond, et le fracas de la guerre forge une poésie républicaine et antimilitariste d’une férocité inédite.
+					</p>
+					<p class="intro-instructions">
+						Naviguez entre les 4 parcours de lecture, filtrez par poème ou par statut épistémologique, et distinguez avec rigueur le fait historique documenté de l’interprétation littéraire et du paysage purement imaginaire.
+					</p>
+
+					<!-- Raccourcis des parcours de lecture -->
+					<nav class="rimbaud-paths-quicklinks" aria-label="Accès direct aux parcours thématiques">
+						<a href="#parcours-ardennes" class="path-quicklink">
+							<span class="quicklink-icon" aria-hidden="true">🌲</span>
+							<span>Parcours A · Le Rimbaud des Ardennes</span>
+						</a>
+						<a href="#parcours-fugues" class="path-quicklink">
+							<span class="quicklink-icon" aria-hidden="true">🚶</span>
+							<span>Parcours B · Marcher, partir, s’évader</span>
+						</a>
+						<a href="#parcours-guerre" class="path-quicklink">
+							<span class="quicklink-icon" aria-hidden="true">⚔️</span>
+							<span>Parcours C · Guerre & Débâcle de 1870</span>
+						</a>
+						<a href="#parcours-emancipation" class="path-quicklink">
+							<span class="quicklink-icon" aria-hidden="true">✨</span>
+							<span>Parcours D · Émancipation & Espaces imaginaires</span>
+						</a>
+					</nav>
+				</header>
+
+				<!-- Section interactive principale avec la carte Leaflet -->
+				<section class="rimbaud-map-section" id="section-carte-interactive" aria-labelledby="map-section-title">
+					<header class="section-editorial-header">
+						<p class="section-tag">Visualisation géographique & littéraire</p>
+						<h2 id="map-section-title" class="section-title">
+							La carte interactive des 22 poèmes
+						</h2>
+						<p class="section-lead">
+							Sélectionnez un marqueur ou un poème pour analyser le rapport singulier entre le territoire physique et la forme poétique.
+						</p>
+					</header>
+
+					<RimbaudMap />
+				</section>
+
+				<!-- Grille méthodologique : 3 catégories rigoureuses -->
+				<section class="rimbaud-methodology-section" aria-labelledby="methodo-title">
+					<header class="methodo-header">
+						<h2 id="methodo-title" class="methodo-heading">
+							Rigueur philologique : les trois statuts de l’espace rimbaldien
+						</h2>
+						<p class="methodo-intro">
+							Pour un élève de seconde préparant les épreuves de français, cartographier la poésie exige d’éviter deux écueils symétriques : transformer abusivement chaque métaphore en coordonnée GPS, ou réduire le poème à une simple anecdote biographique.
+						</p>
+					</header>
+
+					<div class="methodo-cards-grid">
+						<div class="methodo-card card-atteste">
+							<div class="methodo-card-badge">Catégorie 1</div>
+							<h3>Lieu attesté dans le texte</h3>
+							<p>
+								Toponyme explicitement nommé dans les vers ou le sous-titre autographe du poème (ex. : <em>Charleroi</em> dans « Au Cabaret-Vert », <em>Valmy</em> dans « Morts de Quatre-vingt-douze », <em>Sarrebrück</em>, <em>Tuileries</em>).
+							</p>
+							<div class="methodo-card-caution">
+								<strong>Règle critique :</strong> Même nommé, le lieu est réinventé par l'écriture poétique et ne vaut pas simple reportage documentaire.
+							</div>
+						</div>
+
+						<div class="methodo-card card-interprete">
+							<div class="methodo-card-badge">Catégorie 2</div>
+							<h3>Lieu interprété ou biographique</h3>
+							<p>
+								Cadre naturel ou déplacement documenté par l'histoire littéraire (la vallée encaissée du « Dormeur du val », les routes ardennaises de « Ma Bohème », la prison de Mazas, le havre de Douai chez Paul Demeny).
+							</p>
+							<div class="methodo-card-caution">
+								<strong>Règle critique :</strong> Ne jamais confondre lieu de séjour, lieu de rédaction et décor de la scène poétique sans preuve formelle.
+							</div>
+						</div>
+
+						<div class="methodo-card card-imaginaire">
+							<div class="methodo-card-badge">Catégorie 3</div>
+							<h3>Espace poétique non localisable</h3>
+							<p>
+								Paysage symbolique, visionnaire ou allégorique (la Grèce antique de « Soleil et chair », la potence médiévale du « Bal des pendus », les flots mythiques d'« Ophélie »).
+							</p>
+							<div class="methodo-card-caution">
+								<strong>Règle critique :</strong> Doit impérativement être maintenu hors géolocalisation pour respecter la liberté symbolique de l'œuvre.
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- Synthèse pédagogique : Les 4 parcours d'analyse littéraire -->
+				<section class="rimbaud-paths-deepdive" aria-labelledby="deepdive-title">
+					<h2 id="deepdive-title" class="deepdive-heading">
+						Quatre parcours d'étude pour la classe de Seconde
+					</h2>
+
+					<div class="deepdive-articles">
+						<!-- Parcours A -->
+						<article class="deepdive-article" id="parcours-ardennes">
+							<div class="deepdive-meta">
+								<span class="deepdive-tag">Parcours A</span>
+								<span class="deepdive-scale">Échelle locale & régionale</span>
+							</div>
+							<h3>Le Rimbaud des Ardennes : du collège aux refus provinciaux</h3>
+							<p>
+								Né à Charleville, Rimbaud grandit sous la férule sévère de sa mère, Vitalie Cuif, et dans l'étroitesse d'une ville provinciale de garnison qu'il déteste (« Ma ville natale est supérieurement idiote entre les petites villes de province »). Pourtant, cet espace nourrit son inspiration : le collège municipal où il brille en vers latins et rencontre son jeune professeur Georges Izambard ; les promenades et les cafés de « Roman » où l'adolescence s'ébroue ; le soupirail de boulangerie des « Effarés ». Le territoire natal n'est pas un décor passif, c'est l'étouffoir contre lequel la voix poétique se dresse et s'aiguise.
+							</p>
+							<blockquote class="deepdive-quote">
+								« On va sous les tilleuls verts de la promenade. / Les tilleuls sentent bon dans les bons soirs de juin ! »
+								<cite>— « Roman », 29 septembre 1870</cite>
+							</blockquote>
+						</article>
+
+						<!-- Parcours B -->
+						<article class="deepdive-article" id="parcours-fugues">
+							<div class="deepdive-meta">
+								<span class="deepdive-tag">Parcours B</span>
+								<span class="deepdive-scale">Échelle transfrontalière (France – Belgique)</span>
+							</div>
+							<h3>Marcher, partir, s’évader : la poétique du vagabondage</h3>
+							<p>
+								Entre août et octobre 1870, Rimbaud fugue à trois reprises. La première fugue (29 août) le mène en train à Paris où, sans billet valable, il est incarcéré à la prison de Mazas avant d'être recueilli à Douai. La seconde fugue (début octobre) est pédestre : franchissant clandestinement la frontière belge vers Charleroi, le poète parcourt des dizaines de kilomètres à pied. La marche à pied (« Petit-Poucet rêveur ») n'est pas seulement un moyen de fuite : elle impose un rythme corporel à l'alexandrin, délie la syntaxe et éveille les sens au contact de la terre, du vent et des auberges (« Au Cabaret-Vert », « La Maline », « Ma Bohème »).
+							</p>
+							<blockquote class="deepdive-quote">
+								« Mon auberge était à la Grande-Ourse. / — Mes étoiles au ciel avaient un doux frou-frou / Et je les écoutais, assis au bord des routes... »
+								<cite>— « Ma Bohème », octobre 1870</cite>
+							</blockquote>
+						</article>
+
+						<!-- Parcours C -->
+						<article class="deepdive-article" id="parcours-guerre">
+							<div class="deepdive-meta">
+								<span class="deepdive-tag">Parcours C</span>
+								<span class="deepdive-scale">Échelle nationale & géopolitique</span>
+							</div>
+							<h3>L’Année terrible : guerre franco-prussienne, Sedan et satire antimilitariste</h3>
+							<p>
+								L'été 1870 est marqué par la déclaration de guerre à la Prusse et la fulgurante invasion du Nord-Est. Le 2 septembre 1870, la forteresse de Sedan, à vingt kilomètres de Charleville, capitule avec 80 000 soldats français et l'empereur Napoléon III. Rimbaud vit au contact immédiat de ce désastre : les blessés affluent, les journaux exaltent un patriotisme frelaté. Sa réponse poétique est d'une radicalité totale : démystification burlesque de la propagande (« L'Éclatante Victoire de Sarrebrück »), satire sauvage de l'empereur captif à Wilhelmshöhe (« Rages de Césars »), et dénonciation poignante du massacre aveugle dans « Le Dormeur du val » et « Le Mal ».
+							</p>
+							<blockquote class="deepdive-quote">
+								« Les parfums ne font pas frissonner sa narine ; / Il dort dans le soleil, la main sur sa poitrine, / Tranquille. Il a deux trous rouges au côté droit. »
+								<cite>— « Le Dormeur du val », octobre 1870</cite>
+							</blockquote>
+						</article>
+
+						<!-- Parcours D -->
+						<article class="deepdive-article" id="parcours-emancipation">
+							<div class="deepdive-meta">
+								<span class="deepdive-tag">Parcours D</span>
+								<span class="deepdive-scale">Échelle imaginaire & symbolique</span>
+							</div>
+							<h3>Émancipation poétique : du document réaliste au mythe</h3>
+							<p>
+								Les <em>Cahiers de Douai</em> constituent l'acte de naissance d'un poète moderne. Rimbaud ne s'arrête pas au cadre régional : il métamorphose le quotidien bourgeois (le vieux meuble chêne dans « Le Buffet », la baignoire de zinc dans « Vénus anadyomène ») et ressuscite des espaces mythologiques païens dans « Soleil et chair ». En opposant la Grèce antique lumineuse à la noirceur de la société chrétienne et impériale, il invente une géographie intérieure où le corps affranchi célèbre la beauté libre du monde.
+							</p>
+							<blockquote class="deepdive-quote">
+								« Ô splendeur de la chair ! ô splendeur idéale ! / Ô renouveau d’amours, aurore triomphale / Où, courbant à leurs pieds les Dieux et les Héros, / La blanche Vénus d’or sortit du sein des flots ! »
+								<cite>— « Soleil et chair », mai 1870</cite>
+							</blockquote>
+						</article>
+					</div>
+				</section>
+
+				<!-- Récapitulatif du corpus Demeny -->
+				<section class="rimbaud-corpus-summary" aria-labelledby="corpus-title">
+					<h2 id="corpus-title" class="corpus-heading">
+						Composition intégrale des <cite>Cahiers de Douai</cite> (22 poèmes)
+					</h2>
+					<p class="corpus-lead">
+						Les poèmes sont répartis en deux cahiers autographes confiés à Paul Demeny le 26 septembre et en octobre 1870 :
+					</p>
+
+					<div class="cahiers-display-grid">
+						<div class="cahier-column">
+							<div class="cahier-header">
+								<h3>Premier Cahier (15 poèmes)</h3>
+								<span class="cahier-date">Remis le 26 septembre 1870</span>
+							</div>
+							<ol class="cahier-poem-list">
+								{CAHIERS_DE_DOUAI_POEMS.filter((p) => p.cahier === 1).map((p) => (
+									<li>
+										<strong>{p.title}</strong> — <em>{p.form}</em> ({p.dateWritten})
+										<br />
+										<span class="poem-space-note">📍 {p.placesSummary}</span>
+									</li>
+								))}
+							</ol>
+						</div>
+
+						<div class="cahier-column">
+							<div class="cahier-header">
+								<h3>Second Cahier (7 poèmes)</h3>
+								<span class="cahier-date">Remis en octobre 1870</span>
+							</div>
+							<ol class="cahier-poem-list" start="16">
+								{CAHIERS_DE_DOUAI_POEMS.filter((p) => p.cahier === 2).map((p) => (
+									<li>
+										<strong>{p.title}</strong> — <em>{p.form}</em> ({p.dateWritten})
+										<br />
+										<span class="poem-space-note">📍 {p.placesSummary}</span>
+									</li>
+								))}
+							</ol>
+						</div>
+					</div>
+				</section>
+			</article>
+		</main>
+
+		<Footer />
+	</body>
+</html>
+
+<!-- Styles spécifiques de la page Rimbaud -->
+<style>
+	@import '../styles/editorial-map.css';
+
+	.rimbaud-page {
+		max-width: 1100px;
+	}
+
+	.intro-eyebrow {
+		--intro-eyebrow-color: #b91c1c;
+	}
+
+	.rimbaud-paths-quicklinks {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.6rem;
+		margin-top: 1.5rem;
+	}
+
+	.path-quicklink {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.45rem 0.85rem;
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 20px;
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: var(--map-ink, #172b3a);
+		text-decoration: none;
+		transition: all 0.15s ease;
+	}
+
+	.path-quicklink:hover {
+		background: #172b3a;
+		color: #ffffff;
+		border-color: #172b3a;
+		transform: translateY(-1px);
+	}
+
+	/* Section titres éditoriaux */
+	.section-editorial-header {
+		text-align: center;
+		margin-bottom: 1.5rem;
+	}
+
+	.section-tag {
+		font-size: 0.78rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.12em;
+		color: #b91c1c;
+		margin: 0 0 0.35rem;
+	}
+
+	.section-title {
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.85rem;
+		font-weight: normal;
+		margin: 0 0 0.5rem;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.section-lead {
+		font-size: 1rem;
+		color: var(--map-muted, #5e6d7a);
+		max-width: 680px;
+		margin: 0 auto;
+	}
+
+	/* Méthodologie : 3 catégories */
+	.rimbaud-methodology-section {
+		margin: 4rem 0;
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 12px;
+		padding: 2rem;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+	}
+
+	.methodo-header {
+		text-align: center;
+		max-width: 800px;
+		margin: 0 auto 2rem;
+	}
+
+	.methodo-heading {
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.6rem;
+		font-weight: normal;
+		color: var(--map-ink, #172b3a);
+		margin: 0 0 0.6rem;
+	}
+
+	.methodo-intro {
+		font-size: 0.95rem;
+		line-height: 1.55;
+		color: var(--map-ink-soft, #2d3e4d);
+		margin: 0;
+	}
+
+	.methodo-cards-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1.5rem;
+	}
+
+	@media (min-width: 840px) {
+		.methodo-cards-grid {
+			grid-template-columns: 1fr 1fr 1fr;
+		}
+	}
+
+	.methodo-card {
+		background: #faf8f5;
+		border: 1px solid var(--map-border-soft, #ece7de);
+		border-radius: 8px;
+		padding: 1.25rem;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.methodo-card-badge {
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		margin-bottom: 0.5rem;
+	}
+
+	.card-atteste .methodo-card-badge {
+		color: #b91c1c;
+	}
+	.card-interprete .methodo-card-badge {
+		color: #047857;
+	}
+	.card-imaginaire .methodo-card-badge {
+		color: #7c3aed;
+	}
+
+	.methodo-card h3 {
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.15rem;
+		margin: 0 0 0.6rem;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.methodo-card p {
+		font-size: 0.88rem;
+		line-height: 1.5;
+		color: var(--map-ink-soft, #2d3e4d);
+		flex-grow: 1;
+		margin: 0 0 0.85rem;
+	}
+
+	.methodo-card-caution {
+		background: #ffffff;
+		border-left: 3px solid var(--map-border, #dcd6cb);
+		padding: 0.55rem 0.75rem;
+		font-size: 0.8rem;
+		line-height: 1.45;
+		color: var(--map-muted, #5e6d7a);
+		border-radius: 0 4px 4px 0;
+	}
+
+	/* Parcours d'approfondissement */
+	.rimbaud-paths-deepdive {
+		margin: 4rem 0;
+	}
+
+	.deepdive-heading {
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.7rem;
+		font-weight: normal;
+		text-align: center;
+		margin: 0 0 2rem;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.deepdive-articles {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1.75rem;
+	}
+
+	@media (min-width: 768px) {
+		.deepdive-articles {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	.deepdive-article {
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 10px;
+		padding: 1.4rem;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+	}
+
+	.deepdive-meta {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 0.5rem;
+	}
+
+	.deepdive-tag {
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		color: #b91c1c;
+		letter-spacing: 0.06em;
+	}
+
+	.deepdive-scale {
+		font-size: 0.75rem;
+		color: var(--map-muted, #5e6d7a);
+		font-style: italic;
+	}
+
+	.deepdive-article h3 {
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.25rem;
+		margin: 0 0 0.75rem;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.deepdive-article p {
+		font-size: 0.9rem;
+		line-height: 1.55;
+		color: var(--map-ink-soft, #2d3e4d);
+		margin: 0 0 1rem;
+	}
+
+	.deepdive-quote {
+		margin: 0;
+		padding: 0.75rem 0.9rem;
+		background: #fbf9f4;
+		border-left: 3px solid #8b572a;
+		border-radius: 0 4px 4px 0;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 0.88rem;
+		font-style: italic;
+		line-height: 1.45;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.deepdive-quote cite {
+		display: block;
+		margin-top: 0.4rem;
+		font-size: 0.76rem;
+		font-style: normal;
+		color: var(--map-muted, #5e6d7a);
+		text-align: right;
+	}
+
+	/* Synthèse corpus */
+	.rimbaud-corpus-summary {
+		margin: 4rem 0 2rem;
+		background: #faf8f5;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 12px;
+		padding: 2rem;
+	}
+
+	.corpus-heading {
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.5rem;
+		font-weight: normal;
+		text-align: center;
+		margin: 0 0 0.5rem;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.corpus-lead {
+		text-align: center;
+		font-size: 0.95rem;
+		color: var(--map-muted, #5e6d7a);
+		margin: 0 0 1.75rem;
+	}
+
+	.cahiers-display-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1.5rem;
+	}
+
+	@media (min-width: 768px) {
+		.cahiers-display-grid {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	.cahier-column {
+		background: #ffffff;
+		border: 1px solid var(--map-border-soft, #ece7de);
+		border-radius: 8px;
+		padding: 1.25rem;
+	}
+
+	.cahier-header {
+		margin-bottom: 1rem;
+		padding-bottom: 0.6rem;
+		border-bottom: 1px solid var(--map-border-soft, #ece7de);
+	}
+
+	.cahier-header h3 {
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.15rem;
+		margin: 0 0 0.25rem;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.cahier-date {
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: #8b572a;
+	}
+
+	.cahier-poem-list {
+		margin: 0;
+		padding-left: 1.35rem;
+		font-size: 0.88rem;
+	}
+
+	.cahier-poem-list li {
+		margin-bottom: 0.85rem;
+		line-height: 1.4;
+	}
+
+	.poem-space-note {
+		font-size: 0.78rem;
+		color: var(--map-muted, #5e6d7a);
+	}
+</style>

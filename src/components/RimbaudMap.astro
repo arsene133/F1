@@ -1,0 +1,1568 @@
+---
+import {
+	CAHIERS_DE_DOUAI_POEMS,
+	LOCATION_PRECISION_LABELS,
+	PLACE_CATEGORY_LABELS,
+	READING_PATHS,
+	RIMBAUD_MAP_CONFIG,
+	RIMBAUD_PLACES,
+	type RimbaudPlace,
+} from '../data/rimbaud-places';
+
+const initialPlace = RIMBAUD_PLACES[0];
+const categoriesList = Object.values(PLACE_CATEGORY_LABELS);
+---
+
+<div class="rimbaud-map-interactive" id="rimbaud-interactive-app" data-rimbaud-app>
+	<!-- Données JSON sérialisées pour hydratation client côté script -->
+	<script
+		type="application/json"
+		id="rimbaud-places-data"
+		set:html={JSON.stringify({
+			places: RIMBAUD_PLACES,
+			poems: CAHIERS_DE_DOUAI_POEMS,
+			categories: PLACE_CATEGORY_LABELS,
+			precisionLabels: LOCATION_PRECISION_LABELS,
+			readingPaths: READING_PATHS,
+			mapConfig: RIMBAUD_MAP_CONFIG,
+		})}
+	/>
+
+	<!-- En-tête des contrôles : Parcours thématiques, filtres par catégorie, filtre par poème -->
+	<section class="rimbaud-controls-card" aria-label="Modes d'exploration et filtres littéraires">
+		<!-- 1. Sélection du parcours de lecture -->
+		<div class="control-row paths-row">
+			<span class="control-label" id="paths-label">Parcours de lecture :</span>
+			<div class="paths-pills" role="tablist" aria-labelledby="paths-label">
+				<button
+					type="button"
+					role="tab"
+					class="path-pill is-active"
+					data-path-id="all"
+					aria-selected="true"
+				>
+					<span class="path-icon" aria-hidden="true">🌐</span>
+					<span>Vue complète ({RIMBAUD_PLACES.length} lieux)</span>
+				</button>
+				{READING_PATHS.map((path) => (
+					<button
+						type="button"
+						role="tab"
+						class="path-pill"
+						data-path-id={path.id}
+						aria-selected="false"
+					>
+						<span class="path-title-short">{path.title.split('—')[0].trim()}</span>
+						<span class="path-title-desc"> · {path.title.split('—')[1]?.trim()}</span>
+					</button>
+				))}
+			</div>
+		</div>
+
+		<!-- Bandeau explicatif du parcours actif -->
+		<div class="active-path-banner" id="active-path-banner">
+			<div class="path-banner-content">
+				<h3 class="path-banner-title" id="active-path-title">Vue panoramique complète</h3>
+				<p class="path-banner-desc" id="active-path-desc">
+					Explorez l'ensemble des 14 repères littéraires et biographiques des <em>Cahiers de Douai</em> : des bastions ardennais aux routes de Belgique, de la captivité de Mazas aux plaines révolutionnaires de Valmy.
+				</p>
+			</div>
+			<div class="path-banner-meta">
+				<span class="path-banner-badge" id="active-path-badge">14 repères · 22 poèmes</span>
+			</div>
+		</div>
+
+		<!-- 2. Filtres croisés : Catégorie & Sélection d'un poème -->
+		<div class="control-row filters-row">
+			<div class="filter-col categories-col">
+				<span class="filter-caption" id="cat-filter-label">Filtrer par statut épistémologique :</span>
+				<div class="filter-chips" role="group" aria-labelledby="cat-filter-label">
+					<button
+						type="button"
+						class="chip-button is-active"
+						data-category-filter="all"
+						aria-pressed="true"
+					>
+						<span class="chip-dot chip-all" aria-hidden="true"></span>
+						<span>Toutes catégories ({RIMBAUD_PLACES.length})</span>
+					</button>
+					{categoriesList.map((cat) => {
+						const count = RIMBAUD_PLACES.filter((p) => p.category === cat.id).length;
+						return (
+							<button
+								type="button"
+								class="chip-button"
+								data-category-filter={cat.id}
+								aria-pressed="false"
+								style={`--cat-color: ${cat.color};`}
+							>
+								<span class="chip-symbol" aria-hidden="true">{cat.symbol}</span>
+								<span>{cat.label} ({count})</span>
+							</button>
+						);
+					})}
+				</div>
+			</div>
+
+			<div class="filter-col poem-select-col">
+				<label for="poem-dropdown" class="filter-caption">
+					Sélectionner un poème des <em>Cahiers</em> :
+				</label>
+				<select id="poem-dropdown" class="poem-select" aria-label="Filtrer les lieux par poème">
+					<option value="all">Tous les poèmes (22 poèmes du recueil)</option>
+					<optgroup label="Premier Cahier (septembre 1870)">
+						{CAHIERS_DE_DOUAI_POEMS.filter((p) => p.cahier === 1).map((p) => (
+							<option value={p.id}>
+								{p.order}. {p.title} ({p.dateWritten})
+							</option>
+						))}
+					</optgroup>
+					<optgroup label="Second Cahier (octobre 1870)">
+						{CAHIERS_DE_DOUAI_POEMS.filter((p) => p.cahier === 2).map((p) => (
+							<option value={p.id}>
+								{p.order}. {p.title} ({p.dateWritten})
+							</option>
+						))}
+					</optgroup>
+				</select>
+			</div>
+		</div>
+	</section>
+
+	<!-- Grille principale : Carte Leaflet (à gauche) + Fiche détaillée (à droite) -->
+	<div class="rimbaud-view-grid">
+		<!-- Conteneur Carte -->
+		<div class="map-container-column">
+			<!-- Barre d'outils au-dessus de la carte -->
+			<div class="map-toolbar">
+				<div class="map-status-area">
+					<span class="live-counter" id="map-live-counter" aria-live="polite">
+						Affichage de 14 lieux sur 14
+					</span>
+				</div>
+				<div class="map-buttons-area">
+					<button
+						type="button"
+						id="btn-recenter-markers"
+						class="btn-map-control"
+						title="Ajuster la vue pour embrasser tous les marqueurs visibles"
+					>
+						Recentrer sur les lieux
+					</button>
+					<button
+						type="button"
+						id="btn-reset-ardennes"
+						class="btn-map-control"
+						title="Revenir au foyer ardennais (Charleville, Sedan, Meuse)"
+					>
+						Foyer des Ardennes
+					</button>
+				</div>
+			</div>
+
+			<!-- Élément Leaflet -->
+			<div
+				id="rimbaud-leaflet-map"
+				class="leaflet-map-element"
+				role="region"
+				aria-label="Carte littéraire interactive des Cahiers de Douai"
+				tabindex="0"
+			>
+				<noscript>
+					<div class="noscript-message">
+						<p>
+							<strong>La carte interactive nécessite l’activation de JavaScript.</strong>
+							Retrouvez l’inventaire textuel détaillé de tous les lieux ci-dessous.
+						</p>
+					</div>
+				</noscript>
+			</div>
+
+			<!-- Notice cartographique et échelle -->
+			<div class="map-caption-bar">
+				<p class="map-caption-text">
+					<strong>Échelles géographiques :</strong> Locale (Charleville, Douai), Régionale (Ardennes, Meuse, Hainaut belge) et Élargie (Paris, Valmy, Sarrebrück, Cassel).
+					<span class="map-caption-note">Les espaces purement imaginaires sont présentés hors coordonnées pour préserver la vérité philologique.</span>
+				</p>
+			</div>
+
+			<!-- Légende explicite et accessible -->
+			<div class="map-legend-bar" aria-label="Légende des statuts de lieux">
+				<span class="legend-title">Légende :</span>
+				<ul class="legend-items">
+					{categoriesList.map((cat) => (
+						<li class="legend-item" style={`--item-color: ${cat.color};`}>
+							<span class="legend-badge" aria-hidden="true">{cat.symbol}</span>
+							<span class="legend-text">{cat.label}</span>
+						</li>
+					))}
+				</ul>
+			</div>
+
+			<!-- Bannière des espaces imaginaires non géolocalisés -->
+			<section class="imaginary-spaces-panel" aria-labelledby="imaginary-spaces-title">
+				<h3 id="imaginary-spaces-title" class="imaginary-panel-title">
+					<span aria-hidden="true">✨</span> Espaces poétiques et imaginaires (hors carte)
+				</h3>
+				<p class="imaginary-panel-intro">
+					Conformément à la rigueur littéraire, les paysages mythiques ou allégoriques de Rimbaud ne sont pas assignés à de fausses coordonnées GPS terrestres :
+				</p>
+				<div class="imaginary-cards">
+					{RIMBAUD_PLACES.filter((p) => p.category === 'imaginaire').map((place) => (
+						<div
+							class="imaginary-card"
+							id={`imaginary-item-${place.id}`}
+							tabindex="0"
+							role="button"
+							data-place-id={place.id}
+						>
+							<div class="imaginary-card-header">
+								<span class="imaginary-badge">Espace poétique non localisable</span>
+								<h4 class="imaginary-title">{place.name}</h4>
+							</div>
+							<p class="imaginary-desc">{place.shortDescription}</p>
+							<div class="imaginary-action">
+								<span class="btn-inspect-imaginary">Consulter l'analyse littéraire →</span>
+							</div>
+						</div>
+					))}
+				</div>
+			</section>
+		</div>
+
+		<!-- Fiche d'analyse du lieu sélectionné -->
+		<aside
+			class="place-card-column"
+			id="place-card-column"
+			aria-labelledby="card-place-name"
+			aria-live="polite"
+		>
+			<article class="place-detail-card" id="active-place-card">
+				<!-- En-tête de la fiche -->
+				<header class="place-card-header">
+					<div class="place-badges">
+						<span
+							class="badge-cat"
+							id="card-badge-category"
+							style={`background-color: ${PLACE_CATEGORY_LABELS[initialPlace.category].color};`}
+						>
+							<span id="card-badge-symbol">{PLACE_CATEGORY_LABELS[initialPlace.category].symbol}</span>
+							<span id="card-badge-label">{PLACE_CATEGORY_LABELS[initialPlace.category].label}</span>
+						</span>
+						<span class="badge-precision" id="card-badge-precision">
+							{LOCATION_PRECISION_LABELS[initialPlace.precision].label}
+						</span>
+						<span class="badge-epistemo" id="card-badge-status">
+							{initialPlace.epistemologicalStatus === 'atteste_texte' && '✓ Attesté par le texte'}
+							{initialPlace.epistemologicalStatus === 'source_historique' && '🏛️ Établi historiquement'}
+							{initialPlace.epistemologicalStatus === 'hypothese_argumentee' && '💡 Hypothèse critique'}
+							{initialPlace.epistemologicalStatus === 'espace_symbolique' && '✨ Espace symbolique'}
+						</span>
+					</div>
+
+					<h2 class="place-title" id="card-place-name">{initialPlace.name}</h2>
+					{initialPlace.historicName1870 && (
+						<p class="place-historic-name" id="card-historic-name">
+							<strong>Nom en 1870 :</strong> <span id="card-historic-name-val">{initialPlace.historicName1870}</span>
+						</p>
+					)}
+					<p class="place-short-desc" id="card-short-desc">{initialPlace.shortDescription}</p>
+				</header>
+
+				<div class="place-card-body">
+					<!-- Poèmes associés au lieu -->
+					<div class="card-section associated-poems-section">
+						<h3 class="section-label">Poèmes associés du recueil</h3>
+						<div class="poems-tags-list" id="card-poems-list">
+							{initialPlace.poems.map((pid) => {
+								const poemObj = CAHIERS_DE_DOUAI_POEMS.find((p) => p.id === pid);
+								return (
+									<span class="poem-tag">
+										📜 <em>{poemObj?.title || pid}</em> ({poemObj?.dateWritten || '1870'})
+									</span>
+								);
+							})}
+						</div>
+					</div>
+
+					<!-- Citation vérifiée -->
+					<div class="card-section quotation-section">
+						<h3 class="section-label">Citation vérifiée des Cahiers</h3>
+						<blockquote id="card-quote-box">
+							<p class="quote-text" id="card-quote-text">« {initialPlace.quotation} »</p>
+							<cite class="quote-ref" id="card-quote-ref">— {initialPlace.quotationReference}</cite>
+						</blockquote>
+					</div>
+
+					<!-- Analyse du rapport poème / lieu -->
+					<div class="card-section literary-analysis-section">
+						<h3 class="section-label">Analyse littéraire du lieu</h3>
+						<p class="analysis-text" id="card-analysis-text">{initialPlace.literaryAnalysis}</p>
+					</div>
+
+					<!-- Distinction Fait historique vs Interprétation littéraire -->
+					<div class="card-section distinction-section">
+						<h3 class="section-label">Distinction : Histoire & Poésie</h3>
+						<div class="distinction-box" id="card-distinction-box">
+							<span class="distinction-icon" aria-hidden="true">⚖️</span>
+							<p class="distinction-text" id="card-distinction-text">
+								{initialPlace.historicalDistinction}
+							</p>
+						</div>
+					</div>
+
+					<!-- Sources et références documentaires -->
+					<div class="card-section sources-section">
+						<h3 class="section-label">Sources documentaires</h3>
+						<p class="sources-text" id="card-sources-text">
+							📚 {initialPlace.documentarySources}
+						</p>
+					</div>
+
+					<!-- Liens croisés transversaux -->
+					<div class="card-section cross-links-section">
+						<h3 class="section-label">Ressources associées sur le site</h3>
+						<ul class="cross-links-list">
+							<li>
+								<a href="/chronologie#cahiers-douai" class="cross-link">
+									📅 Voir la notice des <em>Cahiers de Douai</em> sur la Frise chronologique (1870) ↗
+								</a>
+							</li>
+							<li>
+								<a href="/balzac-rimbaud" class="cross-link">
+									⚡ Découvrir Rimbaud face à la Commune et au XIXe siècle (/balzac-rimbaud) ↗
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</article>
+		</aside>
+	</div>
+
+	<!-- Inventaire textuel complet et accessible -->
+	<section class="rimbaud-accessible-inventory" aria-labelledby="inventory-title">
+		<details class="inventory-details">
+			<summary class="inventory-summary">
+				<h2 id="inventory-title" class="inventory-summary-title">
+					Inventaire textuel exhaustif des 14 lieux et des 22 poèmes
+				</h2>
+				<span class="inventory-summary-sub">
+					(Consultable sans carte interactive pour les lecteurs d'écran et révisions)
+				</span>
+			</summary>
+
+			<div class="inventory-content">
+				<div class="inventory-grid">
+					{RIMBAUD_PLACES.map((place, idx) => (
+						<article class="inventory-card" id={`inv-place-${place.id}`}>
+							<header class="inv-header">
+								<span class="inv-number">#{idx + 1}</span>
+								<h3 class="inv-name">{place.name}</h3>
+								<span class="inv-cat" style={`color: ${PLACE_CATEGORY_LABELS[place.category].color};`}>
+									[{PLACE_CATEGORY_LABELS[place.category].label}]
+								</span>
+							</header>
+							<div class="inv-body">
+								<p><strong>Description :</strong> {place.shortDescription}</p>
+								<p><strong>Analyse littéraire :</strong> {place.literaryAnalysis}</p>
+								<p><strong>Distinction historique :</strong> {place.historicalDistinction}</p>
+								<blockquote class="inv-quote">
+									<p>« {place.quotation} »</p>
+									<cite>— {place.quotationReference}</cite>
+								</blockquote>
+								<p><strong>Poèmes associés :</strong> {place.poems.join(', ')}</p>
+								<p><strong>Sources :</strong> {place.documentarySources}</p>
+								<button
+									type="button"
+									class="btn-select-from-table"
+									data-select-place={place.id}
+								>
+									Localiser ce lieu sur la carte ↗
+								</button>
+							</div>
+						</article>
+					))}
+				</div>
+			</div>
+		</details>
+	</section>
+</div>
+
+<!-- Styles intégrés du composant RimbaudMap -->
+<style>
+	.rimbaud-map-interactive {
+		margin: 2rem 0 4rem;
+		font-family: inherit;
+		color: var(--map-ink, #172b3a);
+	}
+
+	/* Contrôles et sélecteurs ------------------------------------------------ */
+	.rimbaud-controls-card {
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 12px;
+		padding: 1.35rem;
+		margin-bottom: 1.5rem;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+	}
+
+	.control-row {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.control-label,
+	.filter-caption {
+		font-size: 0.82rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.paths-row {
+		margin-bottom: 1rem;
+		padding-bottom: 1rem;
+		border-bottom: 1px solid var(--map-border-soft, #ece7de);
+	}
+
+	.paths-pills {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.path-pill {
+		display: inline-flex;
+		align-items: center;
+		padding: 0.5rem 0.9rem;
+		font-family: inherit;
+		font-size: 0.88rem;
+		font-weight: 600;
+		color: var(--map-ink-soft, #2d3e4d);
+		background: #f8f6f0;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 6px;
+		cursor: pointer;
+		transition: all 0.15s ease-in-out;
+	}
+
+	.path-pill:hover {
+		background: #ede8dc;
+		border-color: #beb5a5;
+	}
+
+	.path-pill.is-active {
+		background: #172b3a;
+		color: #ffffff;
+		border-color: #172b3a;
+		box-shadow: 0 2px 6px rgba(23, 43, 58, 0.25);
+	}
+
+	.path-pill:focus-visible {
+		outline: 3px solid #2337ff;
+		outline-offset: 2px;
+	}
+
+	.path-title-desc {
+		font-weight: normal;
+		opacity: 0.85;
+	}
+
+	/* Bandeau du parcours actif */
+	.active-path-banner {
+		background: #fbf9f4;
+		border: 1px solid var(--map-border-soft, #ece7de);
+		border-left: 4px solid #8b572a;
+		border-radius: 6px;
+		padding: 0.85rem 1.1rem;
+		margin-bottom: 1.25rem;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.path-banner-title {
+		margin: 0 0 0.3rem;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.1rem;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.path-banner-desc {
+		margin: 0;
+		font-size: 0.9rem;
+		line-height: 1.5;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	.path-banner-badge {
+		font-size: 0.8rem;
+		font-weight: 700;
+		background: #ede8dc;
+		color: #5c3e21;
+		padding: 0.3rem 0.65rem;
+		border-radius: 4px;
+		white-space: nowrap;
+	}
+
+	/* Filtres croisés */
+	.filters-row {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1.25rem;
+	}
+
+	@media (min-width: 820px) {
+		.filters-row {
+			grid-template-columns: 1.6fr 1.2fr;
+			align-items: end;
+		}
+	}
+
+	.filter-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+		margin-top: 0.4rem;
+	}
+
+	.chip-button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.4rem 0.8rem;
+		font-family: inherit;
+		font-size: 0.84rem;
+		font-weight: 500;
+		color: var(--map-ink, #172b3a);
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 20px;
+		cursor: pointer;
+		transition: all 0.15s ease;
+	}
+
+	.chip-button:hover {
+		background: #f4efe6;
+	}
+
+	.chip-button.is-active {
+		background: rgba(35, 55, 255, 0.08);
+		border-color: #2337ff;
+		color: #0d1db8;
+		font-weight: 700;
+	}
+
+	.chip-button:focus-visible {
+		outline: 3px solid #2337ff;
+		outline-offset: 2px;
+	}
+
+	.chip-dot {
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		background-color: #5e6d7a;
+	}
+
+	.poem-select-col {
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+	}
+
+	.poem-select {
+		padding: 0.55rem 0.85rem;
+		font-family: inherit;
+		font-size: 0.9rem;
+		color: var(--map-ink, #172b3a);
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 6px;
+		cursor: pointer;
+	}
+
+	.poem-select:focus-visible {
+		outline: 3px solid #2337ff;
+	}
+
+	/* Grille principale : Carte + Fiche --------------------------------------- */
+	.rimbaud-view-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1.5rem;
+	}
+
+	@media (min-width: 900px) {
+		.rimbaud-view-grid {
+			grid-template-columns: 1.15fr 0.85fr;
+			align-items: start;
+		}
+	}
+
+	/* Conteneur carte */
+	.map-container-column {
+		display: flex;
+		flex-direction: column;
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 12px;
+		overflow: hidden;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+	}
+
+	.map-toolbar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		padding: 0.75rem 1rem;
+		background: #f7f5f0;
+		border-bottom: 1px solid var(--map-border, #dcd6cb);
+		font-size: 0.84rem;
+	}
+
+	.live-counter {
+		font-weight: 600;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.map-buttons-area {
+		display: flex;
+		gap: 0.4rem;
+	}
+
+	.btn-map-control {
+		padding: 0.35rem 0.75rem;
+		font-size: 0.8rem;
+		font-family: inherit;
+		color: var(--map-ink, #172b3a);
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 4px;
+		cursor: pointer;
+		transition: background 0.15s ease;
+	}
+
+	.btn-map-control:hover {
+		background: #ede8dc;
+	}
+
+	.leaflet-map-element {
+		width: 100%;
+		height: 480px;
+		min-height: 420px;
+		background: #ece7de;
+		position: relative;
+		outline: none;
+	}
+
+	@media (min-width: 900px) {
+		.leaflet-map-element {
+			height: 560px;
+		}
+	}
+
+	.map-caption-bar {
+		padding: 0.75rem 1rem;
+		background: #fbf9f4;
+		border-top: 1px solid var(--map-border-soft, #ece7de);
+		font-size: 0.81rem;
+		line-height: 1.45;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	.map-caption-text {
+		margin: 0;
+	}
+
+	.map-caption-note {
+		display: block;
+		margin-top: 0.25rem;
+		color: var(--map-muted, #5e6d7a);
+		font-style: italic;
+	}
+
+	.map-legend-bar {
+		padding: 0.75rem 1rem;
+		background: #faf8f5;
+		border-top: 1px solid var(--map-border-soft, #ece7de);
+		font-size: 0.82rem;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.legend-title {
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.legend-items {
+		list-style: none;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.8rem;
+		margin: 0;
+		padding: 0;
+	}
+
+	.legend-item {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+	}
+
+	.legend-badge {
+		font-size: 0.95rem;
+	}
+
+	.legend-text {
+		font-weight: 500;
+		color: var(--item-color, #172b3a);
+	}
+
+	/* Panneau des espaces imaginaires */
+	.imaginary-spaces-panel {
+		padding: 1.1rem;
+		background: #ffffff;
+		border-top: 1px solid var(--map-border, #dcd6cb);
+	}
+
+	.imaginary-panel-title {
+		margin: 0 0 0.35rem;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.05rem;
+		color: #5b21b6;
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+	}
+
+	.imaginary-panel-intro {
+		margin: 0 0 0.85rem;
+		font-size: 0.84rem;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.imaginary-cards {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 0.75rem;
+	}
+
+	@media (min-width: 600px) {
+		.imaginary-cards {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	.imaginary-card {
+		background: #fdfaff;
+		border: 1px solid #e9d5ff;
+		border-radius: 8px;
+		padding: 0.85rem;
+		cursor: pointer;
+		transition: all 0.15s ease;
+	}
+
+	.imaginary-card:hover,
+	.imaginary-card:focus-visible {
+		background: #f3e8ff;
+		border-color: #c084fc;
+		transform: translateY(-2px);
+		box-shadow: 0 3px 8px rgba(124, 58, 237, 0.12);
+		outline: none;
+	}
+
+	.imaginary-badge {
+		display: inline-block;
+		font-size: 0.7rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		color: #7c3aed;
+		margin-bottom: 0.25rem;
+	}
+
+	.imaginary-title {
+		margin: 0 0 0.35rem;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 0.98rem;
+		color: #4c1d95;
+	}
+
+	.imaginary-desc {
+		margin: 0 0 0.5rem;
+		font-size: 0.82rem;
+		line-height: 1.4;
+		color: #581c87;
+	}
+
+	.btn-inspect-imaginary {
+		font-size: 0.78rem;
+		font-weight: 600;
+		color: #7c3aed;
+	}
+
+	/* Fiche détaillée du lieu ------------------------------------------------ */
+	.place-card-column {
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 12px;
+		padding: 1.4rem;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+	}
+
+	.place-card-header {
+		padding-bottom: 1rem;
+		border-bottom: 1px solid var(--map-border-soft, #ece7de);
+		margin-bottom: 1rem;
+	}
+
+	.place-badges {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+		margin-bottom: 0.65rem;
+	}
+
+	.badge-cat {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		padding: 0.25rem 0.65rem;
+		border-radius: 4px;
+		color: #ffffff;
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	.badge-precision {
+		padding: 0.25rem 0.65rem;
+		border-radius: 4px;
+		font-size: 0.75rem;
+		font-weight: 600;
+		border: 1px solid var(--map-border, #dcd6cb);
+		background: #fbf9f5;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.badge-epistemo {
+		padding: 0.25rem 0.65rem;
+		border-radius: 4px;
+		font-size: 0.75rem;
+		font-weight: 600;
+		border: 1px solid #d4d0c8;
+		background: #f3f0e8;
+		color: #3d3b37;
+	}
+
+	.place-title {
+		margin: 0 0 0.35rem;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.45rem;
+		line-height: 1.25;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.place-historic-name {
+		margin: 0 0 0.5rem;
+		font-size: 0.85rem;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.place-short-desc {
+		margin: 0;
+		font-size: 0.93rem;
+		line-height: 1.5;
+		color: var(--map-ink-soft, #2d3e4d);
+		font-style: italic;
+	}
+
+	.card-section {
+		margin-bottom: 1.2rem;
+	}
+
+	.section-label {
+		margin: 0 0 0.45rem;
+		font-size: 0.8rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.poems-tags-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+	}
+
+	.poem-tag {
+		background: #f4efe6;
+		border: 1px solid var(--map-border, #dcd6cb);
+		padding: 0.25rem 0.55rem;
+		border-radius: 4px;
+		font-size: 0.82rem;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.quotation-section {
+		background: #faf8f5;
+		border: 1px solid var(--map-border-soft, #ece7de);
+		border-radius: 6px;
+		padding: 0.85rem 1rem;
+	}
+
+	.quotation-section blockquote {
+		margin: 0;
+		padding: 0;
+	}
+
+	.quote-text {
+		margin: 0 0 0.5rem;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 0.92rem;
+		font-style: italic;
+		line-height: 1.55;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.quote-ref {
+		display: block;
+		font-size: 0.78rem;
+		color: var(--map-muted, #5e6d7a);
+		text-align: right;
+		font-style: normal;
+	}
+
+	.analysis-text {
+		margin: 0;
+		font-size: 0.91rem;
+		line-height: 1.55;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	.distinction-box {
+		display: flex;
+		gap: 0.65rem;
+		background: #fbf9f4;
+		border-left: 3px solid #b91c1c;
+		border-radius: 0 6px 6px 0;
+		padding: 0.65rem 0.85rem;
+	}
+
+	.distinction-icon {
+		font-size: 1.1rem;
+	}
+
+	.distinction-text {
+		margin: 0;
+		font-size: 0.87rem;
+		line-height: 1.48;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.sources-text {
+		margin: 0;
+		font-size: 0.82rem;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.cross-links-list {
+		margin: 0;
+		padding-left: 1.1rem;
+		font-size: 0.85rem;
+	}
+
+	.cross-links-list li {
+		margin-bottom: 0.35rem;
+	}
+
+	.cross-link {
+		color: #2337ff;
+		text-decoration: underline;
+		font-weight: 500;
+	}
+
+	/* Inventaire accessible --------------------------------------------------- */
+	.rimbaud-accessible-inventory {
+		margin-top: 3rem;
+		border-top: 1px solid var(--map-border, #dcd6cb);
+		padding-top: 1.5rem;
+	}
+
+	.inventory-details {
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 10px;
+		padding: 0.5rem;
+	}
+
+	.inventory-summary {
+		padding: 0.85rem 1rem;
+		cursor: pointer;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.5rem;
+	}
+
+	.inventory-summary:focus-visible {
+		outline: 3px solid #2337ff;
+	}
+
+	.inventory-summary-title {
+		display: inline;
+		margin: 0;
+		font-size: 1.1rem;
+		font-family: var(--map-serif, Georgia, serif);
+		color: var(--map-ink, #172b3a);
+	}
+
+	.inventory-summary-sub {
+		font-size: 0.85rem;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.inventory-content {
+		padding: 1.25rem;
+		border-top: 1px solid var(--map-border-soft, #ece7de);
+	}
+
+	.inventory-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1.5rem;
+	}
+
+	@media (min-width: 768px) {
+		.inventory-grid {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	.inventory-card {
+		background: #fcfbf8;
+		border: 1px solid var(--map-border-soft, #ece7de);
+		border-radius: 8px;
+		padding: 1rem;
+	}
+
+	.inv-header {
+		margin-bottom: 0.75rem;
+		padding-bottom: 0.5rem;
+		border-bottom: 1px solid var(--map-border-soft, #ece7de);
+	}
+
+	.inv-number {
+		font-weight: 700;
+		color: var(--map-muted, #5e6d7a);
+		margin-right: 0.4rem;
+	}
+
+	.inv-name {
+		display: inline;
+		margin: 0;
+		font-size: 1.05rem;
+	}
+
+	.inv-cat {
+		display: block;
+		font-size: 0.78rem;
+		font-weight: 700;
+		margin-top: 0.2rem;
+	}
+
+	.inv-body p {
+		margin: 0.4rem 0;
+		font-size: 0.86rem;
+		line-height: 1.45;
+	}
+
+	.inv-quote {
+		margin: 0.5rem 0;
+		padding-left: 0.75rem;
+		border-left: 2px solid var(--map-border, #dcd6cb);
+		font-style: italic;
+		font-size: 0.84rem;
+	}
+
+	.btn-select-from-table {
+		margin-top: 0.5rem;
+		padding: 0.35rem 0.75rem;
+		font-family: inherit;
+		font-size: 0.8rem;
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 4px;
+		cursor: pointer;
+	}
+
+	.btn-select-from-table:hover {
+		background: #172b3a;
+		color: #ffffff;
+	}
+
+	/* Marqueurs Leaflet stylisés en CSS pur ---------------------------------- */
+	:global(.custom-rimbaud-marker) {
+		background: transparent;
+		border: none;
+	}
+
+	:global(.rimbaud-pin-wrapper) {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 30px;
+		height: 30px;
+		border-radius: 50%;
+		background: var(--marker-bg, #b91c1c);
+		border: 2px solid #ffffff;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+		color: #ffffff;
+		font-size: 14px;
+		line-height: 1;
+		cursor: pointer;
+		user-select: none;
+		transition: transform 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.18s ease;
+	}
+
+	:global(.rimbaud-pin-wrapper:hover) {
+		transform: scale(1.2);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+		z-index: 900 !important;
+	}
+
+	:global(.rimbaud-pin-wrapper.is-selected) {
+		transform: scale(1.3);
+		border-color: #ffd700;
+		box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.6), 0 4px 14px rgba(0, 0, 0, 0.55);
+		z-index: 1000 !important;
+	}
+</style>
+
+<!-- Script interactif Leaflet côté client -->
+<script>
+	import L from 'leaflet';
+	import 'leaflet/dist/leaflet.css';
+
+	interface PlaceData {
+		id: string;
+		name: string;
+		historicName1870?: string;
+		category: string;
+		precision: string;
+		coordinates: [number, number] | null;
+		shortDescription: string;
+		literaryAnalysis: string;
+		historicalDistinction: string;
+		quotation: string;
+		quotationReference: string;
+		documentarySources: string;
+		poems: string[];
+		scale: 'local' | 'regional' | 'elargi';
+	}
+
+	interface PoemData {
+		id: string;
+		title: string;
+		cahier: number;
+		order: number;
+		dateWritten: string;
+		theme: string;
+	}
+
+	interface CategoryMeta {
+		id: string;
+		label: string;
+		color: string;
+		symbol: string;
+		description: string;
+	}
+
+	interface ReadingPathData {
+		id: string;
+		title: string;
+		subtitle: string;
+		description: string;
+		focus: string;
+		placeIds: string[];
+	}
+
+	interface AppData {
+		places: PlaceData[];
+		poems: PoemData[];
+		categories: Record<string, CategoryMeta>;
+		precisionLabels: Record<string, { label: string; description: string }>;
+		readingPaths: ReadingPathData[];
+		mapConfig: {
+			tileUrl: string;
+			attribution: string;
+			defaultCenter: [number, number];
+			defaultZoom: number;
+			minZoom: number;
+			maxZoom: number;
+		};
+	}
+
+	function initRimbaudMap() {
+		const dataScript = document.getElementById('rimbaud-places-data');
+		if (!dataScript) return;
+
+		let appData: AppData;
+		try {
+			appData = JSON.parse(dataScript.textContent || '{}');
+		} catch (e) {
+			console.error('Erreur de parsing des données Rimbaud', e);
+			return;
+		}
+
+		const { places, poems, categories, precisionLabels, readingPaths, mapConfig } = appData;
+		const mapContainer = document.getElementById('rimbaud-leaflet-map');
+		if (!mapContainer) return;
+
+		// État de l'application
+		let activePathId: string = 'all';
+		let activeCategoryFilter: string = 'all';
+		let activePoemFilter: string = 'all';
+		let selectedPlaceId: string = places[0].id;
+
+		let map: L.Map | null = null;
+		const markersById: Record<string, { marker: L.Marker; el: HTMLElement; place: PlaceData }> = {};
+
+		// Initialisation de la carte Leaflet
+		try {
+			map = L.map(mapContainer, {
+				center: mapConfig.defaultCenter,
+				zoom: mapConfig.defaultZoom,
+				minZoom: mapConfig.minZoom,
+				maxZoom: mapConfig.maxZoom,
+			});
+
+			L.tileLayer(mapConfig.tileUrl, {
+				attribution: mapConfig.attribution,
+				maxZoom: mapConfig.maxZoom,
+			}).addTo(map);
+		} catch (err) {
+			console.error('Erreur initialisation Leaflet', err);
+			return;
+		}
+
+		// Création des marqueurs pour les lieux géolocalisés
+		places.forEach((place) => {
+			if (!place.coordinates) return; // Ignore les espaces imaginaires sur la carte
+
+			const catMeta = categories[place.category];
+			const markerIcon = L.divIcon({
+				className: 'custom-rimbaud-marker',
+				html: `
+					<div class="rimbaud-pin-wrapper ${place.id === selectedPlaceId ? 'is-selected' : ''}" 
+						 style="--marker-bg: ${catMeta?.color || '#b91c1c'};" 
+						 data-marker-place-id="${place.id}" 
+						 title="${place.name}">
+						<span aria-hidden="true">${catMeta?.symbol || '📍'}</span>
+					</div>
+				`,
+				iconSize: [30, 30],
+				iconAnchor: [15, 15],
+			});
+
+			const marker = L.marker(place.coordinates, {
+				icon: markerIcon,
+				title: place.name,
+			}).addTo(map!);
+
+			// Clic sur marqueur
+			marker.on('click', () => {
+				selectPlace(place.id, true);
+			});
+
+			const markerElement = marker.getElement();
+			if (markerElement) {
+				markersById[place.id] = { marker, el: markerElement, place };
+			}
+		});
+
+		// Mise à jour de la fiche détaillée d'un lieu
+		function updatePlaceCard(place: PlaceData) {
+			const catMeta = categories[place.category];
+			const precisionMeta = precisionLabels[place.precision];
+
+			const badgeCat = document.getElementById('card-badge-category');
+			const badgeSymbol = document.getElementById('card-badge-symbol');
+			const badgeLabel = document.getElementById('card-badge-label');
+			const badgePrecision = document.getElementById('card-badge-precision');
+			const badgeStatus = document.getElementById('card-badge-status');
+			const titleEl = document.getElementById('card-place-name');
+			const historicNameContainer = document.getElementById('card-historic-name');
+			const historicNameVal = document.getElementById('card-historic-name-val');
+			const shortDescEl = document.getElementById('card-short-desc');
+			const poemsListEl = document.getElementById('card-poems-list');
+			const quoteTextEl = document.getElementById('card-quote-text');
+			const quoteRefEl = document.getElementById('card-quote-ref');
+			const analysisTextEl = document.getElementById('card-analysis-text');
+			const distinctionTextEl = document.getElementById('card-distinction-text');
+			const sourcesTextEl = document.getElementById('card-sources-text');
+
+			if (badgeCat && catMeta) {
+				badgeCat.style.backgroundColor = catMeta.color;
+			}
+			if (badgeSymbol && catMeta) badgeSymbol.textContent = catMeta.symbol;
+			if (badgeLabel && catMeta) badgeLabel.textContent = catMeta.label;
+			if (badgePrecision && precisionMeta) badgePrecision.textContent = precisionMeta.label;
+			if (badgeStatus) {
+				if (place.epistemologicalStatus === 'atteste_texte') badgeStatus.textContent = '✓ Attesté par le texte';
+				else if (place.epistemologicalStatus === 'source_historique') badgeStatus.textContent = '🏛️ Établi historiquement';
+				else if (place.epistemologicalStatus === 'hypothese_argumentee') badgeStatus.textContent = '💡 Hypothèse critique';
+				else badgeStatus.textContent = '✨ Espace symbolique';
+			}
+			if (titleEl) titleEl.textContent = place.name;
+
+			if (historicNameContainer && historicNameVal) {
+				if (place.historicName1870) {
+					historicNameVal.textContent = place.historicName1870;
+					historicNameContainer.style.display = 'block';
+				} else {
+					historicNameContainer.style.display = 'none';
+				}
+			}
+
+			if (shortDescEl) shortDescEl.textContent = place.shortDescription;
+
+			if (poemsListEl) {
+				poemsListEl.innerHTML = place.poems
+					.map((pid) => {
+						const poemObj = poems.find((p) => p.id === pid);
+						return `<span class="poem-tag">📜 <em>${poemObj?.title || pid}</em> (${poemObj?.dateWritten || '1870'})</span>`;
+					})
+					.join('');
+			}
+
+			if (quoteTextEl) quoteTextEl.textContent = `« ${place.quotation} »`;
+			if (quoteRefEl) quoteRefEl.textContent = `— ${place.quotationReference}`;
+			if (analysisTextEl) analysisTextEl.textContent = place.literaryAnalysis;
+			if (distinctionTextEl) distinctionTextEl.textContent = place.historicalDistinction;
+			if (sourcesTextEl) sourcesTextEl.textContent = `📚 ${place.documentarySources}`;
+		}
+
+		// Sélection d'un lieu
+		function selectPlace(placeId: string, panMap: boolean = true) {
+			selectedPlaceId = placeId;
+			const place = places.find((p) => p.id === placeId);
+			if (!place) return;
+
+			// Mettre à jour l'apparence des marqueurs
+			Object.entries(markersById).forEach(([id, { marker }]) => {
+				const el = marker.getElement()?.querySelector('.rimbaud-pin-wrapper');
+				if (el) {
+					if (id === placeId) {
+						el.classList.add('is-selected');
+					} else {
+						el.classList.remove('is-selected');
+					}
+				}
+			});
+
+			updatePlaceCard(place);
+
+			// Recentrage de la carte si le lieu est géographique
+			if (panMap && place.coordinates && map) {
+				map.setView(place.coordinates, Math.max(map.getZoom(), 10), { animate: true });
+			}
+		}
+
+		// Filtrage global (parcours, catégorie, poème)
+		function applyFilters() {
+			let visibleCount = 0;
+			const bounds = L.latLngBounds([]);
+
+			places.forEach((place) => {
+				let matches = true;
+
+				// 1. Filtre par parcours
+				if (activePathId !== 'all') {
+					const pathObj = readingPaths.find((rp) => rp.id === activePathId);
+					if (pathObj && !pathObj.placeIds.includes(place.id)) {
+						matches = false;
+					}
+				}
+
+				// 2. Filtre par catégorie
+				if (matches && activeCategoryFilter !== 'all') {
+					if (place.category !== activeCategoryFilter) {
+						matches = false;
+					}
+				}
+
+				// 3. Filtre par poème
+				if (matches && activePoemFilter !== 'all') {
+					if (!place.poems.includes(activePoemFilter)) {
+						matches = false;
+					}
+				}
+
+				// Appliquer visibilité marqueur
+				const markerEntry = markersById[place.id];
+				if (markerEntry) {
+					if (matches) {
+						if (!map!.hasLayer(markerEntry.marker)) {
+							markerEntry.marker.addTo(map!);
+						}
+						bounds.extend(place.coordinates!);
+						visibleCount++;
+					} else {
+						if (map!.hasLayer(markerEntry.marker)) {
+							map!.removeLayer(markerEntry.marker);
+						}
+					}
+				} else if (place.category === 'imaginaire' && matches) {
+					visibleCount++;
+				}
+
+				// Visibilité carte imaginaire
+				const imaginaryCard = document.getElementById(`imaginary-item-${place.id}`);
+				if (imaginaryCard) {
+					imaginaryCard.style.display = matches ? 'block' : 'none';
+				}
+			});
+
+			// Mise à jour du compteur live
+			const liveCounter = document.getElementById('map-live-counter');
+			if (liveCounter) {
+				liveCounter.textContent = `Affichage de ${visibleCount} lieu${visibleCount > 1 ? 'x' : ''} sur ${places.length}`;
+			}
+
+			// Ajuster vue si marqueurs visibles
+			if (bounds.isValid() && map) {
+				map.fitBounds(bounds, { padding: [40, 40], maxZoom: 12 });
+			}
+		}
+
+		// Événements boutons Parcours
+		const pathPills = document.querySelectorAll<HTMLButtonElement>('.path-pill');
+		pathPills.forEach((pill) => {
+			pill.addEventListener('click', () => {
+				const pathId = pill.dataset.pathId || 'all';
+				activePathId = pathId;
+
+				pathPills.forEach((p) => {
+					p.classList.toggle('is-active', p === pill);
+					p.setAttribute('aria-selected', p === pill ? 'true' : 'false');
+				});
+
+				// Mettre à jour le bandeau du parcours
+				const bannerTitle = document.getElementById('active-path-title');
+				const bannerDesc = document.getElementById('active-path-desc');
+				const bannerBadge = document.getElementById('active-path-badge');
+
+				if (pathId === 'all') {
+					if (bannerTitle) bannerTitle.textContent = 'Vue panoramique complète';
+					if (bannerDesc) {
+						bannerDesc.innerHTML =
+							'Explorez l’ensemble des 14 repères littéraires et biographiques des <em>Cahiers de Douai</em> : des bastions ardennais aux routes de Belgique, de la captivité de Mazas aux plaines révolutionnaires de Valmy.';
+					}
+					if (bannerBadge) bannerBadge.textContent = '14 repères · 22 poèmes';
+				} else {
+					const pathObj = readingPaths.find((rp) => rp.id === pathId);
+					if (pathObj) {
+						if (bannerTitle) bannerTitle.textContent = pathObj.title;
+						if (bannerDesc) bannerDesc.textContent = pathObj.description;
+						if (bannerBadge) bannerBadge.textContent = `${pathObj.placeIds.length} repères · ${pathObj.focus}`;
+					}
+				}
+
+				applyFilters();
+			});
+		});
+
+		// Événements boutons Catégorie
+		const chipButtons = document.querySelectorAll<HTMLButtonElement>('.chip-button');
+		chipButtons.forEach((chip) => {
+			chip.addEventListener('click', () => {
+				const cat = chip.dataset.categoryFilter || 'all';
+				activeCategoryFilter = cat;
+
+				chipButtons.forEach((c) => {
+					c.classList.toggle('is-active', c === chip);
+					c.setAttribute('aria-pressed', c === chip ? 'true' : 'false');
+				});
+
+				applyFilters();
+			});
+		});
+
+		// Événement menu déroulant Poèmes
+		const poemSelect = document.getElementById('poem-dropdown') as HTMLSelectElement | null;
+		if (poemSelect) {
+			poemSelect.addEventListener('change', () => {
+				activePoemFilter = poemSelect.value;
+				applyFilters();
+			});
+		}
+
+		// Boutons utilitaires carte
+		const btnRecenter = document.getElementById('btn-recenter-markers');
+		if (btnRecenter) {
+			btnRecenter.addEventListener('click', () => {
+				applyFilters();
+			});
+		}
+
+		const btnArdennes = document.getElementById('btn-reset-ardennes');
+		if (btnArdennes && map) {
+			btnArdennes.addEventListener('click', () => {
+				map.setView([49.77, 4.72], 10, { animate: true });
+			});
+		}
+
+		// Clic sur les cartes d'espaces imaginaires
+		const imaginaryCards = document.querySelectorAll<HTMLElement>('.imaginary-card');
+		imaginaryCards.forEach((card) => {
+			card.addEventListener('click', () => {
+				const placeId = card.dataset.placeId;
+				if (placeId) selectPlace(placeId, false);
+			});
+			card.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					e.preventDefault();
+					const placeId = card.dataset.placeId;
+					if (placeId) selectPlace(placeId, false);
+				}
+			});
+		});
+
+		// Clic depuis le tableau textuel accessible
+		const tableButtons = document.querySelectorAll<HTMLButtonElement>('.btn-select-from-table');
+		tableButtons.forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const placeId = btn.dataset.selectPlace;
+				if (placeId) {
+					selectPlace(placeId, true);
+					mapContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+				}
+			});
+		});
+
+		// Initialisation initiale de la fiche
+		updatePlaceCard(places[0]);
+	}
+
+	// Lancement après chargement du DOM
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initRimbaudMap);
+	} else {
+		initRimbaudMap();
+	}
+</script>
