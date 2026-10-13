@@ -389,4 +389,72 @@ describe.skipIf(!BUILT)('Carte interactive du Père Goriot (/goriot) — E2E & I
 			await page.close();
 		}
 	}, 15_000);
+
+	test('la section des documents iconographiques est affichée avec ses 7 fiches, ses métadonnées et ses questions', async () => {
+		const page = await openPage();
+		try {
+			const section = page.locator('#sources-iconographiques');
+			expect(await section.count()).toBe(1);
+
+			// Titre de la section
+			const heading = await section.locator('#iconography-section-title').textContent();
+			expect(heading).toContain('Documents iconographiques');
+			expect(heading).toContain('Père Goriot');
+
+			// Vérifier le lien de raccourci dans la navigation
+			const quicklink = page.locator('a[href="#sources-iconographiques"]');
+			expect(await quicklink.count()).toBe(1);
+
+			// Vérifier les 7 fiches documentaires
+			const cards = section.locator('.iconography-card');
+			expect(await cards.count()).toBe(7);
+
+			// Vérifier que chaque image possède un texte alternatif non vide
+			const images = section.locator('.iconography-img');
+			expect(await images.count()).toBe(7);
+			for (let i = 0; i < 7; i++) {
+				const alt = await images.nth(i).getAttribute('alt');
+				expect(alt).toBeTruthy();
+				expect(alt!.trim().length).toBeGreaterThan(10);
+			}
+
+			// Vérifier les métadonnées et liens pérennes
+			const firstCard = cards.first();
+			const metaList = firstCard.locator('.iconography-meta-list');
+			expect(await metaList.isVisible()).toBe(true);
+			const metaText = await metaList.textContent();
+			expect(metaText).toContain('Institution de conservation');
+
+			// Vérifier la présence des questions d'observation
+			const questionBoxes = section.locator('.iconography-question-box');
+			expect(await questionBoxes.count()).toBe(7);
+
+			// Vérifier la synthèse finale
+			const synthesis = section.locator('.iconography-synthesis-box');
+			expect(await synthesis.isVisible()).toBe(true);
+			const synthesisText = await synthesis.textContent();
+			expect(synthesisText).toContain('lire le réalisme balzacien');
+		} finally {
+			await page.close();
+		}
+	}, 15_000);
+
+	test('sur mobile (375x812), la section iconographique du Père Goriot reste lisible sans débordement horizontal', async () => {
+		const page = await openPage(375, 812);
+		try {
+			const section = page.locator('#sources-iconographiques');
+			expect(await section.isVisible()).toBe(true);
+
+			const box = await section.boundingBox();
+			expect(box).not.toBeNull();
+			expect(box!.width).toBeLessThanOrEqual(375);
+
+			// Vérifier qu'une carte iconographique ne déborde pas
+			const cardBox = await section.locator('.iconography-card').first().boundingBox();
+			expect(cardBox).not.toBeNull();
+			expect(cardBox!.width).toBeLessThanOrEqual(375);
+		} finally {
+			await page.close();
+		}
+	}, 15_000);
 });
