@@ -457,4 +457,78 @@ describe.skipIf(!BUILT)('Carte interactive du Père Goriot (/goriot) — E2E & I
 			await page.close();
 		}
 	}, 15_000);
+
+	test('le carrousel/lightbox d’images fonctionne correctement : ouverture, navigation clavier et tactile, compteur et dimensionnement', async () => {
+		const page = await openPage(1200, 900);
+		try {
+			const firstImg = page.locator('#sources-iconographiques .iconography-img').first();
+			const lightbox = page.locator('#image-lightbox');
+
+			// Vérifier l'état initial : lightbox fermée
+			expect(await lightbox.getAttribute('open')).toBeNull();
+
+			// Clic pour ouvrir la lightbox
+			await firstImg.click();
+			expect(await lightbox.getAttribute('open')).not.toBeNull();
+
+			// Image et légende affichées
+			const lightboxImg = lightbox.locator('[data-lightbox-img]');
+			expect(await lightboxImg.getAttribute('src')).toContain('goriot-edition-originale-1835.jpg');
+
+			const counter = lightbox.locator('[data-lightbox-counter]');
+			expect(await counter.isVisible()).toBe(true);
+			expect(await counter.textContent()).toBe('1 / 7');
+
+			const caption = lightbox.locator('[data-lightbox-caption]');
+			expect(await caption.isVisible()).toBe(true);
+			expect(await caption.textContent()).toContain('Page de titre');
+
+			// Navigation vers l'image suivante (bouton Flèche droite)
+			await page.keyboard.press('ArrowRight');
+			expect(await lightboxImg.getAttribute('src')).toContain('atget-cour-tournefort.jpg');
+			expect(await counter.textContent()).toBe('2 / 7');
+
+			// Navigation vers l'image précédente (bouton Flèche gauche)
+			await page.keyboard.press('ArrowLeft');
+			expect(await lightboxImg.getAttribute('src')).toContain('goriot-edition-originale-1835.jpg');
+			expect(await counter.textContent()).toBe('1 / 7');
+
+			// Navigation via bouton interface Suivant
+			const nextBtn = lightbox.locator('[data-lightbox-next]');
+			await nextBtn.click();
+			expect(await lightboxImg.getAttribute('src')).toContain('atget-cour-tournefort.jpg');
+			expect(await counter.textContent()).toBe('2 / 7');
+
+			// Fermeture avec Échap
+			await page.keyboard.press('Escape');
+			expect(await lightbox.getAttribute('open')).toBeNull();
+		} finally {
+			await page.close();
+		}
+	}, 20_000);
+
+	test('sur mobile (375x667), les boutons de navigation de la lightbox ne recouvrent pas le document et les marges sont préservées', async () => {
+		const page = await openPage(375, 667);
+		try {
+			const landscapeImg = page.locator('img[src*="palais-royal-galerie-bois-1825.jpg"]');
+			const lightbox = page.locator('#image-lightbox');
+
+			await landscapeImg.click();
+			expect(await lightbox.getAttribute('open')).not.toBeNull();
+
+			const lightboxImg = lightbox.locator('[data-lightbox-img]');
+			const imgBox = await lightboxImg.boundingBox();
+			expect(imgBox).not.toBeNull();
+
+			// L'image doit être contrainte en largeur et laisser de l'espace latéral pour les commandes
+			expect(imgBox!.width).toBeLessThanOrEqual(375 - 40);
+
+			// Fermeture via le bouton de fermeture
+			const closeBtn = lightbox.locator('[data-lightbox-close]');
+			await closeBtn.click();
+			expect(await lightbox.getAttribute('open')).toBeNull();
+		} finally {
+			await page.close();
+		}
+	}, 20_000);
 });
