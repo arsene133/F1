@@ -4,6 +4,7 @@ import Footer from '../components/Footer.astro';
 import GraffignyGeoMap from '../components/GraffignyGeoMap.astro';
 import GraffignyJourney from '../components/GraffignyJourney.astro';
 import GraffignyThemesMap from '../components/GraffignyThemesMap.astro';
+import GraphStructureCard from '../components/GraphStructureCard.astro';
 import Header from '../components/Header.astro';
 import RelationshipMap from '../components/RelationshipMap.astro';
 import {
@@ -22,7 +23,12 @@ import {
 	sevigneComparisonNote,
 	ziliaEvolution,
 } from '../data/graffigny';
+import { adaptGraffignyCorpus } from '../lib/graph/adapters/other-works';
+import { analyzeNetworkStructure } from '../lib/graph/structure';
 import '../styles/graffigny.css';
+
+const graffignyCorpus = adaptGraffignyCorpus(graffignyCharacters, graffignyRelationships, graffignyEdgeTypes);
+const graffignyStructureReport = analyzeNetworkStructure(graffignyCorpus.nodes, graffignyCorpus.edges);
 
 const pageTitle = 'Françoise de Graffigny — Lettres d’une Péruvienne : cartographie interactive';
 const pageDescription =
@@ -137,6 +143,8 @@ const pageDescription =
 						filters
 						filtersResetLabel="Afficher toutes les relations"
 					/>
+
+					<GraphStructureCard report={graffignyStructureReport} workTitle="Lettres d’une Péruvienne" />
 				</section>
 
 				<!-- ======================================================

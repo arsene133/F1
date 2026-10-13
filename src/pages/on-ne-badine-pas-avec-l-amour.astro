@@ -1,9 +1,12 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
+import GraphStructureCard from '../components/GraphStructureCard.astro';
 import Header from '../components/Header.astro';
 import RelationshipMap from '../components/RelationshipMap.astro';
 import type { EdgeType, MapNode, MapRelationship } from '../components/relationship-map/types';
+import { adaptMussetCorpus } from '../lib/graph/adapters/other-works';
+import { analyzeNetworkStructure } from '../lib/graph/structure';
 
 const pageTitle = "On ne badine pas avec l'amour — les personnages";
 const pageDescription =
@@ -279,6 +282,9 @@ const functions: Record<string, string> = {
 	bridaine: 'Comique',
 	choeur: 'Commentaire',
 };
+
+const mussetCorpus = adaptMussetCorpus(characters, relationships, edgeTypes);
+const mussetStructureReport = analyzeNetworkStructure(mussetCorpus.nodes, mussetCorpus.edges);
 ---
 
 <!doctype html>
@@ -323,6 +329,8 @@ const functions: Record<string, string> = {
 					relationsLabel="Relations :"
 					indexLabel="Toutes les relations, en texte"
 				/>
+
+				<GraphStructureCard report={mussetStructureReport} workTitle="On ne badine pas avec l’amour" />
 
 				<footer class="map-synthesis" aria-labelledby="synthesis-title">
 					<h2 id="synthesis-title">Qui fait avancer l’intrigue ?</h2>

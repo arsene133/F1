@@ -1,6 +1,7 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
+import GraphStructureCard from '../components/GraphStructureCard.astro';
 import Header from '../components/Header.astro';
 import PercevalGeoMap from '../components/PercevalGeoMap.astro';
 import RelationshipMap from '../components/RelationshipMap.astro';
@@ -13,7 +14,12 @@ import {
 	percevalRelationships,
 	percevalSequences,
 } from '../data/perceval';
+import { adaptPercevalCorpus } from '../lib/graph/adapters/perceval';
+import { analyzeNetworkStructure } from '../lib/graph/structure';
 import '../styles/editorial-map.css';
+
+const percevalCorpus = adaptPercevalCorpus(percevalCharacters, percevalRelationships, percevalEdgeTypes);
+const percevalStructureReport = analyzeNetworkStructure(percevalCorpus.nodes, percevalCorpus.edges);
 
 const pageTitle = 'Le Conte du Graal (Perceval) de Chrétien de Troyes — Réseau des personnages et des relations';
 const pageDescription =
@@ -507,6 +513,8 @@ const pageDescription =
 					filters
 					filtersResetLabel="Toutes les relations"
 				/>
+
+				<GraphStructureCard report={percevalStructureReport} workTitle="Le Conte du Graal" />
 
 				<!-- Synthèse pédagogique des figures du roman -->
 				<footer class="map-synthesis" aria-labelledby="synthesis-title">

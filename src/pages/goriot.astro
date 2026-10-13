@@ -6,8 +6,15 @@ import Footer from '../components/Footer.astro';
 import GoriotMap from '../components/GoriotMap.astro';
 import GoriotRelationshipsMap from '../components/GoriotRelationshipsMap.astro';
 import GoriotThemesDashboard from '../components/GoriotThemesDashboard.astro';
+import GraphStructureCard from '../components/GraphStructureCard.astro';
 import Header from '../components/Header.astro';
 import { goriotCategories, goriotPlaces } from '../data/goriot-places';
+import { goriotCharacters, goriotRelationships } from '../data/goriot-relationships';
+import { adaptGoriotCorpus } from '../lib/graph/adapters/other-works';
+import { analyzeNetworkStructure } from '../lib/graph/structure';
+
+const goriotCorpus = adaptGoriotCorpus(goriotCharacters, goriotRelationships);
+const goriotStructureReport = analyzeNetworkStructure(goriotCorpus.nodes, goriotCorpus.edges);
 
 const pageTitle = 'Le Père Goriot d’Honoré de Balzac — Lieux, personnages et thèmes du roman';
 const pageDescription =
@@ -81,6 +88,8 @@ const pageDescription =
 					</header>
 
 					<GoriotRelationshipsMap id="goriot-relationships" />
+
+					<GraphStructureCard report={goriotStructureReport} workTitle="Le Père Goriot" />
 				</section>
 
 				<!-- Section 2 : Carte géographique des lieux parisiens -->

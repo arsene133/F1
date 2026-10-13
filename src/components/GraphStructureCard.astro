@@ -1,0 +1,302 @@
+---
+import type { NetworkStructureReport } from '../lib/graph/structure-types';
+
+interface Props {
+	report: NetworkStructureReport;
+	/** Titre ou œuvre optionnelle pour le contexte */
+	workTitle?: string;
+	/** Classe CSS optionnelle */
+	class?: string;
+}
+
+const { report, workTitle, class: className = '' } = Astro.props;
+
+const {
+	analyzedNodeCount: V,
+	analyzedEdgeCount: E_typed,
+	connectedPairCount: E_simple,
+	exactShapes,
+	descriptiveProfiles,
+	metrics,
+	roles,
+	pedagogicalSynthesis,
+} = report;
+
+// Formatage des métriques
+const densityPercent = (metrics.density * 100).toFixed(1);
+const freemanPercent = (metrics.centralization.degreeCentralization * 100).toFixed(1);
+const cyclomatic = metrics.cycles.cycleCountEstimate;
+const k = metrics.connectedComponentCount;
+
+// Formatage de la distribution des degrés
+const degreeEntries = Object.entries(metrics.degrees.histogram)
+	.map(([deg, count]) => ({ deg: Number(deg), count }))
+	.sort((a, b) => b.deg - a.deg);
+---
+
+<section class={`graph-structure-card ${className}`} aria-labelledby="graph-analysis-title">
+	<div class="gsc-header">
+		<div class="gsc-badge-group">
+			<span class="gsc-badge gsc-badge-type">Type de graphe</span>
+			<span class="gsc-shape-name">{pedagogicalSynthesis.shapeTitle}</span>
+		</div>
+		<p class="gsc-subtitle">{pedagogicalSynthesis.description}</p>
+	</div>
+
+	<!-- Grille des indicateurs mathématiques fondamentaux -->
+	<div class="gsc-metrics-grid">
+		<div class="gsc-metric-item">
+			<span class="gsc-metric-label">Sommets (V)</span>
+			<strong class="gsc-metric-value">{V}</strong>
+			<small class="gsc-metric-sub">personnages</small>
+		</div>
+
+		<div class="gsc-metric-item">
+			<span class="gsc-metric-label">Arêtes simples (E)</span>
+			<strong class="gsc-metric-value">{E_simple}</strong>
+			<small class="gsc-metric-sub">{E_typed} relations typées</small>
+		</div>
+
+		<div class="gsc-metric-item">
+			<span class="gsc-metric-label">Densité</span>
+			<strong class="gsc-metric-value">{densityPercent} %</strong>
+			<small class="gsc-metric-sub">D = 2E / [V(V-1)]</small>
+		</div>
+
+		<div class="gsc-metric-item">
+			<span class="gsc-metric-label">Cycles indépendants</span>
+			<strong class="gsc-metric-value">{cyclomatic}</strong>
+			<small class="gsc-metric-sub">γ = E - V + k</small>
+		</div>
+
+		<div class="gsc-metric-item">
+			<span class="gsc-metric-label">Centralisation Freeman</span>
+			<strong class="gsc-metric-value">{freemanPercent} %</strong>
+			<small class="gsc-metric-sub">C<sub>D</sub> (concentration)</small>
+		</div>
+	</div>
+
+	<!-- Détail mathématique et pédagogique réductible ou visible -->
+	<div class="gsc-details-body">
+		<div class="gsc-text-block">
+			<h3 class="gsc-block-title" id="graph-analysis-title">Caractérisation mathématique</h3>
+			<p class="gsc-math-desc">
+				Le réseau est composé de <strong>{V} sommets</strong> et de <strong>{E_simple} arêtes simples</strong>
+				non orientées (après dédoublonnage des relations multiples), réparties en <strong>{k} composante{k > 1 ? 's connexes' : ' connexe'}</strong>.
+				La somme des degrés vaut exactement <strong>{2 * E_simple}</strong> (théorème d'Euler).
+				Le degré maximal est de <strong>{metrics.degrees.max}</strong>
+				{roles.dominantHubs.length > 0 && ` (atteint par ${roles.dominantHubs.join(', ')})`},
+				pour un degré moyen de <strong>{metrics.degrees.mean.toFixed(2)}</strong>.
+			</p>
+
+			<div class="gsc-degree-distribution">
+				<span class="gsc-dist-label">Distribution des degrés :</span>
+				<div class="gsc-chips">
+					{degreeEntries.map(({ deg, count }) => (
+						<span class="gsc-chip">
+							degré <strong>{deg}</strong> : {count} sommet{count > 1 ? 's' : ''}
+						</span>
+					))}
+				</div>
+			</div>
+		</div>
+
+		<div class="gsc-literary-block">
+			<h4 class="gsc-lit-title">Éclairage littéraire & pédagogique</h4>
+			<p class="gsc-lit-question">
+				<strong>Question directrice :</strong> {pedagogicalSynthesis.literaryQuestion}
+			</p>
+			<p class="gsc-lit-advice">
+				<strong>Observation :</strong> {pedagogicalSynthesis.pedagogicalAdvice}
+			</p>
+			<p class="gsc-lit-caution">
+				<small><em>Garde-fou critique :</em> {pedagogicalSynthesis.criticalLimitation}</small>
+			</p>
+		</div>
+	</div>
+</section>
+
+<style>
+	.graph-structure-card {
+		margin: 2rem 0 3rem;
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-left: 4px solid var(--map-accent, #8b572a);
+		border-radius: 10px;
+		padding: 1.5rem 1.75rem;
+		box-shadow: 0 3px 12px rgba(23, 43, 58, 0.04);
+	}
+
+	.gsc-header {
+		margin-bottom: 1.25rem;
+	}
+
+	.gsc-badge-group {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		flex-wrap: wrap;
+		margin-bottom: 0.4rem;
+	}
+
+	.gsc-badge-type {
+		background: #235284;
+		color: #ffffff;
+		font-size: 0.72rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		padding: 0.2rem 0.55rem;
+		border-radius: 4px;
+	}
+
+	.gsc-shape-name {
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.35rem;
+		font-weight: bold;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.gsc-subtitle {
+		margin: 0;
+		font-size: 0.94rem;
+		line-height: 1.5;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	/* Grille des 5 métriques */
+	.gsc-metrics-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+		gap: 0.85rem;
+		padding: 1rem 0;
+		margin: 1rem 0 1.25rem;
+		border-top: 1px solid var(--map-border-soft, #ece7de);
+		border-bottom: 1px solid var(--map-border-soft, #ece7de);
+		background: #fbf9f4;
+		border-radius: 6px;
+	}
+
+	.gsc-metric-item {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		padding: 0.25rem 0.5rem;
+	}
+
+	.gsc-metric-label {
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: var(--map-muted, #5e6d7a);
+		margin-bottom: 0.2rem;
+	}
+
+	.gsc-metric-value {
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.4rem;
+		color: var(--map-ink, #172b3a);
+		line-height: 1.2;
+	}
+
+	.gsc-metric-sub {
+		font-size: 0.7rem;
+		color: var(--map-muted, #5e6d7a);
+		margin-top: 0.15rem;
+	}
+
+	/* Corps détaillé */
+	.gsc-details-body {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1.25rem;
+	}
+
+	@media (min-width: 768px) {
+		.gsc-details-body {
+			grid-template-columns: 1.2fr 1fr;
+		}
+	}
+
+	.gsc-block-title {
+		margin: 0 0 0.5rem;
+		font-size: 1rem;
+		font-weight: 700;
+		color: var(--map-ink, #172b3a);
+		font-family: var(--map-sans, system-ui, sans-serif);
+	}
+
+	.gsc-math-desc {
+		margin: 0 0 0.85rem;
+		font-size: 0.9rem;
+		line-height: 1.55;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	.gsc-degree-distribution {
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+		font-size: 0.85rem;
+	}
+
+	.gsc-dist-label {
+		font-weight: 600;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.gsc-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+	}
+
+	.gsc-chip {
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		padding: 0.15rem 0.5rem;
+		border-radius: 4px;
+		font-size: 0.78rem;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	/* Volet littéraire */
+	.gsc-literary-block {
+		background: #faf8f5;
+		border-left: 3px solid #8b572a;
+		padding: 0.85rem 1rem;
+		border-radius: 0 6px 6px 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		font-size: 0.88rem;
+		line-height: 1.5;
+	}
+
+	.gsc-lit-title {
+		margin: 0;
+		font-size: 0.82rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: #8b572a;
+	}
+
+	.gsc-lit-question,
+	.gsc-lit-advice {
+		margin: 0;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	.gsc-lit-question strong,
+	.gsc-lit-advice strong {
+		color: var(--map-ink, #172b3a);
+	}
+
+	.gsc-lit-caution {
+		margin-top: 0.25rem;
+		color: var(--map-muted, #5e6d7a);
+	}
+</style>

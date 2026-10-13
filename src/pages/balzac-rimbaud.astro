@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
+import GraphStructureCard from '../components/GraphStructureCard.astro';
 import Header from '../components/Header.astro';
 import {
 	mobileChain,
@@ -10,6 +11,11 @@ import {
 	relationships,
 	societyCenter,
 } from '../data/balzac-rimbaud';
+import { adaptBalzacRimbaudCorpus } from '../lib/graph/adapters/other-works';
+import { analyzeNetworkStructure } from '../lib/graph/structure';
+
+const balzacRimbaudCorpus = adaptBalzacRimbaudCorpus(nodes, relationships);
+const balzacRimbaudStructureReport = analyzeNetworkStructure(balzacRimbaudCorpus.nodes, balzacRimbaudCorpus.edges);
 
 const pageTitle = "Balzac, Rastignac, la Commune, Marx et Rimbaud";
 const pageDescription = "Carte interactive des relations intellectuelles et sociales au XIXe siècle : Balzac, Rastignac, la Commune, Marx et Rimbaud face à la société bourgeoise.";
@@ -280,6 +286,8 @@ const arrowGlyph = { down: "↓", up: "↑" } as const;
 						</div>
 					</aside>
 				</section>
+
+				<GraphStructureCard report={balzacRimbaudStructureReport} workTitle="Balzac, Marx, Rimbaud" />
 
 				<!--
 					Mode lecture accessible : contenu complet, toujours présent dans le HTML.

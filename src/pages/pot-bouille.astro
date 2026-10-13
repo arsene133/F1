@@ -2,6 +2,7 @@
 import BaseHead from '../components/BaseHead.astro';
 import BuildingCutaway from '../components/BuildingCutaway.astro';
 import Footer from '../components/Footer.astro';
+import GraphStructureCard from '../components/GraphStructureCard.astro';
 import Header from '../components/Header.astro';
 import RelationshipMap from '../components/RelationshipMap.astro';
 import {
@@ -11,6 +12,11 @@ import {
 	potBouilleMechanism,
 	potBouilleRelationships,
 } from '../data/pot-bouille';
+import { adaptPotBouilleCorpus } from '../lib/graph/adapters/other-works';
+import { analyzeNetworkStructure } from '../lib/graph/structure';
+
+const potBouilleCorpus = adaptPotBouilleCorpus(potBouilleCharacters, potBouilleRelationships, potBouilleEdgeTypes);
+const potBouilleStructureReport = analyzeNetworkStructure(potBouilleCorpus.nodes, potBouilleCorpus.edges);
 
 const pageTitle = 'Pot-Bouille d’Émile Zola — les personnages et leurs intrigues';
 const pageDescription =
@@ -98,6 +104,8 @@ const pageDescription =
 					relationsLabel="Relations :"
 					indexLabel="Toutes les relations du roman, en texte"
 				/>
+
+				<GraphStructureCard report={potBouilleStructureReport} workTitle="Pot-Bouille" />
 
 				<footer class="map-synthesis" aria-labelledby="synthesis-title">
 					<details class="inhabitants-note" aria-labelledby="synthesis-title">
