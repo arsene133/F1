@@ -717,8 +717,8 @@ export const RIMBAUD_MAP_CONFIG = {
 	attribution:
 		'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributeurs',
 	defaultCenter: [49.95, 4.25] as [number, number],
-	defaultZoom: 8,
-	minZoom: 6,
+	defaultZoom: 6,
+	minZoom: 5,
 	maxZoom: 18,
 	bounds: [
 		[48.0, 1.5],

@@ -119,7 +119,7 @@ describe('Philologie et géographie des Cahiers de Douai (/rimbaud)', () => {
 		expect(RIMBAUD_MAP_CONFIG.defaultCenter[0]).toBeLessThan(51.0);
 		expect(RIMBAUD_MAP_CONFIG.defaultCenter[1]).toBeGreaterThan(3.5);
 		expect(RIMBAUD_MAP_CONFIG.defaultCenter[1]).toBeLessThan(5.0);
-		expect(RIMBAUD_MAP_CONFIG.defaultZoom).toBeGreaterThanOrEqual(7);
+		expect(RIMBAUD_MAP_CONFIG.defaultZoom).toBe(6);
 	});
 
 	it('prévient les régressions philologiques critiques sur les 22 poèmes et leurs mentions', () => {

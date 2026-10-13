@@ -175,6 +175,27 @@ describe.skipIf(!BUILT)('Cartographie littéraire des Cahiers de Douai (/rimbaud
 			// Le sélecteur de parcours reste accessible
 			const pathPills = page.locator('.paths-pills');
 			expect(await pathPills.isVisible()).toBe(true);
+
+			// Les marqueurs restent lisibles et affichés à ce niveau de zoom
+			const markers = await page.locator('.rimbaud-pin-wrapper').count();
+			expect(markers).toBeGreaterThan(0);
+		} finally {
+			await page.close();
+		}
+	});
+
+	test('le zoom initial de la carte Leaflet est réduit de deux niveaux (zoom 6)', async () => {
+		const page = await openPage();
+		try {
+			const jsonText = await page.locator('#rimbaud-places-data').textContent();
+			const data = JSON.parse(jsonText || '{}');
+			expect(data.mapConfig.defaultZoom).toBe(6);
+
+			// Vérifier que tous les marqueurs géographiques sont visibles avec la vue élargie
+			await page.waitForSelector('.rimbaud-pin-wrapper');
+			const geoCount = RIMBAUD_PLACES.filter((p) => p.category !== 'imaginaire').length;
+			const markers = await page.locator('.rimbaud-pin-wrapper').count();
+			expect(markers).toBe(geoCount);
 		} finally {
 			await page.close();
 		}
