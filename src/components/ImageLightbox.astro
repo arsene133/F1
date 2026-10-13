@@ -409,12 +409,21 @@
 		return 'default-gallery';
 	}
 
+	// Une seule entrée (et un seul jeu d'écouteurs) par image, même si registerImages est rappelé par le MutationObserver
+	const entryByImg = new WeakMap<HTMLImageElement, GalleryEntry>();
+
 	function registerImages() {
 		const imgs = Array.from(document.querySelectorAll<HTMLImageElement>('img'));
 		entries = [];
 
 		imgs.forEach((img) => {
 			if (!isEligibleImage(img)) return;
+
+			const existing = entryByImg.get(img);
+			if (existing) {
+				entries.push(existing);
+				return;
+			}
 
 			img.dataset.zoomable = 'true';
 			img.setAttribute('tabindex', '0');
@@ -429,6 +438,7 @@
 				captionHtml: findCaption(img),
 				group: resolveGroup(img),
 			};
+			entryByImg.set(img, entry);
 			entries.push(entry);
 
 			// Clic pour zoomer
