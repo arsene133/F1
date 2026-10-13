@@ -80,7 +80,7 @@ describe.skipIf(!BUILT)('Page Graffigny (/graffigny) — cartographie interactiv
 			// Repères essentiels et vues annoncées
 			const facts = await page.locator('.key-facts dt').allTextContents();
 			expect(facts).toEqual(['Autrice', 'Publication', 'Genre', 'Mouvement', 'Parcours']);
-			for (const id of ['vue-personnages', 'vue-parcours', 'vue-idees', 'vue-geographie', 'evolution-zilia', 'revision', 'sources']) {
+			for (const id of ['vue-personnages', 'vue-parcours', 'vue-idees', 'vue-geographie', 'evolution-zilia', 'regard-etranger-montesquieu', 'revision', 'sources']) {
 				expect(await page.locator(`#${id}`).count(), id).toBe(1);
 			}
 			expect(errors).toEqual([]);
@@ -368,6 +368,72 @@ describe.skipIf(!BUILT)('Page Graffigny (/graffigny) — cartographie interactiv
 			await page.locator('[data-global-reset]').click();
 			expect(await page.locator('[data-global-reset]').isEnabled()).toBe(false);
 			expect(await page.locator('[data-selection-status]').textContent()).toContain('Rien n’est sélectionné');
+		} finally {
+			await page.close();
+		}
+	});
+
+	test('section comparative : Montesquieu, dates 1721 et 1747/1752, tableau et question de synthèse', async () => {
+		const { page, errors } = await openPage();
+		try {
+			const section = page.locator('#regard-etranger-montesquieu');
+			expect(await section.count()).toBe(1);
+
+			// Titre et contenu
+			const title = await section.locator('h2').textContent();
+			expect(title).toContain('Montesquieu');
+			expect(title).toContain('Graffigny');
+			expect(title).toContain('regard étranger');
+
+			const text = await section.textContent();
+			// Dates exigées
+			expect(text).toContain('1721');
+			expect(text).toContain('1747');
+			expect(text).toContain('1752');
+
+			// Les deux auteurs et œuvres
+			expect(text).toContain('Montesquieu');
+			expect(text).toContain('Lettres persanes');
+			expect(text).toContain('Françoise de Graffigny');
+			expect(text).toContain('Lettres d’une Péruvienne');
+
+			// Tableau comparatif : colonnes et lignes
+			const headers = await section.locator('.comparison-table thead th').allTextContents();
+			expect(headers[0]).toContain('Aspect');
+			expect(headers[1]).toContain('Montesquieu');
+			expect(headers[2]).toContain('Graffigny');
+			expect(await section.locator('.comparison-table tbody tr').count()).toBe(4);
+
+			// Question de synthèse
+			const synth = section.locator('.synthesis-prompt');
+			expect(await synth.count()).toBe(1);
+			const synthText = await synth.textContent();
+			expect(synthText).toContain('Comment le regard d’un personnage étranger');
+			expect(synthText).toContain('Montesquieu');
+			expect(synthText).toContain('Graffigny');
+			expect(synthText).toContain('Zilia');
+
+			expect(errors).toEqual([]);
+		} finally {
+			await page.close();
+		}
+	});
+
+	test.each([320, 375, 768, 960, 1280])('absence de débordement horizontal pour la largeur %ipx', async (width) => {
+		const { page, errors } = await openPage(width, 800);
+		try {
+			const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+			expect(overflow).toBe(0);
+
+			// Vérifier spécifiquement la section comparative
+			const sectionOverflow = await page.evaluate(() => {
+				const s = document.getElementById('regard-etranger-montesquieu');
+				if (!s) return -1;
+				return s.scrollWidth - s.clientWidth;
+			});
+			expect(sectionOverflow).toBe(0);
+
+			expect(errors).toEqual([]);
 		} finally {
 			await page.close();
 		}

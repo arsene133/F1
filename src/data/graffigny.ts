@@ -1138,7 +1138,78 @@ export const revisionQuestions = [
 		question: 'Qu’ajoute l’édition de 1752 à celle de 1747 ?',
 		hint: 'Une Introduction historique sur les Incas et trois lettres : une lettre XXVIII augmentée, une lettre sur le luxe (XXIX) et une lettre sur l’éducation des filles et le mariage (XXXIV).',
 	},
+	{
+		question: 'Comment le regard d’un personnage étranger permet-il à Montesquieu et à Graffigny de critiquer la société française de leur temps ? Qu’apporte le point de vue de Zilia à cette tradition ?',
+		hint: 'Montesquieu (1721) démultiplie les regards masculins de voyageurs libres (Usbek et Rica) sur les mœurs, le pouvoir et la religion ; Graffigny (1747, 1752) donne la parole à une femme captive et exilée, dont l’apprentissage de la langue devient un chemin d’émancipation personnelle.',
+	},
 ];
+
+export interface LiteraryComparisonRow {
+	aspect: string;
+	montesquieu: string;
+	graffigny: string;
+}
+
+export const montesquieuComparison = {
+	id: 'regard-etranger-montesquieu',
+	sectionEyebrow: 'Histoire littéraire · Les Lumières',
+	title: 'De Montesquieu à Graffigny : le regard étranger',
+	lead: 'En 1721, Montesquieu publie anonymement les Lettres persanes à Amsterdam : deux Persans, Usbek et Rica, découvrent la France de la fin du règne de Louis XIV et de la Régence. En 1747 (puis dans l’édition augmentée de 1752), Françoise de Graffigny reprend ce dispositif romanesque et philosophique en donnant la parole à Zilia, une jeune princesse inca. Pour des élèves de seconde, confronter ces deux chefs-d’œuvre permet de comprendre comment le roman épistolaire use du regard étranger pour dénaturaliser les préjugés, tout en mesurant la singularité féministe et intime de Graffigny.',
+	commonDevice: {
+		title: 'Un procédé commun : découvrir la France par les yeux d’un étranger',
+		paragraphs: [
+			'Dans les Lettres persanes (1721), Usbek et Rica, deux Persans en voyage en Europe, observent la société française. Leur regard extérieur permet à Montesquieu de questionner les mœurs, la religion, les institutions politiques et les faux-semblants du pouvoir monarchique. La célèbre interrogation des Parisiens rapportée par Rica dans la lettre XXX (« Comment peut-on être Persan ? ») illustre avec ironie l’étroitesse d’esprit d’une société convaincue d’incarner l’unique norme universelle.',
+			'Dans les Lettres d’une Péruvienne (1747), Zilia, jeune femme inca arrachée à son pays et à son Temple, découvre à son tour la société française. Dès l’Avertissement, Graffigny fait explicitement écho à Montesquieu en reprenant cette même formule (dans l’orthographe et la ponctuation de 1747 : « Comment peut-on être Persan. Nous méprisons les Indiens »). Ses lettres confrontent sans concession les valeurs de pureté et de vérité qu’elle a reçues au Pérou aux pratiques européennes.',
+			'Le mécanisme critique repose sur le même principe de défamiliarisation : ce qui paraît ordinaire, naturel et respectable aux habitants d’une société devient étrange, contradictoire ou absurde lorsqu’un observateur venu d’ailleurs en fait l’expérience sans en partager les automatismes culturels.',
+		],
+	},
+	tableRows: [
+		{
+			aspect: 'Regard étranger',
+			montesquieu: 'Usbek et Rica observent la France en voyageurs libres et curieux.',
+			graffigny: 'Zilia découvre la France après son enlèvement et son exil forcé.',
+		},
+		{
+			aspect: 'Forme épistolaire',
+			montesquieu: 'Polyphonie : plusieurs correspondants et points de vue croisés (Persans à Paris, eunuques et épouses à Ispahan).',
+			graffigny: 'Une voix centrale et intime : les lettres de Zilia suivent pas à pas l’évolution intérieure d’une seule conscience.',
+		},
+		{
+			aspect: 'Critique sociale',
+			montesquieu: 'Satire des mœurs, du pape, de la monarchie absolue, des querelles religieuses et des institutions.',
+			graffigny: 'Dénonciation de la mondanité superficielle, du culte de l’argent, de l’inégalité d’éducation et de la condition féminine.',
+		},
+		{
+			aspect: 'Parcours du personnage',
+			montesquieu: 'Le voyage révèle les contradictions de l’Occident, mais Usbek reste un despote dans son sérail, qui sombre dans la tragédie.',
+			graffigny: 'L’épreuve de l’exil devient une conquête d’autonomie intellectuelle, matérielle et affective, couronnée par le « plaisir d’être ».',
+		},
+	] as LiteraryComparisonRow[],
+	tableCaveat:
+		'Ces oppositions synthétiques n’ont rien d’absolu : les deux œuvres croisent de multiples registres (ironie, émotion, réflexion philosophique) et présentent des architectures romanesques plus riches et nuancées que ce résumé scolaire.',
+	singularity: {
+		title: 'L’originalité de Françoise de Graffigny',
+		paragraphs: [
+			'Loin d’être une simple réécriture des Lettres persanes, les Lettres d’une Péruvienne renouvellent en profondeur la tradition du regard étranger en lui donnant une voix féminine inédite au siècle des Lumières :',
+		],
+		points: [
+			'Une perspective féminine située : Zilia n’est pas un voyageur cosmopolite détaché, mais une femme dont la vulnérabilité sociale et corporelle conditionne chaque instant de son séjour en France.',
+			'Le drame intime de l’arrachement : la rupture avec le Pérou et la séparation douloureuse d’avec Aza confèrent au roman une intensité pathétique et lyrique absente du regard distancié de Rica.',
+			'L’accès au savoir et à l’écriture : l’abandon forcé des quipos au profit de la langue et de l’alphabet français matérialise une difficile émancipation intellectuelle par les Lumières.',
+			'Un dénouement résolument moderne : refusant le mariage d’intérêt comme l’illusion d’une nouvelle soumission, Zilia choisit de vivre dans sa propre demeure, indépendante, entourée de ses livres et fidèle à son amitié choisie.',
+		],
+		conclusion:
+			'Les deux chefs-d’œuvre s’inscrivent ainsi dans une même tradition épistolaire et philosophique des Lumières, mais Graffigny en déplace le centre de gravité : la critique des mœurs y sert l’émancipation d’une femme maîtresse de son destin.',
+	},
+	synthesisQuestion: {
+		question:
+			'Comment le regard d’un personnage étranger permet-il à Montesquieu et à Graffigny de critiquer la société française de leur temps ? Qu’apporte le point de vue de Zilia à cette tradition ?',
+		hints: [
+			'Sur le procédé commun : expliquez comment l’étonnement feint d’un étranger révèle les contradictions de la politesse, des cultes ou du pouvoir (défamiliarisation).',
+			'Sur la singularité de Graffigny : analysez le rôle du statut de femme captive, l’importance de l’apprentissage de la langue et le refus du mariage au dénouement.',
+		],
+	},
+};
 
 export const graffignySources = {
 	editionNote:
@@ -1158,6 +1229,11 @@ export const graffignySources = {
 			title: 'Lettres d’une Péruvienne, Paris, Duchesne, 1752, tome II — Internet Archive',
 			url: 'https://archive.org/details/g1752lettresdun02graf',
 			note: 'lettres XXVIII à XLI, dont les lettres nouvelles XXIX et XXXIV',
+		},
+		{
+			title: 'Montesquieu, Lettres persanes (1721), lettre XXX — Wikisource',
+			url: 'https://fr.wikisource.org/wiki/Lettres_persanes/Lettre_30',
+			note: 'texte de référence pour le regard étranger et la formule de Rica (« Comment peut-on être Persan ? »)',
 		},
 		{
 			title: 'Eduscol — Lettres d’une Péruvienne de Françoise de Graffigny : l’œuvre, le parcours (2024)',

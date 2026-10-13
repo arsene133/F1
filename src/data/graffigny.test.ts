@@ -4,11 +4,14 @@ import {
 	graffignyCharacters,
 	graffignyEdgeTypes,
 	graffignyRelationships,
+	graffignySources,
 	graffignyThemes,
 	letter1752,
 	letterRef,
+	montesquieuComparison,
 	narrativeSteps,
 	quotes,
+	revisionQuestions,
 	roman,
 } from './graffigny';
 
@@ -150,5 +153,45 @@ describe('Lettres d’une Péruvienne — modèle de données (src/data/graffign
 		expect(quotes.nouvelUnivers.text).toContain('un nouvel univers s’est offert à mes yeux');
 		expect(quotes.infidele.text).toContain('Aza est infidéle.');
 		expect(quotes.plaisirEtre.letter).toBe(38);
+	});
+
+	test('rapprochement littéraire Montesquieu (Lettres persanes, 1721) et Graffigny (1747, 1752)', () => {
+		expect(montesquieuComparison.title).toContain('Montesquieu');
+		expect(montesquieuComparison.title).toContain('Graffigny');
+		expect(montesquieuComparison.title).toContain('regard étranger');
+
+		// Dates historiques clés
+		expect(montesquieuComparison.lead).toContain('1721');
+		expect(montesquieuComparison.lead).toContain('1747');
+		expect(montesquieuComparison.lead).toContain('1752');
+		expect(montesquieuComparison.lead).toContain('Lettres persanes');
+		expect(montesquieuComparison.lead).toContain('Françoise de Graffigny');
+
+		// Les deux auteurs et œuvres
+		expect(montesquieuComparison.commonDevice.paragraphs[0]).toContain('Lettres persanes (1721)');
+		expect(montesquieuComparison.commonDevice.paragraphs[0]).toContain('Usbek');
+		expect(montesquieuComparison.commonDevice.paragraphs[0]).toContain('Rica');
+		expect(montesquieuComparison.commonDevice.paragraphs[1]).toContain('Lettres d’une Péruvienne (1747)');
+		expect(montesquieuComparison.commonDevice.paragraphs[1]).toContain('Zilia');
+
+		// Tableau comparatif : 4 aspects
+		expect(montesquieuComparison.tableRows).toHaveLength(4);
+		const aspects = montesquieuComparison.tableRows.map((r) => r.aspect);
+		expect(aspects).toEqual(['Regard étranger', 'Forme épistolaire', 'Critique sociale', 'Parcours du personnage']);
+
+		// Question de synthèse
+		expect(montesquieuComparison.synthesisQuestion.question).toContain('Comment le regard d’un personnage étranger');
+		expect(montesquieuComparison.synthesisQuestion.question).toContain('Montesquieu');
+		expect(montesquieuComparison.synthesisQuestion.question).toContain('Graffigny');
+		expect(montesquieuComparison.synthesisQuestion.question).toContain('Zilia');
+		expect(montesquieuComparison.synthesisQuestion.hints.length).toBeGreaterThanOrEqual(2);
+
+		// Présence dans les questions de révision
+		expect(revisionQuestions.some((q) => q.question.includes('Montesquieu') && q.question.includes('Graffigny'))).toBe(true);
+
+		// Présence dans les références externes
+		const lpRef = graffignySources.references.find((r) => r.title.includes('Lettres persanes'));
+		expect(lpRef).toBeDefined();
+		expect(lpRef?.url).toBe('https://fr.wikisource.org/wiki/Lettres_persanes/Lettre_30');
 	});
 });

@@ -14,6 +14,7 @@ import {
 	graffignySources,
 	graffignyThemes,
 	keyFacts,
+	montesquieuComparison,
 	narrativeSteps,
 	revisionQuestions,
 	ziliaEvolution,
@@ -184,6 +185,90 @@ const pageDescription =
 							</li>
 						))}
 					</ol>
+				</section>
+
+				<!-- ======================================================
+				     SECTION COMPARATIVE : MONTESQUIEU ET GRAFFIGNY
+				     ====================================================== -->
+				<section class="carto-section" id={montesquieuComparison.id} aria-labelledby="montesquieu-comparison-title">
+					<header class="carto-header">
+						<p class="carto-eyebrow">{montesquieuComparison.sectionEyebrow}</p>
+						<h2 id="montesquieu-comparison-title">{montesquieuComparison.title}</h2>
+						<p class="carto-lead">{montesquieuComparison.lead}</p>
+					</header>
+
+					<div class="comparison-article">
+						<!-- A. Un procédé commun -->
+						<div class="comparison-block">
+							<h3>{montesquieuComparison.commonDevice.title}</h3>
+							{montesquieuComparison.commonDevice.paragraphs.map((p) => (
+								<p>{p}</p>
+							))}
+						</div>
+
+						<!-- B. Tableau comparatif responsive -->
+						<div class="comparison-block">
+							<h3>Regards croisés : tableau comparatif</h3>
+							<div class="comparison-table-wrapper">
+								<table class="comparison-table">
+									<thead>
+										<tr>
+											<th scope="col" class="col-aspect">Aspect</th>
+											<th scope="col" class="col-montesquieu">Montesquieu — <cite>Lettres persanes</cite> (1721)</th>
+											<th scope="col" class="col-graffigny">Graffigny — <cite>Lettres d’une Péruvienne</cite> (1747, 1752)</th>
+										</tr>
+									</thead>
+									<tbody>
+										{montesquieuComparison.tableRows.map((row) => (
+											<tr>
+												<th scope="row">{row.aspect}</th>
+												<td data-label="Montesquieu (1721)">{row.montesquieu}</td>
+												<td data-label="Graffigny (1747, 1752)">{row.graffigny}</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+							<p class="comparison-caveat">
+								<strong>Rappel de nuance :</strong> {montesquieuComparison.tableCaveat}
+							</p>
+						</div>
+
+						<!-- C. L'originalité de Graffigny -->
+						<div class="comparison-block">
+							<h3>{montesquieuComparison.singularity.title}</h3>
+							{montesquieuComparison.singularity.paragraphs.map((p) => (
+								<p>{p}</p>
+							))}
+							<ul class="singularity-list">
+								{montesquieuComparison.singularity.points.map((pt) => (
+									<li>{pt}</li>
+								))}
+							</ul>
+							<p>{montesquieuComparison.singularity.conclusion}</p>
+						</div>
+
+						<!-- D. Encadré pédagogique : question de synthèse -->
+						<div class="pedagogical-box synthesis-box">
+							<div class="synthesis-box-header">
+								<span class="synthesis-badge">Question de synthèse · Classe de seconde</span>
+								<h3 class="synthesis-box-title">À vous d’analyser</h3>
+							</div>
+							<div class="synthesis-box-content">
+								<p class="synthesis-prompt">
+									<strong>« {montesquieuComparison.synthesisQuestion.question} »</strong>
+								</p>
+								<details class="synthesis-details">
+									<summary>Pistes pour structurer votre réponse</summary>
+									<ul>
+										{montesquieuComparison.synthesisQuestion.hints.map((h) => (
+											<li>{h}</li>
+										))}
+									</ul>
+								</details>
+							</div>
+						</div>
+					</div>
 				</section>
 
 				<section class="carto-section" id="revision" aria-labelledby="revision-title">
@@ -789,6 +874,216 @@ const pageDescription =
 		overflow-wrap: anywhere;
 	}
 
+	/* Section comparative : Montesquieu - Graffigny */
+	.comparison-article {
+		max-width: 860px;
+		margin: 0 auto;
+	}
+
+	.comparison-block + .comparison-block {
+		margin-top: 2.25rem;
+	}
+
+	.comparison-block h3 {
+		margin: 0 0 0.85rem;
+		font-family: var(--map-serif);
+		font-size: 1.25rem;
+		font-weight: normal;
+		color: var(--map-ink);
+	}
+
+	.comparison-block p {
+		margin: 0 0 0.9rem;
+		font-size: 0.94rem;
+		line-height: 1.65;
+		color: var(--map-ink-soft);
+	}
+
+	.comparison-block p:last-child {
+		margin-bottom: 0;
+	}
+
+	.singularity-list {
+		margin: 0.75rem 0 1rem;
+		padding-left: 1.35rem;
+	}
+
+	.singularity-list li {
+		margin-bottom: 0.55rem;
+		font-size: 0.93rem;
+		line-height: 1.55;
+		color: var(--map-ink-soft);
+	}
+
+	/* Tableau comparatif */
+	.comparison-table-wrapper {
+		margin: 1.25rem 0 0.85rem;
+		border: 1px solid var(--map-border);
+		border-radius: 8px;
+		background: var(--map-surface);
+		box-shadow: 0 2px 8px rgba(23, 43, 58, 0.04);
+		overflow: hidden;
+	}
+
+	.comparison-table {
+		width: 100%;
+		border-collapse: collapse;
+		text-align: left;
+		font-size: 0.91rem;
+	}
+
+	.comparison-table th,
+	.comparison-table td {
+		padding: 0.85rem 1.1rem;
+		vertical-align: top;
+		line-height: 1.55;
+		border-bottom: 1px solid var(--map-border-soft);
+	}
+
+	.comparison-table thead th {
+		background: #fbf9f4;
+		font-weight: 700;
+		color: var(--map-ink);
+		font-size: 0.85rem;
+		border-bottom: 2px solid var(--map-border);
+	}
+
+	.comparison-table thead .col-aspect {
+		width: 22%;
+		color: var(--map-muted);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		font-size: 0.78rem;
+	}
+
+	.comparison-table thead .col-montesquieu {
+		width: 39%;
+		color: #235284;
+	}
+
+	.comparison-table thead .col-graffigny {
+		width: 39%;
+		color: var(--intro-eyebrow-color, #8b572a);
+	}
+
+	.comparison-table tbody th[scope="row"] {
+		font-family: var(--map-serif);
+		font-size: 0.95rem;
+		font-weight: 600;
+		color: var(--map-ink);
+		background: rgba(253, 252, 249, 0.75);
+		border-right: 1px solid var(--map-border-soft);
+	}
+
+	.comparison-table tbody td {
+		color: var(--map-ink-soft);
+	}
+
+	.comparison-table tbody tr:last-child th,
+	.comparison-table tbody tr:last-child td {
+		border-bottom: none;
+	}
+
+	.comparison-caveat {
+		margin-top: 0.75rem;
+		padding: 0.85rem 1.1rem;
+		background: #fbf9f4;
+		border-left: 3px solid var(--intro-eyebrow-color, #8b572a);
+		border-radius: 0 6px 6px 0;
+		font-size: 0.88rem;
+		line-height: 1.55;
+		color: var(--map-ink-soft);
+	}
+
+	/* Encadré pédagogique pour la question de synthèse */
+	.pedagogical-box {
+		margin: 2.25rem 0 0;
+		background: #ffffff;
+		border: 1px solid var(--map-border);
+		border-radius: 8px;
+		box-shadow: 0 2px 8px rgba(23, 43, 58, 0.04);
+		overflow: hidden;
+	}
+
+	.synthesis-box {
+		border-left: 4px solid #235284;
+		background: #fafcff;
+	}
+
+	.synthesis-box-header {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 0.5rem 0.75rem;
+		padding: 0.9rem 1.25rem;
+		background: #f0f5fc;
+		border-bottom: 1px solid var(--map-border-soft);
+	}
+
+	.synthesis-badge {
+		font-size: 0.72rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		padding: 0.2rem 0.55rem;
+		border-radius: 4px;
+		background: rgba(35, 82, 132, 0.12);
+		color: #235284;
+		border: 1px solid rgba(35, 82, 132, 0.25);
+	}
+
+	.synthesis-box-title {
+		margin: 0;
+		font-family: var(--map-serif);
+		font-size: 1.1rem;
+		font-weight: 600;
+		color: var(--map-ink);
+	}
+
+	.synthesis-box-content {
+		padding: 1.25rem;
+	}
+
+	.synthesis-prompt {
+		margin: 0 0 1rem;
+		font-family: var(--map-serif);
+		font-size: 1.05rem;
+		line-height: 1.55;
+		color: var(--map-ink);
+	}
+
+	.synthesis-details {
+		margin-top: 0.75rem;
+		padding: 0.75rem 0.9rem;
+		background: #ffffff;
+		border: 1px solid var(--map-border-soft);
+		border-radius: 6px;
+	}
+
+	.synthesis-details summary {
+		cursor: pointer;
+		font-weight: 600;
+		font-size: 0.9rem;
+		color: #235284;
+	}
+
+	.synthesis-details summary:focus-visible {
+		outline: 2px solid var(--map-accent);
+		outline-offset: 2px;
+	}
+
+	.synthesis-details ul {
+		margin: 0.65rem 0 0;
+		padding-left: 1.2rem;
+	}
+
+	.synthesis-details li {
+		margin-bottom: 0.4rem;
+		font-size: 0.88rem;
+		line-height: 1.5;
+		color: var(--map-ink-soft);
+	}
+
 	@media (max-width: 900px) {
 		.key-facts {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -809,6 +1104,73 @@ const pageDescription =
 
 		.key-facts div:last-child:nth-child(odd) {
 			grid-column: 1 / -1;
+		}
+	}
+
+	@media (max-width: 720px) {
+		.comparison-table-wrapper {
+			border: none;
+			background: transparent;
+			box-shadow: none;
+			overflow: visible;
+		}
+
+		.comparison-table,
+		.comparison-table thead,
+		.comparison-table tbody,
+		.comparison-table th,
+		.comparison-table td,
+		.comparison-table tr {
+			display: block;
+		}
+
+		.comparison-table thead {
+			display: none;
+		}
+
+		.comparison-table tbody tr {
+			background: var(--map-surface);
+			border: 1px solid var(--map-border);
+			border-radius: 8px;
+			margin-bottom: 1.25rem;
+			padding: 0.5rem 0;
+			box-shadow: 0 2px 6px rgba(23, 43, 58, 0.04);
+		}
+
+		.comparison-table tbody th[scope="row"] {
+			background: #fbf9f4;
+			border-right: none;
+			border-bottom: 1px solid var(--map-border-soft);
+			padding: 0.75rem 1rem;
+			font-size: 1rem;
+			color: var(--intro-eyebrow-color, #8b572a);
+		}
+
+		.comparison-table tbody td {
+			padding: 0.85rem 1rem;
+			border-bottom: 1px solid var(--map-border-soft);
+		}
+
+		.comparison-table tbody td:last-child {
+			border-bottom: none;
+		}
+
+		.comparison-table tbody td::before {
+			content: attr(data-label) ' :';
+			display: block;
+			font-size: 0.76rem;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.06em;
+			margin-bottom: 0.35rem;
+		}
+
+		.comparison-table tbody td:nth-of-type(1)::before {
+			color: #235284;
+		}
+
+		.comparison-table tbody td:nth-of-type(2)::before {
+			color: var(--intro-eyebrow-color, #8b572a);
 		}
 	}
 
