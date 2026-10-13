@@ -398,7 +398,7 @@ describe.skipIf(!BUILT)('Page Perceval (/perceval) — Réseau des personnages e
 
 			// Titre H2 conforme
 			const h2 = geoSection.locator('#geography-title');
-			expect(await h2.textContent()).toContain('géographie imaginaire du voyage de Perceval');
+			expect(await h2.textContent()).toContain('Les étapes du voyage de Perceval dans le roman');
 
 			// 7 jalons SVG interactifs
 			const markers = geoSection.locator('.geo-stage-marker');
@@ -414,7 +414,7 @@ describe.skipIf(!BUILT)('Page Perceval (/perceval) — Réseau des personnages e
 			expect(await detailTitle.textContent()).toContain('Gaste Forêt');
 
 			const detailStatus = geoSection.locator('#detail-stage-status');
-			expect(await detailStatus.textContent()).toContain('Espace imaginaire général');
+			expect(await detailStatus.textContent()).toContain('Espace sauvage du conte');
 
 			// Clic sur l'étape 5 (Château du Roi Pêcheur)
 			const grailMarker = geoSection.locator('.geo-stage-marker[data-stage-id="chateau-roi-pecheur"]');
@@ -423,7 +423,7 @@ describe.skipIf(!BUILT)('Page Perceval (/perceval) — Réseau des personnages e
 			expect(await grailMarker.getAttribute('class')).toContain('is-active');
 			expect(await grailMarker.getAttribute('aria-pressed')).toBe('true');
 			expect(await detailTitle.textContent()).toContain('Roi Pêcheur');
-			expect(await detailStatus.textContent()).toContain('magique');
+			expect(await detailStatus.textContent()).toContain('le récit ne permet pas de lui attribuer une position géographique moderne');
 
 			// Filtre par catégorie : cliquer sur 'Lieu réel ou repère breton'
 			const realFilter = geoSection.locator('.geo-filter-btn[data-geo-filter="reel"]');
