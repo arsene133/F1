@@ -200,4 +200,62 @@ describe.skipIf(!BUILT)('Cartographie littéraire des Cahiers de Douai (/rimbaud
 			await page.close();
 		}
 	});
+
+	test('la note repliée sur Rimbaud et Évariste Galois est fermée par défaut et s’ouvre au clic et au clavier', async () => {
+		const page = await openPage();
+		try {
+			const noteDetails = page.locator('#note-rimbaud-galois');
+			expect(await noteDetails.count()).toBe(1);
+
+			// Vérification de l'état initial : fermé par défaut
+			expect(await noteDetails.getAttribute('open')).toBeNull();
+
+			const summary = noteDetails.locator('summary');
+			const title = await summary.locator('.parallel-summary-title').textContent();
+			expect(title).toContain('Rimbaud et Évariste Galois');
+
+			// Le contenu est masqué tant que details est fermé
+			const content = noteDetails.locator('.parallel-details-content');
+			expect(await content.isVisible()).toBe(false);
+
+			// Ouverture au clic
+			await summary.click();
+			expect(await noteDetails.getAttribute('open')).not.toBeNull();
+			expect(await content.isVisible()).toBe(true);
+
+			// Vérification du contenu et des précautions historiques
+			const introText = await noteDetails.locator('.parallel-intro').textContent();
+			expect(introText).toContain('aucune influence directe ni filiation personnelle');
+
+			const datesText = await noteDetails.locator('.parallel-cards-grid').textContent();
+			expect(datesText).toContain('1811–1832');
+			expect(datesText).toContain('1854–1891');
+
+			// Repliage au clavier (Touche Entrée sur le summary)
+			await summary.focus();
+			await page.keyboard.press('Enter');
+			expect(await noteDetails.getAttribute('open')).toBeNull();
+			expect(await content.isVisible()).toBe(false);
+		} finally {
+			await page.close();
+		}
+	});
+
+	test('sur mobile (375x812), la note Rimbaud et Galois s’ouvre sans débordement horizontal', async () => {
+		const page = await openPage(375, 812);
+		try {
+			const noteDetails = page.locator('#note-rimbaud-galois');
+			const summary = noteDetails.locator('summary');
+			await summary.click();
+
+			const content = noteDetails.locator('.parallel-details-content');
+			expect(await content.isVisible()).toBe(true);
+
+			const box = await content.boundingBox();
+			expect(box).not.toBeNull();
+			expect(box!.width).toBeLessThanOrEqual(375);
+		} finally {
+			await page.close();
+		}
+	});
 });
