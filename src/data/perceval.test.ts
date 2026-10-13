@@ -4,6 +4,7 @@ import {
 	percevalCharacters,
 	percevalEdgeTypes,
 	percevalFunctions,
+	percevalIconography,
 	percevalRelationships,
 	percevalSequences,
 } from './perceval';
@@ -140,5 +141,50 @@ describe('Le Conte du Graal (Perceval) — modèle de données (src/data/perceva
 		expect(silenceNote.text).toContain('Gornemant');
 		expect(silenceNote.text).toContain('ermite');
 		expect(silenceNote.text).toContain('mère');
+	});
+
+	test('la sélection iconographique comprend 6 documents vérifiés distinguant Moyen Âge et réceptions postérieures', () => {
+		expect(percevalIconography.length).toBe(6);
+		const ids = percevalIconography.map((d) => d.id);
+		expect(ids).toEqual([
+			'doc-perceval-roi-pecheur',
+			'doc-cortege-graal',
+			'doc-chevalier-westminster',
+			'doc-adoubement-bnf-fr73',
+			'doc-graal-table-ronde-bnf-fr112',
+			'doc-wyeth-percival-1922',
+		]);
+
+		for (const doc of percevalIconography) {
+			expect(doc.title).toBeTruthy();
+			expect(doc.badge).toBeTruthy();
+			expect(doc.image.src).toMatch(/^\/images\/perceval\/.+\.jpg$/);
+			expect(doc.image.alt.length).toBeGreaterThan(30);
+			expect(doc.image.caption).toBeTruthy();
+			expect(doc.image.width).toBeGreaterThan(500);
+			expect(doc.image.height).toBeGreaterThan(500);
+
+			expect(doc.meta.title).toBeTruthy();
+			expect(doc.meta.author).toBeTruthy();
+			expect(doc.meta.date).toBeTruthy();
+			expect(doc.meta.institution).toBeTruthy();
+			expect(doc.meta.identifier).toBeTruthy();
+			expect(doc.meta.identifierUrl).toMatch(/^https?:\/\//);
+			expect(doc.meta.license).toContain('Domaine public');
+
+			expect(doc.pedagogicalAnalysis.whatItShows.length).toBeGreaterThan(80);
+			expect(doc.pedagogicalAnalysis.textualLink.length).toBeGreaterThan(80);
+			expect(doc.pedagogicalAnalysis.criticalLimitation.length).toBeGreaterThan(80);
+
+			expect(doc.questions.length).toBe(2);
+			expect(doc.questions[0].length).toBeGreaterThan(30);
+			expect(doc.questions[1].length).toBeGreaterThan(30);
+		}
+
+		// Vérifier les 3 catégories documentaires distinctes
+		const badges = percevalIconography.map((d) => d.badge);
+		expect(badges.some((b) => b.includes('Témoignage médiéval'))).toBe(true);
+		expect(badges.some((b) => b.includes('Tradition postérieure du Graal'))).toBe(true);
+		expect(badges.some((b) => b.includes('Reconstitution moderne'))).toBe(true);
 	});
 });

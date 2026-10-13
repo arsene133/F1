@@ -23,6 +23,35 @@ export interface DidacticNote {
 	text: string;
 }
 
+export interface PercevalIconographyDocument {
+	id: string;
+	title: string;
+	badge: string;
+	badgeClass: string;
+	image: {
+		src: string;
+		alt: string;
+		caption: string;
+		width: number;
+		height: number;
+	};
+	meta: {
+		title: string;
+		author: string;
+		date: string;
+		institution: string;
+		identifier: string;
+		identifierUrl: string;
+		license: string;
+	};
+	pedagogicalAnalysis: {
+		whatItShows: string;
+		textualLink: string;
+		criticalLimitation: string;
+	};
+	questions: [string, string];
+}
+
 export const percevalSequences: NarrativeSequence[] = [
 	{
 		id: 'enfance-foret',
@@ -768,7 +797,7 @@ export const didacticNotes: DidacticNote[] = [
 	},
 	{
 		title: 'Nature du Graal chez Chrétien de Troyes',
-		text: 'Dans ce livre, le mot « graal » est d’abord un nom ordinaire : Chrétien écrit « un graal ». Il s’agit d’un plat large ou d’un vase précieux en or pur, orné de pierres brillantes, qui sert à porter une hostie (le pain de la messe) au père du Roi Pêcheur. Le mot vient très probablement du latin médiéval gradalis (un plat de table pour les mets précieux), sans que cette origine soit certaine à 100 %. Ce n’est que plus tard, vers 1200, qu’un autre écrivain, Robert de Boron, transformera le Graal en coupe sainte du Christ (le calice de la Cène). Chez Chrétien, la scène mélange merveilleux et religion sans explication complète.',
+		text: 'Dans ce livre, le mot « graal » est d’abord un nom commun : Chrétien écrit « un graal ». Il s’agit d’un plat large ou d’un récipient précieux en or pur, orné de pierres brillantes, porté par une jeune fille. Il sert à porter une hostie (le pain de la messe) au père du Roi Pêcheur, ce qui lui donne un rôle religieux sans que l’auteur ne propose d’explication complète ou définitive dans le roman. Le mot vient très probablement du latin médiéval gradalis (un plat de table pour les mets de choix). Ce n’est que vers 1200 que Robert de Boron assimilera le Graal à la coupe du Christ (le calice de la Cène). Chez Chrétien, l’objet conserve une part essentielle de mystère poétique et spirituel.',
 	},
 	{
 		title: 'La dialectique des deux héros : Perceval et Gauvain',
@@ -777,5 +806,212 @@ export const didacticNotes: DidacticNote[] = [
 	{
 		title: 'La question non posée : conseil de courtoisie et interprétation spirituelle',
 		text: 'Pourquoi Perceval garde-t-il le silence au château du Roi Pêcheur ? Le récit donne deux explications successives. Pendant le repas, Perceval se souvient simplement du conseil de Gornemant (« gardez-vous de trop parler ») et craint de paraître impoli en posant des questions indiscrètes. Bien plus tard, le jour du Vendredi saint, son oncle l’ermite lui donne une explication religieuse : sa faute d’avoir fait mourir sa mère de chagrin en partant a pesé sur son cœur et l’a empêché de parler. Chrétien associe ainsi une maladresse de politesse et une faute morale révélée après coup.',
+	},
+];
+
+export const percevalIconography: PercevalIconographyDocument[] = [
+	{
+		id: 'doc-perceval-roi-pecheur',
+		title: 'Perceval reçu au château du Roi Pêcheur (manuscrit de 1330)',
+		badge: 'Témoignage médiéval · Manuscrit du Conte du Graal (vers 1330)',
+		badgeClass: 'status-medieval',
+		image: {
+			src: '/images/perceval/perceval-roi-pecheur-bnf-fr12577.jpg',
+			alt: 'Enluminure médiévale en deux scènes : Perceval à cheval devant la porte du château et Perceval assis à table avec le Roi Pêcheur',
+			caption: 'Perceval arrivant au château et reçu à table par le Roi Pêcheur. Manuscrit du Conte du Graal et ses continuations, vers 1330. BnF, Français 12577, folio 18 verso.',
+			width: 1640,
+			height: 2507,
+		},
+		meta: {
+			title: 'Le Conte du Graal avec continuations (BnF Français 12577, fol. 18v)',
+			author: 'Enlumineur anonyme parisien (texte de Chrétien de Troyes)',
+			date: 'Vers 1330 (première moitié du XIVᵉ siècle)',
+			institution: 'Bibliothèque nationale de France (BnF, Département des Manuscrits)',
+			identifier: 'BnF Français 12577, fol. 18v / Gallica ark:/12148/btv1b10549434x',
+			identifierUrl: 'https://gallica.bnf.fr/ark:/12148/btv1b10549434x/f42.item',
+			license: 'Domaine public (BnF Gallica / Wikimedia Commons)',
+		},
+		pedagogicalAnalysis: {
+			whatItShows:
+				'Sur cette page de manuscrit, on observe le texte en deux colonnes surmontant une peinture divisée en deux compartiments. À gauche, un chevalier en armure arrive à cheval devant une tour où un personnage lui tend une épée. À droite, le chevalier partage un repas avec un seigneur couronné devant un foyer ardent, tandis qu’une servante apporte des récipients de table.',
+			textualLink:
+				'Cette miniature représente une scène directement associée au récit de Chrétien de Troyes (vers 3080–3180) : le jeune Perceval est accueilli au château par le Roi Pêcheur, qui souffre d’une blessure et ne peut pas se lever, avant que commence le repas mystérieux.',
+			criticalLimitation:
+				'Mise en garde historique : cette enluminure a été peinte vers 1330, soit environ 140 ans après l’écriture du roman par Chrétien de Troyes (vers 1181–1190). L’artiste habille les personnages et décore la salle selon les modes du XIVᵉ siècle, et non selon la réalité du XIIᵉ siècle.',
+		},
+		questions: [
+			'Regarde bien les deux parties de la peinture : que fait Perceval à gauche sur son cheval, puis à droite autour de la table avec le roi ?',
+			'Observe l’écriture au-dessus de l’image : pourquoi le copiste a-t-il tracé les lettres à la main sur deux colonnes régulières ?',
+		],
+	},
+	{
+		id: 'doc-cortege-graal',
+		title: 'Le banquet et le cortège du Graal dans une continuation (manuscrit de 1330)',
+		badge: 'Témoignage médiéval · Cortège mystérieux (vers 1330)',
+		badgeClass: 'status-medieval',
+		image: {
+			src: '/images/perceval/cortege-graal-bnf-fr12577.jpg',
+			alt: 'Miniature médiévale montrant le cortège du Graal : quatre porteurs avec une bière funéraire portant une épée brisée, un valet avec la lance et une demoiselle avec le Graal',
+			caption: 'Le repas chez le Roi Pêcheur et le défilé du Graal. Première Continuation du Conte du Graal, vers 1330. BnF, Français 12577, folio 74 verso.',
+			width: 2463,
+			height: 1354,
+		},
+		meta: {
+			title: 'Cortège du Graal dans la Première Continuation (BnF Français 12577, fol. 74v)',
+			author: 'Enlumineur anonyme parisien (Première Continuation)',
+			date: 'Vers 1330 (première moitié du XIVᵉ siècle)',
+			institution: 'Bibliothèque nationale de France (BnF, Département des Manuscrits)',
+			identifier: 'BnF Français 12577, fol. 74v / Gallica ark:/12148/btv1b10549434x',
+			identifierUrl: 'https://gallica.bnf.fr/ark:/12148/btv1b10549434x/f154.item',
+			license: 'Domaine public (BnF Gallica / Wikimedia Commons)',
+		},
+		pedagogicalAnalysis: {
+			whatItShows:
+				'La peinture montre deux groupes de personnages. À gauche, quatre valets portent sur leurs épaules un lit funéraire (une bière) tendu d’étoffe rouge où repose une épée brisée. Au centre et à droite, un jeune homme tient une lance dressée, une jeune fille élève un vase doré à couvercle, et des convives sont assis à table les mains jointes.',
+			textualLink:
+				'Cette image permet de comprendre la célèbre scène du cortège vue par Perceval (vers 3190–3310). Chez Chrétien, le héros regarde défiler un objet appelé « un graal », porté par une demoiselle, sans oser demander à quoi il sert ni à qui on le porte, par réserve et timidité.',
+			criticalLimitation:
+				'Précision littéraire essentielle : ce feuillet 74v n’illustre pas le texte original de Chrétien de Troyes, mais la « Première Continuation », une suite anonyme ajoutée après sa mort. C’est cette continuation qui ajoute au cortège le lit funéraire et l’épée brisée. Chez Chrétien, le cortège comprend des chandeliers, la lance qui saigne, un graal précieux et un tailloir d’argent, sans lit mortuaire.',
+		},
+		questions: [
+			'Quels objets mystérieux sont transportés dans ce défilé : que vois-tu sur le lit funéraire à gauche et dans les mains des jeunes gens ?',
+			'Pourquoi l’attitude des personnages assis à table, les mains jointes comme à la messe, montre-t-elle le caractère sacré du cortège ?',
+		],
+	},
+	{
+		id: 'doc-chevalier-westminster',
+		title: 'Un chevalier en hommage : équipement militaire du XIIIᵉ siècle (Psautier de Westminster)',
+		badge: 'Témoignage médiéval · Équipement militaire (vers 1250)',
+		badgeClass: 'status-medieval',
+		image: {
+			src: '/images/perceval/chevalier-psautier-westminster.jpg',
+			alt: 'Dessin médiéval d’un chevalier en cotte de mailles agenouillé en geste d’hommage devant son cheval, avec un écuyer tenant son heaume depuis les créneaux d’une tour',
+			caption: 'Chevalier en cotte de mailles agenouillé en geste d’hommage. Psautier de Westminster, Angleterre, vers 1250. British Library, Royal MS 2 A XXII, folio 220 recto.',
+			width: 977,
+			height: 1500,
+		},
+		meta: {
+			title: 'Kneeling knight rendering homage (Westminster Psalter, fol. 220r)',
+			author: 'Artiste anonyme de l’abbaye de Westminster (Angleterre)',
+			date: 'Vers 1250 (milieu du XIIIᵉ siècle)',
+			institution: 'British Library, Londres (Royaume-Uni)',
+			identifier: 'British Library Royal MS 2 A XXII, f. 220r',
+			identifierUrl: 'https://www.bl.uk/manuscripts/Viewer.aspx?ref=royal_ms_2_a_xxii_fs001r',
+			license: 'Domaine public (British Library / CC0 Wikimedia Commons)',
+		},
+		pedagogicalAnalysis: {
+			whatItShows:
+				'Sur l’image, on observe un homme d’armes agenouillé sur un genou, tendant les mains ouvertes en avant. Il porte une protection de mailles recouvrant le corps et la tête, un vêtement orné de croix, une épée et des éperons pointus. Un cheval harnaché se tient derrière lui, et en haut à droite, depuis des créneaux, un personnage tend un grand casque métallique. La notice institutionnelle de la British Library identifie cette scène comme un chevalier rendant hommage à un roi (peint sur le feuillet précédent), avec un écuyer lui tendant son heaume.',
+			textualLink:
+				'Cette image ne représente pas Perceval, mais elle permet de comparer le texte du roman avec des armes réelles du Moyen Âge. Quand Perceval rencontre pour la première fois des chevaliers dans la forêt (vers 110–180), l’éclat de ce métal et de ces casques le frappe tellement qu’il les prend pour des anges de Dieu.',
+			criticalLimitation:
+				'Mise en garde historique : ce document provient d’un livre de prières anglais (un psautier) et montre une relation féodale d’hommage à un roi. Il sert d’exemple concret pour observer l’armement des chevaliers au XIIIᵉ siècle, sans prétendre raconter l’histoire de Perceval.',
+		},
+		questions: [
+			'Retrouve les éléments de l’équipement militaire : où sont le haubert en mailles, l’épée au côté, les éperons et le grand heaume tenu par l’écuyer ?',
+			'Pourquoi le geste des deux mains ouvertes tendues en avant montre-t-elle la fidélité et le respect d’un chevalier envers son seigneur ?',
+		],
+	},
+	{
+		id: 'doc-adoubement-bnf-fr73',
+		title: 'La cérémonie de l’adoubement : la colée et la remise des armes (début du XVᵉ siècle)',
+		badge: 'Témoignage médiéval · Rituel chevaleresque (vers 1400–1405)',
+		badgeClass: 'status-medieval',
+		image: {
+			src: '/images/perceval/adoubement-chevaliers-bnf-fr73.jpg',
+			alt: 'Miniature médiévale montrant le roi Jean II le Bon adoubant des chevaliers agenouillés par le coup d’épée (la colée)',
+			caption: 'Le roi de France Jean II le Bon adoubant des chevaliers avec son épée. Grandes Chroniques de France, vers 1400–1405. BnF, Français 73, folio 386.',
+			width: 2048,
+			height: 2479,
+		},
+		meta: {
+			title: 'Jean II le Bon adoubant des chevaliers (Grandes Chroniques de France, fol. 386)',
+			author: 'Atelier parisien de miniaturistes (début du XVᵉ siècle)',
+			date: 'Vers 1400–1405 (début du XVᵉ siècle)',
+			institution: 'Bibliothèque nationale de France (BnF, Département des Manuscrits)',
+			identifier: 'BnF Français 73, fol. 386 / Gallica ark:/12148/btv1b8100014c',
+			identifierUrl: 'https://gallica.bnf.fr/ark:/12148/btv1b8100014c/f786.item',
+			license: 'Domaine public (BnF Gallica / Wikimedia Commons)',
+		},
+		pedagogicalAnalysis: {
+			whatItShows:
+				'Cette miniature royale des Grandes Chroniques de France montre le roi Jean II le Bon le jour de son sacre en 1350. Vêtu d’un manteau bleu semé de fleurs de lys dorées, le souverain tient une épée levée pour donner le coup rituel (la colée) sur l’épaule de trois nouveaux chevaliers agenouillés devant lui en robe bleue.',
+			textualLink:
+				'Cette image permet de comprendre concrètement la cérémonie d’entrée dans la chevalerie que Perceval reçoit de son maître Gornemant de Goort (vers 1630–1645) : attacher les éperons, ceindre l’épée et prêter le serment d’épargner les vaincus qui demandent merci.',
+			criticalLimitation:
+				'Mise en garde historique : cette scène ne représente pas Perceval, mais une cérémonie de la cour des rois de France peinte au début du XVᵉ siècle. Plus de deux siècles après Chrétien de Troyes, le rituel est devenu plus politique et fastueux que l’adoubement simple décrit dans le roman du XIIᵉ siècle.',
+		},
+		questions: [
+			'Quel geste spectaculaire le roi fait-il avec son épée au-dessus des jeunes seigneurs agenouillés devant lui ?',
+			'Pourquoi l’adoubement est-il une étape capitale qui transforme un jeune homme ordinaire en un véritable chevalier ?',
+		],
+	},
+	{
+		id: 'doc-graal-table-ronde-bnf-fr112',
+		title: 'L’apparition du Graal à la Table ronde : la tradition romanesque ultérieure (1470)',
+		badge: 'Tradition postérieure du Graal · Légende de la Table ronde (1470)',
+		badgeClass: 'status-tardif',
+		image: {
+			src: '/images/perceval/graal-table-ronde-bnf-fr112.jpg',
+			alt: 'Grande miniature du XVe siècle montrant les chevaliers de la Table ronde réunis autour du roi Arthur, voyant le Graal descendre sous la forme d’un calice doré porté par deux anges',
+			caption: 'Apparition du Saint Graal aux compagnons de la Table ronde. Enluminure d’Évrard d’Espinques, 1470. BnF, Français 112, tome III, folio 5 recto.',
+			width: 4996,
+			height: 7138,
+		},
+		meta: {
+			title: 'Apparition du Saint Graal à la Table ronde (La Queste del Saint-Graal, BnF Fr. 112, t. III, fol. 5r)',
+			author: 'Évrard d’Espinques (enlumineur pour Jacques d’Armagnac)',
+			date: '1470 (fin du XVᵉ siècle)',
+			institution: 'Bibliothèque nationale de France (BnF, Département des Manuscrits)',
+			identifier: 'BnF Français 112 (3), fol. 5r / Gallica ark:/12148/btv1b8527589h',
+			identifierUrl: 'https://gallica.bnf.fr/ark:/12148/btv1b8527589h/f13.item',
+			license: 'Domaine public (BnF Gallica / Wikimedia Commons)',
+		},
+		pedagogicalAnalysis: {
+			whatItShows:
+				'Sur l’image, on aperçoit le roi Arthur et ses chevaliers assis autour d’une grande table ronde couverte d’une nappe blanche, chacun ayant son nom peint au-dessus de sa place. Au centre, entouré de rayons d’or, deux anges portent un vase d’or surmonté d’un voile blanc. La notice de la BnF rattache ce feuillet à l’apparition du Saint Graal lors de la fête de la Pentecôte.',
+			textualLink:
+				'Cette image témoigne d’une tradition romanesque postérieure : la Quête du Saint Graal en prose (composée vers 1225–1230). Dans ce roman plus tardif, tous les compagnons d’Arthur font le serment de partir en quête pour voir le Graal découvert, ce qui transforme la quête personnelle de Perceval en une mission spirituelle collective.',
+			criticalLimitation:
+				'Mise en garde historique fondamentale : cette scène de la Table ronde n’appartient pas au roman de Chrétien de Troyes. Chez Chrétien, le Graal n’apparaît jamais à la cour d’Arthur et n’est pas porté par des anges dans le ciel : c’est un objet mystérieux appelé graal, porté en procession par une jeune fille dans le château secret du Roi Pêcheur, sans explication théologique complète.',
+		},
+		questions: [
+			'Regarde bien le centre de la table : qui porte l’objet sacré et pourquoi le Graal est-il entouré de rayons de lumière d’or ?',
+			'Pourquoi la disposition en cercle parfait autour de la table montre-t-elle l’idéal d’égalité et de fraternité des chevaliers du roi Arthur ?',
+		],
+	},
+	{
+		id: 'doc-wyeth-percival-1922',
+		title: 'Perceval dans un livre d’aventures illustré par N. C. Wyeth (1917–1922)',
+		badge: 'Reconstitution moderne · Illustration du XXᵉ siècle (1922)',
+		badgeClass: 'status-moderne',
+		image: {
+			src: '/images/perceval/wyeth-percival-1922.jpg',
+			alt: 'Peinture de N.C. Wyeth montrant un chevalier en armure complète d’argent levant le bras vers le ciel sur son cheval noir au bord d’une mer démontée sous un ciel étoilé',
+			caption: 'Sir Percival levant le bras au bord d’une eau démontée sous un ciel d’orage étoilé. Huile sur toile de N. C. Wyeth (1917, publiée en 1922).',
+			width: 1580,
+			height: 2004,
+		},
+		meta: {
+			title: 'When Sir Percival came nigh unto the brim (The Boy’s King Arthur, p. 214)',
+			author: 'Newell Convers Wyeth (1882–1945), peintre et illustrateur américain',
+			date: '1917 (création) / 1922 (édition Charles Scribner’s Sons)',
+			institution: 'Collection Scribner’s Illustrated Classics / Musée Brandywine / Wikimedia Commons',
+			identifier: 'The Boy’s King Arthur (New York, Charles Scribner’s Sons, 1922, p. 214)',
+			identifierUrl: 'https://commons.wikimedia.org/wiki/File:Boys_King_Arthur_-_N._C._Wyeth_-_p214.jpg',
+			license: 'Domaine public (publié aux États-Unis avant 1929)',
+		},
+		pedagogicalAnalysis: {
+			whatItShows:
+				'Cette peinture à l’huile américaine met en scène un chevalier en armure d’acier étincelante et cape rouge, montant un cheval noir au bord d’un gouffre rocheux battu par des vagues écumantes. Il lève le bras ganté vers un ciel nocturne chargé d’étoiles et de nuages menaçants.',
+			textualLink:
+				'Cette image propose une réinterprétation moderne de la légende arthurienne inspirée du livre anglais de Thomas Malory (XVᵉ siècle). Elle fait revivre le sentiment de solitude et d’épreuve de Perceval lorsqu’il erre dans des régions inconnues et affronte la tentation du doute.',
+			criticalLimitation:
+				'Mise en garde historique : réalisée en 1917 pour un livre pour la jeunesse, cette œuvre est une reconstitution moderne romantique. L’armure en plaques de fer complètes et la mise en scène spectaculaire s’inspirent des romans du XIXᵉ siècle et du cinéma d’aventure, et non du XIIᵉ siècle de Chrétien de Troyes.',
+		},
+		questions: [
+			'Qu’est-ce qui rend cette scène beaucoup plus impressionnante et cinématographique qu’une enluminure médiévale sur parchemin ?',
+			'En quoi cette image moderne montre-t-elle que le mythe de Perceval continue de faire rêver les artistes et les lecteurs jusqu’à aujourd’hui ?',
+		],
 	},
 ];

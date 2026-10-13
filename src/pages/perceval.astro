@@ -8,6 +8,7 @@ import {
 	percevalCharacters,
 	percevalEdgeTypes,
 	percevalFunctions,
+	percevalIconography,
 	percevalRelationships,
 	percevalSequences,
 } from '../data/perceval';
@@ -110,12 +111,298 @@ const pageDescription =
 				margin: 0.5rem 0 0;
 				padding-left: 1.25rem;
 			}
+			/* Section Iconographique : Images du Moyen Âge et légende du Graal */
+			.perceval-iconography-section {
+				margin-top: 3.5rem;
+				border-top: 1px solid var(--map-border);
+				padding-top: 2.5rem;
+			}
+			.iconography-header {
+				text-align: center;
+				max-width: 820px;
+				margin: 0 auto 2.5rem;
+			}
+			.iconography-header h2 {
+				font-family: var(--map-serif);
+				font-size: 1.6rem;
+				margin: 0 0 1rem;
+				color: var(--map-ink);
+			}
+			.iconography-lead {
+				font-size: 0.98rem;
+				line-height: 1.55;
+				color: var(--map-muted);
+				margin: 0 0 1.5rem;
+			}
+			.iconography-method-banner {
+				background: #fbf9f4;
+				border: 1px solid var(--map-border-soft);
+				border-radius: 8px;
+				padding: 1rem 1.25rem;
+				text-align: left;
+				font-size: 0.88rem;
+				line-height: 1.5;
+			}
+			.method-banner-title {
+				display: block;
+				font-weight: 700;
+				color: var(--map-ink);
+				margin-bottom: 0.5rem;
+				font-family: var(--map-sans, system-ui, sans-serif);
+				font-size: 0.84rem;
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+			}
+			.method-banner-list {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+				display: flex;
+				flex-direction: column;
+				gap: 0.45rem;
+			}
+			.method-banner-list li {
+				display: flex;
+				align-items: baseline;
+				gap: 0.65rem;
+				flex-wrap: wrap;
+				color: var(--map-ink-soft);
+			}
+			.status-badge {
+				display: inline-block;
+				font-size: 0.72rem;
+				font-weight: 700;
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+				padding: 0.2rem 0.55rem;
+				border-radius: 4px;
+				line-height: 1.3;
+				white-space: normal;
+			}
+			.status-medieval {
+				background: #e8f0fe;
+				color: #174ea6;
+				border: 1px solid rgba(23, 78, 166, 0.25);
+			}
+			.status-tardif {
+				background: #fef3c7;
+				color: #92400e;
+				border: 1px solid rgba(146, 64, 14, 0.25);
+			}
+			.status-moderne {
+				background: #f3e8ff;
+				color: #6b21a8;
+				border: 1px solid rgba(107, 33, 168, 0.25);
+			}
+
+			.iconography-cards-grid {
+				display: grid;
+				grid-template-columns: 1fr;
+				gap: 2rem;
+				margin-top: 2rem;
+			}
+			@media (min-width: 820px) {
+				.iconography-cards-grid {
+					grid-template-columns: 1fr 1fr;
+				}
+			}
+
+			.iconography-card {
+				background: #ffffff;
+				border: 1px solid var(--map-border);
+				border-radius: 10px;
+				padding: 1.4rem 1.5rem;
+				box-shadow: 0 3px 12px rgba(23, 43, 58, 0.04);
+				display: flex;
+				flex-direction: column;
+				gap: 1.1rem;
+				min-width: 0;
+				max-width: 100%;
+				box-sizing: border-box;
+				overflow-wrap: break-word;
+			}
+			.iconography-card-header {
+				display: flex;
+				flex-direction: column;
+				gap: 0.45rem;
+				padding-bottom: 0.6rem;
+				border-bottom: 1px solid var(--map-border-soft);
+			}
+			.iconography-card-title {
+				margin: 0;
+				font-family: var(--map-serif);
+				font-size: 1.18rem;
+				font-weight: 600;
+				color: var(--map-ink);
+				line-height: 1.35;
+			}
+			.iconography-figure {
+				margin: 0;
+				padding: 0;
+				background: #faf8f5;
+				border: 1px solid var(--map-border-soft);
+				border-radius: 6px;
+				overflow: hidden;
+				display: flex;
+				flex-direction: column;
+				position: relative;
+			}
+			.iconography-img {
+				display: block;
+				width: 100%;
+				height: auto;
+				max-height: 340px;
+				object-fit: contain;
+				background: #f2ede4;
+				cursor: zoom-in;
+			}
+			.iconography-caption {
+				padding: 0.75rem 0.95rem;
+				font-size: 0.82rem;
+				line-height: 1.45;
+				color: var(--map-ink-soft);
+				border-top: 1px solid var(--map-border-soft);
+				background: #ffffff;
+			}
+			.iconography-meta-box {
+				background: #fbf9f4;
+				border: 1px solid var(--map-border-soft);
+				border-radius: 6px;
+				padding: 0.85rem 1rem;
+				font-size: 0.82rem;
+				line-height: 1.5;
+			}
+			.iconography-meta-list {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+				display: flex;
+				flex-direction: column;
+				gap: 0.35rem;
+			}
+			.iconography-meta-list li {
+				color: var(--map-ink-soft);
+				word-break: break-word;
+			}
+			.meta-permalink {
+				color: var(--map-accent, #8b572a);
+				text-decoration: underline;
+				text-underline-offset: 2px;
+			}
+			.meta-permalink:hover {
+				color: var(--map-ink);
+			}
+			.iconography-evaluation-box {
+				border-left: 3px solid #8b572a;
+				padding: 0.85rem 1.1rem;
+				background: #faf8f5;
+				border-radius: 0 6px 6px 0;
+				font-size: 0.88rem;
+				line-height: 1.6;
+				display: flex;
+				flex-direction: column;
+				gap: 0.65rem;
+			}
+			.iconography-evaluation-box h4 {
+				margin: 0;
+				font-family: var(--map-sans, system-ui, sans-serif);
+				font-size: 0.82rem;
+				text-transform: uppercase;
+				letter-spacing: 0.06em;
+				color: #8b572a;
+				font-weight: 700;
+			}
+			.iconography-evaluation-box p {
+				margin: 0;
+				color: var(--map-ink-soft);
+			}
+			.iconography-evaluation-box strong {
+				color: var(--map-ink);
+			}
+			.iconography-question-box {
+				background: #f5f8fa;
+				border: 1px solid #d8e3eb;
+				border-radius: 6px;
+				padding: 0.95rem 1.1rem;
+				font-size: 0.88rem;
+				line-height: 1.55;
+				display: flex;
+				flex-direction: column;
+				gap: 0.45rem;
+			}
+			.iconography-question-box strong {
+				color: #235284;
+				font-size: 0.82rem;
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+			}
+			.iconography-question-box p {
+				margin: 0;
+				color: var(--map-ink);
+			}
+
+			.iconography-synthesis-box {
+				margin-top: 2.5rem;
+				background: #ffffff;
+				border: 1px solid var(--map-border);
+				border-radius: 8px;
+				padding: 1.4rem 1.6rem;
+			}
+			.iconography-synthesis-header {
+				display: flex;
+				align-items: center;
+				gap: 0.75rem;
+				margin-bottom: 0.85rem;
+				flex-wrap: wrap;
+			}
+			.iconography-synthesis-badge {
+				background: #235284;
+				color: #ffffff;
+				font-size: 0.72rem;
+				font-weight: 700;
+				text-transform: uppercase;
+				letter-spacing: 0.06em;
+				padding: 0.2rem 0.55rem;
+				border-radius: 4px;
+			}
+			.iconography-synthesis-title {
+				margin: 0;
+				font-family: var(--map-serif);
+				font-size: 1.25rem;
+				color: var(--map-ink);
+			}
+			.iconography-synthesis-content p {
+				margin: 0 0 0.85rem;
+				font-size: 0.92rem;
+				line-height: 1.55;
+				color: var(--map-ink-soft);
+			}
+			.iconography-synthesis-steps {
+				margin: 0;
+				padding-left: 1.25rem;
+				display: flex;
+				flex-direction: column;
+				gap: 0.55rem;
+				font-size: 0.9rem;
+				line-height: 1.55;
+				color: var(--map-ink-soft);
+			}
+			.iconography-synthesis-steps strong {
+				color: var(--map-ink);
+			}
+
 			@media (max-width: 640px) {
 				.perceval-page .rm-anchor {
 					display: none;
 				}
 				.didactic-card {
 					padding: 1rem 1.15rem;
+				}
+				.iconography-card {
+					padding: 1.1rem 1.15rem;
+				}
+				.iconography-synthesis-box {
+					padding: 1.1rem 1.15rem;
 				}
 			}
 		</style>
@@ -225,6 +512,118 @@ const pageDescription =
 								<li>Chrétien de Troyes, <em>Œuvres complètes</em>, sous la direction de Daniel Poirion, avec Anne Berthelot, Peter F. Dembowski, Sylvie Lefèvre, Karl D. Uitti et Philippe Walter, Paris, Gallimard, coll. « Bibliothèque de la Pléiade », 1994.</li>
 								<li>Chrétien de Troyes, <em>Le Conte du Graal ou le Roman de Perceval</em>, édition bilingue et traduction par Charles Méla, Paris, Le Livre de Poche, coll. « Lettres gothiques », 1990.</li>
 							</ul>
+						</div>
+					</section>
+
+					<!-- Section Iconographique : Images du Moyen Âge et légende du Graal -->
+					<section class="perceval-iconography-section" id="iconographie" aria-labelledby="iconography-title">
+						<header class="iconography-header">
+							<h2 id="iconography-title">Images du Moyen Âge et légende du Graal</h2>
+							<p class="iconography-lead">
+								Observer des manuscrits médiévaux, des objets de chevaliers et des peintures plus récentes pour comprendre comment on lisait et imaginait l’histoire de Perceval à travers les siècles.
+							</p>
+
+							<!-- Cadre méthodologique des trois statuts documentaires -->
+							<div class="iconography-method-banner">
+								<span class="method-banner-title">Conseil pour les élèves de 5ᵉ : bien distinguer les trois types d’images</span>
+								<ul class="method-banner-list">
+									<li>
+										<span class="status-badge status-medieval">Témoignage médiéval</span>
+										Document ou peinture réalisé réellement au Moyen Âge (manuscrits copiés à la main, enluminures).
+									</li>
+									<li>
+										<span class="status-badge status-tardif">Tradition postérieure du Graal</span>
+										Image inspirée par les légendes écrites après Chrétien de Troyes (qui transforment le Graal en calice de la messe).
+									</li>
+									<li>
+										<span class="status-badge status-moderne">Reconstitution moderne</span>
+										Dessin ou peinture du XIXᵉ ou du XXᵉ siècle imaginé pour un livre d’aventures pour la jeunesse.
+									</li>
+								</ul>
+							</div>
+						</header>
+
+						<div class="iconography-cards-grid">
+							{percevalIconography.map((doc, idx) => (
+								<article class="iconography-card" id={doc.id}>
+									<header class="iconography-card-header">
+										<span class={`status-badge ${doc.badgeClass}`}>{doc.badge}</span>
+										<h3 class="iconography-card-title">{idx + 1}. {doc.title}</h3>
+									</header>
+
+									<figure class="iconography-figure">
+										<img
+											src={doc.image.src}
+											alt={doc.image.alt}
+											class="iconography-img"
+											loading="lazy"
+											width={doc.image.width}
+											height={doc.image.height}
+										/>
+										<figcaption class="iconography-caption">
+											{doc.image.caption}
+										</figcaption>
+									</figure>
+
+									<div class="iconography-meta-box">
+										<ul class="iconography-meta-list">
+											<li><strong>Titre du document :</strong> {doc.meta.title}</li>
+											<li><strong>Artiste / Origine :</strong> {doc.meta.author}</li>
+											<li><strong>Date :</strong> {doc.meta.date}</li>
+											<li><strong>Lieu de conservation :</strong> {doc.meta.institution}</li>
+											<li>
+												<strong>Notice et cote :</strong>{' '}
+												<a href={doc.meta.identifierUrl} target="_blank" rel="noopener noreferrer" class="meta-permalink">
+													{doc.meta.identifier}
+												</a>
+											</li>
+											<li><strong>Droits :</strong> {doc.meta.license}</li>
+										</ul>
+									</div>
+
+									<div class="iconography-evaluation-box">
+										<h4>Comprendre l’image & le roman</h4>
+										<p>
+											<strong>Ce que l’on voit :</strong> {doc.pedagogicalAnalysis.whatItShows}
+										</p>
+										<p>
+											<strong>Lien avec le roman de Chrétien :</strong> {doc.pedagogicalAnalysis.textualLink}
+										</p>
+										<p>
+											<strong>Mise en garde historique :</strong> {doc.pedagogicalAnalysis.criticalLimitation}
+										</p>
+									</div>
+
+									<div class="iconography-question-box">
+										<strong>Questions d’observation :</strong>
+										<p>1. {doc.questions[0]}</p>
+										<p>2. {doc.questions[1]}</p>
+									</div>
+								</article>
+							))}
+						</div>
+
+						<div class="iconography-synthesis-box">
+							<header class="iconography-synthesis-header">
+								<span class="iconography-synthesis-badge">Bilan pour la classe de 5ᵉ</span>
+								<h3 class="iconography-synthesis-title">Ce qu’il faut retenir de ces images</h3>
+							</header>
+							<div class="iconography-synthesis-content">
+								<p>
+									En observant ces documents, on comprend trois grandes étapes de la légende du Graal :
+								</p>
+								<ol class="iconography-synthesis-steps">
+									<li>
+										<strong>Au XIIᵉ siècle avec Chrétien de Troyes :</strong> le roman s’écoute à la cour des seigneurs. Les chevaliers portent le haubert de mailles, et le mot « graal » désigne un plat mystérieux servant à nourrir un vieux roi infirme.
+									</li>
+									<li>
+										<strong>Au XIIIᵉ et au XVᵉ siècle :</strong> d’autres écrivains et artistes transforment le Graal en coupe sainte du Christ et imaginent que tous les chevaliers de la Table ronde partent ensemble à sa recherche.
+									</li>
+									<li>
+										<strong>Aux XIXᵉ et XXᵉ siècles :</strong> les illustrateurs modernes réinventent le personnage avec des armures d’acier complètes et des paysages spectaculaires pour faire rêver les lecteurs.
+									</li>
+								</ol>
+							</div>
 						</div>
 					</section>
 				</footer>

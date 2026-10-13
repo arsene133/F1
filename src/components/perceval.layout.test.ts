@@ -5,7 +5,12 @@ import { spawn, type ChildProcess } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { chromium, type Browser, type Page } from 'playwright';
-import { percevalCharacters, percevalEdgeTypes, percevalRelationships } from '../data/perceval';
+import {
+	percevalCharacters,
+	percevalEdgeTypes,
+	percevalIconography,
+	percevalRelationships,
+} from '../data/perceval';
 
 const BUILT = existsSync('dist/perceval/index.html');
 const PORT = 4399;
@@ -276,6 +281,112 @@ describe.skipIf(!BUILT)('Page Perceval (/perceval) — Réseau des personnages e
 			} finally {
 				await page.close();
 			}
+		}
+	});
+
+	test('section iconographique : présence des 6 cartes documentaires, métadonnées, légendes et questions d’observation', async () => {
+		const { page, errors } = await openPage();
+		try {
+			expect(errors).toEqual([]);
+
+			const section = page.locator('#iconographie');
+			expect(await section.count()).toBe(1);
+
+			const title = section.locator('#iconography-title');
+			expect(await title.textContent()).toContain('Images du Moyen Âge et légende du Graal');
+
+			// Les 6 cartes sont présentes
+			const cards = section.locator('.iconography-card');
+			expect(await cards.count()).toBe(percevalIconography.length);
+
+			for (let i = 0; i < percevalIconography.length; i++) {
+				const card = cards.nth(i);
+				const doc = percevalIconography[i];
+
+				// Vérification de l'ID
+				expect(await card.getAttribute('id')).toBe(doc.id);
+
+				// Titre et badge de statut
+				expect(await card.locator('.iconography-card-title').textContent()).toContain(doc.title);
+				expect(await card.locator('.status-badge').textContent()).toBe(doc.badge);
+
+				// Image avec attributs valides et texte alternatif détaillé
+				const img = card.locator('.iconography-img');
+				expect(await img.getAttribute('src')).toBe(doc.image.src);
+				expect((await img.getAttribute('alt'))?.length).toBeGreaterThan(30);
+
+				// Légende sous l'image
+				expect(await card.locator('.iconography-caption').textContent()).toContain(doc.image.caption);
+
+				// Métadonnées patrimoniales
+				const metaText = await card.locator('.iconography-meta-box').innerText();
+				expect(metaText).toContain(doc.meta.institution);
+				expect(metaText).toContain(doc.meta.date);
+
+				// Zone d'évaluation pour les élèves
+				const evalText = await card.locator('.iconography-evaluation-box').innerText();
+				expect(evalText.toUpperCase()).toContain('COMPRENDRE L’IMAGE & LE ROMAN');
+				expect(evalText).toContain('Mise en garde historique :');
+
+				// Questions d’observation
+				const qText = await card.locator('.iconography-question-box').innerText();
+				expect(qText.toUpperCase()).toContain('QUESTIONS D’OBSERVATION :');
+				expect(qText).toContain(doc.questions[0]);
+			}
+
+			// Bilan méthodologique final pour les 5e
+			const synthesis = section.locator('.iconography-synthesis-box');
+			expect(await synthesis.count()).toBe(1);
+			expect(await synthesis.locator('.iconography-synthesis-title').textContent()).toContain('Ce qu’il faut retenir de ces images');
+		} finally {
+			await page.close();
+		}
+	});
+
+	test('lightbox universelle sur /perceval : zoom au clic, affichage de la légende, navigation clavier et fermeture Échap', async () => {
+		const { page } = await openPage();
+		try {
+			const lightbox = page.locator('#image-lightbox');
+			expect(await lightbox.count()).toBe(1);
+
+			// Première image iconographique marquée comme zoomable
+			const firstImg = page.locator('#doc-perceval-roi-pecheur .iconography-img');
+			expect(await firstImg.getAttribute('data-zoomable')).toBe('true');
+			expect(await firstImg.getAttribute('role')).toBe('button');
+
+			// Clic pour ouvrir la lightbox
+			await firstImg.click();
+			expect(await lightbox.getAttribute('open')).not.toBeNull();
+
+			const lightboxImg = lightbox.locator('[data-lightbox-img]');
+			expect(await lightboxImg.getAttribute('src')).toContain('perceval-roi-pecheur-bnf-fr12577.jpg');
+
+			// La légende de l'image est affichée dans la lightbox
+			const caption = lightbox.locator('[data-lightbox-caption]');
+			expect(await caption.isVisible()).toBe(true);
+			expect(await caption.textContent()).toContain('Roi Pêcheur');
+
+			// Le défilement de page est verrouillé
+			const bodyOverflow = await page.evaluate(() => document.body.style.overflow);
+			expect(bodyOverflow).toBe('hidden');
+
+			// Navigation vers l'image suivante avec Flèche Droite
+			await page.keyboard.press('ArrowRight');
+			expect(await lightboxImg.getAttribute('src')).toContain('cortege-graal-bnf-fr12577.jpg');
+
+			// Navigation vers l'image précédente avec Flèche Gauche
+			await page.keyboard.press('ArrowLeft');
+			expect(await lightboxImg.getAttribute('src')).toContain('perceval-roi-pecheur-bnf-fr12577.jpg');
+
+			// Fermeture avec la touche Échap
+			await page.keyboard.press('Escape');
+			expect(await lightbox.getAttribute('open')).toBeNull();
+
+			// Défilement de page restauré
+			const postBodyOverflow = await page.evaluate(() => document.body.style.overflow);
+			expect(postBodyOverflow).toBe('');
+		} finally {
+			await page.close();
 		}
 	});
 });
