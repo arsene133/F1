@@ -1,0 +1,795 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import GraffignyJourney from '../components/GraffignyJourney.astro';
+import GraffignyThemesMap from '../components/GraffignyThemesMap.astro';
+import Header from '../components/Header.astro';
+import RelationshipMap from '../components/RelationshipMap.astro';
+import {
+	crossLinkIndex,
+	graffignyCharacters,
+	graffignyEdgeTypes,
+	graffignyRelationships,
+	graffignySources,
+	graffignyThemes,
+	keyFacts,
+	narrativeSteps,
+	revisionQuestions,
+	ziliaEvolution,
+} from '../data/graffigny';
+import '../styles/graffigny.css';
+
+const pageTitle = 'Françoise de Graffigny — Lettres d’une Péruvienne : cartographie interactive';
+const pageDescription =
+	'Carte interactive des Lettres d’une Péruvienne (1747, 1752) de Françoise de Graffigny pour le lycée : personnages et relations, parcours de Zilia lettre après lettre, thèmes et regard critique des Lumières.';
+---
+
+<!doctype html>
+<html lang="fr">
+	<head>
+		<BaseHead title={pageTitle} description={pageDescription} />
+		<noscript>
+			<style>
+				[data-step-detail],
+				[data-theme-detail] {
+					display: block !important;
+				}
+				[data-step-detail] + [data-step-detail],
+				[data-theme-detail] + [data-theme-detail] {
+					margin-top: 2rem;
+				}
+				.view-close,
+				.selection-bar {
+					display: none !important;
+				}
+			</style>
+		</noscript>
+	</head>
+	<body>
+		<Header />
+
+		<main class="page-container graffigny-page">
+			<article aria-labelledby="page-title">
+				<header class="map-intro">
+					<p class="intro-eyebrow">Les Lumières · 1747, édition augmentée en 1752 · Roman épistolaire</p>
+					<h1 id="page-title">Françoise de Graffigny — <cite>Lettres d’une Péruvienne</cite></h1>
+					<p class="intro-desc">
+						<strong>Comment le regard d’une étrangère permet-il de découvrir, de questionner et de critiquer la société française du XVIII<sup>e</sup> siècle ?</strong>
+					</p>
+					<p class="intro-lead">
+						Zilia, jeune Inca arrachée à son pays, raconte dans ses lettres sa captivité, son arrivée en France et sa découverte d’une société qu’elle ne comprend pas d’abord. Son amour pour Aza, son apprentissage de la langue et son regard sur les mœurs françaises la conduisent peu à peu à penser par elle-même.
+						Œuvre étudiée dans le parcours <strong>« Un nouvel univers s’est offert à mes yeux »</strong>.
+					</p>
+				</header>
+
+				<dl class="key-facts" aria-label="Repères essentiels">
+					{keyFacts.map((f) => (
+						<div>
+							<dt>{f.label}</dt>
+							<dd>{f.value}</dd>
+						</div>
+					))}
+				</dl>
+
+				<!-- Barre commune aux trois vues : navigation, sélection en cours, réinitialisation -->
+				<div class="selection-bar" data-selection-bar>
+					<nav class="selection-nav" aria-label="Les trois vues de la cartographie">
+						<a href="#vue-personnages">Personnages</a>
+						<a href="#vue-parcours">Parcours</a>
+						<a href="#vue-idees">Idées</a>
+					</nav>
+					<p class="selection-status" aria-live="polite" data-selection-status>Rien n’est sélectionné : explorez librement.</p>
+					<button type="button" class="selection-reset" data-global-reset disabled>Tout afficher</button>
+				</div>
+
+				<p class="how-to">
+					<strong>Mode d’emploi.</strong> Les trois vues sont reliées : choisir un personnage, une relation, une étape ou un thème met en évidence ce qui lui correspond dans les deux autres vues. « Tout afficher » rétablit la vue initiale ; Échap ferme la fiche ouverte.
+				</p>
+
+				<!-- ======================================================
+				     VUE 1 : personnages et relations
+				     ====================================================== -->
+				<section class="carto-section" id="vue-personnages" aria-labelledby="vue-personnages-title">
+					<header class="carto-header">
+						<p class="carto-eyebrow">Vue 1 · Carte des relations</p>
+						<h2 id="vue-personnages-title">Les personnages et leurs liens</h2>
+						<p class="carto-lead">
+							Les flèches indiquent le sens d’une relation à sens unique : l’amour de Déterville pour Zilia, par exemple, n’est pas réciproque. Les filtres sous la carte masquent ou affichent chaque type de lien.
+						</p>
+					</header>
+
+					<RelationshipMap
+						id="graffigny"
+						ariaLabel="Carte des relations entre les personnages des Lettres d’une Péruvienne"
+						nodesLabel="Personnages des Lettres d’une Péruvienne"
+						nodes={graffignyCharacters}
+						relationships={graffignyRelationships}
+						edgeTypes={graffignyEdgeTypes}
+						layout={{ width: 900, height: 600 }}
+						mobileLayout={{ width: 360, height: 920 }}
+						hint="Choisissez un personnage pour afficher sa fiche, ou une étiquette pour comprendre une relation. Sur téléphone, les relations sont détaillées dans la fiche de chaque personnage."
+						pointsLabel="Dans le roman :"
+						relationsLabel="Ses relations :"
+						resetLabel="Fermer la fiche"
+						indexLabel="Toutes les relations, en texte"
+						linksLabel="Dans les autres vues :"
+						filters
+						filtersResetLabel="Afficher toutes les relations"
+					/>
+				</section>
+
+				<!-- ======================================================
+				     VUE 2 : parcours narratif
+				     ====================================================== -->
+				<section class="carto-section" id="vue-parcours" aria-labelledby="vue-parcours-title">
+					<header class="carto-header">
+						<p class="carto-eyebrow">Vue 2 · Parcours narratif</p>
+						<h2 id="vue-parcours-title">Le parcours de Zilia, de la captivité à l’indépendance</h2>
+						<p class="carto-lead">
+							Le roman n’est pas un journal régulier : il avance au rythme des lettres, écrites après coup, parfois après de longs silences. Les sept étapes ci-dessous regroupent ces lettres pour faire apparaître l’évolution de Zilia.
+						</p>
+					</header>
+
+					<GraffignyJourney steps={narrativeSteps} characters={graffignyCharacters} themes={graffignyThemes} />
+				</section>
+
+				<!-- ======================================================
+				     VUE 3 : carte des idées
+				     ====================================================== -->
+				<section class="carto-section" id="vue-idees" aria-labelledby="vue-idees-title">
+					<header class="carto-header">
+						<p class="carto-eyebrow">Vue 3 · Carte des idées</p>
+						<h2 id="vue-idees-title">Ce que le regard de Zilia met en question</h2>
+						<p class="carto-lead">
+							Chaque axe part du même point : une étrangère qui observe la France sans en partager les habitudes. Choisissez un axe pour l’expliquer, le relier aux personnages et aux étapes du récit.
+						</p>
+					</header>
+
+					<GraffignyThemesMap themes={graffignyThemes} steps={narrativeSteps} characters={graffignyCharacters} />
+				</section>
+
+				<!-- ======================================================
+				     SYNTHÈSE, RÉVISION, RESSOURCES
+				     ====================================================== -->
+				<section class="carto-section" id="evolution-zilia" aria-labelledby="evolution-title">
+					<header class="carto-header">
+						<p class="carto-eyebrow">Synthèse</p>
+						<h2 id="evolution-title">L’évolution de Zilia en bref</h2>
+					</header>
+					<ol class="evolution">
+						{ziliaEvolution.map((e) => (
+							<li>
+								<strong>{e.from}</strong>
+								<span aria-hidden="true">→</span>
+								<span class="sr-only">devient</span>
+								<strong>{e.to}</strong>
+								<p>{e.text}</p>
+							</li>
+						))}
+					</ol>
+				</section>
+
+				<section class="carto-section" id="revision" aria-labelledby="revision-title">
+					<header class="carto-header">
+						<p class="carto-eyebrow">Réviser</p>
+						<h2 id="revision-title">Questions de révision</h2>
+					</header>
+					<ol class="revision">
+						{revisionQuestions.map((q) => (
+							<li>
+								<details>
+									<summary>{q.question}</summary>
+									<p>{q.hint}</p>
+								</details>
+							</li>
+						))}
+					</ol>
+				</section>
+
+				<section class="carto-section" id="sources" aria-labelledby="sources-title">
+					<header class="carto-header">
+						<p class="carto-eyebrow">Sources</p>
+						<h2 id="sources-title">Édition, références et prolongements</h2>
+					</header>
+
+					<div class="sources">
+						<p class="sources-note">{graffignySources.editionNote}</p>
+						<p class="sources-note">
+							<strong>Comment lire cette page :</strong> les citations entre guillemets et les numéros de lettres viennent du texte ; les repères biographiques et historiques relèvent du contexte ; les rapprochements thématiques, les questions et la division en sept étapes sont des propositions pédagogiques.
+						</p>
+
+						<h3>Références</h3>
+						<ul class="sources-list">
+							{graffignySources.references.map((r) => (
+								<li>
+									<a href={r.url} rel="noopener" target="_blank">{r.title}</a>
+									<span> — {r.note}</span>
+								</li>
+							))}
+						</ul>
+
+						<h3>Sur ce site</h3>
+						<ul class="sources-list">
+							{graffignySources.internal.map((r) => (
+								<li>
+									<a href={r.url}>{r.title}</a>
+									<span> — {r.note}</span>
+								</li>
+							))}
+						</ul>
+					</div>
+				</section>
+			</article>
+		</main>
+
+		<Footer />
+
+		<!-- Index des correspondances entre les vues (lu par le script de coordination) -->
+		<script type="application/json" id="graffigny-index" set:html={JSON.stringify(crossLinkIndex)} />
+	</body>
+</html>
+
+<script>
+	// Coordination des trois vues : une seule sélection pour toute la page.
+	type Kind = 'node' | 'edge' | 'step' | 'theme';
+	type Selection = { kind: Kind; id: string } | null;
+	interface Linked {
+		characters: string[];
+		relationships: string[];
+		steps: string[];
+		themes: string[];
+	}
+	interface Index {
+		names: Record<Kind, Record<string, string>>;
+		nodes: Record<string, Linked>;
+		edges: Record<string, Linked>;
+		steps: Record<string, Linked>;
+		themes: Record<string, Linked>;
+	}
+
+	const index = JSON.parse(document.getElementById('graffigny-index')!.textContent!) as Index;
+	const mapEl = document.querySelector<HTMLElement>('[data-rel-map]')!;
+	const journey = document.querySelector<HTMLElement>('[data-journey]')!;
+	const ideas = document.querySelector<HTMLElement>('[data-ideas]')!;
+	const stepButtons = [...journey.querySelectorAll<HTMLButtonElement>('[data-step-id]')];
+	const themeButtons = [...ideas.querySelectorAll<HTMLButtonElement>('[data-theme-id]')];
+	const spokes = [...ideas.querySelectorAll<SVGLineElement>('[data-spoke]')];
+	const stepDetails = [...journey.querySelectorAll<HTMLElement>('[data-step-detail]')];
+	const themeDetails = [...ideas.querySelectorAll<HTMLElement>('[data-theme-detail]')];
+	const status = document.querySelector<HTMLElement>('[data-selection-status]')!;
+	const globalReset = document.querySelector<HTMLButtonElement>('[data-global-reset]')!;
+	const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	const KIND_LABEL: Record<Kind, string> = { node: 'personnage', edge: 'relation', step: 'étape', theme: 'thème' };
+	const INDEX_KEY = { node: 'nodes', edge: 'edges', step: 'steps', theme: 'themes' } as const;
+
+	let current: Selection = null;
+
+	const plural = (n: number, word: string) => `${n} ${word}${n > 1 ? 's' : ''}`;
+
+	function render() {
+		const linked: Linked | null = current ? index[INDEX_KEY[current.kind]][current.id] : null;
+
+		// Parcours narratif
+		journey.toggleAttribute('data-dimmed', !!current);
+		for (const btn of stepButtons) {
+			const id = btn.dataset.stepId!;
+			btn.setAttribute('aria-pressed', String(current?.kind === 'step' && current.id === id));
+			btn.classList.toggle('is-linked', !!linked?.steps.includes(id));
+		}
+		for (const el of stepDetails) el.hidden = !(current?.kind === 'step' && current.id === el.dataset.stepDetail);
+		journey.querySelector<HTMLElement>('[data-journey-hint]')!.hidden = current?.kind === 'step';
+
+		// Carte des idées
+		ideas.toggleAttribute('data-dimmed', !!current);
+		for (const btn of themeButtons) {
+			const id = btn.dataset.themeId!;
+			btn.setAttribute('aria-pressed', String(current?.kind === 'theme' && current.id === id));
+			btn.classList.toggle('is-linked', !!linked?.themes.includes(id));
+		}
+		for (const line of spokes) {
+			const id = line.dataset.spoke!;
+			line.classList.toggle('is-linked', !!linked?.themes.includes(id) || (current?.kind === 'theme' && current.id === id));
+		}
+		for (const el of themeDetails) el.hidden = !(current?.kind === 'theme' && current.id === el.dataset.themeDetail);
+		ideas.querySelector<HTMLElement>('[data-ideas-hint]')!.hidden = current?.kind === 'theme';
+
+		// Barre de sélection
+		globalReset.disabled = !current;
+		if (!current || !linked) {
+			status.textContent = 'Rien n’est sélectionné : explorez librement.';
+		} else {
+			const parts = [];
+			if (current.kind !== 'step') parts.push(plural(linked.steps.length, 'étape'));
+			if (current.kind !== 'theme') parts.push(plural(linked.themes.length, 'thème'));
+			if (current.kind === 'step' || current.kind === 'theme') parts.push(plural(linked.characters.length, 'personnage'));
+			status.replaceChildren(
+				`Sélection (${KIND_LABEL[current.kind]}) : `,
+				Object.assign(document.createElement('strong'), { textContent: index.names[current.kind][current.id] }),
+				` · ${parts.join(', ')} en lien`,
+			);
+		}
+	}
+
+	function setSelection(sel: Selection) {
+		current = sel;
+		// La carte des relations gère elle-même la sélection d'un personnage ou d'une relation ;
+		// pour une étape ou un thème, elle met seulement en évidence les éléments liés.
+		if (!sel || sel.kind === 'step' || sel.kind === 'theme') {
+			const linked = sel ? index[INDEX_KEY[sel.kind]][sel.id] : null;
+			mapEl.dispatchEvent(
+				new CustomEvent('relmap:highlight', {
+					detail: linked ? { nodes: linked.characters, edges: linked.relationships } : null,
+				}),
+			);
+		}
+		render();
+	}
+
+	function reveal(el: HTMLElement | null, focusEl?: HTMLElement | null) {
+		if (!el) return;
+		const rect = el.getBoundingClientRect();
+		const barBottom = document.querySelector('[data-selection-bar]')!.getBoundingClientRect().bottom;
+		// Fait défiler seulement si le haut de la fiche est caché : sous l'écran (cas fréquent
+		// sur téléphone), au-dessus, ou sous la barre collante.
+		if (rect.top > window.innerHeight - 80 || rect.top < barBottom) {
+			el.scrollIntoView({ block: 'start', behavior: reducedMotion ? 'auto' : 'smooth' });
+		}
+		focusEl?.focus({ preventScroll: true });
+	}
+
+	const panelOf = (kind: 'step' | 'theme', id: string) =>
+		document.getElementById(`${kind === 'step' ? 'etape' : 'theme'}-${id}`);
+	const titleOf = (kind: 'step' | 'theme', id: string) =>
+		document.getElementById(`${kind === 'step' ? 'etape' : 'theme'}-${id}-title`);
+
+	function openView(kind: 'step' | 'theme', id: string, fromElsewhere: boolean) {
+		setSelection({ kind, id });
+		const panel = kind === 'step' ? journey.querySelector<HTMLElement>('[data-journey-panel]') : ideas.querySelector<HTMLElement>('[data-ideas-panel]');
+		// Depuis une autre vue : le focus suit vers la fiche ; sinon il reste sur le bouton.
+		reveal(fromElsewhere ? panelOf(kind, id) : panel, fromElsewhere ? titleOf(kind, id) : null);
+	}
+
+	function toggleView(kind: 'step' | 'theme', id: string) {
+		if (current?.kind === kind && current.id === id) setSelection(null);
+		else openView(kind, id, false);
+	}
+
+	stepButtons.forEach((btn) => btn.addEventListener('click', () => toggleView('step', btn.dataset.stepId!)));
+	themeButtons.forEach((btn) => btn.addEventListener('click', () => toggleView('theme', btn.dataset.themeId!)));
+
+	// Navigation fléchée dans le parcours et dans la carte des idées.
+	for (const group of [stepButtons, themeButtons]) {
+		group.forEach((btn, i) =>
+			btn.addEventListener('keydown', (e) => {
+				const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+				if (!step) return;
+				e.preventDefault();
+				group[(i + step + group.length) % group.length].focus();
+			}),
+		);
+	}
+
+	// Fermeture d'une fiche d'étape ou de thème : le focus revient sur le bouton d'origine.
+	document.querySelectorAll<HTMLButtonElement>('[data-view-close]').forEach((btn) =>
+		btn.addEventListener('click', () => {
+			const prev = current;
+			setSelection(null);
+			if (prev?.kind === 'step') stepButtons.find((b) => b.dataset.stepId === prev.id)?.focus();
+			if (prev?.kind === 'theme') themeButtons.find((b) => b.dataset.themeId === prev.id)?.focus();
+		}),
+	);
+
+	for (const root of [journey, ideas]) {
+		root.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape' && current) {
+				e.preventDefault();
+				root.querySelector<HTMLButtonElement>('article:not([hidden]) [data-view-close]')?.click();
+			}
+		});
+	}
+
+	// Renvois depuis les fiches : vers un personnage, une étape, un thème.
+	document.addEventListener('click', (e) => {
+		const target = e.target as Element;
+		const nodeChip = target.closest<HTMLElement>('[data-goto-node]');
+		const stepChip = target.closest<HTMLElement>('[data-goto-step]');
+		const themeChip = target.closest<HTMLElement>('[data-goto-theme]');
+		const anchor = target.closest<HTMLAnchorElement>('.rm-detail-links a[href^="#"]');
+
+		if (nodeChip) {
+			const id = nodeChip.dataset.gotoNode!;
+			mapEl.dispatchEvent(new CustomEvent('relmap:select-request', { detail: { kind: 'node', id } }));
+			const nodeBtn = mapEl.querySelector<HTMLElement>(`.rm-node[data-node-id="${id}"]`);
+			const section = document.getElementById('vue-personnages')!;
+			section.scrollIntoView({ block: 'start', behavior: reducedMotion ? 'auto' : 'smooth' });
+			nodeBtn?.focus({ preventScroll: true });
+		} else if (stepChip) {
+			openView('step', stepChip.dataset.gotoStep!, true);
+		} else if (themeChip) {
+			openView('theme', themeChip.dataset.gotoTheme!, true);
+		} else if (anchor) {
+			const [, kind, id] = anchor.getAttribute('href')!.match(/^#(etape|theme)-(.+)$/) ?? [];
+			if (!kind) return;
+			e.preventDefault();
+			openView(kind === 'etape' ? 'step' : 'theme', id, true);
+		}
+	});
+
+	// Sélection faite dans la carte des relations par l'utilisateur.
+	mapEl.addEventListener('relmap:select', (e) => {
+		const sel = (e as CustomEvent<{ kind: 'node' | 'edge'; id: string } | null>).detail;
+		if (sel) {
+			current = sel;
+			render();
+			// Sur téléphone, la fiche est sous la carte : on l'amène à l'écran.
+			if (window.matchMedia('(max-width: 640px)').matches) reveal(mapEl.querySelector<HTMLElement>('.rm-panel'));
+		} else if (current?.kind === 'node' || current?.kind === 'edge') {
+			current = null;
+			render();
+		}
+	});
+
+	globalReset.addEventListener('click', () => {
+		current = null;
+		mapEl.dispatchEvent(new CustomEvent('relmap:reset'));
+		render();
+		document.getElementById('vue-personnages')!.scrollIntoView({ block: 'start', behavior: reducedMotion ? 'auto' : 'smooth' });
+	});
+
+	render();
+</script>
+
+<style>
+	.graffigny-page {
+		--intro-eyebrow-color: #8b572a;
+	}
+
+	.map-intro h1 cite {
+		font-style: italic;
+	}
+
+	.intro-lead {
+		margin: 0.75rem auto 0;
+		max-width: 720px;
+		font-size: 0.98rem;
+		line-height: 1.6;
+		color: var(--map-ink-soft);
+	}
+
+	/* Repères essentiels */
+	.key-facts {
+		display: grid;
+		grid-template-columns: repeat(5, minmax(0, 1fr));
+		gap: 0;
+		margin: -1rem 0 1.75rem;
+		border: 1px solid var(--map-border);
+		border-radius: 10px;
+		background: var(--map-surface);
+		overflow: hidden;
+	}
+
+	.key-facts div {
+		padding: 0.7rem 0.9rem;
+		border-left: 1px solid var(--map-border-soft);
+	}
+
+	.key-facts div:first-child {
+		border-left: 0;
+	}
+
+	.key-facts dt {
+		margin: 0;
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--map-muted);
+	}
+
+	.key-facts dd {
+		margin: 0.2rem 0 0;
+		font-family: var(--map-serif);
+		font-size: 0.92rem;
+		line-height: 1.35;
+		color: var(--map-ink);
+	}
+
+	/* Barre de sélection commune, collante en haut de l'écran */
+	.selection-bar {
+		position: sticky;
+		top: 0;
+		z-index: 20;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem 1rem;
+		margin: 0 0 0.75rem;
+		padding: 0.5rem 0.75rem;
+		border: 1px solid var(--map-border);
+		border-radius: 10px;
+		background: rgba(253, 252, 249, 0.96);
+		box-shadow: 0 4px 14px rgba(23, 43, 58, 0.06);
+		font-size: 0.85rem;
+	}
+
+	.selection-nav {
+		display: flex;
+		gap: 0.35rem;
+		flex-shrink: 0;
+	}
+
+	.selection-nav a {
+		padding: 0.25rem 0.6rem;
+		border-radius: 6px;
+		font-weight: 600;
+		color: #235284;
+		text-decoration: none;
+	}
+
+	.selection-nav a:hover {
+		background: var(--map-accent-soft);
+	}
+
+	.selection-status {
+		flex: 1;
+		min-width: 0;
+		margin: 0;
+		color: var(--map-muted);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.selection-status :global(strong) {
+		color: var(--map-ink);
+	}
+
+	.selection-reset {
+		flex-shrink: 0;
+		padding: 0.35rem 0.8rem;
+		border: 1px solid var(--map-ink-soft);
+		border-radius: 6px;
+		background: var(--map-surface);
+		font: inherit;
+		font-weight: 600;
+		color: var(--map-ink);
+		cursor: pointer;
+	}
+
+	.selection-reset:disabled {
+		border-color: var(--map-border);
+		color: var(--map-muted);
+		cursor: default;
+	}
+
+	.selection-nav a:focus-visible,
+	.selection-reset:focus-visible {
+		outline: 2px solid var(--map-accent);
+		outline-offset: 2px;
+	}
+
+	/* Les fiches amenées à l'écran ne passent pas sous la barre collante. */
+	.graffigny-page :global(.rm-panel) {
+		scroll-margin-top: 5.5rem;
+	}
+
+	.how-to {
+		margin: 0 0 2.5rem;
+		font-size: 0.88rem;
+		line-height: 1.5;
+		color: var(--map-muted);
+	}
+
+	/* Sections */
+	.carto-section {
+		margin-top: 3rem;
+		scroll-margin-top: 4.5rem;
+	}
+
+	.carto-section + .carto-section {
+		border-top: 1px solid var(--map-border);
+		padding-top: 2.5rem;
+	}
+
+	.carto-header {
+		max-width: 780px;
+		margin: 0 auto 1.5rem;
+		text-align: center;
+	}
+
+	.carto-eyebrow {
+		margin: 0 0 0.4rem;
+		font-size: 0.75rem;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--intro-eyebrow-color);
+	}
+
+	.carto-header h2 {
+		margin: 0;
+		font-family: var(--map-serif);
+		font-size: clamp(1.45rem, 3vw, 2rem);
+		font-weight: normal;
+		line-height: 1.25;
+		color: var(--map-ink);
+	}
+
+	.carto-lead {
+		margin: 0.6rem 0 0;
+		font-size: 0.95rem;
+		line-height: 1.55;
+		color: var(--map-ink-soft);
+	}
+
+	/* Synthèse : évolution de Zilia */
+	.evolution {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.evolution li {
+		margin: 0;
+		padding: 1rem 1.15rem;
+		border: 1px solid var(--map-border);
+		border-left: 3px solid var(--intro-eyebrow-color);
+		border-radius: 0 8px 8px 0;
+		background: var(--map-surface);
+	}
+
+	.evolution strong {
+		font-family: var(--map-serif);
+		color: var(--map-ink);
+	}
+
+	.evolution span[aria-hidden] {
+		margin: 0 0.4rem;
+		color: var(--intro-eyebrow-color);
+	}
+
+	.evolution p {
+		margin: 0.45rem 0 0;
+		font-size: 0.9rem;
+		line-height: 1.55;
+		color: var(--map-ink-soft);
+	}
+
+	/* Révision */
+	.revision {
+		margin: 0 auto;
+		max-width: 820px;
+		padding-left: 1.4rem;
+	}
+
+	.revision li + li {
+		margin-top: 0.6rem;
+	}
+
+	.revision summary {
+		cursor: pointer;
+		font-weight: 600;
+		line-height: 1.45;
+		color: var(--map-ink);
+	}
+
+	.revision summary:focus-visible {
+		outline: 2px solid var(--map-accent);
+		outline-offset: 2px;
+	}
+
+	.revision p {
+		margin: 0.4rem 0 0;
+		font-size: 0.9rem;
+		line-height: 1.55;
+		color: var(--map-ink-soft);
+	}
+
+	/* Sources */
+	.sources {
+		max-width: 820px;
+		margin: 0 auto;
+		font-size: 0.9rem;
+		line-height: 1.55;
+		color: var(--map-ink-soft);
+	}
+
+	.sources h3 {
+		margin: 1.5rem 0 0.5rem;
+		font-family: var(--map-serif);
+		font-size: 1.1rem;
+		font-weight: normal;
+		color: var(--map-ink);
+	}
+
+	.sources-note {
+		margin: 0 0 0.75rem;
+	}
+
+	.sources-list {
+		margin: 0;
+		padding-left: 1.2rem;
+	}
+
+	.sources-list li + li {
+		margin-top: 0.4rem;
+	}
+
+	.sources-list a {
+		overflow-wrap: anywhere;
+	}
+
+	@media (max-width: 900px) {
+		.key-facts {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.key-facts div {
+			border-left: 0;
+			border-top: 1px solid var(--map-border-soft);
+		}
+
+		.key-facts div:nth-child(-n + 2) {
+			border-top: 0;
+		}
+
+		.key-facts div:nth-child(even) {
+			border-left: 1px solid var(--map-border-soft);
+		}
+
+		.key-facts div:last-child:nth-child(odd) {
+			grid-column: 1 / -1;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.selection-bar {
+			flex-wrap: wrap;
+			gap: 0.15rem 0.5rem;
+			padding: 0.35rem 0.5rem;
+			font-size: 0.8rem;
+		}
+
+		.selection-nav {
+			flex: 1;
+			gap: 0;
+		}
+
+		.selection-nav a {
+			padding: 0.3rem 0.35rem;
+		}
+
+		.selection-reset {
+			padding: 0.3rem 0.55rem;
+		}
+
+		.selection-status {
+			order: 3;
+			flex-basis: 100%;
+			font-size: 0.74rem;
+		}
+
+		.evolution {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 380px) {
+		.key-facts {
+			grid-template-columns: 1fr;
+		}
+
+		.key-facts div,
+		.key-facts div:nth-child(even) {
+			border-left: 0;
+			border-top: 1px solid var(--map-border-soft);
+		}
+
+		.key-facts div:first-child {
+			border-top: 0;
+		}
+	}
+</style>

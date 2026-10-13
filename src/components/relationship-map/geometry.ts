@@ -54,6 +54,21 @@ export function segment(src: Box, targets: Box[]): { start: Point; end: Point; c
 	return { start, end: { x: center.x + (dx / len) * 12, y: center.y + (dy / len) * 12 }, center };
 }
 
+/** Décale un segment parallèlement à lui-même (offset > 0 : à gauche dans le sens source → cible). */
+export function shift<T extends { start: Point; end: Point }>(seg: T, offset = 0): T {
+	if (!offset) return seg;
+	const dx = seg.end.x - seg.start.x;
+	const dy = seg.end.y - seg.start.y;
+	const len = Math.hypot(dx, dy) || 1;
+	const ox = (dy / len) * offset;
+	const oy = (-dx / len) * offset;
+	return {
+		...seg,
+		start: { x: seg.start.x + ox, y: seg.start.y + oy },
+		end: { x: seg.end.x + ox, y: seg.end.y + oy },
+	};
+}
+
 export interface EdgeGeometry {
 	x1: number;
 	y1: number;
@@ -75,7 +90,7 @@ export function edgeGeometry(
 	const src = nodeBox(nodesById.get(rel.source)!, mobile);
 	const targets = targetsOf(rel).map((id) => nodeBox(nodesById.get(id)!, mobile));
 
-	const { start, end, center } = segment(src, targets);
+	const { start, end, center } = shift(segment(src, targets), rel.offset);
 
 	const t = (mobile ? rel.mLabelT : undefined) ?? rel.labelT ?? 0.5;
 	const dx = (mobile ? rel.mLabelDx : undefined) ?? rel.labelDx ?? 0;
