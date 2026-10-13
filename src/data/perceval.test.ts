@@ -187,4 +187,55 @@ describe('Le Conte du Graal (Perceval) — modèle de données (src/data/perceva
 		expect(badges.some((b) => b.includes('Tradition postérieure du Graal'))).toBe(true);
 		expect(badges.some((b) => b.includes('Reconstitution moderne'))).toBe(true);
 	});
+
+	test('le modèle géographique et spatial de Perceval distingue lieux réels, fictionnels et espaces sauvages sans coordonnées inventées', async () => {
+		const { PERCEVAL_SPATIAL_CATEGORIES, percevalSpatialStages } = await import(
+			'./perceval-geography'
+		);
+
+		expect(percevalSpatialStages.length).toBe(7);
+
+		const categoriesFound = new Set(percevalSpatialStages.map((s) => s.category));
+		expect(categoriesFound.has('reel')).toBe(true);
+		expect(categoriesFound.has('fictionnel')).toBe(true);
+		expect(categoriesFound.has('espace_naturel')).toBe(true);
+
+		// Vérifier l'ordre chronologique des étapes (1 à 7)
+		const orders = percevalSpatialStages.map((s) => s.order);
+		expect(orders).toEqual([1, 2, 3, 4, 5, 6, 7]);
+
+		for (const stage of percevalSpatialStages) {
+			expect(stage.id).toBeTruthy();
+			expect(stage.name).toBeTruthy();
+			expect(stage.summary.length).toBeGreaterThan(50);
+			expect(stage.verses).toMatch(/^vers /);
+			expect(stage.spatialRole.length).toBeGreaterThan(30);
+			expect(stage.geographicStatus.length).toBeGreaterThan(30);
+			expect(stage.didacticExplanation.length).toBeGreaterThan(50);
+			expect(stage.characters.length).toBeGreaterThanOrEqual(1);
+
+			// Vérifier qu'aucun lieu fictionnel ou naturel n'a reçu de fausses coordonnées GPS modernes
+			expect((stage as any).coordinates).toBeUndefined();
+			expect((stage as any).latitude).toBeUndefined();
+			expect((stage as any).longitude).toBeUndefined();
+
+			// Vérifier les coordonnées schématiques SVG (canevas 900x400)
+			expect(stage.x).toBeGreaterThan(0);
+			expect(stage.x).toBeLessThan(900);
+			expect(stage.y).toBeGreaterThan(0);
+			expect(stage.y).toBeLessThan(400);
+		}
+
+		// Vérifier la catégorisation exacte des lieux clés
+		const carduel = percevalSpatialStages.find((s) => s.id === 'carduel-arthur')!;
+		expect(carduel.category).toBe('reel');
+		expect(carduel.geographicStatus).toContain('Carlisle');
+
+		const graal = percevalSpatialStages.find((s) => s.id === 'chateau-roi-pecheur')!;
+		expect(graal.category).toBe('fictionnel');
+		expect(graal.geographicStatus).toContain('magique');
+
+		const foret = percevalSpatialStages.find((s) => s.id === 'gaste-foret')!;
+		expect(foret.category).toBe('espace_naturel');
+	});
 });

@@ -389,4 +389,65 @@ describe.skipIf(!BUILT)('Page Perceval (/perceval) — Réseau des personnages e
 			await page.close();
 		}
 	});
+
+	test('carte narrative schématique : présence des 7 étapes, sélection d’étape, mise à jour de la fiche et accessibilité clavier', async () => {
+		const { page } = await openPage();
+		try {
+			const geoSection = page.locator('.perceval-geography-section');
+			expect(await geoSection.count()).toBe(1);
+
+			// Titre H2 conforme
+			const h2 = geoSection.locator('#geography-title');
+			expect(await h2.textContent()).toContain('géographie imaginaire du voyage de Perceval');
+
+			// 7 jalons SVG interactifs
+			const markers = geoSection.locator('.geo-stage-marker');
+			expect(await markers.count()).toBe(7);
+
+			// Le premier jalon est actif par défaut
+			const firstMarker = markers.first();
+			expect(await firstMarker.getAttribute('class')).toContain('is-active');
+			expect(await firstMarker.getAttribute('aria-pressed')).toBe('true');
+
+			// Le panneau de détail affiche l'étape 1 (Gaste Forêt)
+			const detailTitle = geoSection.locator('#detail-stage-title');
+			expect(await detailTitle.textContent()).toContain('Gaste Forêt');
+
+			const detailStatus = geoSection.locator('#detail-stage-status');
+			expect(await detailStatus.textContent()).toContain('Espace imaginaire général');
+
+			// Clic sur l'étape 5 (Château du Roi Pêcheur)
+			const grailMarker = geoSection.locator('.geo-stage-marker[data-stage-id="chateau-roi-pecheur"]');
+			await grailMarker.click();
+
+			expect(await grailMarker.getAttribute('class')).toContain('is-active');
+			expect(await grailMarker.getAttribute('aria-pressed')).toBe('true');
+			expect(await detailTitle.textContent()).toContain('Roi Pêcheur');
+			expect(await detailStatus.textContent()).toContain('magique');
+
+			// Filtre par catégorie : cliquer sur 'Lieu réel ou repère breton'
+			const realFilter = geoSection.locator('.geo-filter-btn[data-geo-filter="reel"]');
+			await realFilter.click();
+
+			// L'étape réelle (Carduel) n'est pas estompée, les étapes fictionnelles le sont
+			const carduelMarker = geoSection.locator('.geo-stage-marker[data-stage-id="carduel-arthur"]');
+			expect(await carduelMarker.getAttribute('class')).not.toContain('is-dimmed');
+			expect(await grailMarker.getAttribute('class')).toContain('is-dimmed');
+
+			// Bouton étape suivante
+			const nextBtn = geoSection.locator('#btn-next-stage');
+			await nextBtn.click();
+			// L'étape a avancé
+			const orderText = await geoSection.locator('#detail-stage-order').textContent();
+			expect(orderText).toMatch(/Étape \d sur 7/);
+
+			// Tableau accessible dépliable
+			const accessibleTable = geoSection.locator('.geo-accessible-table');
+			expect(await accessibleTable.count()).toBe(1);
+			const rows = accessibleTable.locator('tbody tr');
+			expect(await rows.count()).toBe(7);
+		} finally {
+			await page.close();
+		}
+	});
 });
