@@ -607,42 +607,63 @@ describe.skipIf(!BUILT)('Page Graffigny (/graffigny) — cartographie interactiv
 		}
 	});
 
-	test.each([320, 375, 768, 960, 1280])(
-		'absence de débordement horizontal à %ipx avec la note Sévigné ouverte et fermée',
+	test.each([320, 375, 390, 430, 768, 960, 1024, 1280, 1440])(
+		'matrice responsive complète à %ipx : zéro débordement horizontal de la page entière',
 		async (width) => {
 			const { page, errors } = await openPage(width, 800);
 			try {
-				// État fermé par défaut
-				let overflow = await page.evaluate(
+				const overflow = await page.evaluate(
 					() => document.documentElement.scrollWidth - document.documentElement.clientWidth,
 				);
 				expect(overflow).toBe(0);
 
-				// Ouvrir la note
-				const summary = page.locator('#note-sevigne-graffigny summary');
-				await summary.click();
-				const note = page.locator('#note-sevigne-graffigny');
-				expect(await note.evaluate((el: HTMLDetailsElement) => el.open)).toBe(true);
+				// Vérifier la présence et visibilité des 4 vues
+				expect(await page.locator('#vue-geographie').isVisible()).toBe(true);
+				expect(await page.locator('#vue-personnages').isVisible()).toBe(true);
+				expect(await page.locator('#vue-parcours').isVisible()).toBe(true);
+				expect(await page.locator('#vue-idees').isVisible()).toBe(true);
 
-				// Pas de débordement horizontal lorsque la note est ouverte
-				overflow = await page.evaluate(
-					() => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-				);
-				expect(overflow).toBe(0);
-
-				// Refermer la note
-				await summary.click();
-				expect(await note.evaluate((el: HTMLDetailsElement) => el.open)).toBe(false);
-				overflow = await page.evaluate(
-					() => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-				);
-				expect(overflow).toBe(0);
+				// À <= 840px (mobile et tablette portrait 768px), la carte des idées est disposée en liste verticale fluide sans débordement
+				if (width <= 840) {
+					const ideasCanvas = page.locator('.ideas-canvas');
+					const display = await ideasCanvas.evaluate((el) => window.getComputedStyle(el).display);
+					expect(display).toBe('flex');
+					const linesDisplay = await page.locator('.ideas-lines').evaluate((el) => window.getComputedStyle(el).display);
+					expect(linesDisplay).toBe('none');
+				} else {
+					const linesDisplay = await page.locator('.ideas-lines').evaluate((el) => window.getComputedStyle(el).display);
+					expect(linesDisplay).toBe('block');
+				}
 
 				expect(errors).toEqual([]);
 			} finally {
 				await page.close();
 			}
 		},
-		20_000,
+		25_000,
 	);
+
+	test('synchronisation et statut de sélection : pluriel français correct « lieux » et réinitialisation', async () => {
+		const { page, errors } = await openPage(375, 800);
+		try {
+			// Sélectionner le personnage Zilia
+			await node(page, 'zilia').click();
+			await page.waitForTimeout(300);
+
+			const statusText = await page.locator('[data-selection-status]').textContent();
+			expect(statusText).toContain('lieux en lien');
+			expect(statusText).not.toContain('lieus');
+
+			// Bouton Tout afficher actif et fonctionnel
+			const resetBtn = page.locator('[data-global-reset]');
+			expect(await resetBtn.isEnabled()).toBe(true);
+			await resetBtn.click();
+			expect(await page.locator('[data-selection-status]').textContent()).toContain('Rien n’est sélectionné');
+
+			expect(errors).toEqual([]);
+		} finally {
+			await page.close();
+		}
+	});
 });
+

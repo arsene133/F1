@@ -64,7 +64,8 @@
 
 .view-close {
 	align-self: flex-start;
-	padding: 0.4rem 0.85rem;
+	min-height: 2.5rem;
+	padding: 0.45rem 0.95rem;
 	border: 1px solid var(--map-border);
 	border-radius: 6px;
 	background: transparent;
@@ -74,6 +75,7 @@
 	color: var(--map-muted);
 	white-space: nowrap;
 	cursor: pointer;
+	touch-action: manipulation;
 }
 
 .view-close:hover {
@@ -90,5 +92,16 @@
 @media (max-width: 640px) {
 	.view-detail-links {
 		grid-template-columns: 1fr;
+	}
+
+	.chip {
+		min-height: 2.25rem;
+		padding: 0.35rem 0.75rem;
+		font-size: 0.84rem;
+	}
+
+	.view-close {
+		min-height: 2.5rem;
+		padding: 0.5rem 1rem;
 	}
 }
