@@ -258,4 +258,51 @@ describe.skipIf(!BUILT)('Cartographie littéraire des Cahiers de Douai (/rimbaud
 			await page.close();
 		}
 	});
+
+	test('la section pédagogique sur le style poétique révolutionnaire est affichée avec ses 5 axes et sa synthèse', async () => {
+		const page = await openPage();
+		try {
+			const section = page.locator('#style-revolutionnaire');
+			expect(await section.count()).toBe(1);
+
+			// Vérifier le titre et les 5 axes
+			const heading = await section.locator('#style-revolution-title').textContent();
+			expect(heading).toContain('style poétique d’Arthur Rimbaud est révolutionnaire');
+
+			const axes = section.locator('.transformation-card');
+			expect(await axes.count()).toBe(5);
+
+			// Vérifier la présence des 4 étapes méthodologiques dans chaque exemple
+			const firstCase = section.locator('.analysis-case').first();
+			const steps = firstCase.locator('.case-step');
+			expect(await steps.count()).toBe(4);
+
+			// Vérifier la boîte de synthèse finale
+			const synthesis = section.locator('.stylistic-synthesis-box');
+			expect(await synthesis.isVisible()).toBe(true);
+			const coreStatement = await synthesis.locator('.synthesis-core-statement').textContent();
+			expect(coreStatement).toContain('ne consiste pas, en 1870, à abolir toutes les règles');
+		} finally {
+			await page.close();
+		}
+	});
+
+	test('sur mobile (375x812), la section du style poétique reste lisible sans débordement horizontal', async () => {
+		const page = await openPage(375, 812);
+		try {
+			const section = page.locator('#style-revolutionnaire');
+			expect(await section.isVisible()).toBe(true);
+
+			const box = await section.boundingBox();
+			expect(box).not.toBeNull();
+			expect(box!.width).toBeLessThanOrEqual(375);
+
+			// Vérifier qu'une carte d'analyse ne dépasse pas
+			const cardBox = await section.locator('.transformation-card').first().boundingBox();
+			expect(cardBox).not.toBeNull();
+			expect(cardBox!.width).toBeLessThanOrEqual(375);
+		} finally {
+			await page.close();
+		}
+	});
 });
