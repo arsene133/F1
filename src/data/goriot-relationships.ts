@@ -118,7 +118,7 @@ export interface GoriotCharacterData {
 	// Classification relationnelle objective dans le réseau
 	clusterId: 'core' | 'satellite-restaud' | 'satellite-taillefer' | 'satellite-delateurs' | 'satellite-domesticite' | 'peripheral-nucingen';
 	structuralRole: string;
-	// Coordonnées pour layout bureau (900 x 560) et mobile (360 x 860)
+	// Centre de la carte dans les canevas bureau (x, y) et mobile (mx, my) : voir goriotMapLayout
 	x: number;
 	y: number;
 	mx: number;
@@ -184,16 +184,22 @@ export interface GoriotRelationshipData {
 		reference: string;
 	};
 	narrativeContext: string;
-	// Décalages géométriques pour le rendu SVG
-	offset?: number;
+	// Rendu SVG : courbure de l'arête (écart du milieu, à gauche du sens
+	// source → cible ; mBend pour le mobile) et position préférée de
+	// l'étiquette (0 → source, 1 → cible). L'étiquette est ensuite placée
+	// automatiquement sans chevauchement.
+	bend?: number;
+	mBend?: number;
 	labelT?: number;
-	labelDx?: number;
-	labelDy?: number;
-	mLabelT?: number;
-	mLabelDx?: number;
-	mLabelDy?: number;
-	mobileLabel?: boolean;
 }
+
+/** Dimensions des canevas bureau et mobile (unités des coordonnées x/y et mx/my). */
+export const goriotMapLayout = {
+	desktop: { width: 1040, height: 1062 },
+	mobile: { width: 690, height: 1385 },
+	/** Cartouche « L’Échiquier social balzacien » (bureau uniquement). */
+	anchor: { x: 870, y: 762 },
+} as const;
 
 export const goriotStructuralClusters: GoriotStructuralCluster[] = [
 	{
@@ -207,8 +213,8 @@ export const goriotStructuralClusters: GoriotStructuralCluster[] = [
 		nodeIds: ['rastignac', 'goriot', 'delphine', 'vautrin', 'bianchon', 'mme-vauquer', 'mme-de-beauseant'],
 		attachmentPointNodeIds: [],
 		attachmentEdgeIds: [],
-		dRect: { x: 190, y: 110, w: 625, h: 320, rx: 16 },
-		mRect: { x: 10, y: 160, w: 340, h: 320, rx: 12 },
+		dRect: { x: 16, y: 248, w: 1008, h: 574, rx: 16 },
+		mRect: { x: 10, y: 344, w: 667, h: 681, rx: 10 },
 	},
 	{
 		id: 'satellite-restaud',
@@ -221,8 +227,8 @@ export const goriotStructuralClusters: GoriotStructuralCluster[] = [
 		nodeIds: ['anastasie', 'comte-restaud'],
 		attachmentPointNodeIds: ['goriot'],
 		attachmentEdgeIds: ['goriot-anastasie', 'goriot-daughters-financial'],
-		dRect: { x: 30, y: 25, w: 345, h: 75, rx: 10 },
-		mRect: { x: 10, y: 25, w: 155, h: 125, rx: 8 },
+		dRect: { x: 16, y: 16, w: 432, h: 218, rx: 10 },
+		mRect: { x: 248, y: 18, w: 204, h: 251, rx: 10 },
 	},
 	{
 		id: 'satellite-domesticite',
@@ -235,8 +241,8 @@ export const goriotStructuralClusters: GoriotStructuralCluster[] = [
 		nodeIds: ['christophe', 'sylvie'],
 		attachmentPointNodeIds: ['goriot'],
 		attachmentEdgeIds: ['christophe-goriot-loyalty'],
-		dRect: { x: 445, y: 20, w: 320, h: 70, rx: 10 },
-		mRect: { x: 195, y: 25, w: 155, h: 125, rx: 8 },
+		dRect: { x: 462, y: 16, w: 288, h: 218, rx: 10 },
+		mRect: { x: 27, y: 19, w: 204, h: 218, rx: 10 },
 	},
 	{
 		id: 'satellite-taillefer',
@@ -249,8 +255,8 @@ export const goriotStructuralClusters: GoriotStructuralCluster[] = [
 		nodeIds: ['victorine', 'm-taillefer'],
 		attachmentPointNodeIds: ['rastignac', 'vautrin'],
 		attachmentEdgeIds: ['victorine-rastignac', 'vautrin-taillefer-crime'],
-		dRect: { x: 165, y: 455, w: 350, h: 80, rx: 10 },
-		mRect: { x: 175, y: 485, w: 175, h: 165, rx: 8 },
+		dRect: { x: 360, y: 836, w: 664, h: 210, rx: 10 },
+		mRect: { x: 241, y: 1109, w: 406, h: 223, rx: 10 },
 	},
 	{
 		id: 'satellite-delateurs',
@@ -263,8 +269,8 @@ export const goriotStructuralClusters: GoriotStructuralCluster[] = [
 		nodeIds: ['michonneau', 'poiret'],
 		attachmentPointNodeIds: ['vautrin'],
 		attachmentEdgeIds: ['michonneau-vautrin-police'],
-		dRect: { x: 25, y: 215, w: 145, h: 225, rx: 10 },
-		mRect: { x: 10, y: 585, w: 165, h: 175, rx: 8 },
+		dRect: { x: 16, y: 836, w: 330, h: 210, rx: 10 },
+		mRect: { x: 10, y: 1132, w: 204, h: 230, rx: 10 },
 	},
 	{
 		id: 'peripheral-nucingen',
@@ -277,8 +283,8 @@ export const goriotStructuralClusters: GoriotStructuralCluster[] = [
 		nodeIds: ['baron-nucingen'],
 		attachmentPointNodeIds: ['delphine'],
 		attachmentEdgeIds: ['delphine-baron-nucingen'],
-		dRect: { x: 735, y: 205, w: 155, h: 65, rx: 8 },
-		mRect: { x: 200, y: 325, w: 150, h: 55, rx: 6 },
+		dRect: { x: 764, y: 16, w: 260, h: 218, rx: 10 },
+		mRect: { x: 473, y: 77, w: 204, h: 110, rx: 10 },
 	},
 ];
 
@@ -310,10 +316,10 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		tier: 'major',
 		clusterId: 'core',
 		structuralRole: 'Noyau relationnel central (7 relations directes)',
-		x: 475,
-		y: 310,
-		mx: 180,
-		my: 370,
+		x: 380,
+		y: 632,
+		mx: 226,
+		my: 800,
 	},
 
 	// 2. Jean-Joachim Goriot (Père Goriot - Nœud central)
@@ -343,10 +349,10 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		tier: 'major',
 		clusterId: 'core',
 		structuralRole: 'Noyau relationnel central (6 relations directes)',
-		x: 410,
-		y: 150,
-		mx: 180,
-		my: 185,
+		x: 390,
+		y: 327,
+		mx: 236,
+		my: 410,
 	},
 
 	// 3. Anastasie de Restaud
@@ -370,10 +376,10 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		tier: 'standard',
 		clusterId: 'satellite-restaud',
 		structuralRole: 'Satellite Restaud (rattaché au père Goriot)',
-		x: 290,
-		y: 60,
-		mx: 85,
-		my: 125,
+		x: 205,
+		y: 196,
+		mx: 350,
+		my: 215,
 	},
 
 	// 4. Delphine de Nucingen
@@ -397,10 +403,10 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		tier: 'major',
 		clusterId: 'core',
 		structuralRole: 'Noyau relationnel central (4 relations directes)',
-		x: 660,
-		y: 165,
-		mx: 275,
-		my: 260,
+		x: 870,
+		y: 327,
+		mx: 575,
+		my: 590,
 	},
 
 	// 5. Vautrin (Jacques Collin)
@@ -430,10 +436,10 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		tier: 'major',
 		clusterId: 'core',
 		structuralRole: 'Noyau relationnel central (3 relations directes)',
-		x: 285,
-		y: 385,
-		mx: 95,
-		my: 515,
+		x: 185,
+		y: 757,
+		mx: 112,
+		my: 975,
 	},
 
 	// 6. Victorine Taillefer
@@ -456,10 +462,10 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		tier: 'standard',
 		clusterId: 'satellite-taillefer',
 		structuralRole: 'Satellite Taillefer (rattaché à Rastignac et Taillefer)',
-		x: 435,
-		y: 495,
-		mx: 250,
-		my: 515,
+		x: 860,
+		y: 932,
+		mx: 545,
+		my: 1170,
 	},
 
 	// 7. Madame Vauquer
@@ -483,10 +489,10 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		tier: 'standard',
 		clusterId: 'core',
 		structuralRole: 'Noyau relationnel · Témoin direct (Rastignac et Goriot)',
-		x: 490,
-		y: 230,
-		mx: 180,
-		my: 270,
+		x: 545,
+		y: 442,
+		mx: 375,
+		my: 540,
 	},
 
 	// 8. Sylvie
@@ -508,10 +514,10 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		tier: 'minor',
 		clusterId: 'satellite-domesticite',
 		structuralRole: 'Satellite Domesticité (rattaché à Christophe)',
-		x: 680,
-		y: 50,
-		mx: 275,
-		my: 50,
+		x: 655,
+		y: 66,
+		mx: 112,
+		my: 72,
 	},
 
 	// 9. Christophe
@@ -534,10 +540,10 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		tier: 'minor',
 		clusterId: 'satellite-domesticite',
 		structuralRole: 'Satellite Domesticité (rattaché au père Goriot)',
-		x: 520,
-		y: 50,
-		mx: 275,
-		my: 125,
+		x: 540,
+		y: 182,
+		mx: 112,
+		my: 200,
 	},
 
 	// 10. Horace Bianchon (noté aussi Bianchon, une seule entité)
@@ -565,10 +571,10 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		tier: 'major',
 		clusterId: 'core',
 		structuralRole: 'Noyau relationnel · Appui direct (Rastignac et Goriot)',
-		x: 270,
-		y: 225,
-		mx: 85,
-		my: 260,
+		x: 170,
+		y: 492,
+		mx: 112,
+		my: 575,
 	},
 
 	// 11. La vicomtesse de Beauséant
@@ -596,10 +602,10 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		tier: 'major',
 		clusterId: 'core',
 		structuralRole: 'Noyau relationnel · Parrainage direct (Rastignac et Delphine)',
-		x: 725,
-		y: 345,
-		mx: 275,
-		my: 445,
+		x: 870,
+		y: 642,
+		mx: 563,
+		my: 970,
 	},
 
 	// 12. Le baron de Nucingen
@@ -622,10 +628,10 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		tier: 'standard',
 		clusterId: 'peripheral-nucingen',
 		structuralRole: 'Personnage périphérique (rattaché à Delphine)',
-		x: 815,
-		y: 235,
-		mx: 275,
-		my: 350,
+		x: 894,
+		y: 125,
+		mx: 575,
+		my: 140,
 	},
 
 	// 13. Le comte de Restaud
@@ -648,10 +654,10 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		tier: 'standard',
 		clusterId: 'satellite-restaud',
 		structuralRole: 'Satellite Restaud (rattaché à Anastasie)',
-		x: 110,
-		y: 60,
-		mx: 85,
-		my: 50,
+		x: 138,
+		y: 64,
+		mx: 350,
+		my: 72,
 	},
 
 	// 14. Monsieur Taillefer
@@ -674,10 +680,10 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		tier: 'minor',
 		clusterId: 'satellite-taillefer',
 		structuralRole: 'Satellite Taillefer (rattaché à Vautrin et Victorine)',
-		x: 235,
-		y: 495,
-		mx: 250,
-		my: 620,
+		x: 500,
+		y: 932,
+		mx: 335,
+		my: 1295,
 	},
 
 	// 15. Poiret
@@ -701,10 +707,10 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		tier: 'minor',
 		clusterId: 'satellite-delateurs',
 		structuralRole: 'Satellite Délateurs (rattaché à Michonneau)',
-		x: 90,
-		y: 255,
-		mx: 95,
-		my: 730,
+		x: 150,
+		y: 1012,
+		mx: 112,
+		my: 1325,
 	},
 
 	// 16. Mademoiselle Michonneau
@@ -728,10 +734,10 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		tier: 'standard',
 		clusterId: 'satellite-delateurs',
 		structuralRole: 'Satellite Délateurs (rattaché à Vautrin)',
-		x: 90,
-		y: 405,
-		mx: 95,
-		my: 620,
+		x: 150,
+		y: 892,
+		mx: 112,
+		my: 1195,
 	},
 ];
 
@@ -756,12 +762,8 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 			reference: 'Quatrième partie (« La Mort du père »)',
 		},
 		narrativeContext: 'Révélé dès la première partie et confirmé par la scène déchirante de l’agonie au chapitre final.',
-		offset: 4,
-		labelDx: -16,
-		labelDy: -12,
-		mLabelDx: -16,
-		mLabelDy: -12,
-		mobileLabel: true,
+		bend: 15,
+		mBend: -20,
 	},
 	{
 		id: 'goriot-delphine',
@@ -782,11 +784,7 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 			reference: 'Troisième partie (« Trompe-la-Mort »)',
 		},
 		narrativeContext: 'Établi tout au long du récit, depuis la vente des couverts jusqu’à la garçonnière de la rue d’Artois.',
-		labelDx: 18,
-		labelDy: -12,
-		mLabelDx: 18,
-		mLabelDy: -12,
-		mobileLabel: true,
+		mBend: 50,
 	},
 	{
 		id: 'anastasie-comte-restaud',
@@ -806,10 +804,6 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 			reference: 'Quatrième partie (« La Mort du père »)',
 		},
 		narrativeContext: 'Exposé dès la visite d’Eugène à l’hôtel de la rue du Helder, puis révélé lors de la spoliation finale des diamants.',
-		labelDx: 0,
-		labelDy: -14,
-		mLabelDx: 0,
-		mLabelDy: -14,
 	},
 	{
 		id: 'delphine-baron-nucingen',
@@ -825,10 +819,6 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-2',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Détaillé par Delphine à Eugène lors de leurs confidences au Palais-Royal et rue Saint-Lazare.',
-		labelDx: 0,
-		labelDy: -14,
-		mLabelDx: 0,
-		mLabelDy: -14,
 	},
 	{
 		id: 'rastignac-beauseant-family',
@@ -843,11 +833,7 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-1',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Motif initial qui décide Eugène à écrire à sa famille pour obtenir sa lettre de recommandation.',
-		offset: -4,
-		labelDx: -10,
-		labelDy: -14,
-		mLabelDx: -10,
-		mLabelDy: -14,
+		bend: 22,
 	},
 	{
 		id: 'm-taillefer-victorine',
@@ -863,10 +849,6 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-1',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Présenté dès l’ouverture du roman comme l’injustice sociale révoltante de la pension.',
-		labelDx: 0,
-		labelDy: 14,
-		mLabelDx: 0,
-		mLabelDy: 14,
 	},
 
 	// --- AMOUR ET SÉDUCTION ---
@@ -888,13 +870,7 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 			reference: 'Deuxième partie (« L’Entrée dans le monde »)',
 		},
 		narrativeContext: 'Commence au Théâtre des Italiens, s’affirme rue Saint-Lazare et se concrétise rue d’Artois.',
-		offset: 4,
-		labelT: 0.65,
-		labelDx: 0,
-		labelDy: -14,
-		mLabelDx: 18,
-		mLabelDy: 10,
-		mobileLabel: true,
+		bend: -25,
 	},
 	{
 		id: 'victorine-rastignac',
@@ -910,10 +886,6 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-2',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Développé au fil des dîners de la pension Vauquer et des confidences dans le salon.',
-		labelDx: 14,
-		labelDy: 10,
-		mLabelDx: 14,
-		mLabelDy: 10,
 	},
 
 	// --- ARGENT ET DÉPENDANCE ---
@@ -931,10 +903,6 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-3',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Aménagement de la garçonnière au chapitre III, puis dépenses de la maladie au chapitre IV.',
-		labelDx: 14,
-		labelDy: 0,
-		mLabelDx: 14,
-		mLabelDy: 0,
 	},
 	{
 		id: 'rastignac-delphine-money',
@@ -954,12 +922,7 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 			reference: 'Deuxième partie (« L’Entrée dans le monde »)',
 		},
 		narrativeContext: 'Scène clé de la seconde partie où Eugène découvre le lien sordide entre luxe et faillite privée.',
-		offset: -4,
-		labelT: 0.35,
-		labelDx: 0,
-		labelDy: 14,
-		mLabelDx: 18,
-		mLabelDy: -10,
+		bend: 40,
 	},
 	{
 		id: 'goriot-daughters-financial',
@@ -975,11 +938,8 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-1',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Surpris par Eugène au début du roman roulant son argenterie en pâte d’argent vermeil.',
-		offset: -4,
-		labelDx: 16,
-		labelDy: 14,
-		mLabelDx: 16,
-		mLabelDy: 14,
+		bend: -65,
+		mBend: -35,
 	},
 
 	// --- SOCIÉTÉ ET INFLUENCE ---
@@ -1002,12 +962,8 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 			reference: 'Première partie (« Une pension bourgeoise »)',
 		},
 		narrativeContext: 'Entretien décisif à l’hôtel de Beauséant après la gaffe commise chez Mme de Restaud.',
-		offset: 4,
-		labelDx: 10,
-		labelDy: 14,
-		mLabelDx: 14,
-		mLabelDy: -6,
-		mobileLabel: true,
+		bend: -22,
+		mBend: -32,
 	},
 	{
 		id: 'beauseant-delphine-snobisme',
@@ -1028,10 +984,6 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 			reference: 'Première partie (« Une pension bourgeoise »)',
 		},
 		narrativeContext: 'Motivation maîtresse qui pousse Delphine à se lier à Eugène pour forcer le verrou du noble faubourg.',
-		labelDx: 14,
-		labelDy: 0,
-		mLabelDx: 14,
-		mLabelDy: 0,
 	},
 
 	// --- AMITIÉ ET SOLIDARITÉ ---
@@ -1048,11 +1000,6 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-1',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Présent dès la table d’hôte de la pension, au Luxembourg pour le mandarin et au chevet de mort de Goriot.',
-		labelDx: 0,
-		labelDy: -12,
-		mLabelDx: 14,
-		mLabelDy: -12,
-		mobileLabel: true,
 	},
 	{
 		id: 'bianchon-goriot-care',
@@ -1068,10 +1015,6 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-4',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Quatrième partie entière lors de la crise d’apoplexie séreuse.',
-		labelDx: -14,
-		labelDy: 12,
-		mLabelDx: -14,
-		mLabelDy: 12,
 	},
 	{
 		id: 'christophe-goriot-loyalty',
@@ -1086,10 +1029,6 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-1',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Courses de commission puis enterrement à Saint-Étienne-du-Mont et au Père-Lachaise.',
-		labelDx: -16,
-		labelDy: 0,
-		mLabelDx: -16,
-		mLabelDy: 0,
 	},
 
 	// --- CONFLIT ET MANIPULATION ---
@@ -1112,11 +1051,6 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 			reference: 'Deuxième partie (« L’Entrée dans le monde »)',
 		},
 		narrativeContext: 'La grande scène de tentation dans le jardinet de la pension Vauquer.',
-		labelDx: 0,
-		labelDy: -14,
-		mLabelDx: 0,
-		mLabelDy: -14,
-		mobileLabel: true,
 	},
 	{
 		id: 'vautrin-taillefer-crime',
@@ -1132,10 +1066,6 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-3',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Exécution du meurtre au début de la troisième partie.',
-		labelDx: -14,
-		labelDy: 0,
-		mLabelDx: -14,
-		mLabelDy: 0,
 	},
 	{
 		id: 'michonneau-vautrin-police',
@@ -1151,11 +1081,6 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-3',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Négociations au Jardin des Plantes et scène d’empoisonnement à la pension.',
-		labelDx: 0,
-		labelDy: -12,
-		mLabelDx: 14,
-		mLabelDy: 14,
-		mobileLabel: true,
 	},
 	{
 		id: 'michonneau-poiret-complicity',
@@ -1171,10 +1096,6 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-3',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Scène du Jardin des Plantes et départ forcé de la pension.',
-		labelDx: 16,
-		labelDy: 0,
-		mLabelDx: 16,
-		mLabelDy: 0,
 	},
 
 	// --- LOGEMENT ET QUOTIDIEN ---
@@ -1192,10 +1113,6 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-1',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Genèse de la pension exposée dans la première partie.',
-		labelDx: 14,
-		labelDy: -10,
-		mLabelDx: 14,
-		mLabelDy: -10,
 	},
 	{
 		id: 'vauquer-pensionnaires-housing',
@@ -1211,10 +1128,6 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-1',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Cadre de vie quotidien du faubourg Saint-Marceau.',
-		labelDx: 14,
-		labelDy: 10,
-		mLabelDx: 14,
-		mLabelDy: 10,
 	},
 	{
 		id: 'sylvie-christophe-service',
@@ -1229,10 +1142,6 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-1',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Tableaux de la vie quotidienne de la pension Vauquer.',
-		labelDx: 0,
-		labelDy: -14,
-		mLabelDx: 0,
-		mLabelDy: -14,
 	},
 ];
 

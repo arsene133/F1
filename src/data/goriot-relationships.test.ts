@@ -1,7 +1,9 @@
 import { describe, expect, test } from 'vitest';
+import { estimateNodeBox } from '../components/relationship-map/goriot-layout';
 import {
 	goriotCharacters,
 	goriotGuidedTracks,
+	goriotMapLayout,
 	goriotNarrativeStages,
 	goriotRelCategories,
 	goriotRelationships,
@@ -204,19 +206,44 @@ describe('Modèle de données des relations du Père Goriot (src/data/goriot-rel
 			});
 		});
 
-		test('tous les nœuds sont inscrits dans les limites du canevas bureau (900x560) et mobile (360x860)', () => {
-			goriotCharacters.forEach((c) => {
-				// Canvases: bureau [50, 850] x [25, 535], mobile [30, 330] x [30, 830]
-				expect(c.x).toBeGreaterThanOrEqual(40);
-				expect(c.x).toBeLessThanOrEqual(860);
-				expect(c.y).toBeGreaterThanOrEqual(25);
-				expect(c.y).toBeLessThanOrEqual(535);
+		test('toutes les cartes sont inscrites dans les canevas bureau et mobile, à l’intérieur de leur zone', () => {
+			for (const mobile of [false, true]) {
+				const size = mobile ? goriotMapLayout.mobile : goriotMapLayout.desktop;
+				goriotCharacters.forEach((c) => {
+					const b = estimateNodeBox(c, mobile);
+					const where = `${c.id} (${mobile ? 'mobile' : 'bureau'})`;
+					expect(b.x - b.hw, where).toBeGreaterThanOrEqual(8);
+					expect(b.y - b.hh, where).toBeGreaterThanOrEqual(8);
+					expect(b.x + b.hw, where).toBeLessThanOrEqual(size.width - 8);
+					expect(b.y + b.hh, where).toBeLessThanOrEqual(size.height - 8);
 
-				expect(c.mx).toBeGreaterThanOrEqual(30);
-				expect(c.mx).toBeLessThanOrEqual(330);
-				expect(c.my).toBeGreaterThanOrEqual(30);
-				expect(c.my).toBeLessThanOrEqual(830);
-			});
+					const cluster = goriotStructuralClusters.find((cl) => cl.id === c.clusterId)!;
+					const z = mobile ? cluster.mRect : cluster.dRect;
+					expect(b.x - b.hw, where).toBeGreaterThanOrEqual(z.x);
+					expect(b.x + b.hw, where).toBeLessThanOrEqual(z.x + z.w);
+					// Le titre de la zone occupe sa première ligne.
+					expect(b.y - b.hh, where).toBeGreaterThanOrEqual(z.y + 20);
+					expect(b.y + b.hh, where).toBeLessThanOrEqual(z.y + z.h);
+				});
+			}
+		});
+
+		test('les zones du noyau, des satellites et de la périphérie ne se chevauchent pas', () => {
+			for (const key of ['dRect', 'mRect'] as const) {
+				const size = key === 'mRect' ? goriotMapLayout.mobile : goriotMapLayout.desktop;
+				goriotStructuralClusters.forEach((a, i) => {
+					const za = a[key];
+					expect(za.x).toBeGreaterThanOrEqual(0);
+					expect(za.y).toBeGreaterThanOrEqual(0);
+					expect(za.x + za.w).toBeLessThanOrEqual(size.width);
+					expect(za.y + za.h).toBeLessThanOrEqual(size.height);
+					goriotStructuralClusters.slice(i + 1).forEach((b) => {
+						const zb = b[key];
+						const apart = za.x + za.w <= zb.x || zb.x + zb.w <= za.x || za.y + za.h <= zb.y || zb.y + zb.h <= za.y;
+						expect(apart, `${a.id} / ${b.id} (${key})`).toBe(true);
+					});
+				});
+			}
 		});
 
 		test('la disposition du réseau ne présente aucun croisement de liens (0 croisement bureau et mobile)', () => {
@@ -248,7 +275,7 @@ describe('Modèle de données des relations du Père Goriot (src/data/goriot-rel
 				return ccw(p1, p3, p4) !== ccw(p2, p3, p4) && ccw(p1, p2, p3) !== ccw(p1, p2, p4);
 			}
 
-			// Vérification Bureau (900x560)
+			// Vérification Bureau
 			const desktopCrossings: string[] = [];
 			edgePairs.forEach(([e1, e2]) => {
 				const n1 = nodeMap.get(e1.source)!;
@@ -261,7 +288,7 @@ describe('Modèle de données des relations du Père Goriot (src/data/goriot-rel
 			});
 			expect(desktopCrossings, `Croisements bureau détectés : ${desktopCrossings.join(', ')}`).toEqual([]);
 
-			// Vérification Mobile (360x860)
+			// Vérification Mobile
 			const mobileCrossings: string[] = [];
 			edgePairs.forEach(([e1, e2]) => {
 				const n1 = nodeMap.get(e1.source)!;

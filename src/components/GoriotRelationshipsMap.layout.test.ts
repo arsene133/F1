@@ -37,6 +37,53 @@ async function openPage(width = 1200, height = 900): Promise<Page> {
 	return page;
 }
 
+// Mesure, dans le navigateur, tout ce qui conditionne la lisibilité de la carte :
+// emprise des cartes et des étiquettes, tracé réel des arêtes (échantillonné
+// le long du chemin SVG), pointes de flèche et débordements.
+async function measureMap(page: Page) {
+	return page.evaluate(() => {
+		type R = { id: string; l: number; t: number; r: number; b: number };
+		type P = { x: number; y: number; d: number };
+		const app = document.querySelector('#goriot-relationships')!;
+		const canvas = app.querySelector('[data-map-canvas]')!.getBoundingClientRect();
+		const rel = (id: string, r: DOMRect): R => ({ id, l: r.left - canvas.left, t: r.top - canvas.top, r: r.right - canvas.left, b: r.bottom - canvas.top });
+		const shown = (e: Element) => getComputedStyle(e).display !== 'none';
+		const nodes = [...app.querySelectorAll<HTMLElement>('.rm-node')].filter(shown).map((n) => rel(n.dataset.nodeId!, n.getBoundingClientRect()));
+		const labels = [...app.querySelectorAll<HTMLElement>('.rm-label')].filter(shown).map((n) => rel(n.dataset.edgeId!, n.getBoundingClientRect()));
+		const svg = [...app.querySelectorAll<SVGSVGElement>('.rm-lines')].find((s) => s.getBoundingClientRect().width)!;
+		const k = svg.viewBox.baseVal.width / svg.getBoundingClientRect().width;
+		const edges = [...svg.querySelectorAll<SVGGElement>('.rm-edge')].filter(shown).map((g) => {
+			const path = g.querySelector('path')!;
+			const len = path.getTotalLength();
+			const pts: P[] = [];
+			for (let d = 0; d <= len; d += 2) {
+				const q = path.getPointAtLength(d);
+				pts.push({ x: q.x / k, y: q.y / k, d: d / k });
+			}
+			const style = getComputedStyle(path);
+			const [source, target] = g.dataset.ends!.split(' ');
+			return { id: g.dataset.edgeId!, source, target, pts, len: len / k, markerEnd: style.markerEnd, markerStart: style.markerStart };
+		});
+		return {
+			canvas: { w: canvas.width, h: canvas.height },
+			pageOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+			nodes,
+			labels,
+			edges,
+		};
+	});
+}
+
+const SIZES: Array<[number, number]> = [
+	[1440, 1000],
+	[1280, 900],
+	[1024, 800],
+	[900, 800],
+	[768, 1024],
+	[390, 844],
+	[360, 740],
+];
+
 describe.skipIf(!BUILT)('Réseau interactif des relations du Père Goriot (/goriot) — E2E & Interactions', () => {
 	beforeAll(async () => {
 		server = spawn('pnpm', ['astro', 'preview', '--port', String(PORT)], { stdio: 'ignore' });
@@ -326,5 +373,80 @@ describe.skipIf(!BUILT)('Réseau interactif des relations du Père Goriot (/gori
 		} finally {
 			await page.close();
 		}
+	});
+	describe.each(SIZES)('lisibilité du rendu réel à %i×%i', (width, height) => {
+		const area = (a: { l: number; t: number; r: number; b: number }, b: typeof a) =>
+			Math.max(0, Math.min(a.r, b.r) - Math.max(a.l, b.l)) * Math.max(0, Math.min(a.b, b.b) - Math.max(a.t, b.t));
+		const inside = (r: { l: number; t: number; r: number; b: number }, p: { x: number; y: number }) =>
+			p.x > r.l && p.x < r.r && p.y > r.t && p.y < r.b;
+		const gapTo = (r: { l: number; t: number; r: number; b: number }, p: { x: number; y: number }) =>
+			Math.hypot(Math.max(r.l - p.x, 0, p.x - r.r), Math.max(r.t - p.y, 0, p.y - r.b));
+		let m: Awaited<ReturnType<typeof measureMap>>;
+
+		beforeAll(async () => {
+			const page = await openPage(width, height);
+			await page.evaluate(() => document.fonts.ready);
+			await page.waitForTimeout(200);
+			m = await measureMap(page);
+			await page.close();
+		});
+
+		test('16 personnages, 23 relations et 23 étiquettes affichés, sans débordement de page', () => {
+			expect(m.nodes).toHaveLength(goriotCharacters.length);
+			expect(m.edges).toHaveLength(goriotRelationships.length);
+			expect(m.labels).toHaveLength(goriotRelationships.length);
+			expect(m.pageOverflow).toBeLessThanOrEqual(0);
+		});
+
+		test('aucune carte ni étiquette coupée par les bords du canevas', () => {
+			const cut = [...m.nodes, ...m.labels].filter((e) => e.l < 0 || e.t < 0 || e.r > m.canvas.w || e.b > m.canvas.h);
+			expect(cut.map((e) => e.id)).toEqual([]);
+		});
+
+		test('aucun chevauchement entre cartes, entre étiquettes, ni entre étiquette et carte', () => {
+			const issues: string[] = [];
+			m.nodes.forEach((a, i) => m.nodes.slice(i + 1).forEach((b) => area(a, b) > 0 && issues.push(`${a.id}/${b.id}`)));
+			m.labels.forEach((a, i) => m.labels.slice(i + 1).forEach((b) => area(a, b) > 1 && issues.push(`${a.id}/${b.id}`)));
+			m.labels.forEach((l) => m.nodes.forEach((n) => area(l, n) > 0 && issues.push(`${l.id}/${n.id}`)));
+			expect(issues).toEqual([]);
+		});
+
+		test('chaque étiquette touche presque son arête et en est plus proche que de toute autre', () => {
+			const issues: string[] = [];
+			for (const l of m.labels) {
+				const own = Math.min(...m.edges.find((e) => e.id === l.id)!.pts.map((p) => gapTo(l, p)));
+				if (own > 40) issues.push(`${l.id} à ${own.toFixed(0)}px`);
+				for (const e of m.edges) {
+					if (e.id !== l.id && Math.min(...e.pts.map((p) => gapTo(l, p))) < own) issues.push(`${l.id} ~ ${e.id}`);
+				}
+			}
+			expect(issues).toEqual([]);
+		});
+
+		test('les arêtes ne traversent ni cartes ni étiquettes voisines', () => {
+			const issues: string[] = [];
+			for (const e of m.edges) {
+				for (const n of m.nodes) if (e.pts.some((p) => inside(n, p))) issues.push(`${e.id} × ${n.id}`);
+				for (const l of m.labels) if (l.id !== e.id && e.pts.some((p) => inside(l, p))) issues.push(`${e.id} × ${l.id}`);
+			}
+			expect(issues).toEqual([]);
+		});
+
+		test('les pointes de flèche sont présentes, dégagées et orientées vers le bon personnage', () => {
+			const issues: string[] = [];
+			for (const e of m.edges) {
+				const cat = goriotRelCategories[goriotRelationships.find((r) => r.id === e.id)!.category];
+				if (!e.markerEnd.includes('url(')) issues.push(`${e.id} sans pointe`);
+				if (cat.arrow === 'both' && !e.markerStart.includes('url(')) issues.push(`${e.id} sans pointe de départ`);
+				const tip = e.pts.filter((p) => e.len - p.d < 10 || (cat.arrow === 'both' && p.d < 10));
+				for (const l of m.labels) if (tip.some((p) => inside(l, p))) issues.push(`pointe de ${e.id} sous ${l.id}`);
+				const end = e.pts[e.pts.length - 1];
+				const target = m.nodes.find((n) => n.id === e.target)!;
+				const source = m.nodes.find((n) => n.id === e.source)!;
+				if (gapTo(target, end) > 12) issues.push(`${e.id} n’atteint pas ${e.target}`);
+				if (gapTo(target, end) >= gapTo(source, end)) issues.push(`${e.id} pointe vers ${e.source}`);
+			}
+			expect(issues).toEqual([]);
+		});
 	});
 });
