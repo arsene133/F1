@@ -500,6 +500,11 @@ export function getWorkSpecificExplanation(
 			natureLabel: 'Description de la structure',
 			mathCharacteristics:
 				'Le réseau est dit multipolaire et distribué car les liaisons s’articulent autour de plusieurs figures maîtresses sans dépendre d’un sommet unique.',
+			illustration: {
+				src: '/images/pot-bouille/schema-reseau-distribue.webp',
+				alt: 'Schéma théorique d’un réseau sans centre : cinq sommets de couleurs différentes disposés en pentagone, chacun relié par un trait à chacun des quatre autres.',
+				caption: 'Schéma théorique d’un réseau distribué poussé à l’extrême : chaque sommet est relié à tous les autres, si bien qu’aucun ne joue le rôle de centre.',
+			},
 			studentExplanation:
 				'En observant le schéma, on constate que la centralité est partagée principalement entre Octave Mouret et Berthe Josserand, qui comptent chacun six liens. Autour d’eux, les autres habitants s’organisent en foyers familiaux distincts (comme les familles Josserand et Vabre). Le réseau n’est pas sans centre : il est multipolaire et distribué, avec plusieurs points d’ancrage dans l’immeuble.',
 			literaryContext:
