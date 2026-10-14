@@ -70,6 +70,22 @@ const noteId = `note-forme-reseau-${(workTitle ?? 'oeuvre').toLowerCase().replac
 				</p>
 			)}
 
+			{explanation.illustration && (
+				<figure class="structure-illustration">
+					<img
+						src={explanation.illustration.src}
+						alt={explanation.illustration.alt}
+						width="900"
+						height="900"
+						loading="lazy"
+						decoding="async"
+					/>
+					{explanation.illustration.caption && (
+						<figcaption>{explanation.illustration.caption}</figcaption>
+					)}
+				</figure>
+			)}
+
 			<p class="structure-student-text">
 				{explanation.studentExplanation}
 			</p>
@@ -327,6 +343,30 @@ const noteId = `note-forme-reseau-${(workTitle ?? 'oeuvre').toLowerCase().replac
 	.structure-math-note strong {
 		font-style: normal;
 		color: var(--map-ink, #172b3a);
+	}
+
+	.structure-illustration {
+		margin: 0.25rem auto;
+		max-width: 360px;
+		width: 100%;
+		text-align: center;
+	}
+
+	.structure-illustration img {
+		display: block;
+		width: 100%;
+		height: auto;
+		background: #ffffff;
+		border: 1px solid var(--map-border-soft, #ece7de);
+		border-radius: 6px;
+	}
+
+	.structure-illustration figcaption {
+		margin-top: 0.4rem;
+		font-size: 0.8rem;
+		line-height: 1.45;
+		color: var(--map-muted, #5e6d7a);
+		font-style: italic;
 	}
 
 	.structure-student-text {
