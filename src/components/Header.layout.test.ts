@@ -35,7 +35,7 @@ describe.skipIf(!BUILT)('En-tête de navigation (/Header.astro) — E2E & Access
 		server?.kill();
 	});
 
-	test('Desktop 1280px : affiche le menu compact et le menu déroulant avec les 7 œuvres dont Graffigny', async () => {
+	test('Desktop 1280px : affiche le menu déroulant avec les 8 œuvres classées chronologiquement dont Perceval', async () => {
 		const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
 		await page.goto(`${BASE}/`);
 
@@ -55,25 +55,72 @@ describe.skipIf(!BUILT)('En-tête de navigation (/Header.astro) — E2E & Access
 		const isOpen = await dropdown.getAttribute('open');
 		expect(isOpen !== null).toBe(true);
 
-		// Vérifier les 7 œuvres littéraires
+		// Vérifier les 8 entrées littéraires et parcours
 		const items = dropdown.locator('.dropdown-item');
-		expect(await items.count()).toBe(7);
+		expect(await items.count()).toBe(8);
 
-		// Vérifier que Graffigny est présent avec son URL correcte
+		// Vérifier que Perceval est présent en première position avec ses métadonnées exactes
+		const percevalLink = dropdown.locator('a[href="/perceval"]');
+		expect(await percevalLink.isVisible()).toBe(true);
+		const percevalText = await percevalLink.innerText();
+		expect(percevalText).toContain('Perceval — Le Conte du Graal');
+		expect(percevalText).toContain('Chrétien de Troyes');
+		expect(percevalText).toContain('vers 1181–1190');
+
+		// Vérifier l'ordre chronologique exact de l'ensemble des entrées du menu
+		const expectedHrefs = [
+			'/perceval',
+			'/don-juan',
+			'/graffigny',
+			'/on-ne-badine-pas-avec-l-amour',
+			'/goriot',
+			'/rimbaud',
+			'/pot-bouille',
+			'/balzac-rimbaud',
+		];
+		const itemHrefs = await items.evaluateAll((els) => els.map((el) => el.getAttribute('href')));
+		expect(itemHrefs).toEqual(expectedHrefs);
+
+		// Vérifier l'absence absolue de doublons d'URL
+		expect(new Set(itemHrefs).size).toBe(itemHrefs.length);
+
+		// Vérifier que Graffigny, Molière Dom Juan et Zola Pot-Bouille sont présents et visibles
 		const graffignyLink = dropdown.locator('a[href="/graffigny"]');
 		expect(await graffignyLink.isVisible()).toBe(true);
 		const graffignyText = await graffignyLink.innerText();
 		expect(graffignyText).toContain('Lettres d’une Péruvienne');
 		expect(graffignyText).toContain('Françoise de Graffigny');
 
-		// Vérifier également Molière Dom Juan et Zola Pot-Bouille
 		expect(await dropdown.locator('a[href="/don-juan"]').isVisible()).toBe(true);
 		expect(await dropdown.locator('a[href="/pot-bouille"]').isVisible()).toBe(true);
+
+		// Validité des liens HTTP (chaque entrée répond avec un code 200)
+		for (const href of itemHrefs) {
+			const res = await fetch(`${BASE}${href}`);
+			expect(res.status).toBe(200);
+		}
 
 		// Fermer au clic extérieur
 		await page.locator('header h2').click();
 		const isStillOpen = await dropdown.getAttribute('open');
 		expect(isStillOpen).toBeNull();
+
+		await page.close();
+	});
+
+	test('Navigation active : met en évidence "Œuvres & auteurs" et l’élément actif sur la page /perceval', async () => {
+		const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+		await page.goto(`${BASE}/perceval/`);
+
+		// La synthèse doit être marquée comme active
+		const summary = page.locator('#works-dropdown summary');
+		const summaryClasses = (await summary.getAttribute('class')) || '';
+		expect(summaryClasses.includes('active')).toBe(true);
+
+		// Dans la liste, le lien /perceval doit avoir la classe active
+		const percevalItem = page.locator('#works-dropdown a[href="/perceval"]');
+		const percevalClasses = (await percevalItem.getAttribute('class')) || '';
+		expect(percevalClasses.includes('active')).toBe(true);
 
 		await page.close();
 	});
@@ -114,7 +161,7 @@ describe.skipIf(!BUILT)('En-tête de navigation (/Header.astro) — E2E & Access
 		await page.close();
 	});
 
-	test('Mobile 375px : aucun débordement horizontal et navigation vers /graffigny', async () => {
+	test('Mobile 375px : aucun débordement horizontal, affichage de Perceval et navigation', async () => {
 		const page = await browser.newPage({ viewport: { width: 375, height: 812 }, isMobile: true });
 		await page.goto(`${BASE}/`);
 
@@ -127,13 +174,13 @@ describe.skipIf(!BUILT)('En-tête de navigation (/Header.astro) — E2E & Access
 		const summary = page.locator('#works-dropdown summary');
 		await summary.click();
 
-		const graffignyLink = page.locator('#works-dropdown a[href="/graffigny"]');
-		expect(await graffignyLink.isVisible()).toBe(true);
+		const percevalLink = page.locator('#works-dropdown a[href="/perceval"]');
+		expect(await percevalLink.isVisible()).toBe(true);
 
-		// Cliquer sur le lien et naviguer vers /graffigny
-		await graffignyLink.click();
-		await page.waitForURL('**/graffigny');
-		expect(page.url()).toContain('/graffigny');
+		// Cliquer sur le lien et naviguer vers /perceval
+		await percevalLink.click();
+		await page.waitForURL('**/perceval');
+		expect(page.url()).toContain('/perceval');
 
 		await page.close();
 	});
