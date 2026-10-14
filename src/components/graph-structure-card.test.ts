@@ -9,11 +9,12 @@ describe('Audit factuel et éditorial approfondi de la rubrique « Type de graph
 			expectedNature: 'Description de la structure',
 			expectedShape: 'Réseau très centré sur un personnage',
 			positiveAssertions: [
-				'Perceval occupe le centre et se relie directement aux treize autres personnages ou objets',
-				'cinq relations secondaires existent aussi entre d’autres éléments',
-				'la mère avec le père et les frères',
-				'Gornemant avec Blanchefleur',
-				'Arthur avec Keu et Gauvain',
+				'Perceval est au centre du réseau',
+				'relié directement aux treize autres personnages ou éléments représentés',
+				'Mais certains d’entre eux sont aussi reliés entre eux',
+				'Arthur est lié à Gauvain et à Keu',
+				'le Graal au Roi Pêcheur',
+				'Le dessin ressemble donc à une étoile, avec quelques liens supplémentaires entre les branches',
 			],
 			negativeAssertions: [
 				// Aucune relation entre Roi Pêcheur et Lance ne doit être affirmée

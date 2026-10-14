@@ -429,7 +429,7 @@ export function getWorkSpecificExplanation(
 			mathCharacteristics:
 				'Ce schéma ne forme pas une étoile mathématique parfaite car des liens relient aussi certains personnages secondaires entre eux. Il s’agit d’une description de tendance et non d’une figure géométrique stricte.',
 			studentExplanation:
-				'En observant le schéma, on remarque que Perceval occupe le centre et se relie directement aux treize autres personnages ou objets. Mais cinq relations secondaires existent aussi entre d’autres éléments (par exemple la mère avec le père et les frères, Gornemant avec Blanchefleur, ou Arthur avec Keu et Gauvain). Le réseau possède donc un centre prédominant tout en comportant des liens secondaires : ce n’est pas une étoile mathématique parfaite.',
+				'Sur ce schéma, Perceval est au centre du réseau : il est relié directement aux treize autres personnages ou éléments représentés. Mais certains d’entre eux sont aussi reliés entre eux : Arthur est lié à Gauvain et à Keu, et le Graal au Roi Pêcheur. Le dessin ressemble donc à une étoile, avec quelques liens supplémentaires entre les branches.',
 			literaryContext:
 				'Sur le plan littéraire, cette forte centralité met en valeur le parcours initiatique du héros, qui découvre le monde au fil de ses rencontres successives.',
 		};
