@@ -445,6 +445,11 @@ export function getWorkSpecificExplanation(
 			natureLabel: 'Forme mathématique exacte',
 			mathCharacteristics:
 				'En théorie des graphes, une étoile désigne un arbre où un sommet central unique est relié à tous les autres (les sommets périphériques), sans aucun lien direct entre ces derniers.',
+			illustration: {
+				src: '/images/don-juan/schema-etoile.webp',
+				alt: 'Schéma théorique d’une étoile : un sommet central relié par un trait à chacun des douze sommets disposés en cercle autour de lui, sans aucun trait entre ces sommets périphériques.',
+				caption: 'Schéma théorique d’une étoile : tous les liens partent du centre, aucun ne relie les sommets périphériques entre eux.',
+			},
 			studentExplanation:
 				'Sur le schéma, chaque trait part de Dom Juan vers l’une des sept autres figures, sans qu’aucun trait ne relie les autres entre elles. Avec un sommet central et sept sommets périphériques isolés les uns des autres, le graphe forme mathématiquement une étoile stricte.',
 			literaryContext:
