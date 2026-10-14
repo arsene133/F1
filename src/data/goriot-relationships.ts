@@ -76,6 +76,28 @@ export const goriotRelCategories: Record<GoriotRelationshipCategory, GoriotCateg
 	},
 };
 
+export interface GoriotClusterZone {
+	x: number;
+	y: number;
+	w: number;
+	h: number;
+	rx?: number;
+}
+
+export interface GoriotStructuralCluster {
+	id: string;
+	type: 'core' | 'satellite' | 'peripheral';
+	label: string;
+	subtitle: string;
+	tag: string;
+	description: string;
+	nodeIds: string[];
+	attachmentPointNodeIds: string[];
+	attachmentEdgeIds: string[];
+	dRect: GoriotClusterZone;
+	mRect: GoriotClusterZone;
+}
+
 export interface GoriotCharacterData {
 	id: string;
 	label: string;
@@ -93,6 +115,9 @@ export interface GoriotCharacterData {
 	};
 	color: string;
 	tier: 'major' | 'standard' | 'minor';
+	// Classification relationnelle objective dans le réseau
+	clusterId: 'core' | 'satellite-restaud' | 'satellite-taillefer' | 'satellite-delateurs' | 'satellite-domesticite' | 'peripheral-nucingen';
+	structuralRole: string;
 	// Coordonnées pour layout bureau (900 x 560) et mobile (360 x 860)
 	x: number;
 	y: number;
@@ -160,6 +185,7 @@ export interface GoriotRelationshipData {
 	};
 	narrativeContext: string;
 	// Décalages géométriques pour le rendu SVG
+	offset?: number;
 	labelT?: number;
 	labelDx?: number;
 	labelDy?: number;
@@ -168,6 +194,93 @@ export interface GoriotRelationshipData {
 	mLabelDy?: number;
 	mobileLabel?: boolean;
 }
+
+export const goriotStructuralClusters: GoriotStructuralCluster[] = [
+	{
+		id: 'core',
+		type: 'core',
+		label: 'Noyau relationnel central',
+		subtitle: 'Rastignac, Goriot, Delphine, Vautrin et leurs appuis directs',
+		tag: 'Noyau',
+		description:
+			'Le centre névralgique du drame : Rastignac et Goriot au cœur des passions et des sacrifices, rejoints par Delphine et Vautrin comme tentations et moteurs d’ascension, et entourés de leurs confidents directs (Horace Bianchon, Mme de Beauséant et Mme Vauquer).',
+		nodeIds: ['rastignac', 'goriot', 'delphine', 'vautrin', 'bianchon', 'mme-vauquer', 'mme-de-beauseant'],
+		attachmentPointNodeIds: [],
+		attachmentEdgeIds: [],
+		dRect: { x: 190, y: 110, w: 625, h: 320, rx: 16 },
+		mRect: { x: 10, y: 160, w: 340, h: 320, rx: 12 },
+	},
+	{
+		id: 'satellite-restaud',
+		type: 'satellite',
+		label: 'Satellite Restaud',
+		subtitle: 'Faubourg Saint-Germain · Aristocratie déchue',
+		tag: 'Satellite',
+		description:
+			'Ménage aristocratique uni par un mariage de dot et déchiré par les dettes de jeu de l’amant d’Anastasie, Maxime de Trailles, pour lequel elle engage les biens du foyer. Ce satellite se rattache au noyau par le sacrifice paternel et les dons financiers extrêmes de Jean-Joachim Goriot.',
+		nodeIds: ['anastasie', 'comte-restaud'],
+		attachmentPointNodeIds: ['goriot'],
+		attachmentEdgeIds: ['goriot-anastasie', 'goriot-daughters-financial'],
+		dRect: { x: 30, y: 25, w: 345, h: 75, rx: 10 },
+		mRect: { x: 10, y: 25, w: 155, h: 125, rx: 8 },
+	},
+	{
+		id: 'satellite-domesticite',
+		type: 'satellite',
+		label: 'Satellite Domesticité',
+		subtitle: 'Pension Vauquer · Le service humble',
+		tag: 'Satellite',
+		description:
+			'Les deux serviteurs de la pension Vauquer, unis par le travail domestique quotidien et les rumeurs de la table d’hôte. Bien qu’employés par Mme Vauquer, ils se rattachent au drame central du noyau par la compassion désintéressée et la présence fidèle de Christophe au convoi funèbre de Goriot.',
+		nodeIds: ['christophe', 'sylvie'],
+		attachmentPointNodeIds: ['goriot'],
+		attachmentEdgeIds: ['christophe-goriot-loyalty'],
+		dRect: { x: 445, y: 20, w: 320, h: 70, rx: 10 },
+		mRect: { x: 195, y: 25, w: 155, h: 125, rx: 8 },
+	},
+	{
+		id: 'satellite-taillefer',
+		type: 'satellite',
+		label: 'Satellite Taillefer',
+		subtitle: 'Chaussée-d’Antin · L’héritage spolié',
+		tag: 'Satellite',
+		description:
+			'Père et fille séparés par le déshéritement de Victorine au profit de son frère. Ce groupe s’articule au noyau par deux points pivots distincts : l’affection candide de Victorine pour Eugène de Rastignac à la pension, et l’attentat en duel commandité par Vautrin contre le frère pour contraindre le père à faire de Victorine son héritière.',
+		nodeIds: ['victorine', 'm-taillefer'],
+		attachmentPointNodeIds: ['rastignac', 'vautrin'],
+		attachmentEdgeIds: ['victorine-rastignac', 'vautrin-taillefer-crime'],
+		dRect: { x: 165, y: 455, w: 350, h: 80, rx: 10 },
+		mRect: { x: 175, y: 485, w: 175, h: 165, rx: 8 },
+	},
+	{
+		id: 'satellite-delateurs',
+		type: 'satellite',
+		label: 'Satellite Délateurs',
+		subtitle: 'Pension Vauquer · Le complot policier',
+		tag: 'Satellite',
+		description:
+			'Duo de pensionnaires impliqué dans l’arrestation de Jacques Collin : Mlle Michonneau négocie la prime de 3 000 francs et administre le narcotique, secondée passivement par Poiret. Ce satellite se rattache au noyau par la délation policière ciblant Vautrin.',
+		nodeIds: ['michonneau', 'poiret'],
+		attachmentPointNodeIds: ['vautrin'],
+		attachmentEdgeIds: ['michonneau-vautrin-police'],
+		dRect: { x: 25, y: 215, w: 145, h: 225, rx: 10 },
+		mRect: { x: 10, y: 585, w: 165, h: 175, rx: 8 },
+	},
+	{
+		id: 'peripheral-nucingen',
+		type: 'peripheral',
+		label: 'Périphérie Nucingen',
+		subtitle: 'Haute finance · Baron de Nucingen',
+		tag: 'Périphérie',
+		description:
+			'Grand banquier d’affaires qui engage la dot de Delphine dans des opérations financières risquées, tout en limitant les sommes dont elle peut disposer personnellement. Dans le réseau du roman, il forme un sommet périphérique (degré 1) rattaché uniquement à Delphine de Nucingen, ses manœuvres s’exerçant à distance du drame de la pension.',
+		nodeIds: ['baron-nucingen'],
+		attachmentPointNodeIds: ['delphine'],
+		attachmentEdgeIds: ['delphine-baron-nucingen'],
+		dRect: { x: 735, y: 205, w: 155, h: 65, rx: 8 },
+		mRect: { x: 200, y: 325, w: 150, h: 55, rx: 6 },
+	},
+];
 
 export const goriotCharacters: GoriotCharacterData[] = [
 	// 1. Eugène de Rastignac (Nœud central)
@@ -195,10 +308,12 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		},
 		color: '#1d4ed8',
 		tier: 'major',
-		x: 450,
-		y: 280,
+		clusterId: 'core',
+		structuralRole: 'Noyau relationnel central (7 relations directes)',
+		x: 475,
+		y: 310,
 		mx: 180,
-		my: 240,
+		my: 370,
 	},
 
 	// 2. Jean-Joachim Goriot (Père Goriot - Nœud central)
@@ -213,7 +328,7 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		description:
 			'Ancien maître vermicellier et président de section sous la Révolution, il a amassé une immense fortune consacrée entièrement à l’établissement de ses deux filles dans l’aristocratie et la haute banque. Rejeté par ses gendres dès qu’il a cessé de payer, il descend d’étage en étage à la pension Vauquer, vendant son argenterie et ses dernières rentes pour subvenir aux folies financières de ses enfants, jusqu’à mourir dans un dénuement absolu.',
 		keyFacts: [
-			'Assure des dots de 800 000 francs à chacune de ses deux filles, Anastasie et Delphine (Partie 1).',
+			'Dote magnifiquement ses deux filles, Anastasie et Delphine, en leur transmettant l’essentiel de sa fortune de négociant (Parties 1 et 3).',
 			'Descend de la pension Vauquer du 1er étage (appartement bourgeois) au 3e étage (chambre d’indigent).',
 			'Vend clandestinement son couvert d’argent et ses rentes viagères pour solder les dettes de ses filles (Partie 1).',
 			'Aménage la garçonnière de la rue d’Artois pour réunir Eugène et Delphine (Partie 3).',
@@ -226,10 +341,12 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		},
 		color: '#8b5a2b',
 		tier: 'major',
-		x: 450,
-		y: 110,
+		clusterId: 'core',
+		structuralRole: 'Noyau relationnel central (6 relations directes)',
+		x: 410,
+		y: 150,
 		mx: 180,
-		my: 90,
+		my: 185,
 	},
 
 	// 3. Anastasie de Restaud
@@ -251,10 +368,12 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		],
 		color: '#be185d',
 		tier: 'standard',
-		x: 230,
-		y: 70,
-		mx: 75,
-		my: 150,
+		clusterId: 'satellite-restaud',
+		structuralRole: 'Satellite Restaud (rattaché au père Goriot)',
+		x: 290,
+		y: 60,
+		mx: 85,
+		my: 125,
 	},
 
 	// 4. Delphine de Nucingen
@@ -267,7 +386,7 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		meta: ['fille cadette de Jean-Joachim Goriot', 'épouse du baron de Nucingen'],
 		socialRole: 'Épouse d’un puissant banquier alsacien, prisonnière d’un mariage d’affaires et avide d’être reçue dans le faubourg Saint-Germain.',
 		description:
-			'Fille cadette de Goriot mariée au riche banquier alsacien baron de Nucingen, Delphine souffre d’être recluse dans la bourgeoisie de la Chaussée-d’Antin sans pouvoir franchir les portes du faubourg Saint-Germain. Délaissée par son mari qui séquestre sa fortune personnelle, elle prend Eugène de Rastignac pour amant et s’appuie sur son père pour aménager leur intimité.',
+			'Fille cadette de Goriot mariée au riche banquier alsacien baron de Nucingen, Delphine souffre d’être recluse dans la bourgeoisie de la Chaussée-d’Antin sans pouvoir franchir les portes du faubourg Saint-Germain. Délaissée par son mari qui engage sa dot dans des opérations financières risquées et limite ses ressources personnelles, elle prend Eugène de Rastignac pour amant et s’appuie sur son père pour aménager leur intimité.',
 		keyFacts: [
 			'Rencontre Eugène au Théâtre des Italiens dans sa loge (Partie 2).',
 			'Envoie Eugène risquer ses derniers 100 francs à la roulette du Palais-Royal (Partie 2).',
@@ -276,10 +395,12 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		],
 		color: '#be185d',
 		tier: 'major',
-		x: 670,
-		y: 70,
-		mx: 285,
-		my: 150,
+		clusterId: 'core',
+		structuralRole: 'Noyau relationnel central (4 relations directes)',
+		x: 660,
+		y: 165,
+		mx: 275,
+		my: 260,
 	},
 
 	// 5. Vautrin (Jacques Collin)
@@ -307,10 +428,12 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		},
 		color: '#7f1d1d',
 		tier: 'major',
-		x: 230,
-		y: 390,
-		mx: 75,
-		my: 400,
+		clusterId: 'core',
+		structuralRole: 'Noyau relationnel central (3 relations directes)',
+		x: 285,
+		y: 385,
+		mx: 95,
+		my: 515,
 	},
 
 	// 6. Victorine Taillefer
@@ -331,10 +454,12 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		],
 		color: '#a16207',
 		tier: 'standard',
-		x: 230,
-		y: 490,
-		mx: 75,
-		my: 510,
+		clusterId: 'satellite-taillefer',
+		structuralRole: 'Satellite Taillefer (rattaché à Rastignac et Taillefer)',
+		x: 435,
+		y: 495,
+		mx: 250,
+		my: 515,
 	},
 
 	// 7. Madame Vauquer
@@ -356,10 +481,12 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		],
 		color: '#78350f',
 		tier: 'standard',
-		x: 450,
-		y: 470,
+		clusterId: 'core',
+		structuralRole: 'Noyau relationnel · Témoin direct (Rastignac et Goriot)',
+		x: 490,
+		y: 230,
 		mx: 180,
-		my: 620,
+		my: 270,
 	},
 
 	// 8. Sylvie
@@ -379,10 +506,12 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		],
 		color: '#52525b',
 		tier: 'minor',
-		x: 580,
-		y: 520,
-		mx: 285,
-		my: 620,
+		clusterId: 'satellite-domesticite',
+		structuralRole: 'Satellite Domesticité (rattaché à Christophe)',
+		x: 680,
+		y: 50,
+		mx: 275,
+		my: 50,
 	},
 
 	// 9. Christophe
@@ -403,10 +532,12 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		],
 		color: '#52525b',
 		tier: 'minor',
-		x: 340,
-		y: 520,
-		mx: 75,
-		my: 620,
+		clusterId: 'satellite-domesticite',
+		structuralRole: 'Satellite Domesticité (rattaché au père Goriot)',
+		x: 520,
+		y: 50,
+		mx: 275,
+		my: 125,
 	},
 
 	// 10. Horace Bianchon (noté aussi Bianchon, une seule entité)
@@ -432,10 +563,12 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		},
 		color: '#15803d',
 		tier: 'major',
-		x: 670,
-		y: 280,
-		mx: 285,
-		my: 240,
+		clusterId: 'core',
+		structuralRole: 'Noyau relationnel · Appui direct (Rastignac et Goriot)',
+		x: 270,
+		y: 225,
+		mx: 85,
+		my: 260,
 	},
 
 	// 11. La vicomtesse de Beauséant
@@ -461,10 +594,12 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		},
 		color: '#1e4b88',
 		tier: 'major',
-		x: 230,
-		y: 190,
-		mx: 75,
-		my: 290,
+		clusterId: 'core',
+		structuralRole: 'Noyau relationnel · Parrainage direct (Rastignac et Delphine)',
+		x: 725,
+		y: 345,
+		mx: 275,
+		my: 445,
 	},
 
 	// 12. Le baron de Nucingen
@@ -477,18 +612,20 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		meta: ['Delphine est son épouse', 'originaire d’Alsace', 'pair de France ultérieur'],
 		socialRole: 'Grand banquier de la Chaussée-d’Antin représentant la puissance moderne de l’argent et du capitalisme émergent.',
 		description:
-			'Banquier sans scrupules parlant avec un fort accent alsacien, le baron de Nucingen a épousé Delphine pour son imposante dot de 800 000 francs. Maître des spéculations boursières, il a bloqué les capitaux de son épouse dans des affaires immobilières et industrielles pour la tenir financièrement à sa merci et neutraliser ses prétentions d’indépendance.',
+			'Grand banquier d’origine alsacienne, le baron de Nucingen a épousé Delphine pour sa dot. Expert en manœuvres de haute banque, il engage la dot de son épouse dans des opérations financières risquées, tout en limitant les sommes dont elle peut disposer personnellement.',
 		keyFacts: [
-			'Bloque la dot de Delphine dans des spéculations et lui refuse toute marge de manœuvre (Partie 2).',
+			'Engage la dot de Delphine dans des opérations risquées et restreint ses dépenses personnelles (Parties 2 et 4).',
 			'Accepte avec cynisme la liaison de Delphine et Rastignac tant qu’elle ne nuit pas à ses affaires (Partie 3).',
 			'Refuse de payer les frais de secours de son beau-père agonisant (Partie 4).',
 		],
 		color: '#b45309',
 		tier: 'standard',
-		x: 790,
-		y: 70,
-		mx: 285,
-		my: 40,
+		clusterId: 'peripheral-nucingen',
+		structuralRole: 'Personnage périphérique (rattaché à Delphine)',
+		x: 815,
+		y: 235,
+		mx: 275,
+		my: 350,
 	},
 
 	// 13. Le comte de Restaud
@@ -509,10 +646,12 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		],
 		color: '#475569',
 		tier: 'standard',
-		x: 105,
-		y: 70,
-		mx: 75,
-		my: 40,
+		clusterId: 'satellite-restaud',
+		structuralRole: 'Satellite Restaud (rattaché à Anastasie)',
+		x: 110,
+		y: 60,
+		mx: 85,
+		my: 50,
 	},
 
 	// 14. Monsieur Taillefer
@@ -533,10 +672,12 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		],
 		color: '#475569',
 		tier: 'minor',
-		x: 105,
-		y: 490,
-		mx: 75,
-		my: 720,
+		clusterId: 'satellite-taillefer',
+		structuralRole: 'Satellite Taillefer (rattaché à Vautrin et Victorine)',
+		x: 235,
+		y: 495,
+		mx: 250,
+		my: 620,
 	},
 
 	// 15. Poiret
@@ -558,10 +699,12 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		],
 		color: '#64748b',
 		tier: 'minor',
-		x: 670,
-		y: 450,
-		mx: 285,
-		my: 510,
+		clusterId: 'satellite-delateurs',
+		structuralRole: 'Satellite Délateurs (rattaché à Michonneau)',
+		x: 90,
+		y: 255,
+		mx: 95,
+		my: 730,
 	},
 
 	// 16. Mademoiselle Michonneau
@@ -583,10 +726,12 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		],
 		color: '#7f1d1d',
 		tier: 'standard',
-		x: 670,
-		y: 370,
-		mx: 285,
-		my: 400,
+		clusterId: 'satellite-delateurs',
+		structuralRole: 'Satellite Délateurs (rattaché à Vautrin)',
+		x: 90,
+		y: 405,
+		mx: 95,
+		my: 620,
 	},
 ];
 
@@ -600,7 +745,7 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		label: 'amour paternel sacrificiel',
 		shortSummary: 'Goriot se dépouille pour sa fille aînée qui ne vient qu’après sa mort.',
 		description:
-			'Goriot idolâtre sa fille aînée Anastasie, à qui il a constitué une dot de 800 000 francs pour la marier au comte de Restaud. Devenue comtesse, Anastasie a honte des manières populaires de son père et ne vient le voir en cachette que pour lui réclamer de l’argent destiné à couvrir les dettes de son amant Maxime de Trailles. Elle arrive au chevet de Goriot quelques secondes après son dernier soupir.',
+			'Goriot idolâtre sa fille aînée Anastasie, à qui il a constitué une dot pour soutenir ses ambitions aristocratiques et son entrée dans la haute noblesse par son mariage avec le comte de Restaud. Devenue comtesse, Anastasie a honte des manières populaires de son père et ne vient le voir en cachette que pour lui réclamer de l’argent destiné à couvrir les dettes de jeu de son amant Maxime de Trailles. Elle n’arrive au chevet de Goriot que quelques instants après son dernier soupir.',
 		asymmetric: true,
 		directionLabel: 'Goriot idolâtre → Anastasie l’exploite puis s’en repent trop tard',
 		firstEstablishedStage: 'stage-1',
@@ -611,9 +756,10 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 			reference: 'Quatrième partie (« La Mort du père »)',
 		},
 		narrativeContext: 'Révélé dès la première partie et confirmé par la scène déchirante de l’agonie au chapitre final.',
-		labelDx: -18,
+		offset: 4,
+		labelDx: -16,
 		labelDy: -12,
-		mLabelDx: -18,
+		mLabelDx: -16,
 		mLabelDy: -12,
 		mobileLabel: true,
 	},
@@ -650,7 +796,7 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		label: 'mariage d’alliance & crise',
 		shortSummary: 'Mariage nobiliaire brisé par les dettes d’amant et le mensonge.',
 		description:
-			'Le comte de Restaud a épousé Anastasie pour sa dot de 800 000 francs. Le couple se déchire lorsque le comte découvre la liaison d’Anastasie avec Maxime de Trailles et la vente clandestine des diamants de famille, obligeant Restaud à dicter des conditions impitoyables pour préserver son nom.',
+			'Courtisée pour sa beauté par le comte de Restaud, grand seigneur d’Empire, Anastasie a été dotée par son père pour satisfaire ses penchants aristocratiques. Le couple se déchire lorsque le comte découvre sa liaison avec Maxime de Trailles et la vente clandestine des diamants de famille, obligeant Restaud à dicter des conditions impitoyables pour préserver son nom.',
 		asymmetric: false,
 		firstEstablishedStage: 'stage-1',
 		certainty: 'certitude_historique',
@@ -660,9 +806,9 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 			reference: 'Quatrième partie (« La Mort du père »)',
 		},
 		narrativeContext: 'Exposé dès la visite d’Eugène à l’hôtel de la rue du Helder, puis révélé lors de la spoliation finale des diamants.',
-		labelDx: -12,
+		labelDx: 0,
 		labelDy: -14,
-		mLabelDx: -12,
+		mLabelDx: 0,
 		mLabelDy: -14,
 	},
 	{
@@ -670,18 +816,18 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		source: 'baron-nucingen',
 		target: 'delphine',
 		category: 'family',
-		label: 'mariage d’argent & captivité',
-		shortSummary: 'Le banquier retient les capitaux de sa femme dans ses spéculations.',
+		label: 'mariage & dépendance financière',
+		shortSummary: 'Le banquier engage la dot de Delphine dans ses affaires et limite ses ressources.',
 		description:
-			'Mariage purement financier. Le baron de Nucingen séquestre la dot de Delphine dans des spéculations hasardeuses et lui refuse toute indépendance pécuniaire, poussant sa femme à chercher des secours financiers chez son père et son nouvel amant Eugène.',
+			'Mariage et dépendance financière. Le baron de Nucingen engage la dot de Delphine dans des opérations financières risquées, tout en limitant les sommes dont elle peut disposer personnellement par une pension étroite, ce qui pousse sa femme à chercher des secours auprès de son père et d’Eugène.',
 		asymmetric: true,
-		directionLabel: 'Nucingen séquestre les capitaux → Delphine subit et s’évade dans l’amour',
+		directionLabel: 'Nucingen restreint les ressources de sa femme → Delphine cherche ailleurs l’affection et l’appui que son mariage ne lui apporte pas',
 		firstEstablishedStage: 'stage-2',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Détaillé par Delphine à Eugène lors de leurs confidences au Palais-Royal et rue Saint-Lazare.',
-		labelDx: 12,
+		labelDx: 0,
 		labelDy: -14,
-		mLabelDx: 12,
+		mLabelDx: 0,
 		mLabelDy: -14,
 	},
 	{
@@ -697,9 +843,10 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-1',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Motif initial qui décide Eugène à écrire à sa famille pour obtenir sa lettre de recommandation.',
-		labelDx: -20,
+		offset: -4,
+		labelDx: -10,
 		labelDy: -14,
-		mLabelDx: -20,
+		mLabelDx: -10,
 		mLabelDy: -14,
 	},
 	{
@@ -716,9 +863,9 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-1',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Présenté dès l’ouverture du roman comme l’injustice sociale révoltante de la pension.',
-		labelDx: -16,
+		labelDx: 0,
 		labelDy: 14,
-		mLabelDx: -16,
+		mLabelDx: 0,
 		mLabelDy: 14,
 	},
 
@@ -741,9 +888,11 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 			reference: 'Deuxième partie (« L’Entrée dans le monde »)',
 		},
 		narrativeContext: 'Commence au Théâtre des Italiens, s’affirme rue Saint-Lazare et se concrétise rue d’Artois.',
-		labelDx: 24,
-		labelDy: 10,
-		mLabelDx: 24,
+		offset: 4,
+		labelT: 0.65,
+		labelDx: 0,
+		labelDy: -14,
+		mLabelDx: 18,
 		mLabelDy: 10,
 		mobileLabel: true,
 	},
@@ -761,10 +910,10 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-2',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Développé au fil des dîners de la pension Vauquer et des confidences dans le salon.',
-		labelDx: -20,
-		labelDy: 18,
-		mLabelDx: -20,
-		mLabelDy: 18,
+		labelDx: 14,
+		labelDy: 10,
+		mLabelDx: 14,
+		mLabelDy: 10,
 	},
 
 	// --- ARGENT ET DÉPENDANCE ---
@@ -783,9 +932,9 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		certainty: 'certitude_historique',
 		narrativeContext: 'Aménagement de la garçonnière au chapitre III, puis dépenses de la maladie au chapitre IV.',
 		labelDx: 14,
-		labelDy: -2,
+		labelDy: 0,
 		mLabelDx: 14,
-		mLabelDy: -2,
+		mLabelDy: 0,
 	},
 	{
 		id: 'rastignac-delphine-money',
@@ -805,10 +954,12 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 			reference: 'Deuxième partie (« L’Entrée dans le monde »)',
 		},
 		narrativeContext: 'Scène clé de la seconde partie où Eugène découvre le lien sordide entre luxe et faillite privée.',
-		labelDx: 32,
-		labelDy: -16,
-		mLabelDx: 32,
-		mLabelDy: -16,
+		offset: -4,
+		labelT: 0.35,
+		labelDx: 0,
+		labelDy: 14,
+		mLabelDx: 18,
+		mLabelDy: -10,
 	},
 	{
 		id: 'goriot-daughters-financial',
@@ -824,10 +975,11 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-1',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Surpris par Eugène au début du roman roulant son argenterie en pâte d’argent vermeil.',
-		labelDx: -35,
-		labelDy: -2,
-		mLabelDx: -35,
-		mLabelDy: -2,
+		offset: -4,
+		labelDx: 16,
+		labelDy: 14,
+		mLabelDx: 16,
+		mLabelDy: 14,
 	},
 
 	// --- SOCIÉTÉ ET INFLUENCE ---
@@ -850,9 +1002,10 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 			reference: 'Première partie (« Une pension bourgeoise »)',
 		},
 		narrativeContext: 'Entretien décisif à l’hôtel de Beauséant après la gaffe commise chez Mme de Restaud.',
-		labelDx: -28,
-		labelDy: -6,
-		mLabelDx: -28,
+		offset: 4,
+		labelDx: 10,
+		labelDy: 14,
+		mLabelDx: 14,
 		mLabelDy: -6,
 		mobileLabel: true,
 	},
@@ -875,10 +1028,10 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 			reference: 'Première partie (« Une pension bourgeoise »)',
 		},
 		narrativeContext: 'Motivation maîtresse qui pousse Delphine à se lier à Eugène pour forcer le verrou du noble faubourg.',
-		labelDx: 0,
-		labelDy: -24,
-		mLabelDx: 0,
-		mLabelDy: -24,
+		labelDx: 14,
+		labelDy: 0,
+		mLabelDx: 14,
+		mLabelDy: 0,
 	},
 
 	// --- AMITIÉ ET SOLIDARITÉ ---
@@ -895,9 +1048,9 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-1',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Présent dès la table d’hôte de la pension, au Luxembourg pour le mandarin et au chevet de mort de Goriot.',
-		labelDx: 18,
+		labelDx: 0,
 		labelDy: -12,
-		mLabelDx: 18,
+		mLabelDx: 14,
 		mLabelDy: -12,
 		mobileLabel: true,
 	},
@@ -915,10 +1068,10 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-4',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Quatrième partie entière lors de la crise d’apoplexie séreuse.',
-		labelDx: 24,
-		labelDy: 16,
-		mLabelDx: 24,
-		mLabelDy: 16,
+		labelDx: -14,
+		labelDy: 12,
+		mLabelDx: -14,
+		mLabelDy: 12,
 	},
 	{
 		id: 'christophe-goriot-loyalty',
@@ -934,9 +1087,9 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		certainty: 'certitude_historique',
 		narrativeContext: 'Courses de commission puis enterrement à Saint-Étienne-du-Mont et au Père-Lachaise.',
 		labelDx: -16,
-		labelDy: -18,
+		labelDy: 0,
 		mLabelDx: -16,
-		mLabelDy: -18,
+		mLabelDy: 0,
 	},
 
 	// --- CONFLIT ET MANIPULATION ---
@@ -959,10 +1112,10 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 			reference: 'Deuxième partie (« L’Entrée dans le monde »)',
 		},
 		narrativeContext: 'La grande scène de tentation dans le jardinet de la pension Vauquer.',
-		labelDx: -24,
-		labelDy: 14,
-		mLabelDx: -24,
-		mLabelDy: 14,
+		labelDx: 0,
+		labelDy: -14,
+		mLabelDx: 0,
+		mLabelDy: -14,
 		mobileLabel: true,
 	},
 	{
@@ -980,9 +1133,9 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		certainty: 'certitude_historique',
 		narrativeContext: 'Exécution du meurtre au début de la troisième partie.',
 		labelDx: -14,
-		labelDy: -12,
+		labelDy: 0,
 		mLabelDx: -14,
-		mLabelDy: -12,
+		mLabelDy: 0,
 	},
 	{
 		id: 'michonneau-vautrin-police',
@@ -998,10 +1151,10 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-3',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Négociations au Jardin des Plantes et scène d’empoisonnement à la pension.',
-		labelDx: 14,
-		labelDy: 16,
+		labelDx: 0,
+		labelDy: -12,
 		mLabelDx: 14,
-		mLabelDy: 16,
+		mLabelDy: 14,
 		mobileLabel: true,
 	},
 	{
@@ -1019,9 +1172,9 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		certainty: 'certitude_historique',
 		narrativeContext: 'Scène du Jardin des Plantes et départ forcé de la pension.',
 		labelDx: 16,
-		labelDy: 12,
+		labelDy: 0,
 		mLabelDx: 16,
-		mLabelDy: 12,
+		mLabelDy: 0,
 	},
 
 	// --- LOGEMENT ET QUOTIDIEN ---
@@ -1039,10 +1192,10 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-1',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Genèse de la pension exposée dans la première partie.',
-		labelDx: 0,
-		labelDy: 18,
-		mLabelDx: 0,
-		mLabelDy: 18,
+		labelDx: 14,
+		labelDy: -10,
+		mLabelDx: 14,
+		mLabelDy: -10,
 	},
 	{
 		id: 'vauquer-pensionnaires-housing',
@@ -1058,10 +1211,10 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-1',
 		certainty: 'certitude_historique',
 		narrativeContext: 'Cadre de vie quotidien du faubourg Saint-Marceau.',
-		labelDx: 12,
-		labelDy: 14,
-		mLabelDx: 12,
-		mLabelDy: 14,
+		labelDx: 14,
+		labelDy: 10,
+		mLabelDx: 14,
+		mLabelDy: 10,
 	},
 	{
 		id: 'sylvie-christophe-service',
@@ -1077,9 +1230,9 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		certainty: 'certitude_historique',
 		narrativeContext: 'Tableaux de la vie quotidienne de la pension Vauquer.',
 		labelDx: 0,
-		labelDy: 12,
+		labelDy: -14,
 		mLabelDx: 0,
-		mLabelDy: 12,
+		mLabelDy: -14,
 	},
 ];
 

@@ -127,12 +127,12 @@ export const goriotThemes: GoriotTheme[] = [
 		tagline: 'Le moteur occulte de toutes les actions : l’or remplace la morale, mesure les sentiments et détermine la survie sociale.',
 		centralQuestion: 'Comment l’argent transforme-t-il les sentiments intimes en marchandises et en rapports de force ?',
 		studentExplanation:
-			'Dans l’univers du roman, rien n’est gratuit et tout a un prix : une dot de huit cent mille francs ouvre les portes du mariage nobiliaire, cent francs risqués à la roulette permettent de repousser la honte d’un découvert bancaire, et trois mille francs achètent la trahison d’un forçat. L’argent n’est pas seulement un moyen matériel, c’est le filtre à travers lequel chaque personnage évalue autrui.',
+			'Dans l’univers du roman, rien n’est gratuit et tout a un prix : une dot considérable ouvre les portes du mariage nobiliaire, cent francs risqués à la roulette permettent de repousser la honte d’un découvert bancaire, et trois mille francs achètent la trahison d’un forçat. L’argent n’est pas seulement un moyen matériel, c’est le filtre à travers lequel chaque personnage évalue autrui.',
 		literarySignificance:
 			'Balzac est le premier grand romancier du réalisme économique : il chiffre au franc près les dots, les rentes viagères, les loyers et les dettes usuraires chez Gobseck. L’argent est un flux vital qui gouverne la modernité capitaliste de la Restauration.',
 		keyObservations: [
-			'Les deux gendres (Restaud et Nucingen) ont épousé les filles pour leur dot colossale (800 000 F chacune) avant de chasser le père artisan.',
-			'Le baron de Nucingen séquestre la dot de Delphine dans des spéculations boursières pour la maintenir dans une dépendance absolue.',
+			'Les deux gendres (Restaud et Nucingen) ont épousé les filles pour leur dot colossale apportée par leur père avant de chasser l’artisan vermicellier.',
+			'Le baron de Nucingen engage la dot de Delphine dans des opérations financières risquées tout en limitant ses ressources personnelles, ce qui la laisse dans une forte dépendance financière.',
 			'Anastasie est contrainte de vendre les diamants du comte pour sauver son amant Maxime de Trailles de la prison pour dettes.',
 			'Eugène comprend que ses études de droit ne lui rapporteront presque rien comparé aux millions nécessaires pour briller à Paris.',
 		],

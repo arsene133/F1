@@ -287,4 +287,44 @@ describe.skipIf(!BUILT)('Réseau interactif des relations du Père Goriot (/gori
 			await page.close();
 		}
 	});
+
+	test('repérage visuel des satellites du noyau : guide pédagogique et surbrillance des points de rattachement', async () => {
+		const page = await openPage();
+		try {
+			// Le bandeau guide pédagogique est présent avec les puces de cluster
+			const guideBar = page.locator('#goriot-relationships .network-structure-guide');
+			expect(await guideBar.count()).toBe(1);
+
+			const chips = page.locator('#goriot-relationships button.cluster-chip');
+			expect(await chips.count()).toBe(6); // 1 noyau + 4 satellites + 1 périphérie
+
+			// Clic sur le chip du satellite Restaud
+			const restaudChip = page.locator('#goriot-relationships button[data-cluster-filter="satellite-restaud"]');
+			expect(await restaudChip.count()).toBe(1);
+			await restaudChip.click();
+			expect(await restaudChip.getAttribute('aria-pressed')).toBe('true');
+
+			// Les membres du satellite (Anastasie, Restaud) sont actifs
+			const anastasieBtn = page.locator('#goriot-relationships button[data-node-id="anastasie"]');
+			expect(await anastasieBtn.getAttribute('class')).toContain('is-active');
+
+			// Le point pivot de rattachement dans le noyau (Goriot) est mis en surbrillance (.is-pivot)
+			const goriotBtn = page.locator('#goriot-relationships button[data-node-id="goriot"]');
+			expect(await goriotBtn.getAttribute('class')).toContain('is-pivot');
+
+			// Le panneau de détail affiche l'explication du satellite et son point de rattachement
+			const detailTitle = await page.locator('#goriot-relationships [data-detail-title]').textContent();
+			expect(detailTitle).toBe('Satellite Restaud');
+			const detailDesc = await page.locator('#goriot-relationships [data-detail-description]').textContent();
+			expect(detailDesc).toContain('sacrifice paternel');
+
+			// Sélection directe d'un personnage d'un satellite (Anastasie)
+			await anastasieBtn.click();
+			const badge = await page.locator('#goriot-relationships [data-detail-cluster]').textContent();
+			expect(badge).toContain('Satellite Restaud');
+			expect(badge).toContain('Jean-Joachim Goriot');
+		} finally {
+			await page.close();
+		}
+	});
 });

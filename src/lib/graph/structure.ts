@@ -459,7 +459,7 @@ export function getWorkSpecificExplanation(
 			mathCharacteristics:
 				'Ce modèle sociologique décrit une division entre un cœur très dense de relations et une marge peu connectée, sans constituer une catégorie géométrique stricte.',
 			studentExplanation:
-				'Sur le schéma, les relations ne sont pas réparties de façon uniforme. On observe un noyau central resserré autour de Rastignac (sept liens) et du père Goriot (six liens), rejoints par Delphine et Vautrin, tandis que des figures comme Poiret ou Sylvie restent en périphérie avec un seul lien.',
+				'Sur le schéma, les relations ne sont pas réparties de façon uniforme. On observe un noyau central resserré autour de Rastignac (sept liens) et du père Goriot (six liens), rejoints par Delphine et Vautrin, et entourés de leurs confidents directs. Autour de ce noyau gravitent quatre petits groupes de personnages (satellites) reliés entre eux et rattachés au centre par des liens pivots précis : les Restaud et la domesticité (rattachés à Goriot), l’intrigue Taillefer (rattachée à Rastignac et Vautrin) et le complot des délateurs (rattaché à Vautrin). Dans ces groupes ou en marge du réseau, des figures comme Poiret ou Sylvie restent en périphérie avec un seul lien, tout comme le baron de Nucingen.',
 			literaryContext:
 				'Cette organisation illustre le fonctionnement du roman balzacien : Rastignac et Goriot servent de passerelles entre le monde modeste de la pension Vauquer et les salons aristocratiques parisiens.',
 		};

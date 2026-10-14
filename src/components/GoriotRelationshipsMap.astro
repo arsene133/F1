@@ -12,9 +12,11 @@ import {
 	goriotNarrativeStages,
 	goriotRelCategories,
 	goriotRelationships,
+	goriotStructuralClusters,
 	type GoriotCharacterData,
 	type GoriotRelationshipCategory,
 	type GoriotRelationshipData,
+	type GoriotStructuralCluster,
 	type NarrativeStage,
 } from '../data/goriot-relationships';
 
@@ -51,6 +53,7 @@ const mapRelationships: MapRelationship[] = goriotRelationships.map((r) => ({
 	type: r.category,
 	label: r.label,
 	description: r.description,
+	offset: r.offset,
 	labelT: r.labelT,
 	labelDx: r.labelDx,
 	labelDy: r.labelDy,
@@ -124,6 +127,7 @@ const clientPayload = {
 	categories: goriotRelCategories,
 	stages: goriotNarrativeStages,
 	tracks: goriotGuidedTracks,
+	clusters: goriotStructuralClusters,
 };
 
 const canvasStyle = [
@@ -237,15 +241,88 @@ const canvasStyle = [
 		</div>
 	</div>
 
+	<!-- Guide pédagogique de structure du réseau relationnel -->
+	<section class="network-structure-guide" aria-label="Organisation du réseau relationnel">
+		<div class="structure-guide-header">
+			<span class="structure-guide-title">
+				<svg class="structure-guide-icon" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true">
+					<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+				</svg>
+				Structure du réseau relationnel
+			</span>
+			<p class="structure-guide-summary">
+				Ce graphe rassemble 16 personnages et 23 relations documentées. Il s’articule autour d’un <strong>noyau relationnel central</strong> (7 personnages majeurs et confidents), entouré de <strong>4 satellites distincts</strong> rattachés par des points pivots précis, et d’un <strong>personnage périphérique</strong>. Ces regroupements mettent en lumière la structure des intrigues sans enfermer les personnages : certains, comme Madame Vauquer, jouent un rôle transversal entre la sociabilité du noyau et le service de ses domestiques.
+			</p>
+		</div>
+
+		<div class="structure-clusters-nav" role="group" aria-label="Explorer les groupes du réseau">
+			<span class="clusters-nav-label">Explorer par groupe :</span>
+			<div class="cluster-chips">
+				{goriotStructuralClusters.map((cluster) => (
+					<button
+						type="button"
+						class={`cluster-chip cluster-chip--${cluster.type}`}
+						data-cluster-filter={cluster.id}
+						aria-pressed="false"
+						title={cluster.subtitle}
+					>
+						<span class="cluster-chip-badge">{cluster.tag}</span>
+						<span class="cluster-chip-name">{cluster.label.replace(/^(Satellite|Périphérie) /, '')}</span>
+					</button>
+				))}
+			</div>
+		</div>
+	</section>
+
 	<!-- Graphe SVG & Éléments positionnés -->
 	<div class="rm-frame">
 		<div class="rm-viewport" data-map-viewport>
 			<div class="rm-canvas" style={canvasStyle} data-map-canvas>
-				<!-- Repère central discret pour Rastignac -->
-				<div class="rm-anchor rm-pos" style="--x: 450; --y: 338;" aria-hidden="true">
+				<!-- Repère d'angle discret pour le roman -->
+				<div class="rm-anchor rm-pos" style="--x: 710; --y: 485;" aria-hidden="true">
 					<span class="rm-anchor-title">L’Échiquier social balzacien</span>
 					<span class="rm-anchor-sub">Rastignac au centre des ambitions et des tentations</span>
 				</div>
+
+				<!-- Zones structurales en arrière-plan (noyau et satellites) -->
+				{layouts.map(({ key, mobile, size }) => (
+					<svg
+						class={`rm-zones rm-zones--${key}`}
+						viewBox={`0 0 ${size.width} ${size.height}`}
+						preserveAspectRatio="none"
+						aria-hidden="true"
+						focusable="false"
+					>
+						{goriotStructuralClusters.map((cluster) => {
+							const rect = mobile ? cluster.mRect : cluster.dRect;
+							const labelY = rect.y + 14;
+							const labelX = rect.x + 10;
+							return (
+								<g
+									class={`rm-cluster-zone rm-cluster-zone--${cluster.type}`}
+									data-cluster-id={cluster.id}
+									data-cluster-type={cluster.type}
+								>
+									<rect
+										x={rect.x}
+										y={rect.y}
+										width={rect.w}
+										height={rect.h}
+										rx={rect.rx ?? 10}
+										ry={rect.rx ?? 10}
+										class="rm-cluster-rect"
+									/>
+									<text x={labelX} y={labelY} class="rm-cluster-tag">
+										{cluster.tag.toUpperCase()}
+									</text>
+									<text x={labelX + cluster.tag.length * 6.5 + 8} y={labelY} class="rm-cluster-name">
+										· {cluster.label}
+									</text>
+								</g>
+							);
+						})}
+					</svg>
+				))}
 
 				<!-- Définitions SVG des flèches -->
 				<svg class="rm-defs" aria-hidden="true" focusable="false" width="0" height="0">
@@ -396,6 +473,7 @@ const canvasStyle = [
 			<!-- Rôle social ou nature de la relation -->
 			<div class="rm-detail-role-wrap" data-detail-role-wrap hidden>
 				<span class="detail-badge-role" data-detail-role></span>
+				<span class="detail-badge-cluster" data-detail-cluster hidden></span>
 			</div>
 
 			<p class="rm-detail-description" data-detail-description></p>
@@ -452,7 +530,15 @@ const canvasStyle = [
 										<br />
 										<small>{c.caption}</small>
 									</th>
-									<td>{c.socialRole}</td>
+									<td>
+										<div>{c.socialRole}</div>
+										<div class="acc-cluster-info">
+											<span class={`acc-cluster-tag acc-cluster-tag--${c.clusterId.startsWith('satellite') ? 'satellite' : c.clusterId === 'core' ? 'core' : 'peripheral'}`}>
+												{c.clusterId === 'core' ? 'Noyau relationnel' : c.clusterId === 'peripheral-nucingen' ? 'Périphérie' : 'Satellite'}
+											</span>
+											<small class="acc-cluster-desc">{c.structuralRole}</small>
+										</div>
+									</td>
 									<td>
 										<ul class="acc-rels-list">
 											{relsOf.map((r) => {
@@ -490,7 +576,19 @@ const canvasStyle = [
 </div>
 
 <script>
-	import { segment, type Box } from './relationship-map/geometry';
+	import { segment, shift, type Box } from './relationship-map/geometry';
+
+	interface ClusterPayload {
+		id: string;
+		type: 'core' | 'satellite' | 'peripheral';
+		label: string;
+		subtitle: string;
+		tag: string;
+		description: string;
+		nodeIds: string[];
+		attachmentPointNodeIds: string[];
+		attachmentEdgeIds: string[];
+	}
 
 	interface CharacterPayload {
 		id: string;
@@ -509,6 +607,8 @@ const canvasStyle = [
 		};
 		color: string;
 		tier: string;
+		clusterId: string;
+		structuralRole: string;
 	}
 
 	interface RelPayload {
@@ -529,6 +629,7 @@ const canvasStyle = [
 			reference: string;
 		};
 		narrativeContext: string;
+		offset?: number;
 	}
 
 	interface CategoryPayload {
@@ -553,6 +654,7 @@ const canvasStyle = [
 		categories: Record<string, CategoryPayload>;
 		stages: Array<{ id: string; num: number; title: string; partName: string; synopsis: string }>;
 		tracks: TrackPayload[];
+		clusters: ClusterPayload[];
 	}
 
 	function initGoriotRelNetwork(appEl: HTMLElement) {
@@ -569,6 +671,8 @@ const canvasStyle = [
 		const labelButtons = qa<HTMLButtonElement>('.rm-label');
 		const edgeGroups = qa<SVGGElement>('.rm-edge');
 		const catChips = qa<HTMLButtonElement>('[data-cat-filter]');
+		const clusterChips = qa<HTMLButtonElement>('[data-cluster-filter]');
+		const clusterZones = qa<SVGGElement>('.rm-cluster-zone');
 		const trackButtons = qa<HTMLButtonElement>('[data-track-id]');
 		const stageSelect = q<HTMLSelectElement>('[data-stage-select]');
 		const searchInput = q<HTMLInputElement>('[data-search-input]');
@@ -588,6 +692,7 @@ const canvasStyle = [
 		const detailMeta = q('[data-detail-meta]');
 		const detailRoleWrap = q('[data-detail-role-wrap]');
 		const detailRole = q('[data-detail-role]');
+		const detailCluster = q('[data-detail-cluster]');
 		const detailDesc = q('[data-detail-description]');
 		const detailQuoteWrap = q('[data-detail-quote-wrap]');
 		const detailQuoteText = q('[data-detail-quote-text]');
@@ -600,6 +705,7 @@ const canvasStyle = [
 
 		const charMap = new Map(data.characters.map((c) => [c.id, c]));
 		const relMap = new Map(data.relationships.map((r) => [r.id, r]));
+		const clusterMap = new Map((data.clusters ?? []).map((cl) => [cl.id, cl]));
 		const nodeBtnById = new Map(nodeButtons.map((b) => [b.dataset.nodeId!, b]));
 
 		// État interactif
@@ -607,7 +713,11 @@ const canvasStyle = [
 		let currentStage: string = 'all'; // 'all' ou 'stage-1'..'stage-4'
 		let currentTrack: TrackPayload | null = null;
 		let searchQuery = '';
-		type Selection = { kind: 'node' | 'edge'; id: string } | null;
+		type Selection =
+			| { kind: 'node'; id: string }
+			| { kind: 'edge'; id: string }
+			| { kind: 'cluster'; id: string }
+			| null;
 		let selected: Selection = null;
 
 		const endsOf = (r: RelPayload) => [r.source, r.target];
@@ -688,10 +798,25 @@ const canvasStyle = [
 			appEl.toggleAttribute('data-active', !!sel || !!currentTrack);
 			const activeNodes = new Set<string>();
 			const relatedNodes = new Set<string>();
+			const pivotNodes = new Set<string>();
 			const activeEdges = new Set<string>();
+			const highlightedClusters = new Set<string>();
 
 			if (sel?.kind === 'node') {
 				activeNodes.add(sel.id);
+				const charData = charMap.get(sel.id);
+				if (charData?.clusterId) {
+					highlightedClusters.add(charData.clusterId);
+					const cl = clusterMap.get(charData.clusterId);
+					if (cl && cl.type !== 'core') {
+						cl.attachmentPointNodeIds.forEach((pid) => {
+							relatedNodes.add(pid);
+							pivotNodes.add(pid);
+						});
+						cl.attachmentEdgeIds.forEach((eid) => activeEdges.add(eid));
+					}
+				}
+
 				for (const r of relsOfNode(sel.id)) {
 					if (isRelVisible(r)) {
 						activeEdges.add(r.id);
@@ -704,6 +829,31 @@ const canvasStyle = [
 					activeEdges.add(r.id);
 					relatedNodes.add(r.source);
 					relatedNodes.add(r.target);
+					const sChar = charMap.get(r.source);
+					const tChar = charMap.get(r.target);
+					if (sChar?.clusterId) highlightedClusters.add(sChar.clusterId);
+					if (tChar?.clusterId) highlightedClusters.add(tChar.clusterId);
+				}
+			} else if (sel?.kind === 'cluster') {
+				highlightedClusters.add(sel.id);
+				const cl = clusterMap.get(sel.id);
+				if (cl) {
+					cl.nodeIds.forEach((nid) => activeNodes.add(nid));
+					if (cl.type !== 'core') {
+						cl.attachmentPointNodeIds.forEach((pid) => {
+							relatedNodes.add(pid);
+							pivotNodes.add(pid);
+						});
+					}
+					for (const r of data.relationships) {
+						if (cl.nodeIds.includes(r.source) && cl.nodeIds.includes(r.target) && isRelVisible(r)) {
+							activeEdges.add(r.id);
+						}
+					}
+					cl.attachmentEdgeIds.forEach((eid) => {
+						const r = relMap.get(eid);
+						if (r && isRelVisible(r)) activeEdges.add(eid);
+					});
 				}
 			} else if (currentTrack) {
 				currentTrack.focusNodeIds.forEach((nid) => activeNodes.add(nid));
@@ -714,11 +864,23 @@ const canvasStyle = [
 				const nid = btn.dataset.nodeId!;
 				btn.classList.toggle('is-active', activeNodes.has(nid));
 				btn.classList.toggle('is-related', relatedNodes.has(nid));
+				btn.classList.toggle('is-pivot', pivotNodes.has(nid));
 			}
 
 			for (const el of [...edgeGroups, ...labelButtons]) {
 				const eid = el.dataset.edgeId!;
 				el.classList.toggle('is-related', activeEdges.has(eid));
+			}
+
+			for (const zone of clusterZones) {
+				const cid = zone.dataset.clusterId!;
+				zone.classList.toggle('is-highlighted', highlightedClusters.has(cid));
+			}
+
+			for (const chip of clusterChips) {
+				const cid = chip.dataset.clusterFilter!;
+				chip.setAttribute('aria-pressed', String(sel?.kind === 'cluster' && sel.id === cid));
+				chip.classList.toggle('is-active', sel?.kind === 'cluster' && sel.id === cid);
 			}
 		}
 
@@ -738,6 +900,26 @@ const canvasStyle = [
 
 				detailRoleWrap.hidden = false;
 				detailRole.textContent = `Rôle : ${c.socialRole}`;
+
+				const cluster = clusterMap.get(c.clusterId);
+				if (cluster) {
+					detailCluster.hidden = false;
+					if (cluster.type === 'core') {
+						detailCluster.textContent = `Position : Noyau relationnel central (${c.structuralRole})`;
+					} else if (cluster.type === 'satellite') {
+						const attachmentNames = cluster.attachmentPointNodeIds
+							.map((id) => charMap.get(id)?.label ?? id)
+							.join(', ');
+						detailCluster.textContent = `Position : ${cluster.label} · Rattaché au noyau via ${attachmentNames} (${c.structuralRole})`;
+					} else {
+						const attachmentNames = cluster.attachmentPointNodeIds
+							.map((id) => charMap.get(id)?.label ?? id)
+							.join(', ');
+						detailCluster.textContent = `Position : Périphérie · Rattaché via ${attachmentNames} (${c.structuralRole})`;
+					}
+				} else {
+					detailCluster.hidden = true;
+				}
 
 				detailDesc.textContent = c.description;
 
@@ -784,7 +966,7 @@ const canvasStyle = [
 					relsList.append(li);
 				}
 				relsWrap.hidden = related.length === 0;
-			} else {
+			} else if (sel.kind === 'edge') {
 				const r = relMap.get(sel.id)!;
 				const catMeta = data.categories[r.category];
 				const src = charMap.get(r.source)!;
@@ -795,6 +977,7 @@ const canvasStyle = [
 				detailMeta.textContent = `Type : ${r.label} (Étape : ${r.firstEstablishedStage}) · Degré : ${r.certainty.replace(/_/g, ' ')}`;
 
 				detailRoleWrap.hidden = true;
+				detailCluster.hidden = true;
 				detailDesc.textContent = r.description;
 
 				// Citation textuelle sur la relation
@@ -812,6 +995,68 @@ const canvasStyle = [
 				pointsList.append(li);
 
 				relsWrap.hidden = true;
+			} else if (sel.kind === 'cluster') {
+				const cl = clusterMap.get(sel.id)!;
+				detailEyebrow.textContent = `${cl.tag.toUpperCase()} · STRUCTURE DU RÉSEAU`;
+				detailTitle.textContent = cl.label;
+				detailMeta.textContent = cl.subtitle;
+
+				detailRoleWrap.hidden = false;
+				detailRole.textContent =
+					cl.type === 'core'
+						? 'Rôle : Noyau relationnel central (forte interconnexion des protagonistes)'
+						: cl.type === 'satellite'
+							? 'Rôle : Groupe satellite (communauté autonome reliée au noyau)'
+							: 'Rôle : Sommet périphérique (faiblement connecté)';
+
+				detailCluster.hidden = false;
+				if (cl.attachmentPointNodeIds.length > 0) {
+					const attachmentNames = cl.attachmentPointNodeIds
+						.map((id) => charMap.get(id)?.label ?? id)
+						.join(', ');
+					detailCluster.textContent = `Point(s) de pivot vers le noyau : ${attachmentNames}`;
+				} else {
+					detailCluster.textContent = 'Centre gravitationnel du roman';
+				}
+
+				detailDesc.textContent = cl.description;
+				detailQuoteWrap.hidden = true;
+
+				pointsWrap.hidden = false;
+				const memberNames = cl.nodeIds.map((id) => charMap.get(id)?.label ?? id).join(', ');
+				const liMembers = document.createElement('li');
+				liMembers.innerHTML = `<strong>Personnages de ce groupe :</strong> ${memberNames}`;
+				pointsList.append(liMembers);
+
+				if (cl.attachmentPointNodeIds.length > 0) {
+					const liAttach = document.createElement('li');
+					const pNames = cl.attachmentPointNodeIds.map((id) => charMap.get(id)?.label ?? id).join(' et ');
+					liAttach.innerHTML = `<strong>Point(s) de pivot vers le noyau :</strong> relié à <em>${pNames}</em>`;
+					pointsList.append(liAttach);
+				}
+
+				// Relations du groupe
+				relsWrap.hidden = false;
+				const relsToShow = data.relationships.filter(
+					(r) =>
+						(cl.nodeIds.includes(r.source) && cl.nodeIds.includes(r.target)) ||
+						cl.attachmentEdgeIds.includes(r.id),
+				);
+				for (const r of relsToShow) {
+					const li = document.createElement('li');
+					const isAttach = cl.attachmentEdgeIds.includes(r.id);
+					const badge = document.createElement('span');
+					badge.className = 'rm-rel-badge';
+					badge.textContent = isAttach
+						? `Lien de rattachement au noyau · ${r.label}`
+						: `Lien interne au groupe · ${r.label}`;
+					li.append(badge);
+
+					const src = charMap.get(r.source)!;
+					const tgt = charMap.get(r.target)!;
+					li.append(` ${src.label} ↔ ${tgt.label} : ${r.shortSummary}`);
+					relsList.append(li);
+				}
 			}
 		}
 
@@ -822,6 +1067,10 @@ const canvasStyle = [
 			}
 			for (const btn of labelButtons) {
 				btn.setAttribute('aria-pressed', String(sel?.kind === 'edge' && btn.dataset.edgeId === sel.id));
+			}
+			for (const chip of clusterChips) {
+				chip.setAttribute('aria-pressed', String(sel?.kind === 'cluster' && chip.dataset.clusterFilter === sel.id));
+				chip.classList.toggle('is-active', sel?.kind === 'cluster' && chip.dataset.clusterFilter === sel.id);
 			}
 			highlight(sel);
 			populate(sel);
@@ -845,6 +1094,16 @@ const canvasStyle = [
 
 		nodeButtons.forEach((btn) => bindNode(btn, { kind: 'node', id: btn.dataset.nodeId! }));
 		labelButtons.forEach((btn) => bindNode(btn, { kind: 'edge', id: btn.dataset.edgeId! }));
+
+		clusterChips.forEach((chip) => {
+			const cid = chip.dataset.clusterFilter!;
+			const sel: Selection = { kind: 'cluster', id: cid };
+			chip.addEventListener('click', () => (isSame(selected, sel) ? clear() : select(sel)));
+			chip.addEventListener('pointerenter', (e) => e.pointerType === 'mouse' && highlight(sel));
+			chip.addEventListener('pointerleave', (e) => e.pointerType === 'mouse' && highlight(selected));
+			chip.addEventListener('focus', () => highlight(sel));
+			chip.addEventListener('blur', () => highlight(selected));
+		});
 
 		// Navigation clavier fléchée entre nœuds
 		nodeButtons.forEach((btn, i) => {
@@ -1003,7 +1262,9 @@ const canvasStyle = [
 				};
 				for (const g of svg.querySelectorAll<SVGGElement>('.rm-edge')) {
 					const [source, ...targets] = g.dataset.ends!.split(' ');
-					const { start, end } = segment(box(source), targets.map(box));
+					const relData = relMap.get(g.dataset.edgeId!);
+					const rawSeg = segment(box(source), targets.map(box));
+					const { start, end } = relData?.offset ? shift(rawSeg, relData.offset * k) : rawSeg;
 					const line = g.querySelector('line')!;
 					line.setAttribute('x1', start.x.toFixed(1));
 					line.setAttribute('y1', start.y.toFixed(1));
@@ -1293,6 +1554,126 @@ const canvasStyle = [
 	}
 
 	/* ==========================================================================
+	   GUIDE PÉDAGOGIQUE DE STRUCTURE DU RÉSEAU (Noyau, satellites, périphérie)
+	   ========================================================================== */
+	.network-structure-guide {
+		background: #ffffff;
+		border: 1px solid var(--map-border);
+		border-left: 4px solid var(--intro-eyebrow-color, #8b572a);
+		border-radius: 10px;
+		padding: 1.1rem 1.35rem;
+		margin-bottom: 1.5rem;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+	}
+
+	.structure-guide-header {
+		margin-bottom: 0.85rem;
+	}
+
+	.structure-guide-title {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-family: var(--map-serif);
+		font-size: 1.05rem;
+		font-weight: bold;
+		color: var(--map-ink);
+		margin-bottom: 0.35rem;
+	}
+
+	.structure-guide-icon {
+		color: var(--intro-eyebrow-color, #8b572a);
+		flex-shrink: 0;
+	}
+
+	.structure-guide-summary {
+		margin: 0;
+		font-size: 0.88rem;
+		line-height: 1.5;
+		color: var(--map-ink-soft);
+	}
+
+	.structure-clusters-nav {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem 0.85rem;
+		padding-top: 0.75rem;
+		border-top: 1px solid var(--map-border-soft);
+	}
+
+	.clusters-nav-label {
+		font-size: 0.82rem;
+		font-weight: 600;
+		color: var(--map-muted);
+	}
+
+	.cluster-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+	}
+
+	.cluster-chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		padding: 0.35rem 0.7rem;
+		border: 1px solid var(--map-border);
+		border-radius: 6px;
+		background: #ffffff;
+		font-size: 0.82rem;
+		color: var(--map-ink);
+		cursor: pointer;
+		transition: all 0.15s ease;
+	}
+
+	.cluster-chip:hover {
+		border-color: var(--map-accent);
+		background: var(--map-surface);
+	}
+
+	.cluster-chip:focus-visible {
+		outline: 2px solid var(--map-accent);
+		outline-offset: 1px;
+	}
+
+	.cluster-chip.is-active,
+	.cluster-chip[aria-pressed='true'] {
+		border-color: var(--map-accent);
+		background: #eff6ff;
+		box-shadow: 0 0 0 1px var(--map-accent);
+	}
+
+	.cluster-chip-badge {
+		font-size: 0.68rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		padding: 0.1rem 0.35rem;
+		border-radius: 3px;
+	}
+
+	.cluster-chip--core .cluster-chip-badge {
+		background: #fef3c7;
+		color: #92400e;
+	}
+
+	.cluster-chip--satellite .cluster-chip-badge {
+		background: #dbeafe;
+		color: #1e40af;
+	}
+
+	.cluster-chip--peripheral .cluster-chip-badge {
+		background: #f1f5f9;
+		color: #475569;
+	}
+
+	.cluster-chip-name {
+		font-weight: 500;
+	}
+
+	/* ==========================================================================
 	   CADRE & CANEVAS (Graphe SVG)
 	   ========================================================================== */
 	.rm-frame {
@@ -1357,6 +1738,109 @@ const canvasStyle = [
 		margin-top: 0.15rem;
 	}
 
+	/* ZONES STRUCTURALES D'ARRIÈRE-PLAN */
+	.rm-zones {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+		z-index: 1;
+		overflow: visible;
+	}
+
+	.rm-zones--mobile {
+		display: none;
+	}
+
+	.rm-cluster-zone {
+		transition: opacity 0.25s ease;
+	}
+
+	.rm-cluster-rect {
+		fill: rgba(248, 250, 252, 0.45);
+		stroke: rgba(148, 163, 184, 0.4);
+		stroke-width: 1.2;
+		stroke-dasharray: 4 3;
+		transition: fill 0.25s ease, stroke 0.25s ease, stroke-width 0.25s ease;
+	}
+
+	.rm-cluster-zone--core .rm-cluster-rect {
+		fill: rgba(254, 243, 199, 0.25);
+		stroke: rgba(217, 119, 6, 0.45);
+		stroke-dasharray: none;
+		stroke-width: 1.5;
+	}
+
+	.rm-cluster-zone--satellite .rm-cluster-rect {
+		fill: rgba(239, 246, 255, 0.35);
+		stroke: rgba(59, 130, 246, 0.35);
+		stroke-dasharray: 5 3;
+	}
+
+	.rm-cluster-zone--peripheral .rm-cluster-rect {
+		fill: rgba(241, 245, 249, 0.3);
+		stroke: rgba(148, 163, 184, 0.4);
+		stroke-dasharray: 3 3;
+	}
+
+	.rm-cluster-tag {
+		font-family: var(--map-sans, sans-serif);
+		font-size: 9px;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		fill: #64748b;
+	}
+
+	.rm-cluster-zone--core .rm-cluster-tag {
+		fill: #b45309;
+	}
+
+	.rm-cluster-zone--satellite .rm-cluster-tag {
+		fill: #2563eb;
+	}
+
+	.rm-cluster-name {
+		font-family: var(--map-serif);
+		font-size: 10px;
+		font-style: italic;
+		font-weight: 600;
+		fill: #475569;
+	}
+
+	.rm-cluster-zone--core .rm-cluster-name {
+		fill: #92400e;
+	}
+
+	.rm-cluster-zone--satellite .rm-cluster-name {
+		fill: #1e40af;
+	}
+
+	.rm-cluster-zone.is-highlighted .rm-cluster-rect {
+		stroke-width: 2.2;
+	}
+
+	.rm-cluster-zone--core.is-highlighted .rm-cluster-rect {
+		fill: rgba(254, 243, 199, 0.55);
+		stroke: #d97706;
+	}
+
+	.rm-cluster-zone--satellite.is-highlighted .rm-cluster-rect {
+		fill: rgba(219, 234, 254, 0.6);
+		stroke: #2563eb;
+		stroke-dasharray: none;
+	}
+
+	.rm-cluster-zone--peripheral.is-highlighted .rm-cluster-rect {
+		fill: rgba(226, 232, 240, 0.6);
+		stroke: #64748b;
+		stroke-dasharray: none;
+	}
+
+	[data-active] .rm-cluster-zone:not(.is-highlighted) {
+		opacity: 0.35;
+	}
+
 	/* ARÊTES */
 	.rm-defs {
 		position: absolute;
@@ -1409,7 +1893,7 @@ const canvasStyle = [
 	}
 
 	.rm-labels {
-		z-index: 3;
+		z-index: 5;
 	}
 
 	.rm-nodes {
@@ -1485,6 +1969,7 @@ const canvasStyle = [
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 		border-color: var(--map-accent);
 		border-top-color: var(--node-color);
+		z-index: 6;
 	}
 
 	.rm-node:focus-visible {
@@ -1586,7 +2071,19 @@ const canvasStyle = [
 		background: var(--node-color);
 	}
 
-	[data-active] .rm-node:not(.is-active, .is-related) {
+	.rm-node.is-pivot {
+		border-color: #d97706;
+		box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.45), 0 4px 14px rgba(217, 119, 6, 0.18);
+		z-index: 5;
+	}
+
+	.rm-node.is-pivot .rm-node-bullet {
+		background: #d97706;
+		border-color: #d97706;
+		transform: scale(1.15);
+	}
+
+	[data-active] .rm-node:not(.is-active, .is-related, .is-pivot) {
 		opacity: 0.38;
 	}
 
@@ -1714,6 +2211,18 @@ const canvasStyle = [
 		border-radius: 4px;
 		font-size: 0.82rem;
 		color: var(--map-ink);
+		font-weight: 600;
+	}
+
+	.detail-badge-cluster {
+		display: inline-block;
+		margin-left: 0.5rem;
+		padding: 0.2rem 0.55rem;
+		background: #eef2ff;
+		border: 1px solid #c7d2fe;
+		border-radius: 4px;
+		font-size: 0.82rem;
+		color: #3730a3;
 		font-weight: 600;
 	}
 
@@ -1932,6 +2441,48 @@ const canvasStyle = [
 		border-color: var(--map-ink);
 	}
 
+	.acc-cluster-info {
+		margin-top: 0.35rem;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.35rem;
+	}
+
+	.acc-cluster-tag {
+		display: inline-block;
+		font-size: 0.68rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		padding: 0.08rem 0.35rem;
+		border-radius: 3px;
+	}
+
+	.acc-cluster-tag--core {
+		background: #fef3c7;
+		color: #92400e;
+		border: 1px solid #fde68a;
+	}
+
+	.acc-cluster-tag--satellite {
+		background: #dbeafe;
+		color: #1e40af;
+		border: 1px solid #bfdbfe;
+	}
+
+	.acc-cluster-tag--peripheral {
+		background: #f1f5f9;
+		color: #475569;
+		border: 1px solid #e2e8f0;
+	}
+
+	.acc-cluster-desc {
+		font-size: 0.78rem;
+		color: var(--map-muted);
+		font-style: italic;
+	}
+
 	/* RESPONSIVE */
 	@media (max-width: 900px) {
 		.rm-node {
@@ -1972,6 +2523,24 @@ const canvasStyle = [
 		.rm-pos {
 			--px: var(--mx, var(--x));
 			--py: var(--my, var(--y));
+		}
+
+		.rm-zones--desktop {
+			display: none;
+		}
+
+		.rm-zones--mobile {
+			display: block;
+		}
+
+		.rm-anchor {
+			display: none;
+		}
+
+		.detail-badge-cluster {
+			display: block;
+			margin-left: 0;
+			margin-top: 0.35rem;
 		}
 
 		.rm-lines--desktop {
