@@ -395,6 +395,226 @@ export function detectDescriptiveProfiles(
 	return profiles;
 }
 
+export interface WorkPedagogicalExplanation {
+	shapeTitle: string;
+	nature: 'exact_shape' | 'descriptive_trend';
+	natureLabel: string;
+	studentExplanation: string;
+	mathCharacteristics?: string;
+	literaryContext?: string;
+}
+
+/**
+ * Construit une explication pédagogique spécifique à une œuvre littéraire ou dynamique pour un réseau général.
+ * S'adresse à un élève de seconde, distingue forme mathématique exacte et description de structure,
+ * et s'appuie scrupuleusement sur les arêtes et sommets réels.
+ */
+export function getWorkSpecificExplanation(
+	report: NetworkStructureReport,
+	workTitle?: string
+): WorkPedagogicalExplanation {
+	const title = (workTitle ?? '').toLowerCase();
+	const V = report.analyzedNodeCount;
+	const E = report.connectedPairCount;
+	const dominantId = report.metrics.dominantNodeId;
+	const dominantDegree = report.metrics.degrees.max;
+	const otherEdges = Math.max(0, E - dominantDegree);
+
+	// 1. Perceval / Le Conte du Graal (Chrétien de Troyes)
+	if (title.includes('perceval') || title.includes('graal')) {
+		return {
+			shapeTitle: 'Réseau très centré sur un personnage (étoile avec ramifications)',
+			nature: 'descriptive_trend',
+			natureLabel: 'Description de la structure',
+			mathCharacteristics:
+				'Ce schéma ne forme pas une étoile mathématique parfaite car des liens relient aussi certains personnages secondaires entre eux. Il s’agit d’une description de tendance et non d’une figure géométrique stricte.',
+			studentExplanation:
+				'En observant le schéma, on remarque que Perceval occupe le centre et se relie directement aux treize autres personnages ou objets. Mais cinq relations secondaires existent aussi entre d’autres éléments (par exemple la mère avec le père et les frères, Gornemant avec Blanchefleur, ou Arthur avec Keu et Gauvain). Le réseau possède donc un centre prédominant tout en comportant des liens secondaires : ce n’est pas une étoile mathématique parfaite.',
+			literaryContext:
+				'Sur le plan littéraire, cette forte centralité met en valeur le parcours initiatique du héros, qui découvre le monde au fil de ses rencontres successives.',
+		};
+	}
+
+	// 2. Dom Juan (Molière)
+	if (title.includes('dom juan') || title.includes('don juan')) {
+		return {
+			shapeTitle: 'Étoile stricte',
+			nature: 'exact_shape',
+			natureLabel: 'Forme mathématique exacte',
+			mathCharacteristics:
+				'En théorie des graphes, une étoile désigne un arbre où un sommet central unique est relié à tous les autres (les sommets périphériques), sans aucun lien direct entre ces derniers.',
+			studentExplanation:
+				'Sur le schéma, chaque trait part de Dom Juan vers l’une des sept autres figures, sans qu’aucun trait ne relie les autres entre elles. Avec un sommet central et sept sommets périphériques isolés les uns des autres, le graphe forme mathématiquement une étoile stricte.',
+			literaryContext:
+				'Cette structure visuelle traduit le choix dramaturgique de la pièce, construite comme une succession de face-à-face entre le protagoniste et ses contradicteurs. Elle ne permet pas de conclure sur la psychologie des personnages ni d’affirmer qu’ils n’ont aucun rapport en dehors des scènes représentées.',
+		};
+	}
+
+	// 3. Le Père Goriot (Honoré de Balzac)
+	if (title.includes('goriot')) {
+		return {
+			shapeTitle: 'Réseau à noyau et périphérie',
+			nature: 'descriptive_trend',
+			natureLabel: 'Description de la structure',
+			mathCharacteristics:
+				'Ce modèle sociologique décrit une division entre un cœur très dense de relations et une marge peu connectée, sans constituer une catégorie géométrique stricte.',
+			studentExplanation:
+				'Sur le schéma, les relations ne sont pas réparties de façon uniforme. On observe un noyau central resserré autour de Rastignac (sept liens) et du père Goriot (six liens), rejoints par Delphine et Vautrin, tandis que des figures comme Poiret ou Sylvie restent en périphérie avec un seul lien.',
+			literaryContext:
+				'Cette organisation illustre le fonctionnement du roman balzacien : Rastignac et Goriot servent de passerelles entre le monde modeste de la pension Vauquer et les salons aristocratiques parisiens.',
+		};
+	}
+
+	// 4. Lettres d'une Péruvienne (Françoise de Graffigny)
+	if (title.includes('péruvienne') || title.includes('peruvienne') || title.includes('graffigny')) {
+		return {
+			shapeTitle: 'Réseau centré sur une narratrice avec noyau relationnel',
+			nature: 'descriptive_trend',
+			natureLabel: 'Description de la structure',
+			mathCharacteristics:
+				'Ce profil associe un pôle principal et un sous-groupe familial interconnecté, sans correspondre à une figure mathématique idéale.',
+			studentExplanation:
+				'Sur le schéma, Zilia rassemble sept relations directes, ce qui en fait la figure la plus connectée du réseau. À côté d’elle, ses protecteurs français (Déterville, sa sœur Céline et leur mère) sont également reliés entre eux par des liens familiaux.',
+			literaryContext:
+				'La position centrale de Zilia découle directement de la forme épistolaire, dont elle est la rédactrice presque exclusive. Ce schéma montre comment l’héroïne exilée s’insère progressivement dans un nouveau cercle d’attaches en France.',
+		};
+	}
+
+	// 5. Pot-Bouille (Émile Zola)
+	if (title.includes('pot-bouille') || title.includes('pot bouille')) {
+		return {
+			shapeTitle: 'Réseau distribué et multipolaire',
+			nature: 'descriptive_trend',
+			natureLabel: 'Description de la structure',
+			mathCharacteristics:
+				'Le réseau est dit multipolaire et distribué car les liaisons s’articulent autour de plusieurs figures maîtresses sans dépendre d’un sommet unique.',
+			studentExplanation:
+				'En observant le schéma, on constate que la centralité est partagée principalement entre Octave Mouret et Berthe Josserand, qui comptent chacun six liens. Autour d’eux, les autres habitants s’organisent en foyers familiaux distincts (comme les familles Josserand et Vabre). Le réseau n’est pas sans centre : il est multipolaire et distribué, avec plusieurs points d’ancrage dans l’immeuble.',
+			literaryContext:
+				'Cette multiplicité de foyers traduit l’ambition naturaliste de Zola : le véritable sujet du livre est l’immeuble tout entier, où s’entrecroisent les rivalités d’argent, les faux-semblants et les liaisons entre appartements.',
+		};
+	}
+
+	// 6. On ne badine pas avec l'amour (Alfred de Musset)
+	if (title.includes('badine') || title.includes('musset')) {
+		return {
+			shapeTitle: 'Réseau partagé à plusieurs pôles',
+			nature: 'descriptive_trend',
+			natureLabel: 'Description de la structure',
+			mathCharacteristics:
+				'Ce réseau ne possède pas de centre mathématique unique : le degré le plus élevé (quatre liens) est partagé entre deux personnages distincts.',
+			studentExplanation:
+				'Sur le schéma, les relations s’articulent autour de deux figures principales à quatre liens (Perdican et Camille), entourées par Rosette et le Baron (trois liens chacun). On repère au centre le trio amoureux (Perdican, Camille, Rosette), relié aux figures tutélaires du château.',
+			literaryContext:
+				'Cette disposition souligne le contraste au cœur du drame romantique : le jeu d’orgueil cruel entre les deux cousins se déroule en parallèle des disputes dérisoires des tuteurs comiques.',
+		};
+	}
+
+	// 7. Balzac-Rimbaud
+	if (title.includes('rimbaud') || title.includes('marx') || title.includes('balzac')) {
+		return {
+			shapeTitle: 'Cycle fermé',
+			nature: 'exact_shape',
+			natureLabel: 'Forme mathématique exacte',
+			mathCharacteristics:
+				'En théorie des graphes, un cycle simple désigne une suite fermée de sommets où chaque sommet possède exactement deux voisins.',
+			studentExplanation:
+				'Sur le schéma, les cinq figures (Balzac, Rastignac, Rimbaud, la Commune et Marx) se succèdent le long d’une boucle fermée continue. Chacune des cinq figures est reliée à exactement deux voisines : il s’agit mathématiquement d’un cycle simple (C₅).',
+			literaryContext:
+				'Cette boucle constitue un dispositif d’analyse reliant littérature, poésie et pensée politique au XIXᵉ siècle. Elle propose une mise en résonance de textes et d’événements sans affirmer une chaîne de causalité historique directe entre eux.',
+		};
+	}
+
+	// Cas générique dynamique
+	if (report.exactShapes.includes('star')) {
+		return {
+			shapeTitle: 'Étoile stricte',
+			nature: 'exact_shape',
+			natureLabel: 'Forme mathématique exacte',
+			mathCharacteristics:
+				'En théorie des graphes, une « étoile » est une forme mathématique précise : un sommet central unique est relié à tous les autres, sans aucun lien direct entre ces derniers.',
+			studentExplanation: `Le réseau compte ${V} sommets et ${E} liens simples. Toutes les relations convergent vers un seul sommet central (${dominantId ?? 'le centre'}), sans aucun échange direct entre les autres. C'est une étoile stricte.`,
+		};
+	}
+
+	if (report.exactShapes.includes('cycle')) {
+		return {
+			shapeTitle: 'Cycle fermé',
+			nature: 'exact_shape',
+			natureLabel: 'Forme mathématique exacte',
+			mathCharacteristics:
+				'En théorie des graphes, un « cycle » est une boucle fermée où chaque sommet est relié à exactement deux voisins.',
+			studentExplanation: `Chacun des ${V} sommets est relié à exactement deux autres sommets, formant une boucle fermée continue de ${E} liens.`,
+		};
+	}
+
+	if (report.exactShapes.includes('chain')) {
+		return {
+			shapeTitle: 'Chaîne linéaire',
+			nature: 'exact_shape',
+			natureLabel: 'Forme mathématique exacte',
+			mathCharacteristics:
+				'Une chaîne est une suite ordonnée de sommets où chaque sommet intermédiaire a exactement deux voisins et chaque extrémité en a un seul.',
+			studentExplanation: `Les ${V} figures se rencontrent de proche en proche le long d'une ligne continue de ${E} liens, d'une extrémité à l'autre.`,
+		};
+	}
+
+	if (report.exactShapes.includes('tree')) {
+		return {
+			shapeTitle: 'Arbre ramifié',
+			nature: 'exact_shape',
+			natureLabel: 'Forme mathématique exacte',
+			mathCharacteristics:
+				'Un arbre est un réseau connexe sans aucun cycle : pour V sommets, il possède exactement V - 1 arêtes.',
+			studentExplanation: `Le réseau compte ${V} sommets et ${E} liens sans former aucune boucle fermée. Les relations se ramifient sans jamais se refermer.`,
+		};
+	}
+
+	if (report.descriptiveProfiles.includes('single_hub_dominated')) {
+		return {
+			shapeTitle: 'Réseau fortement centré (avec liens secondaires)',
+			nature: 'descriptive_trend',
+			natureLabel: 'Description de la structure',
+			mathCharacteristics:
+				'Ce réseau présente une forte centralité autour d’une figure principale, mais comporte aussi des connexions secondaires qui l’éloignent d’une étoile géométrique pure.',
+			studentExplanation: `Le réseau est très centré sur ${dominantId ?? 'une figure principale'} (${dominantDegree} relations directes sur ${V - 1} possibles). Cependant, ${otherEdges} autre${otherEdges > 1 ? 's relations relient' : ' relation relie'} certains personnages entre eux : ce n'est donc pas une étoile parfaite, mais un centre dominant entouré de liens secondaires.`,
+		};
+	}
+
+	if (report.descriptiveProfiles.includes('core_periphery')) {
+		return {
+			shapeTitle: 'Réseau à noyau et périphérie',
+			nature: 'descriptive_trend',
+			natureLabel: 'Description de la structure',
+			mathCharacteristics:
+				'Cette structure regroupe un ensemble dense de sommets très interconnectés et une périphérie de sommets peu reliés.',
+			studentExplanation:
+				'Le réseau s’organise entre un groupe central resserré et des figures plus isolées en périphérie. Cette disposition décrit une tendance de l’intrigue, et non une figure géométrique rigide.',
+		};
+	}
+
+	if (report.descriptiveProfiles.includes('fragmented')) {
+		return {
+			shapeTitle: 'Réseau fragmenté en mondes séparés',
+			nature: 'descriptive_trend',
+			natureLabel: 'Description de la structure',
+			mathCharacteristics:
+				'Le graphe comprend plusieurs composantes disjointes : il n’existe aucun chemin reliant un groupe à l’autre.',
+			studentExplanation:
+				'Le réseau est divisé en plusieurs groupes hermétiques qui ne communiquent pas directement entre eux sur ce schéma.',
+		};
+	}
+
+	return {
+		shapeTitle: 'Réseau distribué et interconnecté',
+		nature: 'descriptive_trend',
+		natureLabel: 'Description de la structure',
+		mathCharacteristics:
+			'La structure ne suit pas de figure géométrique particulière : les liens sont répartis entre plusieurs figures sans centre exclusif.',
+		studentExplanation: `Les relations sont réparties entre les ${V} personnages sans qu'aucun ne domine de façon écrasante le schéma.`,
+	};
+}
+
 /**
  * Construit une synthèse didactique et pédagogique adaptée aux élèves de collège et lycée.
  */
@@ -405,7 +625,11 @@ export function buildPedagogicalSynthesis(
 	nodeCount: number
 ): {
 	shapeTitle: string;
+	nature: 'exact_shape' | 'descriptive_trend';
+	natureLabel: string;
 	description: string;
+	studentExplanation: string;
+	mathCharacteristics?: string;
 	literaryQuestion: string;
 	pedagogicalAdvice: string;
 	criticalLimitation: string;
@@ -413,7 +637,11 @@ export function buildPedagogicalSynthesis(
 	if (nodeCount <= 1) {
 		return {
 			shapeTitle: 'Personnage isolé ou scène vide',
+			nature: 'exact_shape',
+			natureLabel: 'Forme mathématique exacte',
 			description: 'Le réseau ne comporte qu’un seul personnage ou aucune interaction.',
+			studentExplanation:
+				'Le schéma ne comporte qu’une seule figure ou aucun lien : il n’y a pas d’échange à observer entre personnages.',
 			literaryQuestion: 'Ce personnage est-il dans un monologue intérieur ou en marge du monde ?',
 			pedagogicalAdvice: 'Observer si cette solitude ouvre ou clôt le récit.',
 			criticalLimitation: 'Les outils de réseaux ne mesurent pas la vie intérieure du personnage.',
@@ -423,7 +651,12 @@ export function buildPedagogicalSynthesis(
 	if (exactShapes.includes('star')) {
 		return {
 			shapeTitle: 'Réseau en étoile stricte',
+			nature: 'exact_shape',
+			natureLabel: 'Forme mathématique exacte',
+			mathCharacteristics:
+				'En théorie des graphes, une étoile désigne un arbre où un sommet central unique est relié à tous les autres, sans aucun lien direct entre ces derniers.',
 			description: `Tout le réseau gravite autour d'un personnage central unique (${dominantNodeId ?? 'le centre'}), sans aucun échange direct entre les autres.`,
+			studentExplanation: `Sur le schéma, chaque ligne part du personnage central (${dominantNodeId ?? 'le centre'}) pour rejoindre un interlocuteur distinct, sans qu’aucun lien ne relie les autres entre eux. C'est la définition mathématique exacte d'une étoile.`,
 			literaryQuestion: 'Pourquoi les personnages secondaires ne se parlent-ils jamais entre eux ?',
 			pedagogicalAdvice: 'Ce schéma est typique d’un parcours initiatique individuel ou d’un maître absolu.',
 			criticalLimitation: 'Ce modèle reflète souvent un choix didactique d’enseignement centré sur le héros plutôt que l’ensemble du roman.',
@@ -433,7 +666,12 @@ export function buildPedagogicalSynthesis(
 	if (descriptiveProfiles.includes('single_hub_dominated')) {
 		return {
 			shapeTitle: 'Réseau fortement centré (étoile avec ramifications)',
+			nature: 'descriptive_trend',
+			natureLabel: 'Description de la structure',
+			mathCharacteristics:
+				'Ce réseau présente une forte centralité autour d’une figure principale, mais comporte aussi des connexions secondaires qui l’éloignent d’une étoile géométrique pure.',
 			description: `Le réseau est largement dominé par ${dominantNodeId ?? 'un personnage phare'}, mais quelques liens secondaires existent entre certains personnages.`,
+			studentExplanation: `Le réseau est fortement concentré autour de ${dominantNodeId ?? 'la figure principale'}, mais d’autres relations existent entre les personnages secondaires : ce n'est donc pas une étoile parfaite, mais une tendance structurelle très marquée.`,
 			literaryQuestion: 'Les relations entre personnages secondaires complotent-elles contre le héros ou l’aident-elles ?',
 			pedagogicalAdvice: 'Identifier les triangles fermés pour voir quels personnages forment une alliance locale.',
 			criticalLimitation: 'La centralité du héros sur la carte n’empêche pas des intrigues parallèles d’exister dans le texte.',
@@ -443,7 +681,13 @@ export function buildPedagogicalSynthesis(
 	if (exactShapes.includes('cycle')) {
 		return {
 			shapeTitle: 'Réseau en boucle (cycle fermé)',
+			nature: 'exact_shape',
+			natureLabel: 'Forme mathématique exacte',
+			mathCharacteristics:
+				'En théorie des graphes, un cycle désigne une chaîne fermée : chaque sommet est relié à exactement deux voisins, formant une boucle ininterrompue.',
 			description: 'Chaque figure est reliée à exactement deux autres pour former un cercle continu.',
+			studentExplanation:
+				'En suivant les liens, on peut parcourir toutes les figures et revenir au point de départ sans jamais passer deux fois par le même chemin : c’est un cycle exact.',
 			literaryQuestion: 'L’action tourne-t-elle en rond ou s’agit-il d’un enchaînement d’influences mutuelles ?',
 			pedagogicalAdvice: 'Parfait pour modéliser une chaîne causale ou un dialogue d’idées contrastées.',
 			criticalLimitation: 'Une boucle fermée peut être un schéma théorique de commentaire plutôt qu’une pièce de théâtre.',
@@ -453,7 +697,13 @@ export function buildPedagogicalSynthesis(
 	if (exactShapes.includes('chain')) {
 		return {
 			shapeTitle: 'Réseau en chaîne (parcours linéaire)',
+			nature: 'exact_shape',
+			natureLabel: 'Forme mathématique exacte',
+			mathCharacteristics:
+				'Une chaîne est une suite de sommets ordonnés où chaque sommet intermédiaire a exactement deux voisins et chaque extrémité en a un.',
 			description: 'Les personnages se rencontrent à la file indienne, d’une extrémité à l’autre.',
+			studentExplanation:
+				'Les personnages se rencontrent successivement à la file indienne : chaque étape mène à la suivante sans retour en arrière.',
 			literaryQuestion: 'S’agit-il d’un voyage étape par étape ou d’une transmission d’objet/lettre ?',
 			pedagogicalAdvice: 'Suivre la chronologie du récit pour voir si le voyageur avance le long de cette chaîne.',
 			criticalLimitation: 'Une chaîne écrase les retours en arrière et les rencontres simultanées.',
@@ -463,7 +713,13 @@ export function buildPedagogicalSynthesis(
 	if (descriptiveProfiles.includes('core_periphery')) {
 		return {
 			shapeTitle: 'Réseau à noyau et périphérie (monde clos et satellites)',
+			nature: 'descriptive_trend',
+			natureLabel: 'Description de la structure',
+			mathCharacteristics:
+				'Cette structure regroupe un ensemble dense de sommets très interconnectés et une périphérie de sommets peu reliés.',
 			description: 'Un groupe central de personnages est très soudé, tandis que d’autres personnages restent en marge.',
+			studentExplanation:
+				'Le schéma met en valeur un groupe central très resserré et des personnages secondaires en périphérie. Cette répartition décrit l’organisation des relations, et non une catégorie géométrique stricte.',
 			literaryQuestion: 'Qui fait partie du salon fermé ou de la famille, et qui frappe à la porte de l’extérieur ?',
 			pedagogicalAdvice: 'Opposer la sociabilité intense du noyau à l’isolement des témoins périphériques.',
 			criticalLimitation: 'La position périphérique peut refléter un rôle d’observateur moral capital pour le lecteur.',
@@ -473,7 +729,13 @@ export function buildPedagogicalSynthesis(
 	if (descriptiveProfiles.includes('fragmented')) {
 		return {
 			shapeTitle: 'Réseau fragmenté (mondes séparés)',
+			nature: 'descriptive_trend',
+			natureLabel: 'Description de la structure',
+			mathCharacteristics:
+				'Le graphe comprend plusieurs composantes disjointes sans chemin reliant les différents groupes.',
 			description: 'Le réseau est divisé en plusieurs groupes hermétiques qui ne communiquent pas entre eux.',
+			studentExplanation:
+				'Le schéma montre plusieurs sous-groupes séparés qui n’ont aucun lien direct entre eux.',
 			literaryQuestion: 'Qu’est-ce qui empêche ces groupes de se rencontrer (barrière sociale, distance, intrigue double) ?',
 			pedagogicalAdvice: 'Chercher si un personnage messager finira par créer un pont entre ces mondes.',
 			criticalLimitation: 'Une coupure dans le graphe peut être provisoire avant le dénouement de la pièce.',
@@ -482,7 +744,13 @@ export function buildPedagogicalSynthesis(
 
 	return {
 		shapeTitle: 'Réseau distribué et interconnecté',
+		nature: 'descriptive_trend',
+		natureLabel: 'Description de la structure',
+		mathCharacteristics:
+			'La structure ne suit pas de figure géométrique particulière : les liens sont disséminés entre plusieurs figures.',
 		description: 'Les relations sont réparties entre de multiples personnages sans domination exclusive.',
+		studentExplanation:
+			'Les relations sont distribuées entre les personnages sans qu’une figure unique n’accapare le réseau.',
 		literaryQuestion: 'Comment le pouvoir et la parole circulent-ils au sein du groupe ?',
 		pedagogicalAdvice: 'Observer les différents sous-groupes et rivalités équilibrées.',
 		criticalLimitation: 'Un réseau équilibré graphiquement n’implique pas une égalité sociale entre les personnages.',

@@ -135,7 +135,11 @@ export interface NetworkStructureReport {
 	// 7. Restitution didactique et pédagogique
 	pedagogicalSynthesis: {
 		shapeTitle: string;
+		nature: 'exact_shape' | 'descriptive_trend';
+		natureLabel: string;
 		description: string;
+		studentExplanation: string;
+		mathCharacteristics?: string;
 		literaryQuestion: string;
 		pedagogicalAdvice: string;
 		criticalLimitation: string;

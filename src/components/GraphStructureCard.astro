@@ -1,5 +1,6 @@
 ---
 import type { NetworkStructureReport } from '../lib/graph/structure-types';
+import { getWorkSpecificExplanation } from '../lib/graph/structure';
 
 interface Props {
 	report: NetworkStructureReport;
@@ -15,288 +16,501 @@ const {
 	analyzedNodeCount: V,
 	analyzedEdgeCount: E_typed,
 	connectedPairCount: E_simple,
-	exactShapes,
-	descriptiveProfiles,
 	metrics,
 	roles,
 	pedagogicalSynthesis,
 } = report;
 
-// Formatage des métriques
+// Récupération de l'explication adaptée à l'œuvre et adaptée pour un élève de seconde
+const explanation = getWorkSpecificExplanation(report, workTitle);
+
+// Formatage des métriques techniques secondaires
 const densityPercent = (metrics.density * 100).toFixed(1);
 const freemanPercent = (metrics.centralization.degreeCentralization * 100).toFixed(1);
 const cyclomatic = metrics.cycles.cycleCountEstimate;
 const k = metrics.connectedComponentCount;
 
-// Formatage de la distribution des degrés
+// Distribution des degrés
 const degreeEntries = Object.entries(metrics.degrees.histogram)
 	.map(([deg, count]) => ({ deg: Number(deg), count }))
 	.sort((a, b) => b.deg - a.deg);
+
+const noteId = `note-forme-reseau-${(workTitle ?? 'oeuvre').toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 ---
 
-<section class={`graph-structure-card ${className}`} aria-labelledby="graph-analysis-title">
-	<div class="gsc-header">
-		<div class="gsc-badge-group">
-			<span class="gsc-badge gsc-badge-type">Type de graphe</span>
-			<span class="gsc-shape-name">{pedagogicalSynthesis.shapeTitle}</span>
-		</div>
-		<p class="gsc-subtitle">{pedagogicalSynthesis.description}</p>
-	</div>
+<!-- Note repliée par défaut pour rendre le type de graphe discret et compréhensible -->
+<details class={`structure-note graph-structure-note ${className}`} id={noteId} aria-label="Comprendre la forme du réseau">
+	<summary class="structure-summary">
+		<span class="structure-summary-badge">Structure</span>
+		<span class="structure-summary-title">Comprendre la forme du réseau</span>
+		<span class="structure-summary-toggle" aria-hidden="true">
+			<span class="toggle-more">Déplier ▾</span>
+			<span class="toggle-less">Replier ▴</span>
+		</span>
+	</summary>
 
-	<!-- Grille des indicateurs mathématiques fondamentaux -->
-	<div class="gsc-metrics-grid">
-		<div class="gsc-metric-item">
-			<span class="gsc-metric-label">Sommets (V)</span>
-			<strong class="gsc-metric-value">{V}</strong>
-			<small class="gsc-metric-sub">personnages</small>
-		</div>
+	<div class="structure-content">
+		<!-- 1. Définition pour un élève de seconde -->
+		<p class="structure-intro">
+			En observant un schéma de relations (un « graphe »), on cherche à comprendre <strong>la manière dont les personnages ou les éléments sont reliés entre eux</strong>. Chaque figure représentée forme un <em>sommet</em>, et chaque relation constitue une <em>arête</em> (un lien).
+		</p>
 
-		<div class="gsc-metric-item">
-			<span class="gsc-metric-label">Arêtes simples (E)</span>
-			<strong class="gsc-metric-value">{E_simple}</strong>
-			<small class="gsc-metric-sub">{E_typed} relations typées</small>
-		</div>
-
-		<div class="gsc-metric-item">
-			<span class="gsc-metric-label">Densité</span>
-			<strong class="gsc-metric-value">{densityPercent} %</strong>
-			<small class="gsc-metric-sub">D = 2E / [V(V-1)]</small>
-		</div>
-
-		<div class="gsc-metric-item">
-			<span class="gsc-metric-label">Cycles indépendants</span>
-			<strong class="gsc-metric-value">{cyclomatic}</strong>
-			<small class="gsc-metric-sub">γ = E - V + k</small>
-		</div>
-
-		<div class="gsc-metric-item">
-			<span class="gsc-metric-label">Centralisation Freeman</span>
-			<strong class="gsc-metric-value">{freemanPercent} %</strong>
-			<small class="gsc-metric-sub">C<sub>D</sub> (concentration)</small>
-		</div>
-	</div>
-
-	<!-- Détail mathématique et pédagogique réductible ou visible -->
-	<div class="gsc-details-body">
-		<div class="gsc-text-block">
-			<h3 class="gsc-block-title" id="graph-analysis-title">Caractérisation mathématique</h3>
-			<p class="gsc-math-desc">
-				Le réseau est composé de <strong>{V} sommets</strong> et de <strong>{E_simple} arêtes simples</strong>
-				non orientées (après dédoublonnage des relations multiples), réparties en <strong>{k} composante{k > 1 ? 's connexes' : ' connexe'}</strong>.
-				La somme des degrés vaut exactement <strong>{2 * E_simple}</strong> (théorème d'Euler).
-				Le degré maximal est de <strong>{metrics.degrees.max}</strong>
-				{roles.dominantHubs.length > 0 && ` (atteint par ${roles.dominantHubs.join(', ')})`},
-				pour un degré moyen de <strong>{metrics.degrees.mean.toFixed(2)}</strong>.
-			</p>
-
-			<div class="gsc-degree-distribution">
-				<span class="gsc-dist-label">Distribution des degrés :</span>
-				<div class="gsc-chips">
-					{degreeEntries.map(({ deg, count }) => (
-						<span class="gsc-chip">
-							degré <strong>{deg}</strong> : {count} sommet{count > 1 ? 's' : ''}
-						</span>
-					))}
-				</div>
+		<!-- 2. Distinction forme mathématique exacte vs description de la structure -->
+		<div class="structure-analysis-box">
+			<div class="structure-nature-header">
+				<span class={`structure-nature-pill ${explanation.nature === 'exact_shape' ? 'pill-exact' : 'pill-trend'}`}>
+					{explanation.natureLabel}
+				</span>
+				<strong class="structure-shape-name">{explanation.shapeTitle}</strong>
 			</div>
+
+			{explanation.mathCharacteristics && (
+				<p class="structure-math-note">
+					<strong>{explanation.nature === 'exact_shape' ? 'Définition mathématique :' : 'Précision de méthode :'}</strong> {explanation.mathCharacteristics}
+				</p>
+			)}
+
+			<p class="structure-student-text">
+				{explanation.studentExplanation}
+			</p>
 		</div>
 
-		<div class="gsc-literary-block">
-			<h4 class="gsc-lit-title">Éclairage littéraire & pédagogique</h4>
-			<p class="gsc-lit-question">
-				<strong>Question directrice :</strong> {pedagogicalSynthesis.literaryQuestion}
+		<!-- 3. Éclairage littéraire & question d'observation -->
+		<div class="structure-literary-box">
+			<p class="literary-heading">Éclairage littéraire & pistes de réflexion</p>
+			{explanation.literaryContext && (
+				<p class="literary-context-text">
+					{explanation.literaryContext}
+				</p>
+			)}
+			<p class="literary-question">
+				<strong>Question à se poser :</strong> {pedagogicalSynthesis.literaryQuestion}
 			</p>
-			<p class="gsc-lit-advice">
-				<strong>Observation :</strong> {pedagogicalSynthesis.pedagogicalAdvice}
+			<p class="literary-advice">
+				<strong>À observer sur le schéma :</strong> {pedagogicalSynthesis.pedagogicalAdvice}
 			</p>
-			<p class="gsc-lit-caution">
+			<p class="literary-caution">
 				<small><em>Garde-fou critique :</em> {pedagogicalSynthesis.criticalLimitation}</small>
 			</p>
 		</div>
+
+		<!-- 4. Informations techniques secondaires (pour aller plus loin) -->
+		<details class="structure-technical-subdetails">
+			<summary class="technical-summary">
+				<span class="technical-summary-title">Repères quantitatifs et distribution des relations (pour aller plus loin)</span>
+				<span class="technical-summary-icon" aria-hidden="true">
+					<span class="subtoggle-more">Afficher les chiffres ▾</span>
+					<span class="subtoggle-less">Masquer les chiffres ▴</span>
+				</span>
+			</summary>
+
+			<div class="technical-content">
+				<div class="technical-metrics-grid">
+					<div class="technical-metric-item">
+						<span class="tech-metric-label">Sommets (V)</span>
+						<strong class="tech-metric-value">{V}</strong>
+						<small class="tech-metric-sub">figures représentées</small>
+					</div>
+
+					<div class="technical-metric-item">
+						<span class="tech-metric-label">Arêtes simples (E)</span>
+						<strong class="tech-metric-value">{E_simple}</strong>
+						<small class="tech-metric-sub">{E_typed} relations typées</small>
+					</div>
+
+					<div class="technical-metric-item">
+						<span class="tech-metric-label">Densité</span>
+						<strong class="tech-metric-value">{densityPercent} %</strong>
+						<small class="tech-metric-sub">taux de connexions</small>
+					</div>
+
+					<div class="technical-metric-item">
+						<span class="tech-metric-label">Cycles indépendants</span>
+						<strong class="tech-metric-value">{cyclomatic}</strong>
+						<small class="tech-metric-sub">boucles fermées</small>
+					</div>
+
+					<div class="technical-metric-item">
+						<span class="tech-metric-label">Centralisation</span>
+						<strong class="tech-metric-value">{freemanPercent} %</strong>
+						<small class="tech-metric-sub">indice de Freeman</small>
+					</div>
+				</div>
+
+				<div class="technical-distribution">
+					<p class="tech-dist-summary">
+						Le réseau compte <strong>{V} sommets</strong> et <strong>{E_simple} arêtes simples</strong>
+						non orientées (dédoublonnées), réparties en <strong>{k} composante{k > 1 ? 's connexes' : ' connexe'}</strong>.
+						Le degré maximal est de <strong>{metrics.degrees.max} liens</strong>
+						{roles.dominantHubs.length > 0 && ` (atteint par ${roles.dominantHubs.join(', ')})`},
+						pour un degré moyen de <strong>{metrics.degrees.mean.toFixed(2)}</strong> lien{metrics.degrees.mean > 1 ? 's' : ''} par personnage.
+					</p>
+
+					<div class="tech-degree-chips">
+						<span class="tech-chips-label">Distribution des degrés :</span>
+						<div class="tech-chips-list">
+							{degreeEntries.map(({ deg, count }) => (
+								<span class="tech-chip">
+									degré <strong>{deg}</strong> : {count} figure{count > 1 ? 's' : ''}
+								</span>
+							))}
+						</div>
+					</div>
+				</div>
+			</div>
+		</details>
 	</div>
-</section>
+</details>
 
 <style>
-	.graph-structure-card {
+	/* Encadré d'approfondissement replié par défaut */
+	.graph-structure-note {
 		margin: 2rem 0 3rem;
-		background: #ffffff;
+		background: #fbf9f4;
 		border: 1px solid var(--map-border, #dcd6cb);
 		border-left: 4px solid var(--map-accent, #8b572a);
-		border-radius: 10px;
-		padding: 1.5rem 1.75rem;
-		box-shadow: 0 3px 12px rgba(23, 43, 58, 0.04);
+		border-radius: 8px;
+		box-shadow: 0 2px 8px rgba(23, 43, 58, 0.03);
+		transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 	}
 
-	.gsc-header {
-		margin-bottom: 1.25rem;
+	.graph-structure-note[open] {
+		background: #ffffff;
+		box-shadow: 0 4px 14px rgba(23, 43, 58, 0.06);
 	}
 
-	.gsc-badge-group {
+	/* En-tête cliquable (summary) */
+	.structure-summary {
 		display: flex;
-		align-items: center;
-		gap: 0.75rem;
 		flex-wrap: wrap;
-		margin-bottom: 0.4rem;
+		align-items: center;
+		gap: 0.6rem 0.85rem;
+		padding: 1rem 1.35rem;
+		cursor: pointer;
+		user-select: none;
+		list-style: none; /* Retrait de la puce native */
 	}
 
-	.gsc-badge-type {
-		background: #235284;
-		color: #ffffff;
+	.structure-summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.structure-summary:hover {
+		background: rgba(23, 43, 58, 0.02);
+	}
+
+	.structure-summary:focus-visible {
+		outline: 2px solid var(--map-accent, #8b572a);
+		outline-offset: 2px;
+		border-radius: 4px;
+	}
+
+	.structure-summary-badge {
 		font-size: 0.72rem;
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.08em;
-		padding: 0.2rem 0.55rem;
-		border-radius: 4px;
+		padding: 0.18rem 0.5rem;
+		border-radius: 3px;
+		background: rgba(139, 87, 42, 0.1);
+		color: var(--map-accent, #8b572a);
+		border: 1px solid rgba(139, 87, 42, 0.25);
 	}
 
-	.gsc-shape-name {
+	.structure-summary-title {
 		font-family: var(--map-serif, Georgia, serif);
-		font-size: 1.35rem;
-		font-weight: bold;
-		color: var(--map-ink, #172b3a);
-	}
-
-	.gsc-subtitle {
-		margin: 0;
-		font-size: 0.94rem;
-		line-height: 1.5;
-		color: var(--map-ink-soft, #2d3e4d);
-	}
-
-	/* Grille des 5 métriques */
-	.gsc-metrics-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-		gap: 0.85rem;
-		padding: 1rem 0;
-		margin: 1rem 0 1.25rem;
-		border-top: 1px solid var(--map-border-soft, #ece7de);
-		border-bottom: 1px solid var(--map-border-soft, #ece7de);
-		background: #fbf9f4;
-		border-radius: 6px;
-	}
-
-	.gsc-metric-item {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		text-align: center;
-		padding: 0.25rem 0.5rem;
-	}
-
-	.gsc-metric-label {
-		font-size: 0.75rem;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		color: var(--map-muted, #5e6d7a);
-		margin-bottom: 0.2rem;
-	}
-
-	.gsc-metric-value {
-		font-family: var(--map-serif, Georgia, serif);
-		font-size: 1.4rem;
-		color: var(--map-ink, #172b3a);
-		line-height: 1.2;
-	}
-
-	.gsc-metric-sub {
-		font-size: 0.7rem;
-		color: var(--map-muted, #5e6d7a);
-		margin-top: 0.15rem;
-	}
-
-	/* Corps détaillé */
-	.gsc-details-body {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: 1.25rem;
-	}
-
-	@media (min-width: 768px) {
-		.gsc-details-body {
-			grid-template-columns: 1.2fr 1fr;
-		}
-	}
-
-	.gsc-block-title {
-		margin: 0 0 0.5rem;
-		font-size: 1rem;
-		font-weight: 700;
-		color: var(--map-ink, #172b3a);
-		font-family: var(--map-sans, system-ui, sans-serif);
-	}
-
-	.gsc-math-desc {
-		margin: 0 0 0.85rem;
-		font-size: 0.9rem;
-		line-height: 1.55;
-		color: var(--map-ink-soft, #2d3e4d);
-	}
-
-	.gsc-degree-distribution {
-		display: flex;
-		flex-direction: column;
-		gap: 0.4rem;
-		font-size: 0.85rem;
-	}
-
-	.gsc-dist-label {
+		font-size: 1.15rem;
 		font-weight: 600;
 		color: var(--map-ink, #172b3a);
+		flex: 1 1 auto;
 	}
 
-	.gsc-chips {
+	.structure-summary-toggle {
+		font-size: 0.82rem;
+		font-weight: 600;
+		color: var(--map-muted, #5e6d7a);
+		transition: color 0.15s ease;
+	}
+
+	.toggle-less {
+		display: none;
+	}
+
+	.graph-structure-note[open] .toggle-more {
+		display: none;
+	}
+
+	.graph-structure-note[open] .toggle-less {
+		display: inline;
+		color: var(--map-accent, #8b572a);
+	}
+
+	/* Contenu déplié */
+	.structure-content {
+		padding: 0 1.35rem 1.4rem;
+		border-top: 1px solid var(--map-border-soft, #ece7de);
+		margin-top: 0.25rem;
+		padding-top: 1.15rem;
 		display: flex;
-		flex-wrap: wrap;
-		gap: 0.4rem;
+		flex-direction: column;
+		gap: 1.15rem;
 	}
 
-	.gsc-chip {
-		background: #ffffff;
-		border: 1px solid var(--map-border, #dcd6cb);
+	.structure-intro {
+		margin: 0;
+		font-size: 0.95rem;
+		line-height: 1.6;
+		color: var(--map-ink-soft, #2d3e4d);
+		background: #fbf9f4;
+		padding: 0.75rem 1rem;
+		border-radius: 6px;
+		border-left: 3px solid #235284;
+	}
+
+	.structure-intro strong {
+		color: var(--map-ink, #172b3a);
+	}
+
+	/* Boîte d'analyse : forme ou description */
+	.structure-analysis-box {
+		background: #faf8f5;
+		border: 1px solid var(--map-border-soft, #ece7de);
+		border-radius: 6px;
+		padding: 1rem 1.15rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.65rem;
+	}
+
+	.structure-nature-header {
+		display: flex;
+		align-items: center;
+		gap: 0.65rem;
+		flex-wrap: wrap;
+	}
+
+	.structure-nature-pill {
+		font-size: 0.7rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
 		padding: 0.15rem 0.5rem;
 		border-radius: 4px;
-		font-size: 0.78rem;
+	}
+
+	.pill-exact {
+		background: rgba(30, 110, 60, 0.1);
+		color: #1e6e3c;
+		border: 1px solid rgba(30, 110, 60, 0.25);
+	}
+
+	.pill-trend {
+		background: rgba(35, 82, 132, 0.08);
+		color: #235284;
+		border: 1px solid rgba(35, 82, 132, 0.22);
+	}
+
+	.structure-shape-name {
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.2rem;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.structure-math-note {
+		margin: 0;
+		font-size: 0.88rem;
+		line-height: 1.55;
+		color: var(--map-muted, #5e6d7a);
+		font-style: italic;
+	}
+
+	.structure-math-note strong {
+		font-style: normal;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.structure-student-text {
+		margin: 0;
+		font-size: 0.94rem;
+		line-height: 1.6;
 		color: var(--map-ink-soft, #2d3e4d);
 	}
 
 	/* Volet littéraire */
-	.gsc-literary-block {
-		background: #faf8f5;
-		border-left: 3px solid #8b572a;
-		padding: 0.85rem 1rem;
+	.structure-literary-box {
+		background: #ffffff;
+		border: 1px solid var(--map-border-soft, #ece7de);
+		border-left: 3px solid var(--map-accent, #8b572a);
 		border-radius: 0 6px 6px 0;
+		padding: 0.85rem 1.15rem;
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
-		font-size: 0.88rem;
-		line-height: 1.5;
+		gap: 0.45rem;
+		font-size: 0.9rem;
+		line-height: 1.55;
 	}
 
-	.gsc-lit-title {
+	.literary-heading {
 		margin: 0;
-		font-size: 0.82rem;
+		font-size: 0.8rem;
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.06em;
-		color: #8b572a;
+		color: var(--map-accent, #8b572a);
 	}
 
-	.gsc-lit-question,
-	.gsc-lit-advice {
+	.literary-context-text {
+		margin: 0;
+		color: var(--map-ink-soft, #2d3e4d);
+		font-size: 0.92rem;
+		line-height: 1.6;
+	}
+
+	.literary-question,
+	.literary-advice {
 		margin: 0;
 		color: var(--map-ink-soft, #2d3e4d);
 	}
 
-	.gsc-lit-question strong,
-	.gsc-lit-advice strong {
+	.literary-question strong,
+	.literary-advice strong {
 		color: var(--map-ink, #172b3a);
 	}
 
-	.gsc-lit-caution {
-		margin-top: 0.25rem;
+	.literary-caution {
+		margin-top: 0.2rem;
 		color: var(--map-muted, #5e6d7a);
+	}
+
+	/* Volet technique secondaire */
+	.structure-technical-subdetails {
+		background: #fbf9f4;
+		border: 1px solid var(--map-border-soft, #ece7de);
+		border-radius: 6px;
+		margin-top: 0.35rem;
+		transition: background 0.15s ease;
+	}
+
+	.structure-technical-subdetails[open] {
+		background: #ffffff;
+	}
+
+	.technical-summary {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0.75rem 1rem;
+		cursor: pointer;
+		user-select: none;
+		list-style: none;
+		font-size: 0.84rem;
+		font-weight: 600;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.technical-summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.technical-summary:hover {
+		color: var(--map-ink, #172b3a);
+		background: rgba(23, 43, 58, 0.02);
+	}
+
+	.technical-summary:focus-visible {
+		outline: 2px solid var(--map-accent, #8b572a);
+		outline-offset: 1px;
+	}
+
+	.subtoggle-less {
+		display: none;
+	}
+
+	.structure-technical-subdetails[open] .subtoggle-more {
+		display: none;
+	}
+
+	.structure-technical-subdetails[open] .subtoggle-less {
+		display: inline;
+		color: var(--map-accent, #8b572a);
+	}
+
+	.technical-content {
+		padding: 0.5rem 1rem 1rem;
+		border-top: 1px solid var(--map-border-soft, #ece7de);
+		display: flex;
+		flex-direction: column;
+		gap: 0.85rem;
+	}
+
+	.technical-metrics-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+		gap: 0.6rem;
+		padding: 0.75rem 0.5rem;
+		background: #fbf9f4;
+		border-radius: 4px;
+	}
+
+	.technical-metric-item {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+	}
+
+	.tech-metric-label {
+		font-size: 0.7rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.tech-metric-value {
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.25rem;
+		color: var(--map-ink, #172b3a);
+		line-height: 1.2;
+		margin: 0.15rem 0;
+	}
+
+	.tech-metric-sub {
+		font-size: 0.68rem;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.tech-dist-summary {
+		margin: 0;
+		font-size: 0.85rem;
+		line-height: 1.5;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	.tech-degree-chips {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		font-size: 0.8rem;
+	}
+
+	.tech-chips-label {
+		font-weight: 600;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.tech-chips-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+	}
+
+	.tech-chip {
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		padding: 0.12rem 0.45rem;
+		border-radius: 3px;
+		font-size: 0.75rem;
+		color: var(--map-ink-soft, #2d3e4d);
 	}
 </style>
