@@ -885,6 +885,61 @@ const pageDescription =
 						</footer>
 					</section>
 
+					<!-- Section Bande dessinée satirique : Les Jeux olympiques de l’hypocrisie -->
+					<section class="potbouille-comic-section" id="jeux-olympiques-hypocrisie" aria-labelledby="comic-heading">
+						<header class="comic-header">
+							<p class="comic-tag">Expérience graphique & Satire contemporaine</p>
+							<h2 id="comic-heading" class="comic-heading">
+								Les Jeux olympiques de l’hypocrisie
+							</h2>
+							<p class="comic-lead">
+								Et si les personnages de Zola s’affrontaient dans une compétition sportive ? Une bande dessinée satirique sur l’ambition, les apparences et les secrets de l’immeuble.
+							</p>
+						</header>
+
+						<div class="comic-presentation">
+							<figure class="comic-figure">
+								<img
+									src="/images/pot-bouille/jeux-olympiques-hypocrisie.png"
+									alt="Bande dessinée satirique « Les Jeux olympiques de l'hypocrisie » représentant les personnages de Pot-Bouille d'Émile Zola dans des épreuves sportives parodiques : sprint social d'Octave Mouret, gymnastique de Valérie Vabre, lancer de responsabilités d'Auguste, marathon des apparences de Berthe, épreuves de mariage des Josserand et course de fond des domestiques"
+									class="comic-img"
+									loading="lazy"
+									width="1254"
+									height="1254"
+								/>
+								<figcaption class="comic-caption">
+									<strong>« Les Jeux olympiques de l’hypocrisie »</strong> — Bande dessinée satirique inspirée de <em>Pot-Bouille</em>. Cliquez sur l’image pour l’agrandir en plein écran.
+								</figcaption>
+							</figure>
+
+							<div class="comic-commentary">
+								<div class="comic-commentary-card">
+									<h3 class="commentary-title">Le tournoi des faux-semblants</h3>
+									<p>
+										Dans cette transposition humoristique, les intrigues du 28, rue de Choiseul deviennent autant d’épreuves athlétiques taillées sur mesure :
+									</p>
+									<ul class="comic-events-list">
+										<li><strong>Octave Mouret :</strong> le sprint social vers la réussite parisienne, franchissant les convenances sans faiblir.</li>
+										<li><strong>Valérie Vabre :</strong> la gymnastique virtuose de l’hypocrisie, combinant dévotion de façade et liaisons clandestines.</li>
+										<li><strong>Auguste Vabre :</strong> le lancer de responsabilités pour esquiver ses propres faillites intimes et commerciales.</li>
+										<li><strong>Berthe Vabre :</strong> le marathon épuisant des apparences et de la dépense vestimentaire pour masquer l’absence de dot.</li>
+										<li><strong>Les Josserand :</strong> les épreuves combinées du mariage avantageux et des ambitions familiales déçues.</li>
+										<li><strong>Les domestiques :</strong> la course d’endurance au fond de la cour, spectateurs impitoyables des défaillances des maîtres.</li>
+									</ul>
+									<p class="comic-conclusion">
+										<strong>Le relais des convenances :</strong> Le podium final et le classement social ne récompensent pas la vertu, mais l’art consommé de sembler respectable plutôt que de l’être.
+									</p>
+								</div>
+
+								<div class="comic-note-disclaimer">
+									<p>
+										<strong>Expérience de pensée humoristique :</strong> Cette illustration est une libre création satirique inspirée du roman d’Émile Zola, et non la reproduction d’un épisode historique ou d’un document d’époque. Les dialogues et épreuves sportives constituent une métaphore ludique des intrigues bourgeoises.
+									</p>
+								</div>
+							</div>
+						</div>
+					</section>
+
 					<div class="synthesis-axioms">
 						<blockquote>
 							« Vous comprenez, ces maisons-là, c’est bâti pour faire de l’effet… Seulement, il ne
@@ -1846,6 +1901,182 @@ const pageDescription =
 
 		.page-quicklinks {
 			justify-content: flex-start;
+		}
+	}
+
+	/* ==========================================================================
+	   Section Bande dessinée satirique : Les Jeux olympiques de l'hypocrisie
+	   ========================================================================== */
+	.potbouille-comic-section {
+		margin: 4.5rem 0 3.5rem;
+		padding-top: 2.25rem;
+		border-top: 1px solid var(--map-border, #dcd6cb);
+	}
+
+	.comic-header {
+		text-align: center;
+		max-width: 840px;
+		margin: 0 auto 2.25rem;
+	}
+
+	.comic-tag {
+		font-size: 0.78rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.12em;
+		color: #be185d;
+		margin: 0 0 0.4rem;
+	}
+
+	.comic-heading {
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: clamp(1.6rem, 3.2vw, 2.3rem);
+		font-weight: normal;
+		line-height: 1.25;
+		color: var(--map-ink, #172b3a);
+		margin: 0 0 0.85rem;
+	}
+
+	.comic-lead {
+		font-size: 1.05rem;
+		line-height: 1.65;
+		color: var(--map-ink-soft, #2d3e4d);
+		margin: 0;
+	}
+
+	.comic-presentation {
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+		max-width: 900px;
+		margin: 0 auto;
+	}
+
+	.comic-figure {
+		margin: 0;
+		padding: 0;
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-radius: 10px;
+		overflow: hidden;
+		box-shadow: 0 4px 18px rgba(23, 43, 58, 0.05);
+		display: flex;
+		flex-direction: column;
+	}
+
+	.comic-img {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 1 / 1;
+		object-fit: contain;
+		background: #faf8f5;
+	}
+
+	.comic-caption {
+		padding: 0.75rem 1.1rem;
+		font-size: 0.82rem;
+		line-height: 1.5;
+		color: var(--map-ink-soft, #2d3e4d);
+		background: #ffffff;
+		border-top: 1px solid var(--map-border-soft, #ece7de);
+		text-align: center;
+	}
+
+	.comic-caption em {
+		font-style: italic;
+	}
+
+	.comic-commentary {
+		display: flex;
+		flex-direction: column;
+		gap: 1.15rem;
+	}
+
+	.comic-commentary-card {
+		background: #ffffff;
+		border: 1px solid var(--map-border, #dcd6cb);
+		border-left: 4px solid #be185d;
+		border-radius: 8px;
+		padding: 1.35rem 1.6rem;
+		box-shadow: 0 2px 8px rgba(23, 43, 58, 0.03);
+	}
+
+	.commentary-title {
+		margin: 0 0 0.6rem;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.15rem;
+		font-weight: 600;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.comic-commentary-card p {
+		margin: 0 0 0.75rem;
+		font-size: 0.94rem;
+		line-height: 1.6;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	.comic-events-list {
+		margin: 0.75rem 0 1rem;
+		padding-left: 1.25rem;
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 0.6rem;
+		font-size: 0.92rem;
+		line-height: 1.55;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	@media (min-width: 680px) {
+		.comic-events-list {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	.comic-events-list strong {
+		color: var(--map-ink, #172b3a);
+	}
+
+	.comic-conclusion {
+		margin: 0 !important;
+		padding-top: 0.75rem;
+		border-top: 1px dashed var(--map-border, #dcd6cb);
+		font-size: 0.92rem;
+		line-height: 1.55;
+		color: var(--map-ink, #172b3a) !important;
+	}
+
+	.comic-conclusion strong {
+		color: #be185d;
+	}
+
+	.comic-note-disclaimer {
+		padding: 0.75rem 1rem;
+		background: rgba(139, 87, 42, 0.05);
+		border-left: 2px solid #8b572a;
+		border-radius: 0 4px 4px 0;
+	}
+
+	.comic-note-disclaimer p {
+		margin: 0;
+		font-size: 0.88rem;
+		line-height: 1.5;
+		color: #5e6d7a;
+	}
+
+	.comic-note-disclaimer strong {
+		color: #172b3a;
+	}
+
+	@media (max-width: 600px) {
+		.comic-commentary-card {
+			padding: 1.1rem 1.15rem;
+		}
+
+		.comic-caption {
+			padding: 0.65rem 0.85rem;
+			font-size: 0.78rem;
 		}
 	}
 </style>

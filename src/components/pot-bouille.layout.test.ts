@@ -503,6 +503,109 @@ describe.skipIf(!BUILT)('Carte relationnelle de Pot-Bouille (/pot-bouille) — r
 			await page.close();
 		}
 	});
+
+	test('bande dessinée satirique : présence de la section, du titre, des épreuves et de l’image', async () => {
+		const page = await openPage();
+		try {
+			const section = page.locator('#jeux-olympiques-hypocrisie');
+			expect(await section.count()).toBe(1);
+
+			// Titre et chapeau
+			const heading = await section.locator('.comic-heading').textContent();
+			expect(heading).toContain('Les Jeux olympiques de l’hypocrisie');
+
+			const lead = await section.locator('.comic-lead').textContent();
+			expect(lead).toContain('compétition sportive');
+			expect(lead).toContain('secrets de l’immeuble');
+
+			// Image de la bande dessinée
+			const comicImg = section.locator('.comic-figure img.comic-img');
+			expect(await comicImg.count()).toBe(1);
+			expect(await comicImg.getAttribute('src')).toBe('/images/pot-bouille/jeux-olympiques-hypocrisie.png');
+			expect(await comicImg.getAttribute('width')).toBe('1254');
+			expect(await comicImg.getAttribute('height')).toBe('1254');
+
+			const alt = await comicImg.getAttribute('alt');
+			expect(alt).toBeTruthy();
+			expect(alt!.length).toBeGreaterThan(40);
+			expect(alt).toContain('Jeux olympiques de l\'hypocrisie');
+			expect(alt).toContain('Octave Mouret');
+
+			// Légende et notice de lecture
+			const caption = await section.locator('.comic-caption').textContent();
+			expect(caption).toContain('Les Jeux olympiques de l’hypocrisie');
+
+			// Liste des épreuves
+			const commentary = await section.locator('.comic-commentary').textContent();
+			expect(commentary).toContain('Octave Mouret');
+			expect(commentary).toContain('Valérie Vabre');
+			expect(commentary).toContain('Auguste Vabre');
+			expect(commentary).toContain('Berthe Vabre');
+			expect(commentary).toContain('Josserand');
+			expect(commentary).toContain('domestiques');
+			expect(commentary).toContain('relais des convenances');
+		} finally {
+			await page.close();
+		}
+	});
+
+	test('bande dessinée satirique : intégration lightbox (zoom au clic et légende)', async () => {
+		const page = await openPage();
+		try {
+			const comicImg = page.locator('#jeux-olympiques-hypocrisie img.comic-img');
+			expect(await comicImg.getAttribute('data-zoomable')).toBe('true');
+
+			// Clic sur la bande dessinée
+			await comicImg.click();
+
+			const lightbox = page.locator('#image-lightbox');
+			expect(await lightbox.getAttribute('open')).not.toBeNull();
+
+			const lightboxImg = lightbox.locator('[data-lightbox-img]');
+			expect(await lightboxImg.getAttribute('src')).toContain('jeux-olympiques-hypocrisie.png');
+
+			const caption = lightbox.locator('[data-lightbox-caption]');
+			expect(await caption.isVisible()).toBe(true);
+			expect(await caption.textContent()).toContain('Les Jeux olympiques de l’hypocrisie');
+
+			// Fermeture avec Échap
+			await page.keyboard.press('Escape');
+			expect(await lightbox.getAttribute('open')).toBeNull();
+		} finally {
+			await page.close();
+		}
+	});
+
+	test('bande dessinée satirique : responsive à 320px et 375px sans débordement horizontal', async () => {
+		for (const viewportWidth of [320, 375]) {
+			const page = await openPage(viewportWidth, 700);
+			try {
+				const section = page.locator('#jeux-olympiques-hypocrisie');
+				expect(await section.isVisible()).toBe(true);
+
+				const comicImg = section.locator('img.comic-img');
+				const box = await comicImg.boundingBox();
+				expect(box).toBeTruthy();
+				expect(box!.width).toBeLessThanOrEqual(viewportWidth);
+
+				// Rapport d'aspect préservé (1:1 carré avec tolérance de 1.5px)
+				expect(Math.abs(box!.width - box!.height)).toBeLessThanOrEqual(1.5);
+
+				// Absence de débordement horizontal ou de dépassement dans la section de la bande dessinée
+				const sectionOverflow = await section.evaluate((sec, maxW) => {
+					if (sec.scrollWidth > sec.clientWidth) return true;
+					const all = Array.from(sec.querySelectorAll('*'));
+					return all.some((el) => {
+						const r = el.getBoundingClientRect();
+						return r.right > maxW + 1;
+					});
+				}, viewportWidth);
+				expect(sectionOverflow).toBe(false);
+			} finally {
+				await page.close();
+			}
+		}
+	});
 });
 
 
