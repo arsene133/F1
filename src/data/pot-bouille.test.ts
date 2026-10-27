@@ -170,7 +170,7 @@ describe('Modèle de données de Pot-Bouille (src/data/pot-bouille.ts)', () => {
 		);
 		expect(relRachelBerthe).toBeDefined();
 		expect(relRachelBerthe?.description).toContain('ch. XIV');
-		expect(relRachelBerthe?.description).toContain('verrouille');
+		expect(relRachelBerthe?.description).toContain('vendus');
 
 		const relMouretBerthe = potBouilleRelationships.find(
 			(r) => (r.source === 'mouret' && r.target === 'berthe') || (r.source === 'berthe' && r.target === 'mouret'),

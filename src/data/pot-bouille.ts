@@ -19,8 +19,8 @@ export const potBouilleCharacters: MapNode[] = [
 			"Jeune provincial séduisant et calculateur débarquant à Paris. Logé au quatrième étage du 28, rue de Choiseul, il travaille au magasin de nouveautés « Au Bonheur des Dames ». Résolu à réussir, il fait des femmes de l'immeuble l'instrument privilégié de son apprentissage social avant de conquérir le grand commerce.",
 		points: [
 			'S’installe à Paris grâce à l’appui de son compatriote Campardon (ch. I)',
-			'Séduit successivement Marie Pichon (ch. IV), Valérie Vabre (ch. IX) et Berthe (ch. XII)',
-			'Découvert en flagrant délit par Auguste Vabre aidé de Rachel (ch. XIV), déclenchant le grand scandale de l’immeuble (ch. XV)',
+			'Séduit Marie Pichon (ch. IV) puis Berthe (ch. XII) ; Valérie Vabre, elle, repousse ses avances (ch. IV)',
+			'Surpris avec Berthe par Auguste Vabre, que Berthe soupçonne Rachel d’avoir renseigné (ch. XIV), déclenchant le grand scandale de l’immeuble (ch. XV)',
 			'Épouse finalement Mme Hédouin pour prendre la tête du magasin (ch. XVIII)',
 		],
 		color: '#1d4ed8',
@@ -43,8 +43,8 @@ export const potBouilleCharacters: MapNode[] = [
 		points: [
 			'Chasse au mari orchestrée par sa mère lors des soirées du mardi (ch. III)',
 			'Épouse Auguste avec la promesse mensongère d’une dot de 50 000 francs (ch. VIII)',
-			'Cède aux avances d’Octave et devient sa maîtresse au quatrième étage (ch. XII–XIII)',
-			'Surprise en flagrant délit au quatrième étage et chassée en chemise (ch. XIV), au cœur du scandale (ch. XV), puis réconciliée avec Auguste pour sauver les apparences (ch. XVIII)',
+			'Cède aux avances d’Octave et devient sa maîtresse (ch. XII–XIII)',
+			'Surprise avec Octave dans sa chambre du quatrième étage, elle fuit en chemise par l’escalier (ch. XIV), au cœur du scandale (ch. XV), puis réconciliée avec Auguste pour sauver les apparences (ch. XVII)',
 		],
 		color: '#be185d',
 		tier: 'major',
@@ -63,7 +63,7 @@ export const potBouilleCharacters: MapNode[] = [
 			"Mère tyrannique obsédée par le rang social et les apparences de respectabilité. Elle mène une chasse impitoyable aux gendres pour caser ses filles Berthe et Hortense, tout en méprisant son mari qu'elle accable de reproches incessants.",
 		points: [
 			'Organise des réceptions mondaines ruineuses pour séduire les prétendants (ch. III)',
-			'Négocie le mariage de Berthe en promettant une dot fictive de 50 000 francs (ch. VI–VIII)',
+			'Négocie le mariage de Berthe en promettant une dot fictive de 50 000 francs (ch. V–VII)',
 			'Pousse sa fille à la coquetterie et ferme les yeux sur ses dépenses inconsidérées (ch. X)',
 			'Refuse d’accueillir Berthe après le scandale sans calcul d’honneur, puis arrange la réconciliation (ch. XV–XVIII)',
 		],
@@ -105,9 +105,9 @@ export const potBouilleCharacters: MapNode[] = [
 			"Fils maladif et détraqué, tenu à l’écart des mondanités par sa mère. Il nourrit pour sa sœur Berthe une dévotion passionnée et jalouse, prêt à tuer quiconque lui fait du tort.",
 		points: [
 			'N’obéit qu’à Berthe, qui seule sait calmer ses crises (ch. II)',
-			'Défend Berthe avec fureur contre les reproches de son mari Auguste (ch. XI)',
-			'Tente d’étrangler Auguste lorsqu’il apprend le scandale (ch. XV)',
-			'Interné à l’asile des Moulineaux (ch. XVI–XVII), puis en sort au chapitre XVIII',
+			'Défend Berthe avec fureur contre les reproches de son mari Auguste, un couteau à la main (ch. XII)',
+			'Se jette sur Auguste, armé d’un couteau de cuisine, lorsqu’il apprend le scandale (ch. XV)',
+			'Interné à l’asile des Moulineaux avant la noce (ch. VII), ramené chez ses parents (ch. XII), interné de nouveau (ch. XV), puis sorti (ch. XVIII)',
 		],
 		color: '#581c87',
 		tier: 'minor',
@@ -128,9 +128,9 @@ export const potBouilleCharacters: MapNode[] = [
 			"Fils aîné du propriétaire de l'immeuble, il tient le magasin de soieries au rez-de-chaussée et loge à l'entresol. Chétif, souffrant d'incessantes migraines névralgiques, il épouse Berthe dans l'espoir d'une dot. Son avarice maladive précipite l'échec de son mariage.",
 		points: [
 			'Épouse Berthe dans un calcul d’intérêts commerciaux et matrimoniaux (ch. VIII)',
-			'Exige avec acharnement le versement de la dot impayée des Josserand (ch. X–XI)',
+			'Exige avec acharnement le versement de la dot impayée des Josserand (ch. XII, XVI)',
 			'Contrôle mesquinement chaque dépense du foyer (ch. XIII)',
-			'Surprend la liaison de Berthe et Octave et chasse son épouse (ch. XIV–XV), avant de la reprendre pour convenance bourgeoise (ch. XVIII)',
+			'Surprend la liaison de Berthe et Octave et chasse son épouse (ch. XIV–XV), avant de la reprendre pour convenance bourgeoise (ch. XVII)',
 		],
 		color: '#b45309',
 		tier: 'major',
@@ -146,12 +146,12 @@ export const potBouilleCharacters: MapNode[] = [
 		eyebrow: 'Propriétaire de l’immeuble · patriarche avare',
 		meta: ['ancien notaire de Versailles', 'père d’Auguste, Théophile et Clotilde'],
 		description:
-			"Propriétaire imposant de l'immeuble du 28, rue de Choiseul. Il refuse d'aider ses enfants de son vivant et consacre ses journées à un illusoire travail de compilation statistique. Frappé d'une attaque d'apoplexie au chapitre X, sa mort brutale révèle l'absence de testament et déchire ses héritiers.",
+			"Propriétaire imposant de l'immeuble du 28, rue de Choiseul. Il refuse d'aider ses enfants de son vivant et consacre ses journées à un illusoire travail de compilation statistique. Frappé d'une attaque d'apoplexie au chapitre X, il meurt au chapitre XI sans testament et sans la fortune espérée, ce qui déchire ses héritiers.",
 		points: [
 			'Incarne la figure tutélaire de l’ordre et de la propriété bourgeoise (ch. I)',
 			'Refuse d’aider financièrement ses fils malgré leurs supplications (ch. X)',
-			'Meurt subitement d’une attaque d’apoplexie au terme du chapitre X',
-			'L’ouverture de son secrétaire au chapitre XI révèle l’absence de testament, ne laissant que ses biens ordinaires à partager',
+			'Frappé d’une attaque d’apoplexie à la fin du chapitre X, il meurt au chapitre XI',
+			'Ne laisse ni testament ni les six ou sept cent mille francs espérés : on ne trouve que quelques centaines de francs en pièces de dix sous (ch. XI)',
 		],
 		color: '#713f12',
 		tier: 'standard',
@@ -164,15 +164,15 @@ export const potBouilleCharacters: MapNode[] = [
 		id: 'valerie-vabre',
 		label: 'Valérie Vabre',
 		caption: 'épouse de Théophile Vabre',
-		eyebrow: 'Bourgeoise hystérique · adultère désinhibée',
+		eyebrow: 'Épouse nerveuse · adultères sans joie',
 		meta: ['née Louhette', 'épouse de Théophile', 'loge au premier étage sur cour'],
 		description:
-			"Épouse nerveuse et exaltée de Théophile Vabre. Elle méprise son mari maladif et mène des aventures extraconjugales audacieuses, cédant notamment un après-midi aux avances empressées d’Octave Mouret avant de le congédier.",
+			"Épouse nerveuse de Théophile Vabre, qu'elle méprise. Elle multiplie les rendez-vous hors de l'immeuble, mais repousse Octave Mouret, qui avait cru aux ragots de Campardon la disant « hystérique ». Plus tard, elle lui avoue tromper son mari sans plaisir, et tous deux deviennent amis.",
 		points: [
-			'Multiplie les scènes violentes avec son époux au premier étage (ch. V)',
-			'Cède aux désirs d’Octave dans son salon avant de le repousser vivement (ch. IX)',
-			'Nargue son mari sur la paternité de son fils Camille pour le blesser (ch. XI)',
-			'Fait semblant d’une dévotion outrée auprès de l’abbé Mauduit pour sauver les apparences (ch. XVII)',
+			'Les Campardon la disent « hystérique » et répètent la rumeur selon laquelle son fils Camille ne serait pas de Théophile (ch. IV)',
+			'Repousse froidement Octave, qui tente de la prendre après une de ses crises de nerfs (ch. IV)',
+			'Théophile, jaloux, lui tord le bras à cause d’une lettre d’amour, le jour du mariage de Berthe (ch. VIII)',
+			'Confie à Octave qu’elle trompe son mari sans y trouver de joie ; ils restent amis (ch. XV, XVIII)',
 		],
 		color: '#c026d3',
 		tier: 'standard',
@@ -190,8 +190,8 @@ export const potBouilleCharacters: MapNode[] = [
 		description:
 			"Deuxième fils du vieux Vabre, poitrinaire et sans profession stable. Obsédé par la jalousie et l’inconduite de sa femme Valérie, il emplit l’immeuble du fracas de leurs disputes conjugales incessantes.",
 		points: [
-			'Soupçonne continuellement sa femme d’infidélités notoires (ch. V)',
-			'Espionne les allées et venues devant son appartement (ch. IX)',
+			'Se plaint au docteur Juillerat des nerfs de sa femme, qui le « tuait » (ch. III)',
+			'Jaloux, tord le bras de Valérie à cause d’une lettre d’amour, le jour du mariage de Berthe (ch. VIII)',
 			'Se dispute la succession de son père contre son frère Auguste et sa sœur Clotilde (ch. XI)',
 		],
 		color: '#475569',
@@ -214,7 +214,7 @@ export const potBouilleCharacters: MapNode[] = [
 		points: [
 			'Incarne la gravité solennelle de la magistrature au premier étage (ch. I, V)',
 			'Fuit le foyer familial pour rejoindre sa maîtresse Clarisse Bocquet (ch. X)',
-			'Tente de se suicider en se tirant un coup de pistolet dans la mâchoire (ch. XIV)',
+			'Abandonné par Clarisse, tente de se suicider d’un coup de revolver qui lui entame la mâchoire (ch. XVII)',
 			'S’efforce d’étouffer le scandale de Berthe au nom de la dignité de la maison (ch. XV)',
 		],
 		color: '#0f766e',
@@ -252,12 +252,12 @@ export const potBouilleCharacters: MapNode[] = [
 		eyebrow: 'Ami protecteur · inventeur du ménage à trois',
 		meta: ['architecte des édifices religieux', 'compatriote d’Octave Mouret'],
 		description:
-			"Architecte jovial travaillant pour les édifices religieux, logé au deuxième étage. Compatriote provençal d'Octave, il lui trouve son logement. Prétextant la maladie de sa femme Rose (née Domergue), il fait entrer la cousine de celle-ci, Gasparine, devenue sa maîtresse, au domicile conjugal dans une harmonie bourgeoise cynique.",
+			"Architecte jovial travaillant pour les édifices religieux, logé au troisième étage. Compatriote provençal d'Octave, il lui trouve son logement. À la demande de sa femme Rose (née Domergue), souffrante, il laisse s'installer au domicile conjugal la cousine de celle-ci, Gasparine, qui est sa maîtresse, dans une harmonie bourgeoise cynique.",
 		points: [
 			'Accueille Octave et lui loue sa chambre au 28, rue de Choiseul (ch. I)',
 			'Gère les travaux d’églises tout en affichant une dévotion de façade (ch. IV)',
-			'Installe sa maîtresse Gasparine sous le toit conjugal aux côtés de son épouse Rose (ch. VII)',
-			'Fait l’éloge de la paix domestique retrouvée grâce à cette cohabitation (ch. VIII, XII)',
+			'Accueille sa maîtresse Gasparine sous le toit conjugal aux côtés de son épouse Rose (ch. IX)',
+			'Fait l’éloge de la paix domestique retrouvée grâce à cette cohabitation (ch. IX)',
 		],
 		color: '#0284c7',
 		tier: 'standard',
@@ -273,11 +273,11 @@ export const potBouilleCharacters: MapNode[] = [
 		eyebrow: 'Cousine de Rose · maîtresse de maison installée',
 		meta: ['cousine de Rose Campardon', 'ancienne demoiselle de magasin'],
 		description:
-			"Cousine de Rose Campardon et maîtresse d'Achille Campardon. Introduite au deuxième étage à la demande de Rose pour soulager l'épouse souffrante, elle partage la couche de l'architecte tout en prenant la direction autoritaire des dépenses et de la domesticité du foyer.",
+			"Cousine de Rose Campardon et maîtresse d'Achille Campardon. Introduite au troisième étage à la demande de Rose pour soulager l'épouse souffrante, elle partage la couche de l'architecte tout en prenant la direction autoritaire des dépenses et de la domesticité du foyer.",
 		points: [
-			'Rejoint le ménage Campardon avec l’accord chaleureux de l’épouse Rose (ch. VII)',
-			'Devient la véritable intendante et administratrice du foyer (ch. VIII)',
-			'Maintient l’ordre domestique et fait trembler les bonnes sous couvert de dévouement (ch. XII)',
+			'Rejoint le ménage Campardon avec l’accord chaleureux de l’épouse Rose (ch. IX)',
+			'Devient la véritable intendante et administratrice du foyer (ch. IX)',
+			'Maintient l’ordre domestique et fait trembler les bonnes sous couvert de dévouement (ch. IX)',
 		],
 		color: '#4338ca',
 		tier: 'minor',
@@ -297,10 +297,10 @@ export const potBouilleCharacters: MapNode[] = [
 		description:
 			"Femme d'affaires lucide et active à la tête du magasin de nouveautés « Au Bonheur des Dames ». Insensible aux entreprises de séduction précipitées d'Octave, elle privilégie la stricte rentabilité commerciale avant d'accepter de l'épouser une fois devenue veuve.",
 		points: [
-			'Embauche Octave au rayon des soieries du Bonheur des Dames (ch. I)',
-			'Repousse posément les avances galantes d’Octave au nom du travail (ch. VI)',
-			'Reconnaît les compétences commerciales et le sens des affaires d’Octave (ch. XIV)',
-			'L’épouse à la fin du roman après le décès de son premier mari Charles (ch. XVIII)',
+			'Engage Octave comme premier commis au Bonheur des Dames, sur recommandation (ch. I)',
+			'Repousse posément les avances galantes d’Octave au nom du travail (ch. IX)',
+			'Après la mort de son mari (ch. XIII), reprend Octave au magasin (ch. XV, XVII)',
+			'L’épouse à la fin du roman (ch. XVIII)',
 		],
 		color: '#059669',
 		tier: 'standard',
@@ -345,7 +345,7 @@ export const potBouilleCharacters: MapNode[] = [
 		points: [
 			'Interdit formellement les bruits, malles et désordres dans l’escalier (ch. I)',
 			'Vénère la façade de respectabilité tout en méprisant les locataires pauvres (ch. IV)',
-			'Surveille avec effroi le ventre de la locataire ouvrière et exige son départ avant l’accouchement (ch. XI, XII)',
+			'Surveille avec effroi le ventre de la locataire ouvrière et guette son départ forcé avant l’accouchement (ch. XI, XIII)',
 		],
 		color: '#52525b',
 		tier: 'minor',
@@ -363,10 +363,10 @@ export const potBouilleCharacters: MapNode[] = [
 		description:
 			"Femme de chambre intelligente, froide et observatrice de Berthe et Auguste. Témoin au quotidien des turpitudes, des mesquineries financières et de l'adultère de ses maîtres, elle détient le secret de la maison et fait éclater la vérité quand on menace ses intérêts.",
 		points: [
-			'Subit les humiliations et les économies de bout de chandelle du couple (ch. X)',
+			'Subit les économies de bout de chandelle du couple, qui la paie mal (ch. XIV)',
 			'Surveille la liaison clandestine nouée entre Octave et Berthe (ch. XIII)',
-			'Complice d’Auguste, elle lui signale le départ de Berthe et verrouille la porte de cuisine lors du piège (ch. XIV)',
-			'Révèle aux maîtres les secrets d’alcôve et illustre la guerre souterraine des cours et mansardes (ch. XVII–XVIII)',
+			'Surprise par Berthe parlant bas avec Auguste avant le piège ; Berthe la soupçonne de les avoir « vendus » (ch. XIV)',
+			'Chassée par Berthe, elle hurle dans l’escalier de service les secrets de sa maîtresse (ch. XVII)',
 		],
 		color: '#4b5563',
 		tier: 'minor',
@@ -453,7 +453,7 @@ export const potBouilleRelationships: MapRelationship[] = [
 		type: 'marriage',
 		label: 'mariage d’intérêt',
 		description:
-			"Auguste Vabre épouse Berthe Josserand au chapitre VIII, alléché par la fausse promesse d'une dot de 50 000 francs. Leur union, sans amour, s'envenime rapidement autour de l'avarice maladive d'Auguste et du non-paiement de la dot (ch. X–XI). Après la crise de l’adultère, ils reprennent la vie commune pour sauver les convenances (ch. XVIII).",
+			"Auguste Vabre épouse Berthe Josserand au chapitre VIII, alléché par la fausse promesse d'une dot de 50 000 francs. Leur union, sans amour, s'envenime rapidement autour de l'avarice maladive d'Auguste et du non-paiement de la dot (ch. XII). Après la crise de l’adultère, ils reprennent la vie commune pour sauver les convenances (ch. XVII).",
 		labelDy: -12,
 		mLabelDy: -12,
 		mobileLabel: true,
@@ -466,7 +466,7 @@ export const potBouilleRelationships: MapRelationship[] = [
 		type: 'adultery',
 		label: 'liaison adultère',
 		description:
-			"Octave Mouret entreprend la conquête de Berthe une fois celle-ci mariée. Elle devient sa maîtresse au chapitre XII. Leur liaison passionnée et clandestine dans la chambre du quatrième étage est surprise par Auguste alerté par Rachel à la fin de la nuit (ch. XIV), déclenchant le grand scandale de l'immeuble (ch. XV).",
+			"Octave Mouret entreprend la conquête de Berthe une fois celle-ci mariée. Elle devient sa maîtresse au chapitre XII. Leur liaison passionnée et clandestine dans la chambre du quatrième étage est surprise par Auguste, que Berthe soupçonne Rachel d'avoir renseigné (ch. XIV), déclenchant le grand scandale de l'immeuble (ch. XV).",
 		labelDy: 16,
 		mLabelDy: 16,
 		mobileLabel: true,
@@ -487,14 +487,14 @@ export const potBouilleRelationships: MapRelationship[] = [
 		mobileLabel: true,
 	},
 
-	// 4. Octave & Valérie Vabre (Aventure passagère)
+	// 4. Octave & Valérie Vabre (Avances repoussées, puis amitié)
 	{
 		source: 'mouret',
 		target: 'valerie-vabre',
-		type: 'adultery',
-		label: 'liaison passagère',
+		type: 'social',
+		label: 'avances repoussées',
 		description:
-			"Au chapitre IX, Octave séduit la nerveuse Valérie Vabre au premier étage de l'immeuble. L'aventure tourne court : Valérie, après avoir cédé, le congédie avec humeur pour préserver sa liberté et ses amants extérieurs.",
+			"Au chapitre IV, Octave tente de prendre Valérie Vabre après une de ses crises de nerfs ; elle le repousse avec une froide surprise. Au chapitre XV, elle lui explique ce refus et lui avoue tromper son mari sans joie : « on n'aime bien que les femmes qu'on n'a pas eues », conclut Octave. Ils restent ensuite amis (ch. XVIII).",
 		labelDx: 12,
 		labelDy: 14,
 		mLabelDx: 12,
@@ -509,7 +509,7 @@ export const potBouilleRelationships: MapRelationship[] = [
 		type: 'business',
 		label: 'alliance commerciale → mariage',
 		description:
-			"Octave tente d'abord de séduire Mme Hédouin, sa patronne au Bonheur des Dames, qui l'éconduit calmement pour préserver les affaires (ch. VI). Après le décès de son mari Charles, elle accepte d'épouser Octave (ch. XVIII), couronnant son ascension par le contrôle du grand magasin.",
+			"Octave tente d'abord de séduire Mme Hédouin, sa patronne au Bonheur des Dames, qui l'éconduit calmement pour préserver les affaires (ch. IX). Après le décès de son mari (ch. XIII), elle accepte d'épouser Octave (ch. XVIII), couronnant son ascension par le contrôle du grand magasin.",
 		labelDx: -18,
 		labelDy: 0,
 		mLabelDx: -18,
@@ -538,7 +538,7 @@ export const potBouilleRelationships: MapRelationship[] = [
 		type: 'adultery',
 		label: 'maîtresse installée au foyer',
 		description:
-			"Au chapitre VII, Campardon installe Gasparine, cousine de son épouse Rose et sa propre maîtresse, au domicile conjugal sous le prétexte commode de soigner Rose. Le trio vit dans une harmonie bourgeoise exemplaire, Gasparine régissant l'appartement (ch. VIII, XII).",
+			"Au chapitre IX, à l'initiative de Rose, Gasparine, cousine de celle-ci et maîtresse de Campardon, s'installe au domicile conjugal ; l'architecte, d'abord gêné, s'en accommode. Le trio vit dans une harmonie bourgeoise exemplaire, Gasparine régissant l'appartement (ch. IX).",
 		labelDx: -8,
 		labelDy: -12,
 		mLabelDx: -8,
@@ -566,7 +566,7 @@ export const potBouilleRelationships: MapRelationship[] = [
 		type: 'marriage',
 		label: 'ménage déchiré & jalousie',
 		description:
-			"Union de discorde permanente au premier étage sur cour. Théophile soupçonne sans cesse sa femme d'adultère tandis que Valérie le nargue et le tyrannise dans des scènes domestiques furieuses (ch. V, XI).",
+			"Union de discorde permanente au premier étage sur cour. Théophile se plaint au docteur Juillerat des humeurs changeantes de sa femme, qui le « torturait » (ch. III) ; jaloux, il lui tord le bras à cause d'une lettre d'amour le jour du mariage de Berthe (ch. VIII).",
 		labelDx: 0,
 		labelDy: -14,
 		mLabelDx: 0,
@@ -622,7 +622,7 @@ export const potBouilleRelationships: MapRelationship[] = [
 		type: 'family',
 		label: 'attachement passionné & protection',
 		description:
-			"Frère déséquilibré de Berthe, Saturnin lui voue un dévouement féroce. Dès qu'Auguste contrarie sa sœur, Saturnin entre dans des rages destructrices et tente de l'étrangler (ch. XI, XV).",
+			"Frère déséquilibré de Berthe, Saturnin lui voue un dévouement féroce. Dès qu'Auguste contrarie sa sœur, Saturnin entre dans des rages destructrices et le menace de son couteau (ch. XII, XV).",
 		labelDx: 14,
 		labelDy: 10,
 		mLabelDx: 14,
@@ -636,7 +636,7 @@ export const potBouilleRelationships: MapRelationship[] = [
 		type: 'financial',
 		label: 'promesse mensongère de 50 000 F',
 		description:
-			"Pour emporter l'accord d'Auguste Vabre, Mme Josserand promet par contrat une dot de cinquante mille francs qu'elle sait pertinemment inexistante, semant les germes de la discorde financière du ménage (ch. VI, X).",
+			"Pour emporter l'accord d'Auguste Vabre, Mme Josserand promet par contrat une dot de cinquante mille francs qu'elle sait pertinemment inexistante, semant les germes de la discorde financière du ménage (ch. V, VII, XII).",
 		labelDx: 0,
 		labelDy: -18,
 		mLabelDx: 0,
@@ -693,7 +693,7 @@ export const potBouilleRelationships: MapRelationship[] = [
 		type: 'domestic',
 		label: 'espionne → piège du flagrant délit',
 		description:
-			"Témoin direct de l'intimité du foyer, la domestique Rachel découvre la liaison secrète de Berthe avec Octave. Complice d’Auguste, elle lui révèle le départ nocturne de sa maîtresse et verrouille la porte de cuisine pour empêcher toute fuite (ch. XIV).",
+			"Témoin direct de l'intimité du foyer, la domestique Rachel découvre la liaison secrète de Berthe avec Octave. Avant le piège, Berthe la surprend parlant bas avec Auguste ; quand elle trouve ensuite la porte de sa cuisine fermée (elle en avait laissé la clef chez Octave), elle en conclut que sa bonne les a « vendus » (ch. XIV).",
 		labelDx: 0,
 		labelDy: 14,
 		mLabelDx: 0,
