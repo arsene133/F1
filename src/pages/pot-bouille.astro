@@ -294,9 +294,20 @@ const pageDescription =
 					</details>
 
 					<!-- Mise en perspective historique : la nuit de noces et l’intimité conjugale (d’après Aïcha Limbada) -->
-					<section class="interpretation-section intimacy-section" id="nuit-de-noces" aria-labelledby="intimacy-title">
-						<p class="intimacy-eyebrow">Mise en perspective historique</p>
-						<h2 id="intimacy-title">La nuit de noces : l’histoire intime derrière la satire de Zola</h2>
+					<details class="intimacy-note" id="nuit-de-noces" aria-labelledby="intimacy-title">
+						<summary class="note-summary">
+							<span class="note-summary-badge badge-history">Mise en perspective historique</span>
+							<h2 class="note-summary-title" id="intimacy-title">La nuit de noces : l’histoire intime derrière la satire de Zola</h2>
+							<span class="note-summary-toggle" aria-hidden="true">Déplier ▾</span>
+						</summary>
+						<div class="note-details-content intimacy-section">
+						<div class="history-note-footer intimacy-takeaway">
+							<p>
+								<strong>À retenir :</strong> l’histoire de l’intimité conjugale montre que la satire de Zola repose sur
+								des normes bien réelles : l’ignorance imposée aux jeunes filles, le devoir conjugal et le poids de la dot.
+								Le romancier dévoile ce que la respectabilité bourgeoise veut faire taire.
+							</p>
+						</div>
 						<p>
 							L’historienne Aïcha Limbada a consacré un livre à la nuit de noces en France, du XIX<sup>e</sup> au début
 							du XX<sup>e</sup> siècle. Elle s’appuie en particulier sur des procès de couples qui demandaient la
@@ -395,7 +406,7 @@ const pageDescription =
 							versée, et leurs disputes tournent sans cesse autour de l’argent. Au chapitre XVI, le narrateur résume
 							l’histoire du mariage que Berthe raconte à ses parents : ce que les mères enseignent aux filles sans
 							fortune, écrit-il, c’est « tout un cours de prostitution décente et permise ». Après le scandale, les époux
-							reprennent la vie commune pour sauver les apparences (ch. XVIII).
+							reprennent la vie commune pour sauver les apparences (ch. XVII).
 						</p>
 						<p class="intimacy-caution">
 							<strong>Précaution de lecture :</strong> la formule n’est pas une réplique de Berthe : c’est la voix du
@@ -404,14 +415,6 @@ const pageDescription =
 							étudiées par Limbada viennent, elles aussi, de couples en crise : ni le roman ni ces procès ne décrivent
 							le mariage « ordinaire ».
 						</p>
-
-						<footer class="history-note-footer">
-							<p>
-								<strong>À retenir :</strong> l’histoire de l’intimité conjugale montre que la satire de Zola repose sur
-								des normes bien réelles : l’ignorance imposée aux jeunes filles, le devoir conjugal et le poids de la dot.
-								Le romancier dévoile ce que la respectabilité bourgeoise veut faire taire.
-							</p>
-						</footer>
 
 						<p class="intimacy-reference">
 							<strong>Référence :</strong> Aïcha Limbada, <cite>La Nuit de noces. Une histoire de l’intimité
@@ -422,7 +425,8 @@ const pageDescription =
 							<a href="/goriot"><cite>Le Père Goriot</cite> de Balzac</a> ; l’éducation au couvent de Camille dans
 							<a href="/on-ne-badine-pas-avec-l-amour"><cite>On ne badine pas avec l’amour</cite> de Musset</a>.
 						</p>
-					</section>
+						</div>
+					</details>
 
 					<!-- Section iconographique patrimoniale : L’immeuble bourgeois vu par Zola -->
 					<section class="potbouille-iconography-section" id="sources-iconographiques" aria-labelledby="iconography-section-title">
@@ -1024,32 +1028,23 @@ const pageDescription =
 	}
 
 	/* Mise en perspective historique : la nuit de noces (Aïcha Limbada) */
-	.intimacy-section h2 {
-		margin: 0 0 1rem;
-		font-family: var(--map-serif);
-		font-size: 1.45rem;
-		line-height: 1.25;
-		color: var(--map-ink);
-		text-align: left;
+	.intimacy-section .intimacy-takeaway {
+		margin: 0 0 1.25rem;
 	}
 
 	.intimacy-section h3 {
 		margin: 1.75rem 0 0.6rem;
+		font-family: var(--map-serif);
 		font-size: 1.1rem;
+		color: var(--map-ink);
 	}
 
 	.intimacy-section p {
 		margin: 0 0 0.85rem;
+		font-size: 0.95rem;
+		line-height: 1.6;
+		color: var(--map-ink-soft);
 		text-align: left;
-	}
-
-	.intimacy-section p.intimacy-eyebrow {
-		margin: 0 0 0.35rem;
-		font-size: 0.72rem;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.08em;
-		color: var(--intro-eyebrow-color);
 	}
 
 	.intimacy-section p.intimacy-method {
@@ -1094,7 +1089,8 @@ const pageDescription =
 	/* Encadrés d’approfondissement dépliables (details / summary) */
 	.inhabitants-note,
 	.counterfactual-note,
-	.historical-context-note {
+	.historical-context-note,
+	.intimacy-note {
 		margin: 1.75rem 0;
 		background: #fbf9f4;
 		border: 1px solid #e5dfd3;
@@ -1113,7 +1109,8 @@ const pageDescription =
 		border-left: 4px solid #8b572a;
 	}
 
-	.historical-context-note {
+	.historical-context-note,
+	.intimacy-note {
 		background: #ffffff;
 		border: 1px solid #dcd6cb;
 		border-left: 4px solid #274765;
@@ -1121,7 +1118,8 @@ const pageDescription =
 
 	.inhabitants-note[open],
 	.counterfactual-note[open],
-	.historical-context-note[open] {
+	.historical-context-note[open],
+	.intimacy-note[open] {
 		box-shadow: 0 4px 14px rgba(23, 43, 58, 0.06);
 	}
 
@@ -1194,7 +1192,8 @@ const pageDescription =
 
 	.inhabitants-note[open] .note-summary-toggle,
 	.counterfactual-note[open] .note-summary-toggle,
-	.historical-context-note[open] .note-summary-toggle {
+	.historical-context-note[open] .note-summary-toggle,
+	.intimacy-note[open] .note-summary-toggle {
 		color: var(--map-ink);
 	}
 
