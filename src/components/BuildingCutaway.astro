@@ -127,78 +127,24 @@ const clientBuildingData = {
 	</nav>
 
 	<div class="cutaway-main-layout">
-		<!-- Vue graphique de la coupe (Coupe architecturale haussmannienne réaliste) -->
+		<!-- Vue graphique de la coupe (Schéma architectural stylisé) -->
 		<div class="cutaway-elevation-wrapper">
-			<!-- Bandeau supérieur d'orientation spatiale immédiate -->
-			<div class="building-spatial-compass" aria-hidden="true">
-				<div class="compass-side compass-street">
-					<span class="compass-arrow">←</span>
-					<span class="compass-title">FAÇADE RUE DE CHOISEUL</span>
-					<span class="compass-sub">Apparences · Salons & Honneur</span>
-				</div>
-				<div class="compass-center">
-					<span class="compass-divider">COUPE ARCHITECTURALE · 28, RUE DE CHOISEUL</span>
-				</div>
-				<div class="compass-side compass-court">
-					<span class="compass-title">COUR INTÉRIEURE</span>
-					<span class="compass-sub">Puits de jour · Secrets & Boyaux</span>
-					<span class="compass-arrow">→</span>
-				</div>
-			</div>
-
-			<!-- Toiture haussmannienne en coupe avec brisis d'ardoise, terrasson zinc, lucarnes et cheminées -->
 			<div class="building-facade-roof" aria-hidden="true">
-				<div class="roof-silhouette">
-					<!-- Crête de toit décorative en zinc -->
-					<div class="roof-cresting"></div>
-
-					<!-- Souches de cheminée en brique et mitres en terre cuite sur les murs mitoyens -->
+				<div class="roof-zinc">
+					<div class="zinc-ridge"></div>
+					<div class="roof-dormers">
+						<span class="dormer" title="Lucarne mansardée"></span>
+						<span class="dormer" title="Lucarne mansardée"></span>
+						<span class="dormer" title="Lucarne mansardée"></span>
+						<span class="dormer" title="Lucarne mansardée"></span>
+					</div>
 					<div class="chimneys">
-						<div class="chimney chimney-left" title="Souche de cheminée en brique · mur mitoyen rue">
-							<span class="chimney-cap"></span>
-							<div class="chimney-pots">
-								<span class="chimney-pot"></span>
-								<span class="chimney-pot"></span>
-							</div>
-						</div>
-						<div class="chimney chimney-right" title="Souche de cheminée en brique · mur mitoyen cour">
-							<span class="chimney-cap"></span>
-							<div class="chimney-pots">
-								<span class="chimney-pot"></span>
-								<span class="chimney-pot"></span>
-							</div>
-						</div>
+						<span class="chimney"></span>
+						<span class="chimney"></span>
 					</div>
-
-					<!-- Brisis en ardoise et terrasson en zinc avec lucarnes haussmanniennes -->
-					<div class="roof-zinc">
-						<div class="zinc-ridge"></div>
-						<div class="roof-dormers">
-							<div class="dormer" title="Lucarne mansardée en zinc">
-								<span class="dormer-pediment"></span>
-								<span class="dormer-window"></span>
-							</div>
-							<div class="dormer" title="Lucarne mansardée en zinc">
-								<span class="dormer-pediment"></span>
-								<span class="dormer-window"></span>
-							</div>
-							<div class="dormer" title="Lucarne mansardée en zinc">
-								<span class="dormer-pediment"></span>
-								<span class="dormer-window"></span>
-							</div>
-							<div class="dormer" title="Lucarne mansardée en zinc">
-								<span class="dormer-pediment"></span>
-								<span class="dormer-window"></span>
-							</div>
-						</div>
-					</div>
-
-					<!-- Corniche sous brisis avec modillons -->
-					<div class="roof-cornice"></div>
 				</div>
 			</div>
 
-			<!-- Corps du bâtiment : Coupe verticale des étages -->
 			<div class="building-structure" role="region" aria-label="Coupe verticale des étages de l'immeuble">
 				{potBouilleBuildingFloors.map((floor) => (
 					<section
@@ -207,18 +153,12 @@ const clientBuildingData = {
 						data-floor-level={floor.level}
 						aria-labelledby={`floor-label-${floor.id}`}
 					>
-						<!-- Plancher porteur et entablement de l'étage -->
-						<div class="floor-slab" aria-hidden="true">
-							<div class={`floor-slab-finish finish-${floor.id}`}></div>
-							<div class="floor-slab-core"></div>
-						</div>
-
-						<!-- En-tête d'étage avec cartouche, tapis et mention architecturale -->
+						<!-- En-tête de l'étage avec tapis et mention architecturale -->
 						<div class="floor-strip">
 							<div class="floor-badge">
 								<span class="floor-number" id={`floor-label-${floor.id}`}>{floor.name}</span>
 								<span class="floor-carpet" title={floor.carpet}>
-									{floor.level >= 1 && floor.level <= 3 ? '🔴 Tapis rouge d’honneur' : floor.level === 4 ? '⚪ Toile grise' : floor.level === 5 ? '🟡 Combles zinc' : floor.level === 0 ? '🟤 Entresol bas' : '🏛️ Vestibule faux marbre'}
+									{floor.level >= 1 && floor.level <= 3 ? '🔴 Tapis rouge' : floor.level === 4 ? '⚪ Toile grise' : floor.level === 5 ? '🟡 Combles zinc' : '🏛️ Vestibule'}
 								</span>
 							</div>
 							<div class="floor-specs" aria-hidden="true">
@@ -226,102 +166,53 @@ const clientBuildingData = {
 							</div>
 						</div>
 
-						<!-- Ligne de coupe : Façade rue à gauche, appartements au centre, cour à droite -->
-						<div class="floor-sectional-container">
-							<!-- Flanc gauche de façade sur rue avec balcon d'étage -->
-							<aside class={`floor-flank flank-street flank-street-${floor.id}`} aria-hidden="true">
-								<div class="flank-stone-wall">
-									<span class="flank-stone-joint"></span>
-									<span class="flank-stone-joint"></span>
-								</div>
-								{floor.level === 1 && (
-									<div class="balcony-pier balcony-noble" title="Grand balcon en fonte ouvragée soutenu par des cariatides">
-										<div class="balcony-rail">
-											<svg viewBox="0 0 32 16" class="balcony-iron-svg" aria-hidden="true">
-												<path d="M0,2 L32,2 M0,14 L32,14 M4,2 C4,8 12,8 12,14 M12,2 C12,8 4,8 4,14 M20,2 C20,8 28,8 28,14 M28,2 C28,8 20,8 20,14" fill="none" stroke="currentColor" stroke-width="1.2" />
-											</svg>
+						<!-- Distribution des pièces sur l'étage -->
+						<div class="floor-rooms-row">
+							{floor.rooms.map((room) => {
+								const characters = room.characterIds
+									.map((cid) => charactersById.get(cid))
+									.filter(Boolean);
+
+								return (
+									<article
+										class={`room-cell room-orient-${room.orientation}`}
+										data-room-id={room.id}
+										data-orientation={room.orientation}
+										data-character-ids={room.characterIds.join(' ')}
+										tabindex="0"
+										role="button"
+										aria-expanded="false"
+										aria-controls="cutaway-detail-panel"
+									>
+										<div class="room-cell-header">
+											<span class={`room-tag tag-${room.orientation}`}>
+												{room.orientation === 'rue' ? 'Façade Rue' : room.orientation === 'cour' ? 'Sur Cour' : room.orientation === 'communs' ? 'Circulation / Service' : 'Commerce'}
+											</span>
+											<h3 class="room-title">{room.title}</h3>
 										</div>
-										<div class="balcony-console" title="Console sculptée"></div>
-									</div>
-								)}
-								{floor.level === 3 && (
-									<div class="balcony-pier balcony-standard" title="Balcon intermédiaire en pierre avec grille de fonte">
-										<div class="balcony-rail">
-											<svg viewBox="0 0 32 12" class="balcony-iron-svg" aria-hidden="true">
-												<path d="M0,2 L32,2 M0,10 L32,10 M8,2 L8,10 M16,2 L16,10 M24,2 L24,10" fill="none" stroke="currentColor" stroke-width="1.2" />
-											</svg>
-										</div>
-										<div class="balcony-console balcony-console-small"></div>
-									</div>
-								)}
-								{floor.level === -1 && (
-									<div class="cochere-arch" title="Arcade de la porte cochère en chêne à ferrures">
-										<span class="arch-keystone"></span>
-									</div>
-								)}
-							</aside>
 
-							<!-- Distribution intérieure des pièces sur l'étage -->
-							<div class="floor-rooms-row">
-								{floor.rooms.map((room) => {
-									const characters = room.characterIds
-										.map((cid) => charactersById.get(cid))
-										.filter(Boolean);
+										{room.subtitle && <p class="room-subtitle">{room.subtitle}</p>}
 
-									return (
-										<article
-											class={`room-cell room-orient-${room.orientation} room-${room.id}`}
-											data-room-id={room.id}
-											data-orientation={room.orientation}
-											data-character-ids={room.characterIds.join(' ')}
-											tabindex="0"
-											role="button"
-											aria-expanded="false"
-											aria-controls="cutaway-detail-panel"
-										>
-											<!-- Cordon de moulure de plafond -->
-											<div class="room-cornice-top" aria-hidden="true"></div>
-
-											<div class="room-cell-header">
-												<span class={`room-tag tag-${room.orientation}`}>
-													{room.orientation === 'rue' ? 'Façade Rue' : room.orientation === 'cour' ? 'Sur Cour' : room.orientation === 'communs' ? 'Circulation / Service' : 'Commerce'}
-												</span>
-												<h3 class="room-title">{room.title}</h3>
+										{characters.length > 0 && (
+											<div class="room-occupants" aria-label="Habitants de cette pièce">
+												{characters.map((ch) => ch && (
+													<span
+														class="occupant-pill"
+														style={`--occupant-color: ${ch.color};`}
+														data-char-id={ch.id}
+														title={`${ch.label} (${ch.caption})`}
+													>
+														<span class="occupant-dot"></span>
+														<strong class="occupant-name">{ch.label}</strong>
+													</span>
+												))}
 											</div>
+										)}
 
-											{room.subtitle && <p class="room-subtitle">{room.subtitle}</p>}
-
-											{characters.length > 0 && (
-												<div class="room-occupants" aria-label="Habitants de cette pièce">
-													{characters.map((ch) => ch && (
-														<span
-															class="occupant-pill"
-															style={`--occupant-color: ${ch.color};`}
-															data-char-id={ch.id}
-															title={`${ch.label} (${ch.caption})`}
-														>
-															<span class="occupant-dot"></span>
-															<strong class="occupant-name">{ch.label}</strong>
-														</span>
-													))}
-												</div>
-											)}
-
-											<p class="room-micro-desc">{room.description}</p>
-
-											<!-- Parquet ou revêtement de sol d'appartement -->
-											<div class="room-floor-base" aria-hidden="true"></div>
-										</article>
-									);
-								})}
-							</div>
-
-							<!-- Flanc droit sur cour intérieure avec descente pluviale et baies de service -->
-							<aside class={`floor-flank flank-court flank-court-${floor.id}`} aria-hidden="true">
-								<div class="court-wall">
-									<span class="court-downpipe"></span>
-								</div>
-							</aside>
+										<p class="room-micro-desc">{room.description}</p>
+									</article>
+								);
+							})}
 						</div>
 					</section>
 				))}
@@ -337,10 +228,6 @@ const clientBuildingData = {
 					aria-expanded="false"
 					aria-controls="cutaway-detail-panel"
 				>
-					<div class="exterior-storefront-badge" aria-hidden="true">
-						<span class="storefront-icon">🏛️</span>
-						<span>Architecture commerciale moderne · Fer & Verre</span>
-					</div>
 					<div class="room-cell-header">
 						<span class="room-tag tag-commerce">Extérieur · Nouveautés</span>
 						<h3 class="room-title">{potBouilleExteriorSpace.title}</h3>
@@ -368,16 +255,8 @@ const clientBuildingData = {
 			<!-- Pied architectural du bâtiment : fondations et trottoir -->
 			<div class="building-trottoir" aria-hidden="true">
 				<div class="trottoir-pave">
-					<div class="trottoir-street-side">
-						<span class="street-plaque">28, RUE DE CHOISEUL · PARIS IIᵉ</span>
-						<span class="pave-symbol">◆ Trottoir en granit & pavés de grès</span>
-					</div>
-					<div class="trottoir-court-side">
-						<span class="court-pave-symbol">Pavés humides de la cour intérieure ◆</span>
-					</div>
-				</div>
-				<div class="building-foundations">
-					<span class="foundations-vaults">Caves particulières des locataires · Voûtes de meulière · Égout collecteur</span>
+					<span>Trottoir de la rue de Choiseul</span>
+					<span class="pave-symbol">◆ Pavés parisiens ◆ Égouts & caves</span>
 				</div>
 			</div>
 		</div>
@@ -792,237 +671,100 @@ const clientBuildingData = {
 		align-items: start;
 	}
 
-	/* Élévation et coupe du bâtiment */
+	/* Façade et toiture */
 	.cutaway-elevation-wrapper {
 		display: flex;
 		flex-direction: column;
 	}
 
-	/* Bandeau de repérage spatial immédiat (Rue vs Cour) */
-	.building-spatial-compass {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		background: #ece4d5;
-		border: 1px solid #d8cdba;
-		border-radius: 6px 6px 0 0;
-		padding: 0.5rem 0.85rem;
-		margin-bottom: -1px;
-		font-family: var(--map-serif, Georgia, serif);
-	}
-
-	.compass-side {
-		display: flex;
-		flex-direction: column;
-		gap: 0.1rem;
-	}
-
-	.compass-street {
-		text-align: left;
-	}
-
-	.compass-court {
-		text-align: right;
-	}
-
-	.compass-title {
-		font-size: 0.78rem;
-		font-weight: 700;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: #172b3a;
-	}
-
-	.compass-street .compass-title {
-		color: #9a3412;
-	}
-
-	.compass-court .compass-title {
-		color: #9d174d;
-	}
-
-	.compass-sub {
-		font-size: 0.7rem;
-		color: #5e6d7a;
-		font-style: italic;
-	}
-
-	.compass-arrow {
-		font-weight: bold;
-		font-size: 0.85rem;
-	}
-
-	.compass-center {
-		text-align: center;
-	}
-
-	.compass-divider {
-		font-size: 0.68rem;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.1em;
-		color: #786b59;
-		background: #f5eee2;
-		padding: 0.15rem 0.6rem;
-		border-radius: 999px;
-		border: 1px solid #dfd4c2;
-	}
-
-	/* Façade et toiture haussmannienne */
 	.building-facade-roof {
 		position: relative;
 		margin-bottom: -1px;
 	}
 
-	.roof-silhouette {
-		position: relative;
-	}
-
-	.roof-cresting {
-		height: 8px;
-		background: repeating-linear-gradient(90deg, #1e293b 0px, #1e293b 3px, transparent 3px, transparent 10px);
-		border-bottom: 2px solid #334155;
-		margin: 0 16px;
-	}
-
 	.roof-zinc {
 		position: relative;
-		height: 58px;
-		background: linear-gradient(180deg, #475569 0%, #334155 45%, #1e293b 100%);
-		border: 2px solid #1e252e;
+		height: 48px;
+		background: linear-gradient(180deg, #64748b 0%, #475569 100%);
+		border-top-left-radius: 12px;
+		border-top-right-radius: 12px;
+		border: 2px solid #334155;
 		border-bottom: none;
-		box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.25), 0 3px 6px rgba(0, 0, 0, 0.15);
+		box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.2);
 	}
 
 	.zinc-ridge {
 		height: 6px;
-		background: #0f172a;
+		background: #1e293b;
 		border-bottom: 1px solid #94a3b8;
 	}
 
 	.roof-dormers {
 		display: flex;
 		justify-content: space-around;
-		padding: 6px 36px 0;
+		padding: 6px 40px 0;
 	}
 
 	.dormer {
-		width: 26px;
-		height: 28px;
+		width: 22px;
+		height: 22px;
 		background: #f8fafc;
-		border: 2px solid #0f172a;
-		border-radius: 13px 13px 0 0;
-		box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
-		position: relative;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-	}
-
-	.dormer-pediment {
-		width: 32px;
-		height: 4px;
-		background: #64748b;
-		border-radius: 2px;
-		margin-top: -3px;
-		border: 1px solid #1e293b;
-	}
-
-	.dormer-window {
-		width: 14px;
-		height: 16px;
-		background: #cbd5e1;
-		border: 1px solid #334155;
-		border-radius: 7px 7px 0 0;
-		margin-top: 2px;
+		border: 2px solid #1e293b;
+		border-top-left-radius: 11px;
+		border-top-right-radius: 11px;
+		box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
 	}
 
 	.chimneys {
 		position: absolute;
-		top: -16px;
+		top: -14px;
 		left: 0;
 		right: 0;
 		display: flex;
 		justify-content: space-between;
-		padding: 0 12px;
+		padding: 0 24px;
 		pointer-events: none;
-		z-index: 2;
 	}
 
 	.chimney {
-		width: 28px;
-		height: 26px;
-		background: linear-gradient(90deg, #991b1b 0%, #b91c1c 50%, #7f1d1d 100%);
-		border: 1px solid #500707;
-		border-radius: 2px 2px 0 0;
-		position: relative;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-	}
-
-	.chimney-cap {
-		width: 34px;
-		height: 4px;
-		background: #e2d8c3;
-		border: 1px solid #786b59;
-		border-radius: 2px;
-		margin-top: -3px;
-	}
-
-	.chimney-pots {
-		display: flex;
-		gap: 3px;
-		margin-top: -7px;
-	}
-
-	.chimney-pot {
-		width: 8px;
-		height: 8px;
-		background: #ea580c;
-		border: 1px solid #9a3412;
+		width: 16px;
+		height: 18px;
+		background: #b91c1c;
+		border: 1px solid #7f1d1d;
 		border-radius: 2px 2px 0 0;
 	}
 
-	.roof-cornice {
-		height: 10px;
-		background: #dfd4c0;
-		border-top: 2px solid #8c7b64;
-		border-bottom: 2px solid #6b5c4c;
-		background-image: repeating-linear-gradient(90deg, #8c7b64 0px, #8c7b64 5px, transparent 5px, transparent 32px);
-	}
-
-	/* Structure du bâtiment (Coupe en pierre de taille) */
+	/* Structure du bâtiment */
 	.building-structure {
 		display: flex;
 		flex-direction: column;
-		background: #d8cdba;
-		border: 3px solid #4a3e35;
+		background: #e7dfd1;
+		border: 2px solid #4a3e35;
 		border-top: none;
-		gap: 0;
-		padding: 0;
-		box-shadow: 0 8px 24px rgba(23, 43, 58, 0.08);
+		gap: 4px;
+		padding: 4px;
 	}
 
 	.building-floor {
 		background: #fffdf9;
-		border-bottom: 2px solid #4a3e35;
-		padding: 0;
-		position: relative;
+		border: 1px solid #d4c7b2;
+		border-radius: 4px;
+		padding: 0.6rem 0.75rem;
 		transition: background-color 0.2s ease;
 	}
 
-	/* Différenciation architecturale des étages par niveau */
+	/* Différenciation des étages par niveau */
 	.floor-combles {
 		background: #f8fafc;
+		border-color: #cbd5e1;
 	}
 
 	.floor-etage-4 {
-		background: #faf8f4;
+		background: #faf8f5;
 	}
 
 	.floor-etage-3 {
-		background: #fffef7;
+		background: #fffdf8;
 	}
 
 	.floor-etage-2 {
@@ -1030,68 +772,27 @@ const clientBuildingData = {
 	}
 
 	.floor-etage-1 {
-		background: #fff9ee;
-		border-left: 4px solid #b45309;
+		background: #fffaf0;
+		border: 2px solid #b45309;
+		box-shadow: 0 0 8px rgba(180, 83, 9, 0.1);
 	}
 
 	.floor-entresol {
-		background: #fbf6ec;
-		border-left: 4px solid #92400e;
+		background: #fbf7ee;
 	}
 
 	.floor-rdc {
-		background: #f4ece0;
-		border-bottom: 4px solid #3e2e20;
+		background: #f8f3e8;
+		border-bottom: 2px solid #78350f;
 	}
 
-	/* Planchers porteurs réalistes (solives + parquet / tapis) */
-	.floor-slab {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.floor-slab-finish {
-		height: 6px;
-	}
-
-	.finish-combles {
-		background: #b5a48b; /* Sol brut en bois */
-	}
-
-	.finish-etage-4 {
-		background: #94a3b8; /* Toile grise */
-	}
-
-	.finish-etage-3,
-	.finish-etage-2,
-	.finish-etage-1 {
-		background: #9f1239; /* Tapis rouge d'honneur */
-		border-top: 1px solid #d97706; /* Tringles de laiton */
-	}
-
-	.finish-entresol {
-		background: #c29b68; /* Parquet chêne */
-	}
-
-	.finish-rdc {
-		background: #e2e8f0; /* Marbre et dalles */
-		border-top: 1px solid #94a3b8;
-	}
-
-	.floor-slab-core {
-		height: 5px;
-		background: #e8dec8;
-		border-bottom: 1px solid #c9bda5;
-	}
-
-	/* Bandeau d'en-tête d'étage (cartouche architectural) */
 	.floor-strip {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
-		padding: 0.35rem 0.75rem;
-		background: rgba(255, 255, 255, 0.88);
-		border-bottom: 1px solid #ded4c3;
+		margin-bottom: 0.5rem;
+		padding-bottom: 0.35rem;
+		border-bottom: 1px dashed #ded4c3;
 	}
 
 	.floor-badge {
@@ -1108,7 +809,7 @@ const clientBuildingData = {
 	}
 
 	.floor-carpet {
-		font-size: 0.76rem;
+		font-size: 0.78rem;
 		color: #78350f;
 		background: #faeed9;
 		padding: 0.1rem 0.45rem;
@@ -1122,201 +823,29 @@ const clientBuildingData = {
 		font-style: italic;
 	}
 
-	/* Conteneur de section transversale (Flanc Rue + Pièces + Flanc Cour) */
-	.floor-sectional-container {
-		display: flex;
-		align-items: stretch;
-		position: relative;
-	}
-
-	/* Flancs en coupe architecturale */
-	.floor-flank {
-		flex-shrink: 0;
-		position: relative;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.flank-street {
-		width: 38px;
-		background: #dfd3bd;
-		border-right: 2px solid #6b5c4c;
-		border-left: 2px solid #5a4a3c;
-	}
-
-	.flank-stone-wall {
-		width: 100%;
-		height: 100%;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-evenly;
-	}
-
-	.flank-stone-joint {
-		height: 1px;
-		background: rgba(100, 80, 60, 0.3);
-		width: 100%;
-	}
-
-	.flank-court {
-		width: 32px;
-		background: #d2cdc4;
-		border-left: 2px solid #6b5c4c;
-		border-right: 2px solid #5a4a3c;
-	}
-
-	.court-wall {
-		width: 100%;
-		height: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.court-downpipe {
-		width: 5px;
-		height: 100%;
-		background: #94a3b8;
-		border-radius: 2px;
-		box-shadow: inset 1px 0 2px rgba(0, 0, 0, 0.3);
-	}
-
-	/* Balcons haussmanniens sur la façade rue */
-	.balcony-pier {
-		position: absolute;
-		left: -14px;
-		top: 10px;
-		z-index: 3;
-		pointer-events: none;
-	}
-
-	.balcony-noble {
-		width: 38px;
-	}
-
-	.balcony-standard {
-		width: 34px;
-	}
-
-	.balcony-rail {
-		background: #1c2229;
-		color: #dfd3bd;
-		padding: 2px;
-		border-radius: 2px;
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-	}
-
-	.balcony-iron-svg {
-		display: block;
-		width: 100%;
-		height: 14px;
-		color: #e2e8f0;
-	}
-
-	.balcony-console {
-		width: 12px;
-		height: 14px;
-		background: #c8ba9e;
-		border: 1px solid #786b59;
-		margin: 0 auto;
-		border-radius: 0 0 4px 4px;
-	}
-
-	.balcony-console-small {
-		width: 8px;
-		height: 8px;
-	}
-
-	.cochere-arch {
-		position: absolute;
-		left: 4px;
-		right: 4px;
-		top: 10px;
-		bottom: 10px;
-		border: 2px solid #332418;
-		border-bottom: none;
-		border-radius: 12px 12px 0 0;
-		background: #4a3828;
-	}
-
-	.arch-keystone {
-		position: absolute;
-		top: -4px;
-		left: 50%;
-		transform: translateX(-50%);
-		width: 6px;
-		height: 7px;
-		background: #d8cdba;
-		border: 1px solid #5a4a3c;
-	}
-
-	/* Distribution des pièces sur l'étage */
 	.floor-rooms-row {
-		flex: 1;
-		min-width: 0;
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-		gap: 0.6rem;
-		padding: 0.65rem 0.75rem;
+		gap: 0.5rem;
 	}
 
-	/* Proportions architecturales par étage sur desktop */
-	.floor-etage-1 .floor-rooms-row,
-	.floor-etage-2 .floor-rooms-row,
-	.floor-etage-3 .floor-rooms-row {
-		grid-template-columns: 1fr 1fr;
-	}
-
-	.floor-etage-4 .floor-rooms-row {
-		grid-template-columns: 1.25fr 1fr 1fr;
-	}
-
-	.floor-combles .floor-rooms-row {
-		grid-template-columns: 1.35fr 1fr;
-	}
-
-	.floor-entresol .floor-rooms-row {
-		grid-template-columns: 1fr;
-	}
-
-	.floor-rdc .floor-rooms-row {
-		grid-template-columns: 1.3fr 1.1fr 1fr 1.15fr;
-	}
-
-	/* Cellule de pièce (appartement / espace en coupe) */
+	/* Cellule de pièce (appartement / espace) */
 	.room-cell {
 		background: #ffffff;
 		border: 1px solid #dcd3c3;
-		border-radius: 5px;
-		padding: 0.65rem 0.75rem;
+		border-radius: 4px;
+		padding: 0.55rem 0.65rem;
 		cursor: pointer;
 		transition: all 0.18s ease;
 		display: flex;
 		flex-direction: column;
 		position: relative;
-		overflow: hidden;
-		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-	}
-
-	.room-cornice-top {
-		height: 3px;
-		background: #f1ebd8;
-		border-bottom: 1px solid #ded5c5;
-		margin: -0.65rem -0.75rem 0.45rem -0.75rem;
-	}
-
-	.room-floor-base {
-		height: 4px;
-		background: #cbb493;
-		border-top: 1px solid #b89e7a;
-		margin: 0.5rem -0.75rem -0.65rem -0.75rem;
 	}
 
 	.room-cell:hover {
 		border-color: #9f1239;
-		box-shadow: 0 4px 12px rgba(159, 18, 57, 0.14);
-		transform: translateY(-2px);
+		box-shadow: 0 2px 8px rgba(159, 18, 57, 0.12);
+		transform: translateY(-1px);
 	}
 
 	.room-cell:focus-visible {
@@ -1327,7 +856,7 @@ const clientBuildingData = {
 	.room-cell.is-selected {
 		border-color: #9f1239;
 		background: #fff5f7;
-		box-shadow: 0 0 0 2px #9f1239, 0 4px 14px rgba(159, 18, 57, 0.2);
+		box-shadow: 0 0 0 2px #9f1239, 0 3px 10px rgba(159, 18, 57, 0.18);
 	}
 
 	.room-cell.is-dimmed {
@@ -1335,54 +864,22 @@ const clientBuildingData = {
 		filter: grayscale(0.5);
 	}
 
-	/* Différenciation des hauteurs et ambiances par niveau */
-	.floor-etage-1 .room-cell {
-		min-height: 195px;
-	}
-
-	.floor-etage-2 .room-cell,
-	.floor-etage-3 .room-cell {
-		min-height: 180px;
-	}
-
-	.floor-etage-4 .room-cell {
-		min-height: 175px;
-	}
-
-	.floor-combles .room-cell {
-		min-height: 155px;
-		background: #fafafa;
-	}
-
-	.floor-entresol .room-cell {
-		min-height: 140px;
-	}
-
-	.floor-rdc .room-cell {
-		min-height: 180px;
-	}
-
-	/* Nuances d'orientation spatiale */
+	/* Nuances selon l'orientation */
 	.room-orient-rue {
-		border-left: 4px solid #b45309;
-		background: linear-gradient(135deg, #fffdf8 0%, #ffffff 100%);
+		border-left: 3px solid #b45309;
 	}
 
 	.room-orient-cour {
-		border-right: 4px solid #be185d;
-		border-left: 1px solid #e2d9cd;
-		background: linear-gradient(135deg, #ffffff 0%, #fdf8fa 100%);
+		border-left: 3px solid #be185d;
 	}
 
 	.room-orient-communs {
 		border-left: 3px solid #64748b;
-		border-right: 3px solid #64748b;
-		background: #fbfbfb;
+		background: #fcfcfc;
 	}
 
 	.room-orient-commerce {
-		border-left: 4px solid #059669;
-		background: #fafffc;
+		border-left: 3px solid #059669;
 	}
 
 	.room-cell-header {
@@ -1398,33 +895,29 @@ const clientBuildingData = {
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
-		padding: 0.1rem 0.35rem;
-		border-radius: 3px;
+		padding: 0.08rem 0.3rem;
+		border-radius: 2px;
 		flex-shrink: 0;
 	}
 
 	.tag-rue {
 		background: #fef3c7;
 		color: #92400e;
-		border: 1px solid #fde68a;
 	}
 
 	.tag-cour {
 		background: #fce7f3;
 		color: #9d174d;
-		border: 1px solid #fbcfe8;
 	}
 
 	.tag-communs {
 		background: #f1f5f9;
 		color: #475569;
-		border: 1px solid #e2e8f0;
 	}
 
 	.tag-commerce {
 		background: #d1fae5;
 		color: #065f46;
-		border: 1px solid #a7f3d0;
 	}
 
 	.room-title {
@@ -1484,86 +977,37 @@ const clientBuildingData = {
 		overflow: hidden;
 	}
 
-	/* Espace extérieur rattaché (Au Bonheur des Dames) */
+	/* Espace extérieur rattaché */
 	.building-exterior-cell {
-		margin: 0.35rem 0.5rem 0.5rem;
+		margin-top: 0.25rem;
 		border: 1px dashed #059669;
 		background: #f0fdf4;
-	}
-
-	.exterior-storefront-badge {
-		font-size: 0.72rem;
-		font-weight: 600;
-		color: #047857;
-		text-transform: uppercase;
-		margin-bottom: 0.35rem;
-		display: flex;
-		align-items: center;
-		gap: 0.35rem;
 	}
 
 	.building-exterior-cell:hover {
 		border-color: #047857;
 	}
 
-	/* Trottoir et soubassement */
+	/* Trottoir */
 	.building-trottoir {
-		background: #1e293b;
+		background: #334155;
 		color: #f8fafc;
-		border: 3px solid #0f172a;
+		border: 2px solid #1e293b;
 		border-top: none;
 		border-bottom-left-radius: 6px;
 		border-bottom-right-radius: 6px;
-		padding: 0.65rem 1rem;
+		padding: 0.5rem 1rem;
 		font-size: 0.8rem;
-		display: flex;
-		flex-direction: column;
-		gap: 0.35rem;
 	}
 
 	.trottoir-pave {
 		display: flex;
 		justify-content: space-between;
 		font-style: italic;
-		align-items: center;
-	}
-
-	.trottoir-street-side {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-	}
-
-	.street-plaque {
-		background: #1e3a8a;
-		color: #ffffff;
-		border: 2px solid #60a5fa;
-		border-radius: 3px;
-		padding: 0.1rem 0.5rem;
-		font-family: var(--map-serif, Georgia, serif);
-		font-weight: bold;
-		font-size: 0.75rem;
-		letter-spacing: 0.05em;
-		font-style: normal;
 	}
 
 	.pave-symbol {
-		color: #cbd5e1;
-		font-size: 0.76rem;
-	}
-
-	.court-pave-symbol {
 		color: #94a3b8;
-		font-size: 0.76rem;
-	}
-
-	.building-foundations {
-		border-top: 1px dashed #475569;
-		padding-top: 0.3rem;
-		text-align: center;
-		font-size: 0.74rem;
-		color: #94a3b8;
-		font-style: italic;
 	}
 
 	/* Panneau latéral de détails */
@@ -1840,49 +1284,13 @@ const clientBuildingData = {
 		}
 	}
 
-	@media (max-width: 640px) {
+	@media (max-width: 600px) {
 		.building-cutaway {
 			padding: 1.25rem 0.75rem;
 		}
 
-		.building-spatial-compass {
-			flex-direction: column;
-			gap: 0.35rem;
-			text-align: center;
-		}
-
-		.compass-street,
-		.compass-court {
-			text-align: center;
-		}
-
-		.floor-sectional-container {
-			display: block;
-		}
-
-		.floor-flank {
-			display: none;
-		}
-
 		.floor-rooms-row {
-			grid-template-columns: 1fr !important;
-			padding: 0.5rem 0.4rem;
-		}
-
-		.floor-strip {
-			flex-direction: column;
-			align-items: flex-start;
-			gap: 0.3rem;
-		}
-
-		.room-cell {
-			min-height: auto;
-		}
-
-		.trottoir-pave {
-			flex-direction: column;
-			align-items: flex-start;
-			gap: 0.35rem;
+			grid-template-columns: 1fr;
 		}
 
 		.cutaway-controls {
