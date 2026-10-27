@@ -233,6 +233,70 @@ describe.skipIf(!BUILT)('Carte relationnelle de Pot-Bouille (/pot-bouille) — r
 		}
 	});
 
+	test('coupe architecturale : alignement spatial des appartements (Façade Rue à gauche, Sur Cour à droite)', async () => {
+		const page = await openPage();
+		try {
+			// Vérifier les 2 appartements du 2e étage
+			const ecrivain = page.locator('.floor-etage-2 .room-cell[data-room-id="appartement-ecrivain"]');
+			const augusteBerthe = page.locator('.floor-etage-2 .room-cell[data-room-id="appartement-auguste-berthe"]');
+
+			expect(await ecrivain.count()).toBe(1);
+			expect(await augusteBerthe.count()).toBe(1);
+
+			// Vérifier les étiquettes textuelles
+			const ecrivainTag = await ecrivain.locator('.room-tag').textContent();
+			expect(ecrivainTag).toContain('Façade Rue');
+
+			const augusteBertheTag = await augusteBerthe.locator('.room-tag').textContent();
+			expect(augusteBertheTag).toContain('Sur Cour');
+
+			// Vérifier l'ordonnancement horizontal sur desktop (rue à gauche, cour à droite)
+			const ecrivainBox = await ecrivain.boundingBox();
+			const augusteBertheBox = await augusteBerthe.boundingBox();
+			expect(ecrivainBox).not.toBeNull();
+			expect(augusteBertheBox).not.toBeNull();
+			expect(ecrivainBox!.x).toBeLessThan(augusteBertheBox!.x);
+
+			// Vérifier également les étages 1, 3 et 4 pour la cohérence spatiale globale
+			const duveyrier = page.locator('.floor-etage-1 .room-cell[data-room-id="appartement-duveyrier"]');
+			const theophileValerie = page.locator('.floor-etage-1 .room-cell[data-room-id="appartement-theophile-valerie"]');
+			const duveyrierBox = await duveyrier.boundingBox();
+			const theophileBox = await theophileValerie.boundingBox();
+			expect(duveyrierBox!.x).toBeLessThan(theophileBox!.x);
+
+			const campardon = page.locator('.floor-etage-3 .room-cell[data-room-id="foyer-campardon"]');
+			const juzeur = page.locator('.floor-etage-3 .room-cell[data-room-id="logement-juzeur"]');
+			const campardonBox = await campardon.boundingBox();
+			const juzeurBox = await juzeur.boundingBox();
+			expect(campardonBox!.x).toBeLessThan(juzeurBox!.x);
+
+			const josserand = page.locator('.floor-etage-4 .room-cell[data-room-id="foyer-josserand"]');
+			const octave = page.locator('.floor-etage-4 .room-cell[data-room-id="chambre-octave"]');
+			const josserandBox = await josserand.boundingBox();
+			const octaveBox = await octave.boundingBox();
+			expect(josserandBox!.x).toBeLessThan(octaveBox!.x);
+		} finally {
+			await page.close();
+		}
+	});
+
+	test('coupe architecturale en mobile (375×812) : ordre dans le flux (Façade Rue avant Sur Cour)', async () => {
+		const page = await openPage(375, 812);
+		try {
+			// Sur mobile (colonne unique), l'appartement sur rue doit apparaître avant l'appartement sur cour dans le DOM et visuellement (y plus faible)
+			const ecrivain = page.locator('.floor-etage-2 .room-cell[data-room-id="appartement-ecrivain"]');
+			const augusteBerthe = page.locator('.floor-etage-2 .room-cell[data-room-id="appartement-auguste-berthe"]');
+
+			const ecrivainBox = await ecrivain.boundingBox();
+			const augusteBertheBox = await augusteBerthe.boundingBox();
+			expect(ecrivainBox).not.toBeNull();
+			expect(augusteBertheBox).not.toBeNull();
+			expect(ecrivainBox!.y).toBeLessThan(augusteBertheBox!.y);
+		} finally {
+			await page.close();
+		}
+	});
+
 	test('notes éditoriales : repliées par défaut et ouvrables/fermables', async () => {
 		const page = await openPage();
 		try {

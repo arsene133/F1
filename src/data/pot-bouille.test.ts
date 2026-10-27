@@ -207,7 +207,7 @@ describe('Coupe architecturale du 28, rue de Choiseul (src/data/pot-bouille-buil
 		expect(levels).toEqual([5, 4, 3, 2, 1, 0, -1]);
 	});
 
-	test('la répartition spatiale respecte le texte de Zola (Chapitre I)', () => {
+	test('la répartition spatiale respecte le texte de Zola (Chapitre I et XII)', () => {
 		const floorMap = new Map<string, BuildingFloor>(potBouilleBuildingFloors.map((f: BuildingFloor) => [f.id, f]));
 
 		// 4e étage : Josserand sur rue, Pichon et chambre d'Octave sur cour
@@ -225,6 +225,13 @@ describe('Coupe architecturale du 28, rue de Choiseul (src/data/pot-bouille-buil
 		expect(f3Rooms).toContain('foyer-campardon');
 		expect(f3Rooms).toContain('logement-juzeur');
 
+		// 2e étage : Écrivain solitaire sur rue, Auguste et Berthe sur cour
+		const f2 = floorMap.get('etage-2');
+		expect(f2).toBeDefined();
+		const f2Rooms = f2!.rooms.map((r: BuildingRoom) => r.id);
+		expect(f2Rooms).toContain('appartement-ecrivain');
+		expect(f2Rooms).toContain('appartement-auguste-berthe');
+
 		// 1er étage : Duveyrier et vieux Vabre sur rue, Théophile et Valérie sur cour
 		const f1 = floorMap.get('etage-1');
 		expect(f1).toBeDefined();
@@ -240,6 +247,28 @@ describe('Coupe architecturale du 28, rue de Choiseul (src/data/pot-bouille-buil
 		expect(rdcRooms).toContain('vestibule-honneur');
 		expect(rdcRooms).toContain('loge-gourd');
 		expect(rdcRooms).toContain('cour-service');
+	});
+
+	test('l’ordonnancement spatial des pièces place systématiquement la rue avant la cour sur chaque étage', () => {
+		potBouilleBuildingFloors.forEach((floor: BuildingFloor) => {
+			const rueIndex = floor.rooms.findIndex((r) => r.orientation === 'rue');
+			const courIndex = floor.rooms.findIndex((r) => r.orientation === 'cour');
+
+			if (rueIndex !== -1 && courIndex !== -1) {
+				expect(
+					rueIndex,
+					`Sur l'étage ${floor.id}, la pièce sur rue (${floor.rooms[rueIndex].id}) doit précéder la pièce sur cour (${floor.rooms[courIndex].id})`,
+				).toBeLessThan(courIndex);
+			}
+		});
+
+		// Vérification explicite du 2e étage : l'écrivain (rue) est en première position, Auguste & Berthe (cour) en seconde position
+		const f2 = potBouilleBuildingFloors.find((f) => f.id === 'etage-2');
+		expect(f2).toBeDefined();
+		expect(f2!.rooms[0].id).toBe('appartement-ecrivain');
+		expect(f2!.rooms[0].orientation).toBe('rue');
+		expect(f2!.rooms[1].id).toBe('appartement-auguste-berthe');
+		expect(f2!.rooms[1].orientation).toBe('cour');
 	});
 
 	test('tous les personnages associés aux pièces sont valides dans potBouilleCharacters', () => {

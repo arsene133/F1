@@ -195,6 +195,23 @@ export const potBouilleBuildingFloors: BuildingFloor[] = [
 		circulationNote: 'Banquette de velours sous la verrière bordée d’une grecque.',
 		rooms: [
 			{
+				id: 'appartement-ecrivain',
+				title: 'L’appartement de l’écrivain solitaire',
+				subtitle: 'Sur la rue · « des gens qu’on ne voit jamais »',
+				orientation: 'rue',
+				characterIds: [],
+				description:
+					'Grand appartement mystérieux habité par un intellectuel reclus que personne ne fréquente. Méprisé par Campardon et M. Gourd car il ne participe pas à la parade bourgeoise.',
+				quote: {
+					text: 'Des gens qu’on ne voit pas, que personne ne connaît... Le monsieur fait des livres, je crois.',
+					source: 'Chapitre I',
+				},
+				secrets: [
+					'Zola s’y met malicieusement en abyme : le romancier observant en silence les hypocrisies de l’immeuble',
+					'Considéré comme une « tache » par les bourgeois parce qu’il vit sans parade',
+				],
+			},
+			{
 				id: 'appartement-auguste-berthe',
 				title: 'Appartement du couple Auguste & Berthe',
 				subtitle: 'Sur la cour · l’enfer du ménage d’avarice',
@@ -210,23 +227,6 @@ export const potBouilleBuildingFloors: BuildingFloor[] = [
 					'Auguste y compte chaque sou et pèse les morceaux de sucre',
 					'Rachel y espionne les désaccords et aide son maître à tendre le piège de l’adultère',
 					'Berthe s’en échappe en peignoir la nuit pour monter au quatrième chez Octave',
-				],
-			},
-			{
-				id: 'appartement-ecrivain',
-				title: 'L’appartement de l’écrivain solitaire',
-				subtitle: 'Sur la rue · « des gens qu’on ne voit jamais »',
-				orientation: 'rue',
-				characterIds: [],
-				description:
-					'Grand appartement mystérieux habité par un intellectuel reclus que personne ne fréquente. Méprisé par Campardon et M. Gourd car il ne participe pas à la parade bourgeoise.',
-				quote: {
-					text: 'Des gens qu’on ne voit pas, que personne ne connaît... Le monsieur fait des livres, je crois.',
-					source: 'Chapitre I',
-				},
-				secrets: [
-					'Zola s’y met malicieusement en abyme : le romancier observant en silence les hypocrisies de l’immeuble',
-					'Considéré comme une « tache » par les bourgeois parce qu’il vit sans parade',
 				],
 			},
 		],
