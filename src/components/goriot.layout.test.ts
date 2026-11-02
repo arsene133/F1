@@ -150,6 +150,63 @@ describe.skipIf(!BUILT)('Carte interactive du Père Goriot (/goriot) — E2E & I
 		}
 	}, 15_000);
 
+	test('Mode B au clavier : le focus reste visible sur un bouton du parcours aux deux extrémités', async () => {
+		const page = await openPage(375, 812);
+		try {
+			await page.locator('#tab-mode-narrative').focus();
+			await page.keyboard.press('Enter');
+			await page.keyboard.press('Tab');
+			const focused = () =>
+				page.evaluate(() => ({
+					id: document.activeElement?.id,
+					visible: document.activeElement?.matches(':focus-visible'),
+					step: document.getElementById('current-step-index')?.textContent,
+				}));
+			expect((await focused()).id).toBe('narrative-next-btn');
+
+			// Jusqu’à la dernière étape : « Suivant » se désactive, le focus passe sur « Précédent »
+			for (let i = 1; i < goriotPlaces.length; i++) await page.keyboard.press('Enter');
+			expect(await focused()).toEqual({ id: 'narrative-prev-btn', visible: true, step: String(goriotPlaces.length) });
+
+			// Retour à la première étape : « Précédent » se désactive, le focus passe sur « Suivant »
+			for (let i = 1; i < goriotPlaces.length; i++) await page.keyboard.press('Enter');
+			expect(await focused()).toEqual({ id: 'narrative-next-btn', visible: true, step: '1' });
+		} finally {
+			await page.close();
+		}
+	}, 20_000);
+
+	test('Mode B sur mobile (375 px) : les boutons Précédent et Suivant restent dans le cadre à chaque étape', async () => {
+		const page = await openPage(375, 812);
+		try {
+			await page.locator('#tab-mode-narrative').click();
+			const total = goriotPlaces.length;
+			for (let step = 1; step <= total; step++) {
+				const layout = await page.evaluate(() => {
+					const box = (s: string) => document.querySelector(s)!.getBoundingClientRect();
+					const frame = box('.narrative-stepper');
+					const prev = box('#narrative-prev-btn');
+					const next = box('#narrative-next-btn');
+					const ind = box('.stepper-indicator');
+					const overlap = (a: DOMRect, b: DOMRect) =>
+						!(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top);
+					return {
+						inside: [prev, next].every((b) => b.left >= frame.left - 0.5 && b.right <= frame.right + 0.5),
+						overlap: overlap(prev, ind) || overlap(next, ind) || overlap(prev, next),
+						scrollWidth: document.documentElement.scrollWidth,
+					};
+				});
+				expect(layout.inside, `étape ${step}`).toBe(true);
+				expect(layout.overlap, `étape ${step}`).toBe(false);
+				expect(layout.scrollWidth, `étape ${step}`).toBeLessThanOrEqual(375);
+				if (step < total) await page.locator('#narrative-next-btn').click();
+			}
+			expect(await page.locator('#current-step-index').textContent()).toBe(String(total));
+		} finally {
+			await page.close();
+		}
+	}, 20_000);
+
 	test('sélection d’un marqueur au clic met à jour la fiche informative et la citation vérifiée', async () => {
 		const page = await openPage();
 		try {
@@ -434,6 +491,69 @@ describe.skipIf(!BUILT)('Carte interactive du Père Goriot (/goriot) — E2E & I
 			expect(await synthesis.isVisible()).toBe(true);
 			const synthesisText = await synthesis.textContent();
 			expect(synthesisText).toContain('lire le réalisme balzacien');
+		} finally {
+			await page.close();
+		}
+	}, 15_000);
+
+	test('la section « roman de la dette » présente ses cinq axes dépliables, sa synthèse et la citation finale exacte', async () => {
+		const page = await openPage();
+		try {
+			const section = page.locator('#roman-de-la-dette');
+			expect(await section.locator('h2').textContent()).toContain('roman de la dette');
+
+			// Lien de navigation interne
+			expect(await page.locator('a.viz-nav-btn[href="#roman-de-la-dette"]').count()).toBe(1);
+
+			// Cinq axes dépliables, repliés par défaut, chacun séparant faits et interprétation
+			const axes = section.locator('details.debt-axis');
+			expect(await axes.count()).toBe(5);
+			for (let i = 0; i < 5; i++) {
+				const axis = axes.nth(i);
+				expect(await axis.evaluate((el) => (el as HTMLDetailsElement).open)).toBe(false);
+				expect(await axis.locator('.debt-label').allTextContents()).toEqual([
+					'Ce que montre le roman',
+					'Interprétation',
+				]);
+			}
+
+			// Ouverture au clavier du dénouement et citation exacte
+			const ending = section.locator('#dette-denouement');
+			await ending.locator('summary').focus();
+			await page.keyboard.press('Enter');
+			expect(await ending.evaluate((el) => (el as HTMLDetailsElement).open)).toBe(true);
+			expect(await ending.locator('blockquote').textContent()).toContain('— À nous deux maintenant !');
+
+			// Formule mise en valeur dans l'axe paternel
+			expect(await section.locator('#dette-paternelle .debt-formula').textContent()).toBe(
+				'Goriot meurt en créancier d’une reconnaissance qu’il ne recevra jamais.'
+			);
+
+			// Tableau de synthèse des quatre dimensions
+			const rows = await section.locator('.debt-table tbody th').allTextContents();
+			expect(rows.map((r) => r.trim())).toEqual(['Financière', 'Familiale', 'Sociale', 'Morale']);
+
+			expect(await section.locator('.debt-conclusion').textContent()).toContain('incapable d’honorer ses dettes humaines');
+		} finally {
+			await page.close();
+		}
+	}, 15_000);
+
+	test('sur mobile (375x812), la section « roman de la dette » ne déborde pas horizontalement', async () => {
+		const page = await openPage(375, 812);
+		try {
+			const section = page.locator('#roman-de-la-dette');
+			await section.locator('details.debt-axis').evaluateAll((els) =>
+				els.forEach((el) => ((el as HTMLDetailsElement).open = true))
+			);
+			const overflow = await section.evaluate((el) => {
+				const limit = document.documentElement.clientWidth;
+				return [...el.querySelectorAll('*')]
+					.filter((n) => n.getBoundingClientRect().right > limit + 1)
+					.map((n) => n.tagName + '.' + n.className);
+			});
+			expect(overflow).toEqual([]);
+			expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
 		} finally {
 			await page.close();
 		}

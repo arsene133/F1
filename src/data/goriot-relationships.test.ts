@@ -325,4 +325,38 @@ describe('Modèle de données des relations du Père Goriot (src/data/goriot-rel
 			expect(nucingen.description).toContain('Delphine de Nucingen');
 		});
 	});
+
+	describe('Fidélité au dénouement (livre IV, éd. Calmann-Lévy 1910)', () => {
+		const texts = (): string[] => [
+			...goriotCharacters.flatMap((c) => [c.description, ...c.keyFacts]),
+			...goriotRelationships.flatMap((r) => [r.shortSummary, r.description, r.directionLabel ?? '']),
+		];
+
+		test('Anastasie arrive avant la mort de Goriot, jamais « après » son dernier soupir', () => {
+			for (const t of texts()) {
+				expect(t).not.toMatch(/après (sa mort|son dernier soupir)/);
+				expect(t).not.toMatch(/aucune de ses deux filles ne vienne avant/);
+			}
+			const anastasie = goriotCharacters.find((c) => c.id === 'anastasie')!;
+			expect(anastasie.description).toContain('perdu connaissance');
+		});
+
+		test('obsèques et douze mille francs : attributions conformes au texte', () => {
+			for (const t of texts()) {
+				expect(t).not.toMatch(/prête ses propres économies/);
+				expect(t).not.toMatch(/père mourant les douze mille francs/);
+				expect(t).not.toMatch(/fosse commune|externe à l’Hôtel-Dieu|externe en médecine/);
+			}
+			const quote = goriotCharacters.find((c) => c.id === 'goriot')!.quote!.text;
+			// Ponctuation vérifiée sur le fac-similé imprimé de 1910 (p. 320)
+			expect(quote).toContain('c’était mon vice à moi ; elles étaient');
+			expect(goriotCharacters.find((c) => c.id === 'bianchon')!.meta).toContain('interne à l’hôpital Cochin');
+		});
+
+		test('Delphine va au bal le soir de l’annonce, mais ne « danse » pas pendant l’agonie', () => {
+			for (const t of texts()) {
+				expect(t).not.toMatch(/dans(e|er) (au bal )?pendant son agonie|plutôt que de (veiller|rester à son chevet)|lui préfère un bal/);
+			}
+		});
+	});
 });

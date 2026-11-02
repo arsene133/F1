@@ -222,4 +222,79 @@ describe.skipIf(!BUILT)('Tableau de bord thématique du Père Goriot (/goriot) �
 			await page.close();
 		}
 	});
+
+	test('à 320, 375 et 430 px, les cartes de scène restent dans leur grille pour les 8 thèmes', async () => {
+		for (const width of [320, 375, 430]) {
+			const page = await openPage(width, 900);
+			try {
+				const tabs = page.locator('#goriot-themes [data-theme-id]');
+				const count = await tabs.count();
+				expect(count).toBe(8);
+				for (let i = 0; i < count; i++) {
+					await tabs.nth(i).click();
+					const m = await page.evaluate(() => {
+						const grid = document.querySelector('[data-theme-scenes]')!.getBoundingClientRect();
+						const cards = [...document.querySelectorAll('[data-theme-scenes] .theme-scene-card')];
+						return {
+							cardOverflow: Math.max(0, ...cards.map((c) => c.getBoundingClientRect().right - grid.right)),
+							pageOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+						};
+					});
+					expect(m.cardOverflow, `${width} px, thème ${i + 1}`).toBeLessThanOrEqual(0.5);
+					expect(m.pageOverflow, `${width} px, thème ${i + 1}`).toBeLessThanOrEqual(0);
+				}
+			} finally {
+				await page.close();
+			}
+		}
+	}, 40_000);
+
+	test('les éléments reconstruits au changement de thème gardent exactement le style du rendu initial', async () => {
+		const page = await openPage();
+		try {
+			// Propriétés de présentation indépendantes des données (les couleurs propres
+			// à chaque thème ou personnage ne sont pas comparées).
+			const selectors = [
+				'[data-theme-scenes] .theme-scene-card',
+				'[data-theme-scenes] .scene-stage-tag',
+				'[data-theme-scenes] .scene-card-title',
+				'[data-theme-scenes] .scene-card-meaning',
+				'.theme-chip.character-chip',
+				'.theme-chip.place-chip',
+				'.theme-quote-card',
+				'.related-theme-btn',
+			];
+			const props = ['paddingTop', 'paddingLeft', 'fontSize', 'fontFamily', 'fontWeight', 'textTransform', 'backgroundColor', 'borderLeftWidth', 'borderRadius', 'display'];
+			const snapshot = () =>
+				page.evaluate(
+					([sels, keys]) =>
+						Object.fromEntries(
+							sels.map((sel) => {
+								const el = document.querySelector(`#goriot-themes ${sel}`);
+								const cs = el ? getComputedStyle(el) : null;
+								return [sel, cs ? Object.fromEntries(keys.map((k) => [k, cs.getPropertyValue(k.replace(/[A-Z]/g, (m) => '-' + m.toLowerCase()))])) : null];
+							}),
+						),
+					[selectors, props] as const,
+				);
+
+			const initial = await snapshot();
+			expect(initial['[data-theme-scenes] .scene-stage-tag']!.textTransform).toBe('uppercase');
+
+			const tabs = page.locator('#goriot-themes [data-theme-id]');
+			const count = await tabs.count();
+			for (let i = 1; i < count; i++) {
+				await tabs.nth(i).click();
+				const rebuilt = await snapshot();
+				for (const sel of selectors) {
+					if (initial[sel] && rebuilt[sel]) expect(rebuilt[sel], `thème ${i + 1} — ${sel}`).toEqual(initial[sel]);
+				}
+			}
+			// Retour au thème initial, reconstruit à son tour par le script
+			await tabs.nth(0).click();
+			expect(await snapshot()).toEqual(initial);
+		} finally {
+			await page.close();
+		}
+	}, 30_000);
 });

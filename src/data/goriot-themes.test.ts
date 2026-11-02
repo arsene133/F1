@@ -109,4 +109,61 @@ describe('Modèle de données du tableau de bord thématique du Père Goriot (sr
 			});
 		});
 	});
+
+	test('fidélité au dénouement : aucune motivation inventée ni mort « sans personne »', () => {
+		const all = goriotThemes
+			.flatMap((t) => [t.studentExplanation, t.literarySignificance, ...t.keyObservations])
+			.join('\n');
+		expect(all).not.toMatch(/maquillage|froisser leur toilette/);
+		expect(all).not.toMatch(/sans que personne ne vienne tenir sa main/);
+		expect(all).not.toMatch(/préférant danser/);
+		expect(all).not.toMatch(/Rastignac et Bianchon\) et le domestique Christophe accompagnent/);
+		const scenes = JSON.stringify(goriotThemes);
+		expect(scenes).not.toMatch(/quelques instants avant le dernier souffle/);
+		expect(scenes).not.toMatch(/assisté uniquement par les deux étudiants/);
+		// Sépulture : terrain acheté pour cinq ans (livre IV), pas de fosse commune ni de pluie au convoi
+		expect(scenes).not.toMatch(/fosse commune|fosse des pauvres|sous la pluie/);
+		// Bianchon est « l’interne de l’hôpital Cochin » dans ce roman
+		expect(scenes).not.toMatch(/externe en médecine/);
+	});
+
+	describe('citations conformes au fac-similé imprimé de 1910 (éd. Calmann-Lévy)', () => {
+		const corpus = JSON.stringify([goriotThemes, goriotCharacters, goriotRelationships, goriotPlaces]);
+
+		test('aucune réplique inventée ou empruntée à une autre édition', () => {
+			const interdits = [
+				'Une fortune rapide ou le génie',
+				'Pas de mandarin',
+				'je ne veux pas tuer le mandarin',
+				'Vous me paierez cher cette trahison',
+				'Mon Eugène, si vous saviez',
+				'Vous êtes mon seul espoir',
+				'J’ai vendu le dernier morceau d’argent',
+				'Je lui ai causé tant de maux',
+				'un marché que personne ne refuserait',
+				'Victorine Taillefer qui aura des millions',
+				'Est mon voisin de pension',
+				'regard d’intelligence',
+				'Ne voyez dans les hommes',
+				'Il revint à pied rue d’Artois',
+				'L’on donnait hier aux Italiens',
+				'Où as-tu pris cet air grave',
+				'« visiteuses »',
+				'« courut au numéro 9 »',
+			];
+			for (const s of interdits) expect(corpus, s).not.toContain(s);
+		});
+
+		test('les leçons de l’imprimé sont conservées là où la transcription en ligne diverge', () => {
+			// p. 95 : « comme il le mérite » et « comme des chevaux de poste » (la transcription donne d’autres leçons)
+			expect(corpus).toContain('traitez ce monde comme il le mérite');
+			expect(corpus).toContain('que comme des chevaux de poste');
+			// p. 169 : « des stucs, des paliers » ; p. 76 : « ni madame ni moi n’y serons »
+			expect(corpus).toContain('recherches coûteuses, des stucs, des paliers');
+			expect(corpus).toContain('ni madame ni moi n’y serons');
+			expect(corpus).toContain('D’où te vient cet air grave ?');
+			expect(corpus).toContain('madame de Nucingen laperait-elle toute la boue');
+			expect(corpus).toContain('Et, pour premier acte du défi');
+		});
+	});
 });

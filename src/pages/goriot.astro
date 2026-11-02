@@ -53,7 +53,10 @@ const pageDescription =
 						chaque franchissement de la Seine traduit une conquête ou une déchéance morale.
 					</p>
 					<p class="intro-instructions">
-						Naviguez entre les volets complémentaires : le réseau des personnages, la carte topographique des lieux, le tableau de bord des thèmes littéraires, une expérience de pensée qui transpose une scène du roman dans notre présent, et le dossier iconographique.
+						Naviguez entre les volets complémentaires : le réseau des personnages, la carte topographique des lieux, le tableau de bord des thèmes littéraires, une analyse de la dette comme clé de lecture du roman, une expérience de pensée qui transpose une scène du roman dans notre présent, et le dossier iconographique.
+					</p>
+					<p class="intro-sources">
+						Édition de référence des citations : Calmann-Lévy, 1910. En cas d’écart, son <a href="https://fr.wikisource.org/wiki/Livre:Balzac_Le_P%C3%A8re_Goriot_1910.djvu" target="_blank" rel="noopener noreferrer">fac-similé imprimé</a> prime sur la transcription en ligne. Seule adaptation : les majuscules accentuées (« À nous deux maintenant ! » là où l’imprimé porte « A »).
 					</p>
 
 					<!-- Navigation rapide entre les trois sections -->
@@ -70,13 +73,17 @@ const pageDescription =
 							<span class="viz-nav-icon" aria-hidden="true">💡</span>
 							<span>3. Tableau de bord thématique</span>
 						</a>
+						<a href="#roman-de-la-dette" class="viz-nav-btn viz-nav-debt">
+							<span class="viz-nav-icon" aria-hidden="true">⚖️</span>
+							<span>4. Le roman de la dette</span>
+						</a>
 						<a href="#experience-de-pensee" class="viz-nav-btn viz-nav-thought">
 							<span class="viz-nav-icon" aria-hidden="true">🎲</span>
-							<span>4. Expérience de pensée : Rastignac sur Instagram</span>
+							<span>5. Expérience de pensée : Rastignac sur Instagram</span>
 						</a>
 						<a href="#sources-iconographiques" class="viz-nav-btn viz-nav-iconography">
 							<span class="viz-nav-icon" aria-hidden="true">🖼️</span>
-							<span>5. Documents iconographiques</span>
+							<span>6. Documents iconographiques</span>
 						</a>
 					</nav>
 				</header>
@@ -177,6 +184,247 @@ const pageDescription =
 					<GoriotThemesDashboard id="goriot-themes" />
 				</section>
 
+				<!-- Section 4 : Analyse thématique — la dette comme clé de lecture transversale -->
+				<section class="goriot-section debt-section" id="roman-de-la-dette" aria-labelledby="debt-title">
+					<header class="section-editorial-header">
+						<p class="section-tag">Clé de lecture transversale</p>
+						<h2 id="debt-title" class="section-title"><cite>Le Père Goriot</cite>, roman de la dette</h2>
+						<p class="section-lead">
+							Dans <cite>Le Père Goriot</cite>, Balzac fait de la dette bien davantage qu’un problème d’argent : elle constitue un principe d’organisation du récit, un instrument de domination sociale et une forme de dépendance affective. Les personnages sont pris dans un réseau d’obligations, de sacrifices et d’échanges dont les comptes ne s’équilibrent jamais.
+						</p>
+					</header>
+
+					<p class="debt-method">
+						La dette n’est pas le thème unique du roman : c’est une clé de lecture qui traverse plusieurs thèmes du tableau de bord (paternité, ambition, apparences). Chaque axe distingue <strong>ce que montre le roman</strong> (faits du récit et citations vérifiées dans le texte de Balzac) et <strong>l’interprétation</strong> proposée pour l’analyse.
+					</p>
+
+					<div class="debt-axes">
+						<!-- A. Dette financière -->
+						<details class="inhabitants-note debt-axis" id="dette-financiere">
+							<summary class="note-summary">
+								<span class="note-summary-badge badge-debt">A · Dette financière</span>
+								<h3 class="note-summary-title">Le prix de l’ascension sociale</h3>
+								<span class="note-summary-toggle debt-toggle" aria-hidden="true"></span>
+							</summary>
+							<div class="note-details-content">
+								<div class="debt-block">
+									<p class="debt-label">Ce que montre le roman</p>
+									<ul class="debt-list">
+										<li>Eugène de Rastignac, étudiant en droit issu d’une famille noble mais pauvre de province, vit à la pension Vauquer grâce à l’argent que sa famille lui envoie.</li>
+										<li>Pour fréquenter les salons, il écrit à sa mère pour lui demander douze cents francs et sollicite les économies de ses sœurs.</li>
+										<li>Une fois l’argent reçu, il commande des habits : le narrateur souligne alors « l’influence qu’exercent les tailleurs sur la vie des jeunes gens ».</li>
+										<li>Vautrin lui propose d’épouser Victorine Taillefer, qui deviendrait une riche héritière si son frère était tué en duel. En échange, il réclame une part de la dot. Rastignac recule devant ce pacte ; le duel a pourtant lieu, et Vautrin est arrêté peu après.</li>
+									</ul>
+									<figure class="debt-quote">
+										<blockquote lang="fr">
+											<p>Je dois aller dans le monde, et n’ai pas un sou pour avoir des gants propres.</p>
+										</blockquote>
+										<figcaption>Lettre de Rastignac à sa mère — I, « Une pension bourgeoise »</figcaption>
+									</figure>
+									<figure class="debt-quote">
+										<blockquote lang="fr">
+											<p>En deux mots, si je vous procure une dot d’un million, me donnerez-vous deux cent mille francs ? Vingt pour cent de commission, hein ! est-ce trop cher ?</p>
+										</blockquote>
+										<figcaption>Vautrin à Rastignac — II, « L’entrée dans le monde »</figcaption>
+									</figure>
+								</div>
+								<div class="debt-block debt-reading">
+									<p class="debt-label">Interprétation</p>
+									<p>
+										La réussite sociale exige des ressources que Rastignac ne possède pas. Pour être reçu chez les riches, il faut déjà paraître riche : gants, habits, voiture. L’argent devient un <strong>droit d’entrée dans le monde</strong>. L’ascension de Rastignac commence donc par une dette envers sa famille. Vautrin propose de la remplacer par un raccourci criminel, où la fortune se paie d’une commission sur la mort d’un homme.
+									</p>
+								</div>
+							</div>
+						</details>
+
+						<!-- B. Dette paternelle -->
+						<details class="inhabitants-note debt-axis" id="dette-paternelle">
+							<summary class="note-summary">
+								<span class="note-summary-badge badge-debt">B · Dette paternelle</span>
+								<h3 class="note-summary-title">Goriot et ses filles</h3>
+								<span class="note-summary-toggle debt-toggle" aria-hidden="true"></span>
+							</summary>
+							<div class="note-details-content">
+								<div class="debt-block">
+									<p class="debt-label">Ce que montre le roman</p>
+									<ul class="debt-list">
+										<li>Ancien fabricant de vermicelles enrichi, Goriot a donné à chacune de ses filles « près de huit cent mille francs » en dot : Anastasie a épousé le comte de Restaud, Delphine le baron de Nucingen.</li>
+										<li>Il s’appauvrit ensuite pour continuer à les aider : à la pension, il passe du premier au troisième étage ; il vend son service de vermeil pour payer une dette d’Anastasie ; il meuble l’appartement de la rue d’Artois destiné à Delphine et Rastignac.</li>
+										<li>Ses filles dépendent de cet argent pour tenir leur rang. Anastasie a vendu les diamants de la famille Restaud à l’usurier Gobseck pour sauver son amant, Maxime de Trailles. Delphine, dont le mari gère la dot, confie à Rastignac : « Les chaînes d’or sont les plus pesantes. »</li>
+										<li>Mourant, Goriot appelle ses filles. Aucune ne vient à temps ; Anastasie n’arrive que lorsqu’il a perdu connaissance et s’accuse alors de l’avoir « méconnu » et « repoussé ». Au convoi funèbre, « deux voitures armoriées, mais vides » représentent les deux gendres.</li>
+									</ul>
+									<figure class="debt-quote">
+										<blockquote lang="fr">
+											<p>Il faut mourir pour savoir ce que c’est que des enfants… […] L’argent donne tout, même des filles.</p>
+										</blockquote>
+										<figcaption>Goriot sur son lit de mort — IV, « La mort du père »</figcaption>
+									</figure>
+								</div>
+								<div class="debt-block debt-reading">
+									<p class="debt-label">Interprétation</p>
+									<p>
+										Le roman repose sur un paradoxe. Goriot parle comme un débiteur : il dit avoir donné des parures « pour être bien reçu » et avoir « expié le péché de les trop aimer ». Pourtant, ce sont ses filles qui ont envers lui une dette morale. Le sacrifice paternel ne produit pas une reconnaissance proportionnelle.
+									</p>
+									<p class="debt-formula">Goriot meurt en créancier d’une reconnaissance qu’il ne recevra jamais.</p>
+									<p class="debt-nuance">
+										<strong>Nuance :</strong> les filles ne sont pas seulement des ingrates. Selon le Code civil de 1804, une femme mariée ne peut ni vendre, ni donner, ni acheter un bien sans l’accord de son mari (art. 217). La gestion de sa fortune dépend du contrat de mariage : dans la communauté comme dans le régime dotal, c’est le mari qui administre les biens de sa femme, même si elle en reste propriétaire (art. 1428 et 1549). Delphine pourrait demander en justice la séparation de biens, mais Nucingen la presse de le laisser « entièrement maître de gérer les affaires ». Anastasie avoue : « je l’ai laissé le maître de ma fortune ». Leur ingratitude est aussi le produit de mariages arrangés autour de l’argent, que Goriot lui-même a financés.
+									</p>
+								</div>
+							</div>
+						</details>
+
+						<!-- C. Dette sociale -->
+						<details class="inhabitants-note debt-axis" id="dette-sociale">
+							<summary class="note-summary">
+								<span class="note-summary-badge badge-debt">C · Dette sociale</span>
+								<h3 class="note-summary-title">Un réseau de dépendances</h3>
+								<span class="note-summary-toggle debt-toggle" aria-hidden="true"></span>
+							</summary>
+							<div class="note-details-content">
+								<div class="debt-block">
+									<p class="debt-label">Ce que montre le roman</p>
+									<p class="debt-text">
+										À la pension Vauquer, la place de chacun se règle selon ce qu’il paie : les meilleurs appartements sont au premier étage, les plus pauvres logent sous les toits. Lorsque Goriot s’appauvrit, Mme Vauquer exige d’être « payée d’avance ». Vautrin, lui, prête de l’argent aux pensionnaires, et « ses obligés seraient morts plutôt que de ne pas le lui rendre ».
+									</p>
+									<dl class="debt-network">
+										<div>
+											<dt>Rastignac</dt>
+											<dd>dépend financièrement de sa mère, de sa tante et de ses sœurs restées en province.</dd>
+										</div>
+										<div>
+											<dt>Goriot</dt>
+											<dd>dépend affectivement de ses filles, qu’il ne voit qu’à condition de leur être utile.</dd>
+										</div>
+										<div>
+											<dt>Vautrin</dt>
+											<dd>cherche à acheter la coopération de Rastignac en lui offrant un million de dot.</dd>
+										</div>
+										<div>
+											<dt>Delphine</dt>
+											<dd>« ferait tout au monde pour être reçue » chez Mme de Beauséant. Après la roulette, elle déclare à Rastignac : « En conscience, je vous dois mille écus ».</dd>
+										</div>
+										<div>
+											<dt>Le grand monde</dt>
+											<dd>Le marquis d’Ajuda-Pinto quitte Mme de Beauséant pour épouser une riche héritière, Mlle de Rochefide : même l’aristocratie dépend de la fortune et des alliances.</dd>
+										</div>
+									</dl>
+								</div>
+								<div class="debt-block debt-reading">
+									<p class="debt-label">Interprétation</p>
+									<p>
+										La pension Vauquer peut se lire comme un microcosme de la société parisienne : on y retrouve, en plus petit, la hiérarchie fondée sur l’argent qui règne dans les salons. Les relations humaines y prennent souvent la forme de <strong>transactions</strong> : chacun cherche à obtenir quelque chose d’autrui, qu’il s’agisse d’argent, d’une invitation, d’une protection ou d’un silence.
+									</p>
+								</div>
+							</div>
+						</details>
+
+						<!-- D. Dette morale -->
+						<details class="inhabitants-note debt-axis" id="dette-morale">
+							<summary class="note-summary">
+								<span class="note-summary-badge badge-debt">D · Dette morale</span>
+								<h3 class="note-summary-title">Peut-on rendre ce que l’on a reçu ?</h3>
+								<span class="note-summary-toggle debt-toggle" aria-hidden="true"></span>
+							</summary>
+							<div class="note-details-content">
+								<div class="debt-block">
+									<p class="debt-label">Ce que montre le roman</p>
+									<ul class="debt-list">
+										<li>Mme de Beauséant, sa cousine, ouvre à Rastignac les portes du monde : elle l’invite à son bal, lui fait connaître Delphine et lui prête l’autorité de son nom, à condition qu’il ne le compromette pas.</li>
+										<li>Elle lui enseigne aussi une morale du calcul : « Plus froidement vous calculerez, plus avant vous irez. »</li>
+										<li>Rastignac mesure ce qu’il doit à sa famille. Quand Vautrin lui reproche d’avoir « saigné » ses sœurs, il se demande : « j’ai donc volé mes sœurs ? »</li>
+										<li>Avec l’étudiant en médecine Bianchon, il veille Goriot pendant son agonie et organise l’enterrement. Au cimetière, il doit emprunter vingt sous à Christophe, le garçon de peine de la pension, pour le pourboire des fossoyeurs.</li>
+									</ul>
+									<figure class="debt-quote">
+										<blockquote lang="fr">
+											<p>Je vous donne mon nom comme un fil d’Ariane pour entrer dans ce labyrinthe. Ne le compromettez pas, […] rendez-le-moi blanc.</p>
+										</blockquote>
+										<figcaption>Mme de Beauséant à Rastignac — I, « Une pension bourgeoise »</figcaption>
+									</figure>
+								</div>
+								<div class="debt-block debt-reading">
+									<p class="debt-label">Interprétation</p>
+									<p>
+										Ces dettes ne se règlent pas comme des dettes comptables. Un nom prêté se rend « blanc », c’est-à-dire intact : c’est une dette d’honneur. Le dévouement de Goriot n’appelle pas un remboursement mais de la gratitude. Rastignac reçoit ainsi deux leçons contradictoires : celle du calcul, donnée par Mme de Beauséant et Vautrin, et celle du sacrifice, qu’il découvre en observant Goriot. Sa fidélité au vieillard mourant est peut-être la seule dette qu’il honore entièrement, alors qu’elle ne lui rapporte rien.
+									</p>
+								</div>
+							</div>
+						</details>
+
+						<!-- E. Dénouement -->
+						<details class="inhabitants-note debt-axis" id="dette-denouement">
+							<summary class="note-summary">
+								<span class="note-summary-badge badge-debt">E · Dénouement</span>
+								<h3 class="note-summary-title">Rastignac entre dans le système</h3>
+								<span class="note-summary-toggle debt-toggle" aria-hidden="true"></span>
+							</summary>
+							<div class="note-details-content">
+								<div class="debt-block">
+									<p class="debt-label">Ce que montre le roman</p>
+									<p class="debt-text">
+										Après l’enterrement, Rastignac reste seul au cimetière du Père-Lachaise. Il y verse « sa dernière larme de jeune homme », puis regarde Paris, et plus particulièrement les quartiers du « beau monde » situés entre la place Vendôme et les Invalides.
+									</p>
+									<figure class="debt-quote">
+										<blockquote lang="fr">
+											<p>Il lança sur cette ruche bourdonnante un regard qui semblait par avance en pomper le miel, et dit ces mots grandioses : — À nous deux maintenant !</p>
+											<p>Et, pour premier acte du défi qu’il portait à la Société, Rastignac alla dîner chez madame de Nucingen.</p>
+										</blockquote>
+										<figcaption>Dernières lignes du roman — IV, « La mort du père »</figcaption>
+									</figure>
+								</div>
+								<div class="debt-block debt-reading">
+									<p class="debt-label">Interprétation</p>
+									<p>
+										Rastignac a vu de près la violence du système : un père abandonné par ses filles, enterré aux frais de deux étudiants. Il décide pourtant de se mesurer à Paris plutôt que de s’en retirer. La décision reste ambiguë : le « défi » commence par un dîner chez Delphine, la fille qui n’est pas venue à l’enterrement. Rastignac a découvert les règles du jeu, et il choisit d’y participer. On peut y lire une révolte, une capitulation, ou les deux à la fois : le texte ne tranche pas.
+									</p>
+								</div>
+							</div>
+						</details>
+					</div>
+
+					<!-- Synthèse : les quatre dimensions de la dette -->
+					<div class="debt-synthesis">
+						<h3 class="thought-subtitle">Synthèse : les quatre dimensions de la dette</h3>
+						<div class="thought-table-wrapper">
+							<table class="thought-table debt-table" role="table">
+								<caption class="sr-only">Les quatre dimensions de la dette dans Le Père Goriot</caption>
+								<thead role="rowgroup">
+									<tr role="row">
+										<th scope="col" role="columnheader">Dimension</th>
+										<th scope="col" role="columnheader">Signification</th>
+										<th scope="col" role="columnheader">Exemple dans le roman</th>
+									</tr>
+								</thead>
+								<tbody role="rowgroup">
+									<tr role="row">
+										<th scope="row" role="rowheader">Financière</th>
+										<td role="cell">Dépendance à l’argent et aux ressources</td>
+										<td role="cell">Les douze cents francs demandés par Rastignac à sa mère</td>
+									</tr>
+									<tr role="row">
+										<th scope="row" role="rowheader">Familiale</th>
+										<td role="cell">Obligations entre parents et enfants</td>
+										<td role="cell">Les dots de Goriot, puis son abandon</td>
+									</tr>
+									<tr role="row">
+										<th scope="row" role="rowheader">Sociale</th>
+										<td role="cell">Dépendance aux relations et au statut</td>
+										<td role="cell">Delphine prête à tout pour être reçue chez Mme de Beauséant</td>
+									</tr>
+									<tr role="row">
+										<th scope="row" role="rowheader">Morale</th>
+										<td role="cell">Reconnaissance, gratitude et réciprocité</td>
+										<td role="cell">Le nom de Mme de Beauséant, à rendre « blanc »</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<p class="debt-conclusion">
+						<cite>Le Père Goriot</cite> est un roman de la faillite morale : derrière les comptes financiers, Balzac met en scène une société incapable d’honorer ses dettes humaines.
+					</p>
+				</section>
+
 				<!-- Section 4 : Expérience de pensée — la scène de la roulette transposée sur Instagram -->
 				<section class="goriot-section thought-experiment" id="experience-de-pensee" aria-labelledby="thought-experiment-title">
 					<details class="inhabitants-note thought-note" id="thought-experiment-note">
@@ -200,7 +448,7 @@ const pageDescription =
 								<p class="thought-ellipsis">[…]</p>
 								<p>Eugène jette les cent francs sur le chiffre de son âge, vingt et un. Un cri d’étonnement part sans qu’il ait eu le temps de se reconnaître. Il avait gagné sans le savoir.</p>
 								<p class="thought-ellipsis">[…]</p>
-								<p>— Ah çà ! où me mènerez-vous maintenant, dit-il en montrant les sept mille francs à madame de Nucingen quand la portière fut refermée.</p>
+								<p>— Ah çà ! où me mènerez-vous maintenant ? dit-il en montrant les sept mille francs à madame de Nucingen, quand la portière fut refermée.</p>
 								<p>Delphine le serra par une étreinte folle et l’embrassa vivement, mais sans passion.</p>
 								<p>— Vous m’avez sauvée !</p>
 							</blockquote>
@@ -303,7 +551,7 @@ const pageDescription =
 						<article class="thought-card thought-card-limit">
 							<h3>Limites de l’expérience</h3>
 							<p>
-								L’anachronisme éclaire mais déforme. En 1819, Delphine ne peut disposer de sa fortune, contrôlée par Nucingen : sa détresse tient au droit et au mariage autant qu’aux apparences. La réécriture efface aussi le trouble amoureux de la scène originale, où Eugène pense surtout que Delphine « n’aura rien à lui refuser ».
+								L’anachronisme éclaire mais déforme. En 1819, Delphine ne peut disposer de sa fortune, contrôlée par Nucingen : sa détresse tient au droit et au mariage autant qu’aux apparences. La réécriture efface aussi le trouble amoureux de la scène originale, où Eugène pense surtout : « Elle se compromet avec moi, elle n’aura rien à me refuser. »
 							</p>
 						</article>
 					</div>
@@ -383,7 +631,7 @@ const pageDescription =
 									<strong>Que montre réellement le document ?</strong> La typographie d'époque et le sous-titre originel <em>« histoire parisienne »</em>. Le roman est d'abord paru en deux volumes in-8° chez Werdet avant d'être intégré plus tard dans les <em>Scènes de la vie parisienne</em> de <em>La Comédie humaine</em> (1842).
 								</p>
 								<p>
-									<strong>Rapprochement avec le texte du roman :</strong> Dans l'avertissement et le célèbre préambule, Balzac prévient solennellement son lecteur : <em>« Ah ! sachez-le : ce drame n'est ni une fiction, ni un roman. All is true, il est si véritable que chacun peut en reconnaître les éléments chez soi, dans son cœur peut-être. »</em>
+									<strong>Rapprochement avec le texte du roman :</strong> Dès les premières pages du roman, Balzac prévient solennellement son lecteur : <em>« Ah ! sachez-le : ce drame n'est ni une fiction ni un roman. All is true, il est si véritable, que chacun peut en reconnaître les éléments chez soi, dans son cœur peut-être. »</em>
 								</p>
 								<p>
 									<strong>Limite historiographique :</strong> La page de titre témoigne des conditions matérielles de publication sous la monarchie de Juillet (1835), alors que l’intrigue diégétique se déroule seize ans plus tôt, à la fin de l’année 1819 sous la Restauration.
@@ -436,7 +684,7 @@ const pageDescription =
 									<strong>Que montre réellement le document ?</strong> Une étroite cour pavée bordée de hauts murs décrépits, avec un puits en pierre et un sol humide, caractéristique des cours intérieures populeuses de la montagne Sainte-Geneviève.
 								</p>
 								<p>
-									<strong>Rapprochement avec le texte du roman :</strong> Balzac décrit méticuleusement l'entrée et l'environnement de la pension de Mme Vauquer : <em>« Entre la maison et la cour se trouve un puits à roue, avec une margelle de pierre... Le pavé gras et glissant semble imprégné de misère. »</em>
+									<strong>Rapprochement avec le texte du roman :</strong> Balzac décrit la cour située derrière la pension de Mme Vauquer : <em>« Derrière le bâtiment est une cour large d'environ vingt pieds, où vivent en bonne intelligence des cochons, des poules, des lapins, et au fond de laquelle s'élève un hangar à serrer le bois. »</em> Le roman ne mentionne en revanche aucun puits : celui de la photographie appartient au lieu réel, non au texte.
 								</p>
 								<p>
 									<strong>Limite historiographique majeure :</strong> Balzac ne mentionne aucun numéro dans le roman (il écrit seulement <em>« dans le bas de la rue Neuve-Sainte-Geneviève »</em>, ancienne appellation de la rue Tournefort). Ce n'est qu'au tournant du XX<sup>e</sup> siècle que des érudits parisiens ont proposé le n° 24 comme modèle probable. <strong>Cette photographie ne prouve pas l'existence physique de la pension Vauquer</strong> : elle documente la réalité architecturale des cours vétustes de ce quartier.
@@ -446,7 +694,7 @@ const pageDescription =
 							<div class="iconography-question-box">
 								<strong>Questions d’observation pour les élèves :</strong>
 								<p>1. Quels éléments matériels de cette cour photographiée par Atget évoquent l'atmosphère d'isolement et de dénuement décrite par Balzac ?</p>
-								<p>2. Pourquoi faut-il refuser d'affirmer avec certitude que ce lieu précis était « la maison de madame Vauquer » ?</p>
+								<p>2. Pourquoi faut-il refuser d'affirmer avec certitude que ce lieu précis était la pension de Mme Vauquer ?</p>
 							</div>
 						</article>
 
@@ -541,7 +789,7 @@ const pageDescription =
 									<strong>Que montre réellement le document ?</strong> L'effervescence fiévreuse des galeries de bois provisoires du Palais-Royal sous la Restauration : foule interlope de dandys, officiers, libraires, parieurs et maisons de jeu numérotées, avant leur démolition en 1828–1830.
 								</p>
 								<p>
-									<strong>Rapprochement avec le texte du roman :</strong> C'est au <em>numéro 9</em> de ces arcades que Delphine de Nucingen envoie Eugène tenter la chance : <em>« Il courut au numéro 9. [...] Il mit la roulette en feu, et gagna sept mille francs. »</em> L'épisode scelle leur liaison et plonge Eugène dans la tentation du gain sans labeur.
+									<strong>Rapprochement avec le texte du roman :</strong> Envoyé au jeu par Delphine de Nucingen, Eugène tente la chance au <em>numéro 9</em> du Palais-Royal : <em>« Eugène prend la jolie bourse, court au numéro 9, après s'être fait indiquer par un marchand d'habits la plus prochaine maison de jeu. »</em> Il en revient avec sept mille francs. L'épisode scelle leur liaison et plonge Eugène dans la tentation du gain sans labeur.
 								</p>
 								<p>
 									<strong>Limite historiographique :</strong> Bien que réalisée à la fin du XIX<sup>e</sup> siècle par un spécialiste reconnu du Paris disparu, cette lithographie est une <strong>reconstitution historique</strong> rétrospective et non un dessin pris sur le vif en 1819.
@@ -593,7 +841,7 @@ const pageDescription =
 									<strong>Que montre réellement le document ?</strong> Daumier saisit l'affaissement tragique de l'ancien vermicellier : dos voûté, habit élimé, regard d'une douceur résignée et mélancolique. Le dessin traduit visuellement la déchéance physique et vestimentaire qui rythme les années passées à la pension.
 								</p>
 								<p>
-									<strong>Rapprochement avec le texte du roman :</strong> Balzac théorise le lien indissociable entre le corps et la passion : <em>« Goriot était sublime. [...] Ses filles étaient ses maîtresses, ses déesses, son sang. Il eût vendu son âme au diable pour leur éviter une larme. »</em>
+									<strong>Rapprochement avec le texte du roman :</strong> Balzac théorise le lien indissociable entre le corps et la passion : <em>« Le père Goriot était sublime. Jamais Eugène ne l'avait pu voir illuminé par les feux de sa passion paternelle. Une chose digne de remarque est la puissance d'infusion que possèdent les sentiments. Quelque grossière que soit une créature, dès qu'elle exprime une affection forte et vraie, elle exhale un fluide particulier qui modifie la physionomie, anime le geste, colore la voix. »</em>
 								</p>
 								<p>
 									<strong>Limite historiographique :</strong> Cette image n'est pas un portrait réel, mais l'interprétation plastique d'un grand illustrateur du XIX<sup>e</sup> siècle validée par l'auteur lors de la conception de la première grande édition illustrée de <em>La Comédie humaine</em>.
@@ -697,7 +945,7 @@ const pageDescription =
 									<strong>Que montre réellement le document ?</strong> L'aspect originel du cimetière de l'Est (ouvert en 1804) conçu par Alexandre-Théodore Brongniart comme un parc paysager romantique à l'anglaise, avec ses allées plantées d'arbres, ses tertres escarpés et ses premiers monuments à l'écart du Paris dense.
 								</p>
 								<p>
-									<strong>Rapprochement avec le texte du roman :</strong> C'est sur ces hauteurs que s'achève le roman après l'enterrement indigent de Goriot : <em>« Rastignac, resté seul, fit quelques pas vers le haut du cimetière et vit Paris tortueusement couché le long des deux rives de la Seine où commençaient à briller les lumières. [...] Il dit ces mots grandioses : — À nous deux maintenant ! »</em>
+									<strong>Rapprochement avec le texte du roman :</strong> C'est sur ces hauteurs que s'achève le roman après l'enterrement indigent de Goriot : <em>« Rastignac, resté seul, fit quelques pas vers le haut du cimetière et vit Paris tortueusement couché le long des deux rives de la Seine, où commençaient à briller les lumières. Ses yeux s'attachèrent presque avidement entre la colonne de la place Vendôme et le dôme des Invalides, là où vivait ce beau monde dans lequel il avait voulu pénétrer. Il lança sur cette ruche bourdonnante un regard qui semblait par avance en pomper le miel, et dit ces mots grandioses : — À nous deux maintenant ! »</em>
 								</p>
 								<p>
 									<strong>Limite historiographique :</strong> Cette estampe représente l'entrée basse du cimetière et ses chemins montants. Elle permet de comprendre le cadre rural et boisé dans lequel Eugène gravit la colline en 1819, mais n'offre pas le panorama direct vers les Invalides décrit par Balzac depuis la crête sommitale.
@@ -855,6 +1103,12 @@ const pageDescription =
 		border-color: #7a2e4d;
 		background: #fcf7f9;
 		color: #7a2e4d;
+	}
+
+	.viz-nav-debt {
+		border-color: #4d5b2a;
+		background: #f7f8f1;
+		color: #4d5b2a;
 	}
 
 	.viz-nav-icon {
@@ -1613,6 +1867,208 @@ const pageDescription =
 
 		.thought-analysis {
 			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	/* Le roman de la dette ---------------------------------------------------- */
+	.debt-method {
+		max-width: 820px;
+		margin: 0 auto 1.5rem;
+		font-size: 0.92rem;
+		line-height: 1.55;
+		color: var(--map-muted, #5e6d7a);
+		font-style: italic;
+		text-align: center;
+	}
+
+	.debt-axes {
+		display: grid;
+		gap: 0.85rem;
+	}
+
+	.debt-axis .note-summary {
+		padding: 1rem 1.25rem;
+	}
+
+	.debt-axis .note-summary-title {
+		font-size: 1.15rem;
+	}
+
+	.badge-debt {
+		background: #eef1e3;
+		color: #4d5b2a;
+	}
+
+	.debt-toggle::after {
+		content: 'Déplier ▾';
+	}
+
+	.debt-axis[open] .debt-toggle::after {
+		content: 'Replier ▴';
+	}
+
+	.debt-block + .debt-block {
+		margin-top: 1.5rem;
+	}
+
+	.debt-label {
+		font-size: 0.76rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: #8b5a2b;
+		margin: 0 0 0.6rem;
+	}
+
+	.debt-reading .debt-label {
+		color: #4d5b2a;
+	}
+
+	.debt-list {
+		margin: 0;
+		padding-left: 1.2rem;
+	}
+
+	.debt-list li,
+	.debt-text,
+	.debt-reading p,
+	.debt-network dd {
+		font-size: 0.95rem;
+		line-height: 1.6;
+		color: var(--map-ink-soft, #2d3e4d);
+	}
+
+	.debt-list li + li {
+		margin-top: 0.4rem;
+	}
+
+	.debt-text,
+	.debt-reading p {
+		margin: 0 0 0.75rem;
+	}
+
+	.debt-reading {
+		padding-left: 1rem;
+		border-left: 3px solid #c9d0b4;
+	}
+
+	.debt-quote {
+		margin: 1rem 0 0;
+		padding: 0.9rem 1.1rem;
+		border-left: 3px solid #8b5a2b;
+		background: #fdfaf6;
+		border-radius: 0 8px 8px 0;
+	}
+
+	.debt-quote blockquote {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 0.98rem;
+		line-height: 1.6;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.debt-quote blockquote p {
+		margin: 0 0 0.4rem;
+	}
+
+	.debt-quote figcaption {
+		font-size: 0.82rem;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	.debt-reading p.debt-formula {
+		margin: 1rem 0;
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.12rem;
+		font-weight: 600;
+		line-height: 1.45;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.debt-reading p.debt-nuance {
+		font-size: 0.92rem;
+		margin-bottom: 0;
+	}
+
+	.debt-network {
+		display: grid;
+		gap: 0.6rem;
+		margin: 1rem 0 0;
+	}
+
+	.debt-network > div {
+		padding: 0.6rem 0.8rem;
+		border: 1px solid var(--map-border-soft, #ece7de);
+		border-radius: 8px;
+	}
+
+	.debt-network dt {
+		font-weight: 700;
+		font-size: 0.92rem;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.debt-network dd {
+		margin: 0.15rem 0 0;
+	}
+
+	.debt-synthesis {
+		margin-top: 2rem;
+	}
+
+	.debt-table tbody th {
+		white-space: nowrap;
+	}
+
+	.debt-conclusion {
+		max-width: 760px;
+		margin: 1.75rem auto 0;
+		padding: 1rem 1.25rem;
+		border-top: 1px solid var(--map-border, #dcd6cb);
+		border-bottom: 1px solid var(--map-border, #dcd6cb);
+		font-family: var(--map-serif, Georgia, serif);
+		font-size: 1.1rem;
+		line-height: 1.55;
+		text-align: center;
+		color: var(--map-ink, #172b3a);
+	}
+
+	.intro-sources {
+		margin: 0.6rem 0 0;
+		font-size: 0.82rem;
+		line-height: 1.5;
+		color: var(--map-muted, #5e6d7a);
+	}
+
+	@media (min-width: 820px) {
+		.debt-network {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	@media (max-width: 560px) {
+		.debt-table thead {
+			display: none;
+		}
+
+		.debt-table tr {
+			display: block;
+			padding: 0.6rem 0;
+			border-bottom: 1px solid var(--map-border, #dcd6cb);
+		}
+
+		.debt-table tbody th,
+		.debt-table td {
+			display: block;
+			padding: 0.15rem 0;
+			border: 0;
+		}
+
+		.debt-table td:last-child {
+			font-style: italic;
 		}
 	}
 </style>

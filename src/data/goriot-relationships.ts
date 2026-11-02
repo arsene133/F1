@@ -338,7 +338,7 @@ export const goriotCharacters: GoriotCharacterData[] = [
 			'Descend de la pension Vauquer du 1er étage (appartement bourgeois) au 3e étage (chambre d’indigent).',
 			'Vend clandestinement son couvert d’argent et ses rentes viagères pour solder les dettes de ses filles (Partie 1).',
 			'Aménage la garçonnière de la rue d’Artois pour réunir Eugène et Delphine (Partie 3).',
-			'Agonise dans l’abandon sans qu’aucune de ses deux filles ne vienne avant son dernier souffle (Partie 4).',
+			'Agonise loin de ses filles : Delphine ne vient pas ; Anastasie n’arrive que lorsqu’il a perdu connaissance et assiste à sa mort sans qu’il puisse l’entendre (Partie 4).',
 		],
 		quote: {
 			text: 'Mes filles, c’était mon vice à moi ; elles étaient mes maîtresses, enfin tout !',
@@ -365,11 +365,11 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		meta: ['fille aînée de Jean-Joachim Goriot', 'épouse du comte de Restaud'],
 		socialRole: 'Femme du monde titrée entrée dans la haute noblesse grâce à sa dot, déchirée par la passion ruineuse d’un dandy.',
 		description:
-			'Fille aînée de Goriot, fière et ambitieuse, elle épouse le comte de Restaud pour s’agréger à l’aristocratie. Passionnément éprise du dandy Maxime de Trailles, elle engloutit la fortune du ménage et engage les diamants de la famille pour payer les dettes de son amant. Elle n’arrive au chevet de son père que quelques instants après sa mort, anéantie par le remords.',
+			'Fille aînée de Goriot, fière et ambitieuse, elle épouse le comte de Restaud pour s’agréger à l’aristocratie. Passionnément éprise du dandy Maxime de Trailles, elle engloutit la fortune du ménage et engage les diamants de la famille pour payer les dettes de son amant. Elle n’arrive au chevet de son père que lorsqu’il a perdu connaissance : anéantie par le remords, elle lui demande pardon et le veille jusqu’à sa mort, sans qu’il puisse l’entendre.',
 		keyFacts: [
 			'Éconduit brutalement Rastignac après qu’il a mentionné le nom de Goriot dans son salon (Partie 1).',
 			'Engage les diamants du comte pour payer les dettes de jeu de Maxime de Trailles (Partie 4).',
-			'Vient arracher à son père mourant les douze mille francs exigés par Gobseck (Partie 4).',
+			'Avant la maladie de son père, vient lui réclamer douze mille francs pour sauver Maxime de Trailles, poursuivi pour dettes ; Goriot, déjà ruiné, ne les a plus, et Rastignac fournit une lettre de change de ce montant. Goriot tombe malade à la suite de cette scène (Partie 4).',
 			'Arrive trop tard auprès du corps de Goriot pour obtenir son pardon vivant (Partie 4).',
 		],
 		color: '#be185d',
@@ -397,7 +397,7 @@ export const goriotCharacters: GoriotCharacterData[] = [
 			'Rencontre Eugène au Théâtre des Italiens dans sa loge (Partie 2).',
 			'Envoie Eugène risquer ses derniers 100 francs à la roulette du Palais-Royal (Partie 2).',
 			'Se dispute violemment avec sa sœur Anastasie devant leur père épuisé au sujet de leurs dettes (Partie 4).',
-			'Préfère aller danser au bal de Mme de Beauséant plutôt que de veiller son père agonisant (Partie 4).',
+			'Avertie par Rastignac que son père est mourant, se rend au bal de Mme de Beauséant ; le lendemain, malade puis retenue par une scène avec Nucingen, ne vient pas à son chevet (Partie 4).',
 		],
 		color: '#be185d',
 		tier: 'major',
@@ -428,7 +428,7 @@ export const goriotCharacters: GoriotCharacterData[] = [
 			'Arrêté spectaculairement par la police de Gondureau dans la salle à manger de la pension (Partie 3).',
 		],
 		quote: {
-			text: 'Savez-vous ce qu’il faut à Paris ? Une fortune rapide ou le génie. […] Il faut entrer dans cette masse d’hommes comme un boulet de canon, ou s’y glisser comme une peste.',
+			text: 'Savez-vous comment on fait son chemin ici ? Par l’éclat du génie ou par l’adresse de la corruption. Il faut entrer dans cette masse d’hommes comme un boulet de canon, ou s’y glisser comme une peste.',
 			context: 'Leçon dispensée à Rastignac dans le jardin de la pension Vauquer.',
 			reference: 'Deuxième partie (« L’Entrée dans le monde »)',
 		},
@@ -507,7 +507,7 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		description:
 			'Grosse cuisinière de Mme Vauquer, elle prépare la nourriture médiocre servie aux pensionnaires et relaie les bruits de couloir sur les visites nocturnes des filles de Goriot, qu’elle prend au départ pour des maîtresses entretenues.',
 		keyFacts: [
-			'Partage les préjugés de sa maîtresse sur Goriot et ses « visiteuses » (Partie 1).',
+			'Partage les préjugés de sa maîtresse sur Goriot et les visites féminines qu’il reçoit (Partie 1).',
 			'Gère le service ordinaire de la pension aux côtés de Christophe (Partie 1).',
 		],
 		color: '#52525b',
@@ -530,7 +530,7 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		meta: ['frotteur et garçon de peine', 'origine campagnarde'],
 		socialRole: 'Domestique subalterne de la pension, seul avec Rastignac à manifester une pitié désintéressée pour Goriot.',
 		description:
-			'Garçon de peine et homme à tout faire de Mme Vauquer. Bien que rudoyé au quotidien, il témoigne d’une humanité spontanée et accompagne fidèlement le cercueil de Goriot jusqu’à la fosse commune du Père-Lachaise avec Rastignac.',
+			'Garçon de peine et homme à tout faire de Mme Vauquer. Bien que rudoyé au quotidien, il témoigne d’une humanité spontanée et accompagne fidèlement le cercueil de Goriot jusqu’à sa tombe au Père-Lachaise avec Rastignac.',
 		keyFacts: [
 			'Porte les commissions secrètes de Goriot chez les orfèvres et usuriers (Parties 1 et 2).',
 			'Aide à porter et veiller le corps du vieillard dans sa chambre mansardée (Partie 4).',
@@ -553,18 +553,18 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		usageName: 'Horace Bianchon',
 		caption: 'étudiant en médecine · probité laborieuse',
 		eyebrow: 'L’ami fidèle · éthique de la science et probité',
-		meta: ['étudiant en médecine à l’Hôtel-Dieu', 'ami d’Eugène'],
+		meta: ['interne à l’hôpital Cochin', 'ami d’Eugène'],
 		socialRole: 'Futur grand médecin de La Comédie humaine, il incarne l’honnêteté, le travail scientifique régulier et le bon sens moral.',
 		description:
-			'Camarade d’études d’Eugène, externe à l’Hôtel-Dieu, Bianchon représente la voie du labeur et de la probité morale à l’opposé des raccourcis cyniques de Vautrin. Toujours prêt à rendre service, c’est lui qui pose le diagnostic médical de l’apoplexie séreuse de Goriot, veille le mourant et aide Eugène à régler les frais médicaux.',
+			'Camarade d’études d’Eugène, interne à l’hôpital Cochin, Bianchon représente la voie du labeur et de la probité morale à l’opposé des raccourcis cyniques de Vautrin. Toujours prêt à rendre service, c’est lui qui pose le diagnostic médical de l’apoplexie séreuse de Goriot, veille le mourant et aide Eugène à régler les frais médicaux.',
 		keyFacts: [
 			'Prend ses repas à la pension Vauquer tout en poursuivant ses études hospitalières (Partie 1).',
 			'Discute au Luxembourg avec Eugène du paradoxe moral du mandarin de Rousseau/Chateaubriand (Partie 2).',
 			'Soigne Goriot avec dévouement durant sa longue agonie (Partie 4).',
 		],
 		quote: {
-			text: 'Eh bien ! je ne veux pas tuer le mandarin. […] Pas de mandarin !',
-			context: 'Refus catégorique du crime commis par simple volonté lors de la promenade au Luxembourg.',
+			text: '— Est-il bien vieux, le mandarin ? Mais, bah ! jeune ou vieux, paralytique ou bien portant, ma foi… Diantre ! Eh bien, non.',
+			context: 'Réponse à la question du mandarin posée par Eugène au jardin du Luxembourg : après une plaisanterie, Bianchon refuse le crime.',
 			reference: 'Deuxième partie (« L’Entrée dans le monde »)',
 		},
 		color: '#15803d',
@@ -594,7 +594,7 @@ export const goriotCharacters: GoriotCharacterData[] = [
 			'Subit stoïquement l’humiliation de son abandon au cours de son grand bal d’adieu (Partie 4).',
 		],
 		quote: {
-			text: 'Plus froidement vous calculerez, plus avant vous irez. Frappez sans pitié, vous serez craint. Ne voyez dans les hommes et dans les femmes que des chevaux de poste que vous laisserez crever à chaque relais.',
+			text: 'Plus froidement vous calculerez, plus avant vous irez. Frappez sans pitié, vous serez craint. N’acceptez les hommes et les femmes que comme des chevaux de poste que vous laisserez crever à chaque relais, vous arriverez ainsi au faîte de vos désirs.',
 			context: 'Leçon dispensée à Eugène rue de Grenelle après son échec chez Mme de Restaud.',
 			reference: 'Première partie (« Une pension bourgeoise »)',
 		},
@@ -749,15 +749,15 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		target: 'anastasie',
 		category: 'family',
 		label: 'amour paternel sacrificiel',
-		shortSummary: 'Goriot se dépouille pour sa fille aînée qui ne vient qu’après sa mort.',
+		shortSummary: 'Goriot se dépouille pour sa fille aînée, qui n’arrive qu’une fois qu’il a perdu connaissance.',
 		description:
-			'Goriot idolâtre sa fille aînée Anastasie, à qui il a constitué une dot pour soutenir ses ambitions aristocratiques et son entrée dans la haute noblesse par son mariage avec le comte de Restaud. Devenue comtesse, Anastasie a honte des manières populaires de son père et ne vient le voir en cachette que pour lui réclamer de l’argent destiné à couvrir les dettes de jeu de son amant Maxime de Trailles. Elle n’arrive au chevet de Goriot que quelques instants après son dernier soupir.',
+			'Goriot idolâtre sa fille aînée Anastasie, à qui il a constitué une dot pour soutenir ses ambitions aristocratiques et son entrée dans la haute noblesse par son mariage avec le comte de Restaud. Devenue comtesse, Anastasie a honte des manières populaires de son père et ne vient le voir en cachette que pour lui réclamer de l’argent destiné à couvrir les dettes de jeu de son amant Maxime de Trailles. Elle n’arrive au chevet de Goriot que lorsqu’il a perdu connaissance, lui demande pardon et assiste à sa mort.',
 		asymmetric: true,
 		directionLabel: 'Goriot idolâtre → Anastasie l’exploite puis s’en repent trop tard',
 		firstEstablishedStage: 'stage-1',
 		certainty: 'certitude_historique',
 		textualQuote: {
-			text: 'Mon père avait tout donné. Je lui ai causé tant de maux ! […] J’ai vendu le dernier morceau d’argent de mon père, et il a dû mourir en pensant que je ne l’aimais pas !',
+			text: 'Hélas ! pour qui ai-je trahi le seul cœur […] où j’étais adorée ! Je l’ai méconnu, je l’ai repoussé, je lui ai fait mille maux, infâme que je suis !',
 			speaker: 'Anastasie de Restaud',
 			reference: 'Quatrième partie (« La Mort du père »)',
 		},
@@ -771,11 +771,11 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		target: 'delphine',
 		category: 'family',
 		label: 'passion paternelle absolue',
-		shortSummary: 'Goriot meuble le nid d’amour de sa cadette qui lui préfère un bal.',
+		shortSummary: 'Goriot meuble le nid d’amour de sa cadette, absente de son agonie.',
 		description:
-			'Père fasciné par la beauté de Delphine, Goriot épuise ses dernières rentes viagères pour lui louer et meubler la garçonnière de la rue d’Artois, rêvant d’habiter la mansarde au-dessus pour veiller sur son bonheur avec Rastignac. Alors qu’il agonise, Delphine choisit de danser au bal de Mme de Beauséant plutôt que de rester à son chevet.',
+			'Père fasciné par la beauté de Delphine, Goriot épuise ses dernières rentes viagères pour lui louer et meubler la garçonnière de la rue d’Artois, rêvant d’habiter la mansarde au-dessus pour veiller sur son bonheur avec Rastignac. Le soir où Rastignac lui annonce que son père est mourant, Delphine se rend au bal de Mme de Beauséant ; le lendemain, malade puis retenue par une violente scène avec Nucingen au sujet de l’argent demandé pour son père, elle ne vient pas à son chevet.',
 		asymmetric: true,
-		directionLabel: 'Goriot se sacrifie → Delphine accepte ses sacrifices mais danse pendant son agonie',
+		directionLabel: 'Goriot se sacrifie → Delphine accepte ses sacrifices, va au bal et ne vient pas à son chevet',
 		firstEstablishedStage: 'stage-1',
 		certainty: 'certitude_historique',
 		textualQuote: {
@@ -799,8 +799,8 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-1',
 		certainty: 'certitude_historique',
 		textualQuote: {
-			text: 'Vous me paierez cher cette trahison, madame ! s’écria le comte.',
-			speaker: 'Le comte de Restaud',
+			text: 'Vous signerez la vente de vos biens quand je vous le demanderai.',
+			speaker: 'Le comte de Restaud (propos rapportés par Anastasie)',
 			reference: 'Quatrième partie (« La Mort du père »)',
 		},
 		narrativeContext: 'Exposé dès la visite d’Eugène à l’hôtel de la rue du Helder, puis révélé lors de la spoliation finale des diamants.',
@@ -865,9 +865,9 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-2',
 		certainty: 'certitude_historique',
 		textualQuote: {
-			text: 'Mon Eugène, si vous saviez ce que j’ai souffert ! […] Vous êtes mon seul espoir.',
+			text: 'Mon père m’a donné un cœur, mais vous l’avez fait battre.',
 			speaker: 'Delphine de Nucingen',
-			reference: 'Deuxième partie (« L’Entrée dans le monde »)',
+			reference: 'Quatrième partie (« La Mort du père »)',
 		},
 		narrativeContext: 'Commence au Théâtre des Italiens, s’affirme rue Saint-Lazare et se concrétise rue d’Artois.',
 		bend: -25,
@@ -957,7 +957,7 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-1',
 		certainty: 'certitude_historique',
 		textualQuote: {
-			text: 'Traitez ce monde comme il le mérite. Vous voulez parvenir, je vous aiderai.',
+			text: 'Eh bien, monsieur de Rastignac, traitez ce monde comme il le mérite. Vous voulez parvenir, je vous aiderai.',
 			speaker: 'La vicomtesse de Beauséant',
 			reference: 'Première partie (« Une pension bourgeoise »)',
 		},
@@ -979,7 +979,7 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-1',
 		certainty: 'certitude_historique',
 		textualQuote: {
-			text: 'Madame de Nucingen laperait toute la boue qu’il y a entre la rue Saint-Lazare et la rue de Grenelle pour entrer dans mon salon.',
+			text: 'Aussi, madame de Nucingen laperait-elle toute la boue qu’il y a entre la rue Saint-Lazare et la rue de Grenelle pour entrer dans mon salon.',
 			speaker: 'La vicomtesse de Beauséant',
 			reference: 'Première partie (« Une pension bourgeoise »)',
 		},
@@ -995,7 +995,7 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		label: 'amitié d’étudiants & contrepoint moral',
 		shortSummary: 'Bianchon incarne la probité et soigne Goriot avec Eugène.',
 		description:
-			'Horace Bianchon est l’ami fraternel et loyal d’Eugène. Il écoute ses cas de conscience (le mandarin), veille Goriot jusqu’à son dernier souffle, pose le diagnostic médical et prête ses propres économies pour aider Eugène à ensevelir le vieillard.',
+			'Horace Bianchon est l’ami fraternel et loyal d’Eugène. Il écoute ses cas de conscience (le mandarin), soigne Goriot pendant son agonie, pose le diagnostic médical et aide Eugène à organiser des obsèques de pauvre : sans argent lui-même, il fournit une bière de son hôpital, à meilleur marché, et règle le service avec l’église, tandis qu’Eugène en paie les frais.',
 		asymmetric: false,
 		firstEstablishedStage: 'stage-1',
 		certainty: 'certitude_historique',
@@ -1007,7 +1007,7 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		target: 'goriot',
 		category: 'solidarity',
 		label: 'soins médicaux dévoués',
-		shortSummary: 'L’externe en médecine soigne gratuitement le vieillard à l’agonie.',
+		shortSummary: 'L’interne en médecine soigne gratuitement le vieillard à l’agonie.',
 		description:
 			'Bien qu’il n’ait aucun lien familial avec Goriot, l’étudiant en médecine Bianchon prodigue des soins constants, applique des cataplasmes et veille le malade à l’agonie par pure déontologie humaine et amitié pour Eugène.',
 		asymmetric: true,
@@ -1046,7 +1046,7 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		firstEstablishedStage: 'stage-2',
 		certainty: 'certitude_historique',
 		textualQuote: {
-			text: 'Mon petit, je vous propose un marché que personne ne refuserait. […] Vous m’épouserez mademoiselle Victorine Taillefer qui aura des millions.',
+			text: 'Savez-vous ce qu’il vous faut, à vous, au train dont vous allez ? Un million, et promptement ; […] Ce million, je vais vous le donner.',
 			speaker: 'Vautrin (Jacques Collin)',
 			reference: 'Deuxième partie (« L’Entrée dans le monde »)',
 		},

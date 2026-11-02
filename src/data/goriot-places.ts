@@ -186,7 +186,7 @@ export const goriotPlaces: GoriotPlace[] = [
 		eventOrder: 3,
 		narrativeStepTitle: '3. La gaffe chez la comtesse de Restaud',
 		narrativeStepExplanation: 'Rastignac tente d’approcher Anastasie rue du Helder. En mentionnant naïvement le père Goriot aperçu dans la cour, il provoque la réprobation du comte et se fait immédiatement fermer les portes du logis.',
-		quotation: '— Mais, monsieur, dit le comte en arrêtant Eugène par un geste, vous pouvez ignorer que monsieur Goriot… — Est mon voisin de pension, interrompit Eugène. […] Madame de Restaud jeta sur son mari un regard d’intelligence et se leva.',
+		quotation: '— Mais, reprit l’étudiant, je viens de voir sortir de chez vous un monsieur avec lequel je suis porte à porte dans la même pension, le père Goriot. À ce nom enjolivé du mot père, le comte, qui tisonnait, jeta les pincettes dans le feu, comme si elles lui eussent brûlé les mains, et se leva. — Monsieur, vous auriez pu dire M. Goriot ! s’écria-t-il. […] — Toutes les fois que monsieur se présentera, dit le comte à Maurice, ni madame ni moi n’y serons.',
 		quotationReference: 'Le Père Goriot, première partie (« Une pension bourgeoise »)',
 	},
 	{
@@ -236,7 +236,7 @@ export const goriotPlaces: GoriotPlace[] = [
 		eventOrder: 5,
 		narrativeStepTitle: '5. L’ivresse des loges aux Italiens',
 		narrativeStepExplanation: 'Au Théâtre des Italiens, Eugène entend Le Barbier de Séville et s’introduit dans la loge de Delphine de Nucingen. Le lendemain, ses confidences à la pension alertent Goriot.',
-		quotation: '— L’on donnait hier aux Italiens le Barbier de Séville de Rossini. Je n’avais jamais entendu de si délicieuse musique, dit-il. Mon Dieu ! est-on heureux d’avoir une loge aux Italiens. Le père Goriot saisit cette parole au vol comme un chien saisit un mouvement de son maître.',
+		quotation: '— On donnait hier aux Italiens le Barbier de Séville, de Rossini. Je n’avais jamais entendu de si délicieuse musique, dit-il. Mon Dieu, est-on heureux d’avoir une loge aux Italiens ! Le père Goriot saisit cette parole au vol comme un chien saisit un mouvement de son maître.',
 		quotationReference: 'Le Père Goriot, deuxième partie (« L’Entrée dans le monde »)',
 	},
 	{
@@ -252,7 +252,7 @@ export const goriotPlaces: GoriotPlace[] = [
 			leafletCoords: [1524.3, 1442.6],
 		},
 		locationPrecision: 'exact',
-		historicalAddress: 'Galeries du Palais-Royal, maison de jeu au n° 9 (« courut au numéro 9 » dans le texte)',
+		historicalAddress: 'Galeries du Palais-Royal, maison de jeu au n° 9 (« court au numéro 9 » dans le texte)',
 		modernLocation: 'Domaine du Palais-Royal (arcades / galerie de Valois), 1er arrondissement',
 		characters: ['Delphine de Nucingen', 'Eugène de Rastignac'],
 		narrativeRole: 'Lieu des plaisirs et des tripots où Delphine envoie Rastignac jouer à la roulette ses derniers cent francs.',
@@ -311,7 +311,7 @@ export const goriotPlaces: GoriotPlace[] = [
 		eventOrder: 8,
 		narrativeStepTitle: '8. Le dilemme du mandarin au Luxembourg',
 		narrativeStepExplanation: 'Ébranlé par les propositions criminelles de Vautrin, Eugène prend le bras de Bianchon devant le palais du Luxembourg et teste sur lui le fameux cas de conscience du mandarin.',
-		quotation: '— Où as-tu pris cet air grave ? lui dit l’étudiant en médecine en lui prenant le bras pour se promener devant le palais. — Je suis tourmenté par de mauvaises idées. […] — Tu ris sans savoir ce dont il s’agit. As-tu lu Rousseau ? — Oui. — Te souviens-tu de ce passage où il demande à son lecteur ce qu’il ferait au cas où il pourrait s’enrichir en tuant à la Chine par sa seule volonté un vieux mandarin, sans bouger de Paris ?',
+		quotation: '— D’où te vient cet air grave ? lui dit l’étudiant en médecine en lui prenant le bras pour se promener devant le palais. — Je suis tourmenté par de mauvaises idées. […] — Tu ris sans savoir ce dont il s’agit. As-tu lu Rousseau ? — Oui. — Te souviens-tu de ce passage où il demande à son lecteur ce qu’il ferait au cas où il pourrait s’enrichir en tuant à la Chine par sa seule volonté un vieux mandarin, sans bouger de Paris ?',
 		quotationReference: 'Le Père Goriot, deuxième partie (« L’Entrée dans le monde »)',
 	},
 	{
@@ -336,7 +336,7 @@ export const goriotPlaces: GoriotPlace[] = [
 		eventOrder: 9,
 		narrativeStepTitle: '9. L’installation rue d’Artois',
 		narrativeStepExplanation: 'Goriot et Delphine introduisent Eugène dans ce logement au 3e étage d’une maison neuve de la rue d’Artois. Goriot s’y réserve une chambre au-dessus, heureux de vivre en serviteur discret auprès d’eux.',
-		quotation: '— Ah ! voilà ce que je voulais. Vous ne ferez pas attention à moi, n’est-ce pas ? J’irai, je viendrai comme un bon esprit qui est partout, et qu’on sait être là sans le voir. Eh bien ! Delphinette, Ninette, Dedel ! n’ai-je pas eu raison de te dire : « Il y a un joli appartement rue d’Artois, meublons-le pour lui ! » Tu ne voulais pas. Ah ! c’est moi qui suis l’auteur de ta joie, comme je suis l’auteur de tes jours.',
+		quotation: '— Ah ! voilà ce que je voulais. Vous ne ferez pas attention à moi, n’est-ce pas ? J’irai, je viendrai comme un bon esprit qui est partout, et qu’on sait être là sans le voir Eh bien, Delphinette, Ninette, Dedel ! n’ai-je pas eu raison de te dire : « Il y a un joli appartement rue d’Artois, meublons-le pour lui ! » Tu ne voulais pas. Ah ! c’est moi qui suis l’auteur de ta joie, comme je suis l’auteur de tes jours.',
 		quotationReference: 'Le Père Goriot, troisième partie (« Trompe-la-Mort »)',
 	},
 	{
@@ -386,7 +386,7 @@ export const goriotPlaces: GoriotPlace[] = [
 		eventOrder: 11,
 		narrativeStepTitle: '11. L’apothéose finale au Père-Lachaise',
 		narrativeStepExplanation: 'Après l’inhumation, les voitures de parade vides s’éloignent. Seul sur les hauteurs du cimetière, Rastignac contemple la ruche bourdonnante et prononce son cri historique : « À nous deux maintenant ! »',
-		quotation: 'Rastignac, resté seul, fit quelques pas vers le haut du cimetière et vit Paris tortueusement couché le long des deux rives de la Seine où commençaient à briller les lumières. Ses yeux s’attachèrent presque avidement entre la colonne de la place Vendôme et le dôme des Invalides, là où vivait ce beau monde dans lequel il avait voulu pénétrer. Il lança sur cette ruche bourdonnante un regard qui semblait par avance en pomper le miel, et dit ces mots grandioses : — À nous deux maintenant !',
+		quotation: 'Rastignac, resté seul, fit quelques pas vers le haut du cimetière et vit Paris tortueusement couché le long des deux rives de la Seine, où commençaient à briller les lumières. Ses yeux s’attachèrent presque avidement entre la colonne de la place Vendôme et le dôme des Invalides, là où vivait ce beau monde dans lequel il avait voulu pénétrer. Il lança sur cette ruche bourdonnante un regard qui semblait par avance en pomper le miel, et dit ces mots grandioses : — À nous deux maintenant !',
 		quotationReference: 'Le Père Goriot, excipit (conclusion)',
 	},
 ];

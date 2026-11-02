@@ -374,6 +374,16 @@ const clientThemesPayload = {
 		const relatedEl = panelEl.querySelector('[data-theme-related]')!;
 		const verificationEl = panelEl.querySelector('[data-theme-verification]')!;
 
+		// Les styles du composant sont encapsulés par Astro via un attribut data-astro-cid-*
+		// posé sur les éléments du gabarit. Les éléments reconstruits par le script
+		// (createElement / innerHTML) n'en héritent pas : on leur applique le même attribut,
+		// lu sur la racine du tableau de bord, pour qu'ils reçoivent exactement les mêmes règles.
+		const scopeAttr = dashboardEl.getAttributeNames().find((n) => n.startsWith('data-astro-cid-'));
+		function applyScope(root: Element) {
+			if (!scopeAttr) return;
+			root.querySelectorAll(`*:not([${scopeAttr}])`).forEach((el) => el.setAttribute(scopeAttr, ''));
+		}
+
 		function selectTheme(themeId: string, focusPanel = false) {
 			const theme = themeMap.get(themeId);
 			if (!theme) return;
@@ -487,6 +497,8 @@ const clientThemesPayload = {
 
 			// Notes de vérification
 			verificationEl.innerHTML = `<span class="note-icon" aria-hidden="true">ℹ️</span><span><strong>Source et méthode :</strong> ${theme.verificationNotes}</span>`;
+
+			applyScope(panelEl);
 
 			if (focusPanel) {
 				panelEl.focus({ preventScroll: true });
@@ -965,7 +977,8 @@ const clientThemesPayload = {
 	/* Scènes narratives */
 	.theme-scenes-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+		/* min() : sur les écrans étroits, une colonne ne dépasse jamais la largeur disponible */
+		grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
 		gap: 1rem;
 	}
 
@@ -1003,6 +1016,8 @@ const clientThemesPayload = {
 	}
 
 	.scene-card-title {
+		overflow-wrap: break-word;
+		hyphens: auto;
 		font-family: var(--map-serif, Georgia, serif);
 		font-size: 1.02rem;
 		color: var(--map-ink);

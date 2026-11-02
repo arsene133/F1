@@ -11,6 +11,10 @@ import {
 
 const categoriesList = Object.values(goriotCategories);
 const initialPlace = goriotPlaces[0];
+
+// Titres d’œuvres cités dans les textes des lieux : rendus en italique (convention typographique française)
+const WORK_TITLES = /([Ll]e Barbier de Séville)/;
+const withTitles = (text: string) => text.split(WORK_TITLES).map((s, i) => ({ s, em: i % 2 === 1 }));
 ---
 
 <div class="goriot-map-interactive" id="goriot-interactive-app" data-goriot-app>
@@ -128,7 +132,7 @@ const initialPlace = goriotPlaces[0];
 					</button>
 				</div>
 				<p class="stepper-explanation" id="current-step-explanation">
-					{initialPlace.narrativeStepExplanation}
+					{withTitles(initialPlace.narrativeStepExplanation).map((p) => (p.em ? <em>{p.s}</em> : p.s))}
 				</p>
 			</div>
 		</div>
@@ -338,7 +342,7 @@ const initialPlace = goriotPlaces[0];
 					<div class="card-section card-quotation">
 						<h3 class="section-title">Extrait du texte (Wikisource)</h3>
 						<blockquote id="card-quote-block">
-							<p class="quote-text" id="card-quote-text">« {initialPlace.quotation} »</p>
+							<p class="quote-text" id="card-quote-text">« {withTitles(initialPlace.quotation).map((p) => (p.em ? <em>{p.s}</em> : p.s))} »</p>
 							<cite class="quote-ref" id="card-quote-ref">— {initialPlace.quotationReference}</cite>
 						</blockquote>
 					</div>
@@ -377,7 +381,7 @@ const initialPlace = goriotPlaces[0];
 									<p><strong>Intrigue :</strong> {place.narrativeRole}</p>
 									<p><strong>Analyse littéraire :</strong> {place.literaryAnalysis}</p>
 									<blockquote>
-										<p>« {place.quotation} »</p>
+										<p>« {withTitles(place.quotation).map((p) => (p.em ? <em>{p.s}</em> : p.s))} »</p>
 										<cite>— {place.quotationReference}</cite>
 									</blockquote>
 								</div>
@@ -596,6 +600,25 @@ const initialPlace = goriotPlaces[0];
 		font-size: 1.15rem;
 		font-weight: bold;
 		color: var(--map-ink, #172b3a);
+	}
+
+	/* Petits écrans : deux boutons de 110 px + l’indicateur ne tiennent pas sur une ligne.
+	   L’indicateur passe au-dessus, les boutons se partagent la ligne suivante
+	   (ou s’empilent sur les écrans les plus étroits). */
+	@media (max-width: 540px) {
+		.stepper-actions {
+			flex-wrap: wrap;
+			gap: 0.6rem 1rem;
+		}
+
+		.stepper-indicator {
+			order: -1;
+			flex-basis: 100%;
+		}
+
+		.btn-stepper {
+			flex: 1 1 6.5rem;
+		}
 	}
 
 	.stepper-explanation {
@@ -1151,6 +1174,21 @@ const initialPlace = goriotPlaces[0];
 <!-- Script d'interactivité côté client -->
 <script>
 	import L from 'leaflet';
+
+	// Même règle que côté serveur : titres d’œuvres en italique
+	const WORK_TITLES = /([Ll]e Barbier de Séville)/;
+	function setTextWithTitles(el: HTMLElement, text: string) {
+		el.textContent = '';
+		text.split(WORK_TITLES).forEach((part, i) => {
+			if (i % 2 === 1) {
+				const em = document.createElement('em');
+				em.textContent = part;
+				el.append(em);
+			} else if (part) {
+				el.append(part);
+			}
+		});
+	}
 	import 'leaflet/dist/leaflet.css';
 
 	interface HistoricalPoint {
@@ -1504,7 +1542,7 @@ const initialPlace = goriotPlaces[0];
 			}
 
 			const quoteText = document.getElementById('card-quote-text');
-			if (quoteText) quoteText.textContent = `« ${place.quotation} »`;
+			if (quoteText) setTextWithTitles(quoteText, `« ${place.quotation} »`);
 
 			const quoteRef = document.getElementById('card-quote-ref');
 			if (quoteRef) quoteRef.textContent = `— ${place.quotationReference}`;
@@ -1618,13 +1656,20 @@ const initialPlace = goriotPlaces[0];
 			if (stepTitleEl) stepTitleEl.textContent = curPlace.name;
 
 			const stepExpEl = document.getElementById('current-step-explanation');
-			if (stepExpEl) stepExpEl.textContent = curPlace.narrativeStepExplanation;
+			if (stepExpEl) setTextWithTitles(stepExpEl, curPlace.narrativeStepExplanation);
 
 			const prevBtn = document.getElementById('narrative-prev-btn') as HTMLButtonElement;
 			const nextBtn = document.getElementById('narrative-next-btn') as HTMLButtonElement;
 
 			if (prevBtn) prevBtn.disabled = currentStepIndex === 0;
 			if (nextBtn) nextBtn.disabled = currentStepIndex === places.length - 1;
+
+			// Un bouton désactivé perd le focus (qui retomberait sur <body>) :
+			// au clavier, on le confie au bouton opposé du parcours.
+			if (prevBtn && nextBtn) {
+				if (document.activeElement === nextBtn && nextBtn.disabled) prevBtn.focus();
+				else if (document.activeElement === prevBtn && prevBtn.disabled) nextBtn.focus();
+			}
 		}
 
 		// Bascule de mode

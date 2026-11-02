@@ -195,7 +195,8 @@ describe.skipIf(!BUILT)('Réseau interactif des relations du Père Goriot (/gori
 			expect(desc).toContain('Taillefer');
 
 			const quote = await page.locator('#goriot-relationships [data-detail-quote-text]').textContent();
-			expect(quote).toContain('Mon petit, je vous propose un marché');
+			// Citation vérifiée sur le fac-similé de 1910 (p. 124)
+			expect(quote).toContain('Ce million, je vais vous le donner.');
 		} finally {
 			await page.close();
 		}
