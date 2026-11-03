@@ -257,7 +257,7 @@ export const goriotPlaces: GoriotPlace[] = [
 		modernLocation: 'Domaine du Palais-Royal (arcades / galerie de Valois), 1er arrondissement',
 		characters: ['Delphine de Nucingen', 'Eugène de Rastignac'],
 		narrativeRole: `Lieu des plaisirs et des tripots où Delphine envoie Rastignac jouer à la roulette ses derniers cent francs ${eur(100, 'goriot-1819')}.`,
-		literaryAnalysis: `Delphine confie cent francs à Rastignac pour jouer au numéro 9 du Palais-Royal (« Eugène prend la jolie bourse, court au numéro 9 »). Sous la Restauration, les établissements de jeu concédés des arcades du Palais-Royal étaient identifiés par le numéro de leur travée ou arcade, et le n° 9 abritait l’un des cercles de jeu autorisés. Rastignac y empoche 7 000 francs nets ${eur(7000, 'goriot-1819')} (7 200 francs moins le pourboire au vieil habitué). Le repère situe cet ensemble emblématique des galeries du Palais-Royal.`,
+		literaryAnalysis: `Delphine confie cent francs à Rastignac pour jouer au numéro 9 du Palais-Royal (« Eugène prend la jolie bourse, court au numéro 9 »). Sous la Restauration, les établissements de jeu concédés des arcades du Palais-Royal étaient identifiés par le numéro de leur travée ou arcade, et le n° 9 abritait l’un des cercles de jeu autorisés. Rastignac y empoche 7\u00a0000 francs nets ${eur(7000, 'goriot-1819')} (7\u00a0200 francs moins le pourboire au vieil habitué). Le repère situe cet ensemble emblématique des galeries du Palais-Royal.`,
 		observationPoint: 'Le contraste entre les galeries scintillantes du Palais-Royal et la détresse financière d’une baronne prisonnière de son régime matrimonial.',
 		eventOrder: 6,
 		narrativeStepTitle: '6. Le coup de roulette salvateur',

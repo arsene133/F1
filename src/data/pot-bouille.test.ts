@@ -98,7 +98,7 @@ describe('Modèle de données de Pot-Bouille (src/data/pot-bouille.ts)', () => {
 		);
 		expect(dot).toBeDefined();
 		expect(dot?.type).toBe('financial');
-		expect(dot?.label).toContain('50 000');
+		expect(dot?.label).toContain('50\u00a0000');
 		expect(dot?.description).toContain('cinquante mille francs');
 	});
 

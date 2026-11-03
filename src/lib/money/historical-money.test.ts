@@ -9,13 +9,15 @@ import {
 	MONEY_PERIODS,
 	eur,
 	formatEuroRange,
+	formatFrenchNumber,
 	roundSignificant,
+	withNbspThousands,
 	splitEuroGloss,
 	wrapEuroGlossHtml,
 } from './historical-money';
 
-const NNBSP = ' '; // séparateur de milliers fr-FR
-const NBSP = ' '; // avant « € »
+const NNBSP = '\u202f'; // espace fine : ne doit plus apparaître dans les montants
+const NBSP = '\u00a0'; // séparateur de milliers et espace avant l’unité
 const norm = (s: string) => s.replaceAll(NNBSP, ' ').replaceAll(NBSP, ' ');
 
 describe('coefficients', () => {
@@ -42,9 +44,40 @@ describe('formatage', () => {
 	});
 
 	test('typographie française', () => {
-		expect(formatEuroRange(6923, 7859)).toBe(`6${NNBSP}900 à 7${NNBSP}900${NBSP}€`);
+		expect(formatEuroRange(6923, 7859)).toBe(`6${NBSP}900 à 7${NBSP}900${NBSP}€`);
 		expect(formatEuroRange(1_153_800, 1_309_800)).toBe(`1,2 à 1,3${NBSP}million d’euros`);
 		expect(formatEuroRange(5_769_000, 6_549_000)).toBe(`5,8 à 6,5${NBSP}millions d’euros`);
+	});
+
+	test('séparateur de milliers : U+00A0, jamais d’espace ordinaire ni d’espace fine', () => {
+		const codes = (t: string) => [...t].filter((c) => /\s/.test(c)).map((c) => c.codePointAt(0)!.toString(16));
+		expect(formatFrenchNumber(50_000)).toBe('50\u00a0000');
+		expect(formatFrenchNumber(200_000)).toBe('200\u00a0000');
+		expect(formatFrenchNumber(1_200_000)).toBe('1\u00a0200\u00a0000');
+		expect(codes(formatFrenchNumber(1_200_000))).toEqual(['a0', 'a0']);
+		expect(formatFrenchNumber(5.8)).toBe('5,8');
+		// Montants en euros et fourchettes
+		expect(formatEuroRange(580_000, 580_000)).toBe('580\u00a0000\u00a0€');
+		expect(formatEuroRange(240_000, 240_000)).toBe('240\u00a0000\u00a0€');
+		expect(formatEuroRange(17_000, 20_000)).toBe('17\u00a0000 à 20\u00a0000\u00a0€');
+		expect(formatEuroRange(1_153_800, 1_309_800)).toBe('1,2 à 1,3\u00a0million d’euros');
+		// Gloses complètes : aucun U+202F, chaque groupe de milliers lié par U+00A0
+		for (const g of [eur(50_000, 'pot-bouille-1861'), eur(200_000, 'goriot-1819'), eur(1200, 'goriot-1819'), eur(3000, 'goriot-1819', { inFrancs: '3 000 francs' })]) {
+			expect(g).not.toContain(NNBSP);
+			expect(g).not.toMatch(/\d (?=\d{3})/);
+			expect(g).not.toMatch(/\d €/);
+		}
+		expect(eur(3000, 'goriot-1819', { inFrancs: '3 000 francs' })).toBe(
+			'(3\u00a0000\u00a0francs, soit environ 17\u00a0000 à 20\u00a0000\u00a0€ de 2026)',
+		);
+	});
+
+	test('withNbspThousands ne touche qu’aux séparateurs de milliers', () => {
+		expect(withNbspThousands('dot de 50 000 francs, 1 200 000 F, ch. 5 et 12 ans')).toBe(
+			'dot de 50\u00a0000 francs, 1\u00a0200\u00a0000 F, ch. 5 et 12 ans',
+		);
+		expect(withNbspThousands('2 406,11')).toBe('2\u00a0406,11');
+		expect(withNbspThousands('les 21 et 2026')).toBe('les 21 et 2026');
 	});
 
 	test('valeurs affichées sur les pages', () => {
@@ -89,9 +122,9 @@ describe('commission de Vautrin : 20 % d’une dot d’un million = 200 000 fran
 
 	test('relation Vautrin → Rastignac et scène du jardin : montant et équivalent', () => {
 		const pacte = goriotRelationships.find((r) => r.id === 'vautrin-rastignac');
-		expect(pacte?.description).toContain(`tribut de 200 000 francs ${gloss}`);
+		expect(pacte?.description).toContain(`tribut de 200\u00a0000 francs ${gloss}`);
 		const scene = goriotThemes.flatMap((t) => t.scenes).find((s) => s.title === 'Le pacte du jardin de la pension');
-		expect(scene?.summary).toContain(`commission de 200 000 francs ${gloss}`);
+		expect(scene?.summary).toContain(`commission de 200\u00a0000 francs ${gloss}`);
 		expect(norm(gloss)).toBe('(soit environ 1,2 à 1,3 million d’euros de 2026)');
 	});
 
@@ -103,6 +136,25 @@ describe('commission de Vautrin : 20 % d’une dot d’un million = 200 000 fran
 			...goriotPlaces.flatMap((p) => [p.narrativeRole, p.literaryAnalysis, p.narrativeStepExplanation]),
 		];
 		for (const t of texts) expect(t).not.toMatch(/100 000 francs|(?<!(?:deux|trois|quatre|cinq|six|sept|huit|neuf) )cent mille francs/i);
+	});
+});
+
+describe('données Goriot et Pot-Bouille : milliers insécables', () => {
+	test('aucune espace ordinaire ni fine entre groupes de milliers dans les textes affichés', () => {
+		const files = [
+			'src/data/goriot-places.ts',
+			'src/data/goriot-relationships.ts',
+			'src/data/goriot-themes.ts',
+			'src/data/pot-bouille.ts',
+			'src/data/pot-bouille-building.ts',
+		];
+		for (const f of files) {
+			const lines = readFileSync(f, 'utf8').split('\n');
+			lines.forEach((l, i) => {
+				if (/^\s*(\/\/|\*|\/\*)/.test(l)) return;
+				expect(l, `${f}:${i + 1}`).not.toMatch(/\d[ \u202f]\d{3}(?!\d)/);
+			});
+		}
 	});
 });
 

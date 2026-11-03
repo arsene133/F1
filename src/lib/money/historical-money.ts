@@ -87,9 +87,26 @@ export const MONEY_PERIODS: Readonly<Record<MoneyPeriodId, MoneyPeriod>> = {
 /* Formatage                                                           */
 /* ------------------------------------------------------------------ */
 
-const NBSP = ' ';
-// Intl fr-FR sépare les milliers par une espace fine insécable (U+202F).
-const frNumber = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 });
+/** Espace insécable (U+00A0) : séparateur de milliers et espace avant l'unité. */
+export const NBSP = '\u00a0';
+
+const frIntl = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 });
+
+/**
+ * Nombre au format français, milliers séparés par une espace insécable U+00A0
+ * (Intl produit une espace fine U+202F, remplacée ici) : « 1 200 000 », « 5,8 ».
+ */
+export function formatFrenchNumber(value: number): string {
+	return frIntl.format(value).replace(/[\u202f\u00a0 ]/g, NBSP);
+}
+
+/**
+ * Rend insécables les séparateurs de milliers d'un texte déjà rédigé
+ * (« 3 000 francs » → « 3 000 francs »), sans toucher aux autres espaces.
+ */
+export function withNbspThousands(text: string): string {
+	return text.replace(/(\d)[ \u202f](?=\d{3}(?!\d))/g, `$1${NBSP}`);
+}
 
 /** Arrondit à deux chiffres significatifs : une estimation, pas un compte. */
 export function roundSignificant(value: number, digits = 2): number {
@@ -100,7 +117,7 @@ export function roundSignificant(value: number, digits = 2): number {
 }
 
 function formatMillions(value: number): string {
-	return frNumber.format(roundSignificant(value) / 1_000_000);
+	return formatFrenchNumber(roundSignificant(value) / 1_000_000);
 }
 
 /** « 6 900 à 7 900 € », « 240 000 € », « 5,8 à 6,5 millions d’euros ». */
@@ -115,7 +132,7 @@ export function formatEuroRange(low: number, high: number): string {
 			? `${formatMillions(lo)}${NBSP}${unit}`
 			: `${formatMillions(lo)} à ${formatMillions(hi)}${NBSP}${unit}`;
 	}
-	return single ? `${frNumber.format(lo)}${NBSP}€` : `${frNumber.format(lo)} à ${frNumber.format(hi)}${NBSP}€`;
+	return single ? `${formatFrenchNumber(lo)}${NBSP}€` : `${formatFrenchNumber(lo)} à ${formatFrenchNumber(hi)}${NBSP}€`;
 }
 
 /**
@@ -151,8 +168,8 @@ export function euroEquivalentText(
 	const [low, high] = euroEquivalentBounds(francs, periodId);
 	const core = `soit environ ${formatEuroRange(low, high)} de ${TARGET_YEAR}`;
 	if (!options.inFrancs) return core;
-	// Espaces insécables : séparateur de milliers fin (« 3 000 ») et avant l'unité (« 3 000 francs »).
-	const inFrancs = options.inFrancs.replace(/(\d) (?=\d{3}\b)/g, '$1 ').replace(/(\d) (?=francs?\b)/g, '$1 ');
+	// Espaces insécables : séparateur de milliers (« 3 000 ») et avant l'unité (« 3 000 francs »).
+	const inFrancs = withNbspThousands(options.inFrancs).replace(/(\d) (?=francs?\b)/g, `$1${NBSP}`);
 	return `${inFrancs}, ${core}`;
 }
 
