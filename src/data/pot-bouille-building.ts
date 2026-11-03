@@ -98,7 +98,7 @@ export const potBouilleBuildingFloors: BuildingFloor[] = [
 					source: 'Chapitre I',
 				},
 				secrets: [
-					`Promesse frauduleuse d’une dot fictive de 50\u00a0000 francs ${eur(50000, 'pot-bouille-1861')} pour marier Berthe`,
+					`Promesse frauduleuse d’une dot fictive de 50\u202f000 francs ${eur(50000, 'pot-bouille-1861')} pour marier Berthe`,
 					'Travail nocturne clandestin du père caissier pour dissimuler la faillite',
 					'Crises furieuses et dévotion possessive de Saturnin enfermé dans sa chambre',
 				],

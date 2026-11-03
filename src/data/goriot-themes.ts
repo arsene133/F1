@@ -148,7 +148,7 @@ export const goriotThemes: GoriotTheme[] = [
 				locationId: 'palais-royal',
 				locationName: 'Le Palais-Royal et ses tripots',
 				characterIds: ['rastignac', 'delphine'],
-				summary: `Delphine charge Eugène de jouer ses 100 derniers francs ${eur(100, 'goriot-1819')} à la roulette : il gagne 7\u00a0000 francs net ${eur(7000, 'goriot-1819')} qui la sauvent temporairement de ses engagements financiers.`,
+				summary: `Delphine charge Eugène de jouer ses 100 derniers francs ${eur(100, 'goriot-1819')} à la roulette : il gagne 7\u202f000 francs net ${eur(7000, 'goriot-1819')} qui la sauvent temporairement de ses engagements financiers.`,
 				literarySignificance: 'Révélation brutale pour Rastignac : la détresse financière ronge les salons dorés tout autant que la misère ordinaire de la pension Vauquer.',
 			},
 			{
@@ -195,7 +195,7 @@ export const goriotThemes: GoriotTheme[] = [
 			'Rastignac est le prototype de l’ambitieux de la modernité balzacienne. Le roman retrace son roman d’apprentissage (Bildungsroman) : il perd ses illusions provinciales mais conserve, à la différence de Vautrin, une ultime étincelle de piété filiale pour Goriot.',
 		keyObservations: [
 			'Rastignac commet d’abord un faux pas ridicule chez Anastasie de Restaud en prononçant le nom du père Goriot sans connaître les convenances.',
-			'Il demande à sa mère et ses sœurs leurs modestes économies (1\u00a0200 F) pour s’acheter les habits élégants indispensables au faubourg.',
+			'Il demande à sa mère et ses sœurs leurs modestes économies (1\u202f200 F) pour s’acheter les habits élégants indispensables au faubourg.',
 			'Il hésite constamment entre le travail honnête prôné par Horace Bianchon et la tentation de la fortune rapide.',
 			'La scène finale sur la colline du Père-Lachaise scelle son passage du statut de spectateur à celui de combattant résolu.',
 		],
@@ -444,7 +444,7 @@ export const goriotThemes: GoriotTheme[] = [
 		keyObservations: [
 			'Vautrin propose à Eugène de faire assassiner Frédéric Taillefer par le colonel Franchessini pour capter la succession de Victorine.',
 			'Rastignac débat avec Horace Bianchon au jardin du Luxembourg du cas de conscience : tuerait-on un vieux mandarin en Chine d’un simple souhait pour devenir millionnaire ?',
-			`Mlle Michonneau marchande la capture de Vautrin pour 3\u00a0000 francs ${eur(3000, 'goriot-1819')} et le drogue avec un soporifique dans son café.`,
+			`Mlle Michonneau marchande la capture de Vautrin pour 3\u202f000 francs ${eur(3000, 'goriot-1819')} et le drogue avec un soporifique dans son café.`,
 			'L’arrestation spectaculaire de Vautrin dévoile son identité de bagnard sans amoindrir la force implacable de son analyse politique.',
 		],
 		characterIds: ['vautrin', 'rastignac', 'michonneau', 'poiret', 'bianchon', 'm-taillefer'],
@@ -458,7 +458,7 @@ export const goriotThemes: GoriotTheme[] = [
 				locationId: 'pension-vauquer',
 				locationName: 'Le jardin de la pension Vauquer',
 				characterIds: ['vautrin', 'rastignac'],
-				summary: `Vautrin isole Eugène parmi les tilleuls et lui expose son plan diabolique : épouser Victorine après le meurtre de son frère en duel, moyennant une commission de 200\u00a0000 francs ${eur(200000, 'goriot-1819')}.`,
+				summary: `Vautrin isole Eugène parmi les tilleuls et lui expose son plan diabolique : épouser Victorine après le meurtre de son frère en duel, moyennant une commission de 200\u202f000 francs ${eur(200000, 'goriot-1819')}.`,
 				literarySignificance: 'Scène de tentation faustienne majeure : le tentateur dénonce la pourriture du Code civil et propose une alliance d’énergie criminelle.',
 			},
 			{
@@ -479,7 +479,7 @@ export const goriotThemes: GoriotTheme[] = [
 				locationName: 'La salle à manger de la pension Vauquer',
 				characterIds: ['vautrin', 'michonneau', 'poiret', 'mme-vauquer'],
 				summary: 'Trompe-la-Mort, trahi par le narcotique de Michonneau, est cerné par les gendarmes de Gondureau. Face aux fusils, il assume fièrement sa stature de bagnard héroïque et méprise les délateurs.',
-				literarySignificance: `Renversement moral saisissant : le forçat fait figure de colosse lucide face à la lâcheté mesquine des bourgeois qui l’ont vendu pour mille écus ${eur(3000, 'goriot-1819', { inFrancs: '3\u00a0000 francs' })}.`,
+				literarySignificance: `Renversement moral saisissant : le forçat fait figure de colosse lucide face à la lâcheté mesquine des bourgeois qui l’ont vendu pour mille écus ${eur(3000, 'goriot-1819', { inFrancs: '3\u202f000 francs' })}.`,
 			},
 		],
 		quotations: [

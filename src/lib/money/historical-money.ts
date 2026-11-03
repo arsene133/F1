@@ -87,52 +87,100 @@ export const MONEY_PERIODS: Readonly<Record<MoneyPeriodId, MoneyPeriod>> = {
 /* Formatage                                                           */
 /* ------------------------------------------------------------------ */
 
-/** Espace insécable (U+00A0) : séparateur de milliers et espace avant l'unité. */
+/** Espace insécable (U+00A0) : entre le montant et l'unité (« 650 € », « 1,3 million d’euros »). */
 export const NBSP = '\u00a0';
+
+/** Espace fine insécable (U+202F) : séparateur de milliers (« 1 230 », « 580 000 »). */
+export const NNBSP = '\u202f';
 
 const frIntl = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 });
 
 /**
- * Nombre au format français, milliers séparés par une espace insécable U+00A0
- * (Intl produit une espace fine U+202F, remplacée ici) : « 1 200 000 », « 5,8 ».
+ * Nombre au format français : virgule décimale, milliers séparés par une espace
+ * fine insécable U+202F, zéros décimaux superflus supprimés : « 1 230 », « 4,5 », « 5 ».
  */
 export function formatFrenchNumber(value: number): string {
-	return frIntl.format(value).replace(/[\u202f\u00a0 ]/g, NBSP);
+	return frIntl.format(value).replace(/[\u202f\u00a0 ]/g, NNBSP);
 }
 
 /**
- * Rend insécables les séparateurs de milliers d'un texte déjà rédigé
+ * Rend insécables (U+202F) les séparateurs de milliers d'un texte déjà rédigé
  * (« 3 000 francs » → « 3 000 francs »), sans toucher aux autres espaces.
  */
-export function withNbspThousands(text: string): string {
-	return text.replace(/(\d)[ \u202f](?=\d{3}(?!\d))/g, `$1${NBSP}`);
+export function withFrenchThousands(text: string): string {
+	return text.replace(/(\d)[ \u00a0\u202f](?=\d{3}(?!\d))/g, `$1${NNBSP}`);
 }
 
-/** Arrondit à deux chiffres significatifs : une estimation, pas un compte. */
-export function roundSignificant(value: number, digits = 2): number {
-	if (value === 0) return 0;
-	const magnitude = Math.floor(Math.log10(Math.abs(value)));
-	const factor = 10 ** (magnitude - digits + 1);
-	return Math.round(value / factor) * factor;
+/* Arrondi d'affichage ------------------------------------------------ */
+
+const MILLION = 1_000_000;
+
+/**
+ * Pas d'arrondi selon le montant avant arrondi :
+ * moins de 10 € → 0,50 € ; 10 à 99,99 € → 1 € ; 100 € et plus → 10 €.
+ * Les montants d'un million ou plus sont exprimés en millions, au dixième.
+ */
+export function euroRoundingStep(value: number): number {
+	const v = Math.abs(value);
+	if (v < 10) return 0.5;
+	if (v < 100) return 1;
+	if (v < MILLION) return 10;
+	return MILLION / 10;
 }
 
-function formatMillions(value: number): string {
-	return formatFrenchNumber(roundSignificant(value) / 1_000_000);
+type RoundingMode = 'nearest' | 'down' | 'up';
+
+function roundToStep(value: number, step: number, mode: RoundingMode = 'nearest'): number {
+	const fn = mode === 'down' ? Math.floor : mode === 'up' ? Math.ceil : Math.round;
+	// Pas < 1 : on passe par l'inverse pour éviter les erreurs binaires (4,4 / 0,5).
+	return step < 1 ? fn(value * (1 / step)) / (1 / step) : fn(value / step) * step;
 }
 
-/** « 6 900 à 7 900 € », « 240 000 € », « 5,8 à 6,5 millions d’euros ». */
+/**
+ * Arrondi d'affichage d'un équivalent en euros (une seule fois, au dernier moment) :
+ * 4,4 → 4,5 ; 16,7 → 17 ; 645 → 650 ; 12 345 → 12 350 ; 1 260 000 → 1 300 000.
+ */
+export function roundEuroAmount(value: number, mode: RoundingMode = 'nearest'): number {
+	return roundToStep(value, euroRoundingStep(value), mode);
+}
+
+/** Montant en euros prêt à afficher : « 5 € », « 1 230 € », « 1,3 million d’euros ». */
+export function formatEuroAmount(value: number): string {
+	return formatEuroRange(value, value);
+}
+
+function millionUnit(millions: number): string {
+	// Accord français : « million » ne prend la marque du pluriel qu'à partir de deux.
+	return millions >= 2 ? 'millions d’euros' : 'million d’euros';
+}
+
+/**
+ * « 6 à 6,5 € », « 6 920 à 7 860 € », « 640 € », « 1,2 à 1,3 million d’euros ».
+ *
+ * Chaque borne est arrondie indépendamment. Une fourchette reste une fourchette :
+ * si ses deux bornes, distinctes, tombent sur la même valeur arrondie, on arrondit
+ * vers l'extérieur (borne basse par défaut, borne haute par excès).
+ */
 export function formatEuroRange(low: number, high: number): string {
-	const lo = roundSignificant(low);
-	const hi = roundSignificant(high);
-	const single = lo === hi;
-	if (lo >= 1_000_000) {
-		// Accord français : « million » ne prend la marque du pluriel qu'à partir de deux.
-		const unit = hi >= 2_000_000 ? 'millions d’euros' : 'million d’euros';
-		return single
-			? `${formatMillions(lo)}${NBSP}${unit}`
-			: `${formatMillions(lo)} à ${formatMillions(hi)}${NBSP}${unit}`;
+	if (low === high) {
+		const v = roundEuroAmount(low);
+		return v >= MILLION
+			? `${formatFrenchNumber(v / MILLION)}${NBSP}${millionUnit(v / MILLION)}`
+			: `${formatFrenchNumber(v)}${NBSP}€`;
 	}
-	return single ? `${formatFrenchNumber(lo)}${NBSP}€` : `${formatFrenchNumber(lo)} à ${formatFrenchNumber(hi)}${NBSP}€`;
+	let lo = roundEuroAmount(low);
+	let hi = roundEuroAmount(high);
+	if (lo === hi) {
+		lo = roundEuroAmount(low, 'down');
+		hi = roundEuroAmount(high, 'up');
+	}
+	if (hi >= MILLION) {
+		// Les deux bornes en millions, pour une lecture homogène.
+		const loM = lo >= MILLION ? lo / MILLION : roundToStep(low / MILLION, 0.1);
+		const hiM = hi / MILLION;
+		return `${formatFrenchNumber(loM)} à ${formatFrenchNumber(hiM)}${NBSP}${millionUnit(hiM)}`;
+	}
+	return `${formatFrenchNumber(lo)} à ${formatFrenchNumber(hi)}${NBSP}€`;
 }
 
 /**
@@ -159,7 +207,7 @@ export function euroEquivalentBounds(francs: number | readonly [number, number],
 	return [low, high];
 }
 
-/** Texte de l'équivalent, sans parenthèses : « soit environ 6 900 à 7 900 € de 2026 ». */
+/** Texte de l'équivalent, sans parenthèses : « soit environ 6 920 à 7 860 € de 2026 ». */
 export function euroEquivalentText(
 	francs: number | readonly [number, number],
 	periodId: MoneyPeriodId,
@@ -168,8 +216,8 @@ export function euroEquivalentText(
 	const [low, high] = euroEquivalentBounds(francs, periodId);
 	const core = `soit environ ${formatEuroRange(low, high)} de ${TARGET_YEAR}`;
 	if (!options.inFrancs) return core;
-	// Espaces insécables : séparateur de milliers (« 3 000 ») et avant l'unité (« 3 000 francs »).
-	const inFrancs = withNbspThousands(options.inFrancs).replace(/(\d) (?=francs?\b)/g, `$1${NBSP}`);
+	// Espace fine insécable entre milliers (« 3 000 »), insécable avant l'unité (« 3 000 francs »).
+	const inFrancs = withFrenchThousands(options.inFrancs).replace(/(\d) (?=francs?\b)/g, `$1${NBSP}`);
 	return `${inFrancs}, ${core}`;
 }
 

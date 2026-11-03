@@ -319,7 +319,7 @@ describe('Modèle de données des relations du Père Goriot (src/data/goriot-rel
 			const delateurs = goriotStructuralClusters.find((c) => c.id === 'satellite-delateurs')!;
 			expect(delateurs.description).toContain('Michonneau');
 			expect(delateurs.description).toContain('Poiret');
-			expect(delateurs.description).toContain('3\u00a0000 francs');
+			expect(delateurs.description).toContain('3\u202f000 francs');
 
 			const nucingen = goriotStructuralClusters.find((c) => c.id === 'peripheral-nucingen')!;
 			expect(nucingen.description).toContain('Delphine de Nucingen');
