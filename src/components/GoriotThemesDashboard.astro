@@ -4,6 +4,7 @@
 // articulés avec les personnages, les lieux, les scènes et les citations vérifiées.
 // Respecte les conventions d'accessibilité (WCAG AAA/AA, aria, navigation clavier, focus visible).
 
+import MoneyText from './money/MoneyText.astro';
 import { goriotPlaces } from '../data/goriot-places';
 import { goriotCharacters, goriotRelationships } from '../data/goriot-relationships';
 import { goriotThemes, type GoriotTheme } from '../data/goriot-themes';
@@ -126,7 +127,7 @@ const clientThemesPayload = {
 					<h5>Comprendre le thème (repères pour le lycéen)</h5>
 				</div>
 				<p class="core-explanation-text" data-theme-student-desc>
-					{defaultTheme.studentExplanation}
+					<MoneyText text={defaultTheme.studentExplanation} />
 				</p>
 				<p class="core-significance-text" data-theme-significance>
 					<strong>Portée littéraire dans <em>La Comédie humaine</em> :</strong>
@@ -143,7 +144,7 @@ const clientThemesPayload = {
 			</h5>
 			<ul class="theme-observations-list" data-theme-observations>
 				{defaultTheme.keyObservations.map((obs) => (
-					<li>{obs}</li>
+					<li><MoneyText text={obs} /></li>
 				))}
 			</ul>
 		</div>
@@ -217,9 +218,9 @@ const clientThemesPayload = {
 							)}
 						</header>
 						<h6 class="scene-card-title">{scene.title}</h6>
-						<p class="scene-card-summary">{scene.summary}</p>
+						<p class="scene-card-summary"><MoneyText text={scene.summary} /></p>
 						<p class="scene-card-meaning">
-							<strong>Enjeu littéraire :</strong> {scene.literarySignificance}
+							<strong>Enjeu littéraire :</strong> <MoneyText text={scene.literarySignificance} />
 						</p>
 					</article>
 				))}
@@ -286,6 +287,7 @@ const clientThemesPayload = {
 </div>
 
 <script>
+	import { setTextWithEuroGloss, wrapEuroGlossHtml } from '../lib/money/historical-money';
 	interface ThemePayload {
 		id: string;
 		title: string;
@@ -405,7 +407,7 @@ const clientThemesPayload = {
 			subtitleEl.textContent = theme.subtitle;
 			titleEl.textContent = theme.title;
 			questionEl.textContent = `« ${theme.centralQuestion} »`;
-			studentDescEl.textContent = theme.studentExplanation;
+			setTextWithEuroGloss(studentDescEl, theme.studentExplanation);
 
 			significanceEl.innerHTML = `<strong>Portée littéraire dans <em>La Comédie humaine</em> :</strong> <span>${theme.literarySignificance}</span>`;
 
@@ -413,7 +415,7 @@ const clientThemesPayload = {
 			observationsEl.innerHTML = '';
 			theme.keyObservations.forEach((obs) => {
 				const li = document.createElement('li');
-				li.textContent = obs;
+				setTextWithEuroGloss(li, obs);
 				observationsEl.appendChild(li);
 			});
 
@@ -454,8 +456,8 @@ const clientThemesPayload = {
 						${scene.locationName ? `<span class="scene-location-tag">📍 ${scene.locationName}</span>` : ''}
 					</header>
 					<h6 class="scene-card-title">${scene.title}</h6>
-					<p class="scene-card-summary">${scene.summary}</p>
-					<p class="scene-card-meaning"><strong>Enjeu littéraire :</strong> ${scene.literarySignificance}</p>
+					<p class="scene-card-summary">${wrapEuroGlossHtml(scene.summary)}</p>
+					<p class="scene-card-meaning"><strong>Enjeu littéraire :</strong> ${wrapEuroGlossHtml(scene.literarySignificance)}</p>
 				`;
 				scenesEl.appendChild(art);
 			});

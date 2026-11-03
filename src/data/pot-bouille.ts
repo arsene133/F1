@@ -1,4 +1,5 @@
 import type { EdgeType, MapNode, MapRelationship } from '../components/relationship-map/types';
+import { eur } from '../lib/money/historical-money';
 
 // ==========================================================================
 // Données de la page Pot-Bouille d'Émile Zola (/pot-bouille)
@@ -42,7 +43,7 @@ export const potBouilleCharacters: MapNode[] = [
 			"Dressée par sa mère au quatrième étage pour capturer un mari bourgeois fortuné, elle épouse Auguste Vabre sans amour et s'installe à l'entresol. Confrontée à l’avarice de son mari et à l’absence de la dot promise, elle se laisse séduire par Octave Mouret avant que le scandale n’éclate.",
 		points: [
 			'Chasse au mari orchestrée par sa mère lors des soirées du mardi (ch. III)',
-			'Épouse Auguste avec la promesse mensongère d’une dot de 50 000 francs (ch. VIII)',
+			`Épouse Auguste avec la promesse mensongère d’une dot de 50 000 francs ${eur(50000, 'pot-bouille-1861')} (ch. VIII)`,
 			'Cède aux avances d’Octave et devient sa maîtresse (ch. XII–XIII)',
 			'Surprise avec Octave dans sa chambre du quatrième étage, elle fuit en chemise par l’escalier (ch. XIV), au cœur du scandale (ch. XV), puis réconciliée avec Auguste pour sauver les apparences (ch. XVII)',
 		],
@@ -63,7 +64,7 @@ export const potBouilleCharacters: MapNode[] = [
 			"Mère tyrannique obsédée par le rang social et les apparences de respectabilité. Elle mène une chasse impitoyable aux gendres pour caser ses filles Berthe et Hortense, tout en méprisant son mari qu'elle accable de reproches incessants.",
 		points: [
 			'Organise des réceptions mondaines ruineuses pour séduire les prétendants (ch. III)',
-			'Négocie le mariage de Berthe en promettant une dot fictive de 50 000 francs (ch. V–VII)',
+			`Négocie le mariage de Berthe en promettant une dot fictive de 50 000 francs ${eur(50000, 'pot-bouille-1861')} (ch. V–VII)`,
 			'Pousse sa fille à la coquetterie et ferme les yeux sur ses dépenses inconsidérées (ch. X)',
 			'Refuse d’accueillir Berthe après le scandale sans calcul d’honneur, puis arrange la réconciliation (ch. XV–XVIII)',
 		],
@@ -151,7 +152,7 @@ export const potBouilleCharacters: MapNode[] = [
 			'Incarne la figure tutélaire de l’ordre et de la propriété bourgeoise (ch. I)',
 			'Refuse d’aider financièrement ses fils malgré leurs supplications (ch. X)',
 			'Frappé d’une attaque d’apoplexie à la fin du chapitre X, il meurt au chapitre XI',
-			'Ne laisse ni testament ni les six ou sept cent mille francs espérés : on ne trouve que quelques centaines de francs en pièces de dix sous (ch. XI)',
+			`Ne laisse ni testament ni les six ou sept cent mille francs ${eur([600000, 700000], 'pot-bouille-1861')} espérés : on ne trouve que quelques centaines de francs en pièces de dix sous (ch. XI)`,
 		],
 		color: '#713f12',
 		tier: 'standard',
@@ -453,7 +454,7 @@ export const potBouilleRelationships: MapRelationship[] = [
 		type: 'marriage',
 		label: 'mariage d’intérêt',
 		description:
-			"Auguste Vabre épouse Berthe Josserand au chapitre VIII, alléché par la fausse promesse d'une dot de 50 000 francs. Leur union, sans amour, s'envenime rapidement autour de l'avarice maladive d'Auguste et du non-paiement de la dot (ch. XII). Après la crise de l’adultère, ils reprennent la vie commune pour sauver les convenances (ch. XVII).",
+			`Auguste Vabre épouse Berthe Josserand au chapitre VIII, alléché par la fausse promesse d'une dot de 50 000 francs ${eur(50000, 'pot-bouille-1861')}. Leur union, sans amour, s'envenime rapidement autour de l'avarice maladive d'Auguste et du non-paiement de la dot (ch. XII). Après la crise de l’adultère, ils reprennent la vie commune pour sauver les convenances (ch. XVII).`,
 		labelDy: -12,
 		mLabelDy: -12,
 		mobileLabel: true,
@@ -636,7 +637,7 @@ export const potBouilleRelationships: MapRelationship[] = [
 		type: 'financial',
 		label: 'promesse mensongère de 50 000 F',
 		description:
-			"Pour emporter l'accord d'Auguste Vabre, Mme Josserand promet par contrat une dot de cinquante mille francs qu'elle sait pertinemment inexistante, semant les germes de la discorde financière du ménage (ch. V, VII, XII).",
+			`Pour emporter l'accord d'Auguste Vabre, Mme Josserand promet par contrat une dot de cinquante mille francs ${eur(50000, 'pot-bouille-1861')} qu'elle sait pertinemment inexistante, semant les germes de la discorde financière du ménage (ch. V, VII, XII).`,
 		labelDx: 0,
 		labelDy: -18,
 		mLabelDx: 0,
@@ -748,7 +749,7 @@ export const potBouilleMechanism = [
 	},
 	{
 		step: 'Mariage',
-		text: 'Berthe est mariée à Auguste Vabre sur la promesse mensongère d’une dot de 50 000 francs.',
+		text: `Berthe est mariée à Auguste Vabre sur la promesse mensongère d’une dot de 50 000 francs ${eur(50000, 'pot-bouille-1861')}.`,
 	},
 	{
 		step: 'Conquête',

@@ -1,3 +1,4 @@
+import { eur } from '../lib/money/historical-money';
 // Modèle de données pour le tableau de bord thématique du Père Goriot d'Honoré de Balzac (1835)
 // Conçu pour un élève de seconde : rigueur philologique, citations vérifiées avec références,
 // articulation entre observations concrètes, questions d'interprétation littéraire, personnages et lieux parisiens.
@@ -127,7 +128,7 @@ export const goriotThemes: GoriotTheme[] = [
 		tagline: 'Le moteur occulte de toutes les actions : l’or remplace la morale, mesure les sentiments et détermine la survie sociale.',
 		centralQuestion: 'Comment l’argent transforme-t-il les sentiments intimes en marchandises et en rapports de force ?',
 		studentExplanation:
-			'Dans l’univers du roman, rien n’est gratuit et tout a un prix : une dot considérable ouvre les portes du mariage nobiliaire, cent francs risqués à la roulette permettent de repousser la honte d’un découvert bancaire, et trois mille francs achètent la trahison d’un forçat. L’argent n’est pas seulement un moyen matériel, c’est le filtre à travers lequel chaque personnage évalue autrui.',
+			`Dans l’univers du roman, rien n’est gratuit et tout a un prix : une dot considérable ouvre les portes du mariage nobiliaire, cent francs ${eur(100, 'goriot-1819')} risqués à la roulette permettent de repousser la honte d’un découvert bancaire, et trois mille francs ${eur(3000, 'goriot-1819')} achètent la trahison d’un forçat. L’argent n’est pas seulement un moyen matériel, c’est le filtre à travers lequel chaque personnage évalue autrui.`,
 		literarySignificance:
 			'Balzac est le premier grand romancier du réalisme économique : il chiffre au franc près les dots, les rentes viagères, les loyers et les dettes usuraires chez Gobseck. L’argent est un flux vital qui gouverne la modernité capitaliste de la Restauration.',
 		keyObservations: [
@@ -147,7 +148,7 @@ export const goriotThemes: GoriotTheme[] = [
 				locationId: 'palais-royal',
 				locationName: 'Le Palais-Royal et ses tripots',
 				characterIds: ['rastignac', 'delphine'],
-				summary: 'Delphine charge Eugène de jouer ses 100 derniers francs à la roulette : il gagne 7 000 francs net qui la sauvent temporairement de ses engagements financiers.',
+				summary: `Delphine charge Eugène de jouer ses 100 derniers francs ${eur(100, 'goriot-1819')} à la roulette : il gagne 7 000 francs net ${eur(7000, 'goriot-1819')} qui la sauvent temporairement de ses engagements financiers.`,
 				literarySignificance: 'Révélation brutale pour Rastignac : la détresse financière ronge les salons dorés tout autant que la misère ordinaire de la pension Vauquer.',
 			},
 			{
@@ -443,7 +444,7 @@ export const goriotThemes: GoriotTheme[] = [
 		keyObservations: [
 			'Vautrin propose à Eugène de faire assassiner Frédéric Taillefer par le colonel Franchessini pour capter la succession de Victorine.',
 			'Rastignac débat avec Horace Bianchon au jardin du Luxembourg du cas de conscience : tuerait-on un vieux mandarin en Chine d’un simple souhait pour devenir millionnaire ?',
-			'Mlle Michonneau marchande la capture de Vautrin pour 3 000 francs et le drogue avec un soporifique dans son café.',
+			`Mlle Michonneau marchande la capture de Vautrin pour 3 000 francs ${eur(3000, 'goriot-1819')} et le drogue avec un soporifique dans son café.`,
 			'L’arrestation spectaculaire de Vautrin dévoile son identité de bagnard sans amoindrir la force implacable de son analyse politique.',
 		],
 		characterIds: ['vautrin', 'rastignac', 'michonneau', 'poiret', 'bianchon', 'm-taillefer'],
@@ -457,7 +458,7 @@ export const goriotThemes: GoriotTheme[] = [
 				locationId: 'pension-vauquer',
 				locationName: 'Le jardin de la pension Vauquer',
 				characterIds: ['vautrin', 'rastignac'],
-				summary: 'Vautrin isole Eugène parmi les tilleuls et lui expose son plan diabolique : épouser Victorine après le meurtre de son frère en duel, moyennant une commission de 100 000 francs.',
+				summary: `Vautrin isole Eugène parmi les tilleuls et lui expose son plan diabolique : épouser Victorine après le meurtre de son frère en duel, moyennant une commission de 200 000 francs ${eur(200000, 'goriot-1819')}.`,
 				literarySignificance: 'Scène de tentation faustienne majeure : le tentateur dénonce la pourriture du Code civil et propose une alliance d’énergie criminelle.',
 			},
 			{
@@ -478,7 +479,7 @@ export const goriotThemes: GoriotTheme[] = [
 				locationName: 'La salle à manger de la pension Vauquer',
 				characterIds: ['vautrin', 'michonneau', 'poiret', 'mme-vauquer'],
 				summary: 'Trompe-la-Mort, trahi par le narcotique de Michonneau, est cerné par les gendarmes de Gondureau. Face aux fusils, il assume fièrement sa stature de bagnard héroïque et méprise les délateurs.',
-				literarySignificance: 'Renversement moral saisissant : le forçat fait figure de colosse lucide face à la lâcheté mesquine des bourgeois qui l’ont vendu pour mille écus.',
+				literarySignificance: `Renversement moral saisissant : le forçat fait figure de colosse lucide face à la lâcheté mesquine des bourgeois qui l’ont vendu pour mille écus ${eur(3000, 'goriot-1819', { inFrancs: '3 000 francs' })}.`,
 			},
 		],
 		quotations: [

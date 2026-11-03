@@ -10,6 +10,7 @@ import {
 	type BuildingRoom,
 } from '../data/pot-bouille-building';
 import { potBouilleCharacters } from '../data/pot-bouille';
+import MoneyText from './money/MoneyText.astro';
 
 interface Props {
 	id?: string;
@@ -209,7 +210,7 @@ const clientBuildingData = {
 											</div>
 										)}
 
-										<p class="room-micro-desc">{room.description}</p>
+										<p class="room-micro-desc"><MoneyText text={room.description} /></p>
 									</article>
 								);
 							})}
@@ -352,7 +353,7 @@ const clientBuildingData = {
 											.join(', ')
 									: 'Aucun ou anonymes'}
 							</td>
-							<td>{room.description}</td>
+							<td><MoneyText text={room.description} /></td>
 						</tr>
 					))}
 				</tbody>
@@ -362,6 +363,7 @@ const clientBuildingData = {
 </section>
 
 <script>
+	import { setTextWithEuroGloss } from '../lib/money/historical-money';
 	function initBuildingCutaway() {
 		const root = document.querySelector('[data-building-cutaway]');
 		if (!root) return;
@@ -439,7 +441,7 @@ const clientBuildingData = {
 			}
 			if (detailTitle) detailTitle.textContent = room.title;
 			if (detailSub) detailSub.textContent = room.subtitle || floor.subtitle || '';
-			if (detailDesc) detailDesc.textContent = room.description;
+			if (detailDesc) setTextWithEuroGloss(detailDesc, room.description);
 
 			// Occupants
 			if (detailOccupants) {
@@ -483,7 +485,7 @@ const clientBuildingData = {
 					detailSecretsList.innerHTML = '';
 					room.secrets.forEach((s: string) => {
 						const li = document.createElement('li');
-						li.textContent = s;
+						setTextWithEuroGloss(li, s);
 						detailSecretsList.appendChild(li);
 					});
 				} else {

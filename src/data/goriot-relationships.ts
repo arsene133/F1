@@ -1,3 +1,4 @@
+import { eur } from '../lib/money/historical-money';
 // Modèle de données pour les relations entre les personnages du Père Goriot d’Honoré de Balzac (1835)
 // Destiné aux lycéens (classe de seconde) : rigueur philologique, citations vérifiées,
 // distinction explicite entre faits narratifs avérés et interprétations critiques.
@@ -265,7 +266,7 @@ export const goriotStructuralClusters: GoriotStructuralCluster[] = [
 		subtitle: 'Pension Vauquer · Le complot policier',
 		tag: 'Satellite',
 		description:
-			'Duo de pensionnaires impliqué dans l’arrestation de Jacques Collin : Mlle Michonneau négocie la prime de 3 000 francs et administre le narcotique, secondée passivement par Poiret. Ce satellite se rattache au noyau par la délation policière ciblant Vautrin.',
+			`Duo de pensionnaires impliqué dans l’arrestation de Jacques Collin : Mlle Michonneau négocie la prime de 3 000 francs ${eur(3000, 'goriot-1819')} et administre le narcotique, secondée passivement par Poiret. Ce satellite se rattache au noyau par la délation policière ciblant Vautrin.`,
 		nodeIds: ['michonneau', 'poiret'],
 		attachmentPointNodeIds: ['vautrin'],
 		attachmentEdgeIds: ['michonneau-vautrin-police'],
@@ -369,7 +370,7 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		keyFacts: [
 			'Éconduit brutalement Rastignac après qu’il a mentionné le nom de Goriot dans son salon (Partie 1).',
 			'Engage les diamants du comte pour payer les dettes de jeu de Maxime de Trailles (Partie 4).',
-			'Avant la maladie de son père, vient lui réclamer douze mille francs pour sauver Maxime de Trailles, poursuivi pour dettes ; Goriot, déjà ruiné, ne les a plus, et Rastignac fournit une lettre de change de ce montant. Goriot tombe malade à la suite de cette scène (Partie 4).',
+			`Avant la maladie de son père, vient lui réclamer douze mille francs ${eur(12000, 'goriot-1819')} pour sauver Maxime de Trailles, poursuivi pour dettes ; Goriot, déjà ruiné, ne les a plus, et Rastignac fournit une lettre de change de ce montant. Goriot tombe malade à la suite de cette scène (Partie 4).`,
 			'Arrive trop tard auprès du corps de Goriot pour obtenir son pardon vivant (Partie 4).',
 		],
 		color: '#be185d',
@@ -395,7 +396,7 @@ export const goriotCharacters: GoriotCharacterData[] = [
 			'Fille cadette de Goriot mariée au riche banquier alsacien baron de Nucingen, Delphine souffre d’être recluse dans la bourgeoisie de la Chaussée-d’Antin sans pouvoir franchir les portes du faubourg Saint-Germain. Délaissée par son mari qui engage sa dot dans des opérations financières risquées et limite ses ressources personnelles, elle prend Eugène de Rastignac pour amant et s’appuie sur son père pour aménager leur intimité.',
 		keyFacts: [
 			'Rencontre Eugène au Théâtre des Italiens dans sa loge (Partie 2).',
-			'Envoie Eugène risquer ses derniers 100 francs à la roulette du Palais-Royal (Partie 2).',
+			`Envoie Eugène risquer ses derniers 100 francs ${eur(100, 'goriot-1819')} à la roulette du Palais-Royal (Partie 2).`,
 			'Se dispute violemment avec sa sœur Anastasie devant leur père épuisé au sujet de leurs dettes (Partie 4).',
 			'Avertie par Rastignac que son père est mourant, se rend au bal de Mme de Beauséant ; le lendemain, malade puis retenue par une scène avec Nucingen, ne vient pas à son chevet (Partie 4).',
 		],
@@ -723,7 +724,7 @@ export const goriotCharacters: GoriotCharacterData[] = [
 		meta: ['vieille fille austère', 'pensionnaire'],
 		socialRole: 'Pensionnaire aigrie et vénale, actrice principale de la délation de Vautrin auprès de la police secrète pour mille écus.',
 		description:
-			'Vieille fille au regard froid hébergée au troisième étage de la pension Vauquer. Contactée par la police secrète (Gondureau / Bibi-Lupin), c’est elle qui mène les pourparlers, exige et obtient la prime de 3 000 francs (mille écus), verse elle-même le breuvage narcotique dans la tasse de Vautrin et lui applique la gifle révélatrice sur l’épaule.',
+			`Vieille fille au regard froid hébergée au troisième étage de la pension Vauquer. Contactée par la police secrète (Gondureau / Bibi-Lupin), c’est elle qui mène les pourparlers, exige et obtient la prime de 3 000 francs (mille écus) ${eur(3000, 'goriot-1819')}, verse elle-même le breuvage narcotique dans la tasse de Vautrin et lui applique la gifle révélatrice sur l’épaule.`,
 		keyFacts: [
 			'Négocie fermement avec le chef de police Gondureau la prime de 3 000 francs pour livrer Jacques Collin (Partie 3).',
 			'Verse le narcotique dans la tasse de café de Vautrin à la table de la pension (Partie 3).',
@@ -912,7 +913,7 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		label: 'dépendance & roulette (Palais-Royal)',
 		shortSummary: 'Eugène gagne 7 000 F net au jeu pour délivrer Delphine de ses dettes.',
 		description:
-			'Dépourvue d’argent liquide par son mari, Delphine confie ses derniers 100 francs à Eugène pour tenter la roulette au n° 9 du Palais-Royal. Eugène mise sur le 21 (son âge) puis sur le rouge, accumulant 7 200 francs. Après avoir laissé 10 louis (200 francs) de pourboire, il remet 7 000 francs net à Delphine : celle-ci en garde 6 000 francs pour rembourser de Marsay et remet les 1 000 francs restants à Eugène.',
+			`Dépourvue d’argent liquide par son mari, Delphine confie ses derniers 100 francs ${eur(100, 'goriot-1819')} à Eugène pour tenter la roulette au n° 9 du Palais-Royal. Eugène mise sur le 21 (son âge) puis sur le rouge, accumulant 7 200 francs ${eur(7200, 'goriot-1819')}. Après avoir laissé 10 louis (200 francs) de pourboire, il remet 7 000 francs net ${eur(7000, 'goriot-1819')} à Delphine : celle-ci en garde 6 000 francs pour rembourser de Marsay et remet les 1 000 francs restants à Eugène.`,
 		asymmetric: false,
 		firstEstablishedStage: 'stage-2',
 		certainty: 'certitude_historique',
@@ -1040,7 +1041,7 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		label: 'tentation machiavélique & pacte',
 		shortSummary: 'Vautrin propose à Eugène un pacte criminel qu’il refuse d’accomplir.',
 		description:
-			'Vautrin tente d’enrôler Eugène dans un pacte diabolique et criminel : faire éliminer Frédéric Taillefer par un spadassin pour que Victorine recueille l’héritage, en échange d’un tribut de 100 000 francs prélevé sur la dot. Si Eugène refuse catégoriquement d’assassiner et veut avertir le père Taillefer, Vautrin le narcotise au vin de Bordeaux pour exécuter le plan sans son consentement.',
+			`Vautrin tente d’enrôler Eugène dans un pacte diabolique et criminel : faire éliminer Frédéric Taillefer par un spadassin pour que Victorine recueille l’héritage, en échange d’un tribut de 200 000 francs ${eur(200000, 'goriot-1819')} prélevé sur la dot. Si Eugène refuse catégoriquement d’assassiner et veut avertir le père Taillefer, Vautrin le narcotise au vin de Bordeaux pour exécuter le plan sans son consentement.`,
 		asymmetric: true,
 		directionLabel: 'Vautrin tente et manipule → Eugène refuse le crime mais est neutralisé',
 		firstEstablishedStage: 'stage-2',
@@ -1075,7 +1076,7 @@ export const goriotRelationships: GoriotRelationshipData[] = [
 		label: 'délation vénale à la police',
 		shortSummary: 'Mlle Michonneau drogue et livre Trompe-la-Mort pour 3 000 francs.',
 		description:
-			'Pour toucher la prime promise de 3 000 francs (mille écus), Mlle Michonneau administre un narcotique à Vautrin à son insu, puis lui frappe l’épaule pour faire rougir la marque « T.F. » du bagne, avant de signaler la présence du forçat aux policiers embusqués.',
+			`Pour toucher la prime promise de 3 000 francs (mille écus) ${eur(3000, 'goriot-1819')}, Mlle Michonneau administre un narcotique à Vautrin à son insu, puis lui frappe l’épaule pour faire rougir la marque « T.F. » du bagne, avant de signaler la présence du forçat aux policiers embusqués.`,
 		asymmetric: true,
 		directionLabel: 'Michonneau négocie, drogue et dénonce → Vautrin est arrêté',
 		firstEstablishedStage: 'stage-3',

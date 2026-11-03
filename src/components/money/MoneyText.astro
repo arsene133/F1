@@ -1,0 +1,12 @@
+---
+/** Affiche un texte de données en balisant les gloses produites par `eur()`. */
+import { EURO_GLOSS_CLASS, splitEuroGloss } from '../../lib/money/historical-money';
+
+interface Props {
+	text: string;
+}
+
+const segments = splitEuroGloss(Astro.props.text);
+---
+
+{segments.map((s) => (s.gloss ? <span class={EURO_GLOSS_CLASS}>{s.text}</span> : s.text))}

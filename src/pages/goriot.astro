@@ -8,6 +8,9 @@ import GoriotRelationshipsMap from '../components/GoriotRelationshipsMap.astro';
 import GoriotThemesDashboard from '../components/GoriotThemesDashboard.astro';
 import GraphStructureCard from '../components/GraphStructureCard.astro';
 import Header from '../components/Header.astro';
+import EuroEquivalent from '../components/money/EuroEquivalent.astro';
+import MoneyConversionNote from '../components/money/MoneyConversionNote.astro';
+import MoneyText from '../components/money/MoneyText.astro';
 import { goriotCategories, goriotPlaces } from '../data/goriot-places';
 import { goriotCharacters, goriotRelationships } from '../data/goriot-relationships';
 import { adaptGoriotCorpus } from '../lib/graph/adapters/other-works';
@@ -211,7 +214,7 @@ const pageDescription =
 									<p class="debt-label">Ce que montre le roman</p>
 									<ul class="debt-list">
 										<li>Eugène de Rastignac, étudiant en droit issu d’une famille noble mais pauvre de province, vit à la pension Vauquer grâce à l’argent que sa famille lui envoie.</li>
-										<li>Pour fréquenter les salons, il écrit à sa mère pour lui demander douze cents francs et sollicite les économies de ses sœurs.</li>
+										<li>Pour fréquenter les salons, il écrit à sa mère pour lui demander douze cents francs <EuroEquivalent francs={1200} period="goriot-1819" /> et sollicite les économies de ses sœurs.</li>
 										<li>Une fois l’argent reçu, il commande des habits : le narrateur souligne alors « l’influence qu’exercent les tailleurs sur la vie des jeunes gens ».</li>
 										<li>Vautrin lui propose d’épouser Victorine Taillefer, qui deviendrait une riche héritière si son frère était tué en duel. En échange, il réclame une part de la dot. Rastignac recule devant ce pacte ; le duel a pourtant lieu, et Vautrin est arrêté peu après.</li>
 									</ul>
@@ -225,7 +228,7 @@ const pageDescription =
 										<blockquote lang="fr">
 											<p>En deux mots, si je vous procure une dot d’un million, me donnerez-vous deux cent mille francs ? Vingt pour cent de commission, hein ! est-ce trop cher ?</p>
 										</blockquote>
-										<figcaption>Vautrin à Rastignac — II, « L’entrée dans le monde »</figcaption>
+										<figcaption>Vautrin à Rastignac — II, « L’entrée dans le monde ». Un million de francs <EuroEquivalent francs={1000000} period="goriot-1819" /> ; deux cent mille francs <EuroEquivalent francs={200000} period="goriot-1819" />.</figcaption>
 									</figure>
 								</div>
 								<div class="debt-block debt-reading">
@@ -248,7 +251,7 @@ const pageDescription =
 								<div class="debt-block">
 									<p class="debt-label">Ce que montre le roman</p>
 									<ul class="debt-list">
-										<li>Ancien fabricant de vermicelles enrichi, Goriot a donné à chacune de ses filles « près de huit cent mille francs » en dot : Anastasie a épousé le comte de Restaud, Delphine le baron de Nucingen.</li>
+										<li>Ancien fabricant de vermicelles enrichi, Goriot a donné à chacune de ses filles « près de huit cent mille francs » <EuroEquivalent francs={800000} period="goriot-1819" /> en dot : Anastasie a épousé le comte de Restaud, Delphine le baron de Nucingen.</li>
 										<li>Il s’appauvrit ensuite pour continuer à les aider : à la pension, il passe du premier au troisième étage ; il vend son service de vermeil pour payer une dette d’Anastasie ; il meuble l’appartement de la rue d’Artois destiné à Delphine et Rastignac.</li>
 										<li>Ses filles dépendent de cet argent pour tenir leur rang. Anastasie a vendu les diamants de la famille Restaud à l’usurier Gobseck pour sauver son amant, Maxime de Trailles. Delphine, dont le mari gère la dot, confie à Rastignac : « Les chaînes d’or sont les plus pesantes. »</li>
 										<li>Mourant, Goriot appelle ses filles. Aucune ne vient à temps ; Anastasie n’arrive que lorsqu’il a perdu connaissance et s’accuse alors de l’avoir « méconnu » et « repoussé ». Au convoi funèbre, « deux voitures armoriées, mais vides » représentent les deux gendres.</li>
@@ -297,11 +300,11 @@ const pageDescription =
 										</div>
 										<div>
 											<dt>Vautrin</dt>
-											<dd>cherche à acheter la coopération de Rastignac en lui offrant un million de dot.</dd>
+											<dd>cherche à acheter la coopération de Rastignac en lui offrant un million de dot <EuroEquivalent francs={1000000} period="goriot-1819" />.</dd>
 										</div>
 										<div>
 											<dt>Delphine</dt>
-											<dd>« ferait tout au monde pour être reçue » chez Mme de Beauséant. Après la roulette, elle déclare à Rastignac : « En conscience, je vous dois mille écus ».</dd>
+											<dd>« ferait tout au monde pour être reçue » chez Mme de Beauséant. Après la roulette, elle déclare à Rastignac : « En conscience, je vous dois mille écus » <EuroEquivalent francs={3000} period="goriot-1819" inFrancs="3 000 francs" />.</dd>
 										</div>
 										<div>
 											<dt>Le grand monde</dt>
@@ -332,7 +335,7 @@ const pageDescription =
 										<li>Mme de Beauséant, sa cousine, ouvre à Rastignac les portes du monde : elle l’invite à son bal, lui fait connaître Delphine et lui prête l’autorité de son nom, à condition qu’il ne le compromette pas.</li>
 										<li>Elle lui enseigne aussi une morale du calcul : « Plus froidement vous calculerez, plus avant vous irez. »</li>
 										<li>Rastignac mesure ce qu’il doit à sa famille. Quand Vautrin lui reproche d’avoir « saigné » ses sœurs, il se demande : « j’ai donc volé mes sœurs ? »</li>
-										<li>Avec l’étudiant en médecine Bianchon, il veille Goriot pendant son agonie et organise l’enterrement. Au cimetière, il doit emprunter vingt sous à Christophe, le garçon de peine de la pension, pour le pourboire des fossoyeurs.</li>
+										<li>Avec l’étudiant en médecine Bianchon, il veille Goriot pendant son agonie et organise l’enterrement. Au cimetière, il doit emprunter vingt sous <EuroEquivalent francs={1} period="goriot-1819" inFrancs="1 franc" /> à Christophe, le garçon de peine de la pension, pour le pourboire des fossoyeurs.</li>
 									</ul>
 									<figure class="debt-quote">
 										<blockquote lang="fr">
@@ -501,7 +504,7 @@ const pageDescription =
 									</tr>
 									<tr>
 										<th scope="row">La mise</th>
-										<td>Cent francs, posés sur le 21, l’âge d’Eugène</td>
+										<td>Cent francs <EuroEquivalent francs={100} period="goriot-1819" />, posés sur le 21, l’âge d’Eugène</td>
 										<td>Cent euros, et surtout l’image, le temps, la dignité</td>
 									</tr>
 									<tr>
@@ -516,7 +519,7 @@ const pageDescription =
 									</tr>
 									<tr>
 										<th scope="row">Le gain</th>
-										<td>Sept mille francs, en espèces</td>
+										<td>Sept mille francs <EuroEquivalent francs={7000} period="goriot-1819" />, en espèces</td>
 										<td>Six mille abonnés : une promesse, pas encore une somme</td>
 									</tr>
 									<tr>
@@ -789,7 +792,7 @@ const pageDescription =
 									<strong>Que montre réellement le document ?</strong> L'effervescence fiévreuse des galeries de bois provisoires du Palais-Royal sous la Restauration : foule interlope de dandys, officiers, libraires, parieurs et maisons de jeu numérotées, avant leur démolition en 1828–1830.
 								</p>
 								<p>
-									<strong>Rapprochement avec le texte du roman :</strong> Envoyé au jeu par Delphine de Nucingen, Eugène tente la chance au <em>numéro 9</em> du Palais-Royal : <em>« Eugène prend la jolie bourse, court au numéro 9, après s'être fait indiquer par un marchand d'habits la plus prochaine maison de jeu. »</em> Il en revient avec sept mille francs. L'épisode scelle leur liaison et plonge Eugène dans la tentation du gain sans labeur.
+									<strong>Rapprochement avec le texte du roman :</strong> Envoyé au jeu par Delphine de Nucingen, Eugène tente la chance au <em>numéro 9</em> du Palais-Royal : <em>« Eugène prend la jolie bourse, court au numéro 9, après s'être fait indiquer par un marchand d'habits la plus prochaine maison de jeu. »</em> Il en revient avec sept mille francs <EuroEquivalent francs={7000} period="goriot-1819" />. L'épisode scelle leur liaison et plonge Eugène dans la tentation du gain sans labeur.
 								</p>
 								<p>
 									<strong>Limite historiographique :</strong> Bien que réalisée à la fin du XIX<sup>e</sup> siècle par un spécialiste reconnu du Paris disparu, cette lithographie est une <strong>reconstitution historique</strong> rétrospective et non un dessin pris sur le vif en 1819.
@@ -1021,7 +1024,7 @@ const pageDescription =
 													<small class="text-muted">Actuel : {p.modernLocation}</small>
 												</td>
 												<td>{p.characters.join(', ')}</td>
-												<td>{p.literaryAnalysis}</td>
+												<td><MoneyText text={p.literaryAnalysis} /></td>
 											</tr>
 										))}
 									</tbody>
@@ -1030,6 +1033,8 @@ const pageDescription =
 						</div>
 					</details>
 				</footer>
+
+				<MoneyConversionNote periods={['goriot-1819']} incomeDecade={1820} incomeFrancs={600} />
 			</article>
 		</main>
 

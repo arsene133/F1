@@ -4,6 +4,9 @@ import BuildingCutaway from '../components/BuildingCutaway.astro';
 import Footer from '../components/Footer.astro';
 import GraphStructureCard from '../components/GraphStructureCard.astro';
 import Header from '../components/Header.astro';
+import EuroEquivalent from '../components/money/EuroEquivalent.astro';
+import MoneyConversionNote from '../components/money/MoneyConversionNote.astro';
+import MoneyText from '../components/money/MoneyText.astro';
 import RelationshipMap from '../components/RelationshipMap.astro';
 import {
 	potBouilleCharacters,
@@ -77,7 +80,7 @@ const pageDescription =
 					{potBouilleMechanism.map((m) => (
 						<li>
 							<strong>{m.step}</strong>
-							<span>{m.text}</span>
+							<span><MoneyText text={m.text} /></span>
 						</li>
 					))}
 				</ol>
@@ -393,7 +396,7 @@ const pageDescription =
 							Vuillaume recommande à sa fille Marie Pichon, à propos de sa petite-fille : « tâche qu’elle garde son
 							ignorance » (ch. IV). Les Josserand, eux, préparent leurs filles à plaire : Berthe a connu « trois hivers
 							de chasse à l’homme » dans les salons (ch. XVI), et sa mère va jusqu’à annoncer une dot de cinquante mille
-							francs qu’elle sait ne pas pouvoir payer (ch. V). Hortense, l’aînée, a choisi l’avocat Verdier, qui vit
+							francs <EuroEquivalent francs={50000} period="pot-bouille-1861" /> qu’elle sait ne pas pouvoir payer (ch. V). Hortense, l’aînée, a choisi l’avocat Verdier, qui vit
 							pourtant avec une femme depuis quinze ans (ch. III).
 						</p>
 						<p>
@@ -854,7 +857,7 @@ const pageDescription =
 								<div class="iconography-evaluation-box">
 									<h4>Évaluation documentaire & analyse critique</h4>
 									<p>
-										<strong>Que montre réellement le document ?</strong> La sobriété typographique caractéristique des volumes de la collection Charpentier à 3 fr. 50 sous couverture jaune. Le sous-titre monumental (« Histoire naturelle et sociale d'une famille sous le Second Empire ») rappelle que <em>Pot-Bouille</em> n'est pas une satire isolée, mais le 10<sup>e</sup> maillon d'une fresque biologique et héréditaire.
+										<strong>Que montre réellement le document ?</strong> La sobriété typographique caractéristique des volumes de la collection Charpentier à 3 fr. 50 <EuroEquivalent francs={3.5} period="charpentier-1882" /> sous couverture jaune. Le sous-titre monumental (« Histoire naturelle et sociale d'une famille sous le Second Empire ») rappelle que <em>Pot-Bouille</em> n'est pas une satire isolée, mais le 10<sup>e</sup> maillon d'une fresque biologique et héréditaire.
 									</p>
 									<p>
 										<strong>La place de <em>Pot-Bouille</em> dans le cycle :</strong> Après la peinture du monde ouvrier dans <em>L'Assommoir</em> (1877) et du demi-monde dans <em>Nana</em> (1880), Zola s'attaque frontalement au cœur du pouvoir sous le Second Empire : la bourgeoisie d'affaires et de robe. Le roman prépare directement <em>Au Bonheur des Dames</em> (1883), où Octave Mouret révolutionnera le commerce parisien.
@@ -974,6 +977,8 @@ const pageDescription =
 						</ul>
 					</nav>
 				</footer>
+
+				<MoneyConversionNote periods={['pot-bouille-1861', 'charpentier-1882']} incomeDecade={1860} incomeFrancs={1100} />
 			</article>
 		</main>
 

@@ -1,4 +1,5 @@
 ---
+import MoneyText from './money/MoneyText.astro';
 import {
 	HISTORICAL_MAP_CONFIG,
 	MODERN_MAP_CONFIG,
@@ -132,7 +133,7 @@ const withTitles = (text: string) => text.split(WORK_TITLES).map((s, i) => ({ s,
 					</button>
 				</div>
 				<p class="stepper-explanation" id="current-step-explanation">
-					{withTitles(initialPlace.narrativeStepExplanation).map((p) => (p.em ? <em>{p.s}</em> : p.s))}
+					{withTitles(initialPlace.narrativeStepExplanation).map((p) => (p.em ? <em>{p.s}</em> : <MoneyText text={p.s} />))}
 				</p>
 			</div>
 		</div>
@@ -324,13 +325,13 @@ const withTitles = (text: string) => text.split(WORK_TITLES).map((s, i) => ({ s,
 					<!-- Rôle dans l'intrigue -->
 					<div class="card-section">
 						<h3 class="section-title">Rôle dans l’intrigue</h3>
-						<p class="section-text" id="card-narrative-role">{initialPlace.narrativeRole}</p>
+						<p class="section-text" id="card-narrative-role"><MoneyText text={initialPlace.narrativeRole} /></p>
 					</div>
 
 					<!-- Analyse littéraire et sociale -->
 					<div class="card-section card-analysis">
 						<h3 class="section-title">Analyse littéraire & contrastes sociaux</h3>
-						<p class="section-text" id="card-literary-analysis">{initialPlace.literaryAnalysis}</p>
+						<p class="section-text" id="card-literary-analysis"><MoneyText text={initialPlace.literaryAnalysis} /></p>
 						{initialPlace.observationPoint && (
 							<p class="observation-box" id="card-observation-box">
 								<strong>À observer :</strong> <span id="card-observation-text">{initialPlace.observationPoint}</span>
@@ -378,8 +379,8 @@ const withTitles = (text: string) => text.split(WORK_TITLES).map((s, i) => ({ s,
 									<p><strong>Adresse historique :</strong> {place.historicalAddress}</p>
 									<p><strong>Repère actuel :</strong> {place.modernLocation} (<em>{precisionLabels[place.locationPrecision].label}</em>)</p>
 									<p><strong>Personnages :</strong> {place.characters.join(', ')}</p>
-									<p><strong>Intrigue :</strong> {place.narrativeRole}</p>
-									<p><strong>Analyse littéraire :</strong> {place.literaryAnalysis}</p>
+									<p><strong>Intrigue :</strong> <MoneyText text={place.narrativeRole} /></p>
+									<p><strong>Analyse littéraire :</strong> <MoneyText text={place.literaryAnalysis} /></p>
 									<blockquote>
 										<p>« {withTitles(place.quotation).map((p) => (p.em ? <em>{p.s}</em> : p.s))} »</p>
 										<cite>— {place.quotationReference}</cite>
@@ -1174,6 +1175,7 @@ const withTitles = (text: string) => text.split(WORK_TITLES).map((s, i) => ({ s,
 <!-- Script d'interactivité côté client -->
 <script>
 	import L from 'leaflet';
+	import { appendTextWithEuroGloss, setTextWithEuroGloss } from '../lib/money/historical-money';
 
 	// Même règle que côté serveur : titres d’œuvres en italique
 	const WORK_TITLES = /([Ll]e Barbier de Séville)/;
@@ -1185,7 +1187,7 @@ const withTitles = (text: string) => text.split(WORK_TITLES).map((s, i) => ({ s,
 				em.textContent = part;
 				el.append(em);
 			} else if (part) {
-				el.append(part);
+				appendTextWithEuroGloss(el, part);
 			}
 		});
 	}
@@ -1525,10 +1527,10 @@ const withTitles = (text: string) => text.split(WORK_TITLES).map((s, i) => ({ s,
 			if (charEl) charEl.textContent = place.characters.join(' · ');
 
 			const narrEl = document.getElementById('card-narrative-role');
-			if (narrEl) narrEl.textContent = place.narrativeRole;
+			if (narrEl) setTextWithEuroGloss(narrEl, place.narrativeRole);
 
 			const litEl = document.getElementById('card-literary-analysis');
-			if (litEl) litEl.textContent = place.literaryAnalysis;
+			if (litEl) setTextWithEuroGloss(litEl, place.literaryAnalysis);
 
 			const obsBox = document.getElementById('card-observation-box');
 			const obsText = document.getElementById('card-observation-text');

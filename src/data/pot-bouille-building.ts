@@ -1,3 +1,4 @@
+import { eur } from '../lib/money/historical-money';
 // ==========================================================================
 // Données architecturales de l'immeuble du 28, rue de Choiseul (Pot-Bouille)
 // Coupe architecturale narrative conforme au texte d'Émile Zola (1882)
@@ -63,7 +64,7 @@ export const potBouilleBuildingFloors: BuildingFloor[] = [
 				orientation: 'cour',
 				characterIds: [],
 				description:
-					'Étroit réduit loué 130 francs par le vieux Vabre à une ouvrière misérable. Son ventre de femme enceinte terrifie M. Gourd qui la chasse impitoyablement avant qu’elle n’accouche.',
+					`Étroit réduit loué 130 francs ${eur(130, 'pot-bouille-1861')} par le vieux Vabre à une ouvrière misérable. Son ventre de femme enceinte terrifie M. Gourd qui la chasse impitoyablement avant qu’elle n’accouche.`,
 				quote: {
 					text: 'La malheureuse, toute seule, agonisait sous les toits, dans un de ces cabinets de misère, où il n’y avait même plus de place pour son ventre.',
 					source: 'Chapitre XIII',
@@ -97,7 +98,7 @@ export const potBouilleBuildingFloors: BuildingFloor[] = [
 					source: 'Chapitre I',
 				},
 				secrets: [
-					'Promesse frauduleuse d’une dot fictive de 50 000 francs pour marier Berthe',
+					`Promesse frauduleuse d’une dot fictive de 50 000 francs ${eur(50000, 'pot-bouille-1861')} pour marier Berthe`,
 					'Travail nocturne clandestin du père caissier pour dissimuler la faillite',
 					'Crises furieuses et dévotion possessive de Saturnin enfermé dans sa chambre',
 				],
@@ -218,7 +219,7 @@ export const potBouilleBuildingFloors: BuildingFloor[] = [
 				orientation: 'cour',
 				characterIds: ['auguste-vabre', 'berthe', 'rachel'],
 				description:
-					'Appartement loué par Auguste après son mariage au chapitre VIII. Cinq mille francs de meubles en thuya et soie bleue qui déçoivent Berthe. Théâtre des crises de névralgie d’Auguste et des récriminations d’avarice.',
+					`Appartement loué par Auguste après son mariage au chapitre VIII. Cinq mille francs ${eur(5000, 'pot-bouille-1861')} de meubles en thuya et soie bleue qui déçoivent Berthe. Théâtre des crises de névralgie d’Auguste et des récriminations d’avarice.`,
 				quote: {
 					text: 'Son ancien logement de l’entresol ne pouvant suffire, il avait pris l’appartement du second, sur la cour, où il croyait avoir fait des folies...',
 					source: 'Chapitre XII',

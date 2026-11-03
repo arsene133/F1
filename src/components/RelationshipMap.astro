@@ -3,6 +3,7 @@
 // au clic/tap/clavier, survol, panneau contextuel. Le graphe est rendu à partir
 // des seules données (nœuds, relations, types d'arêtes).
 import '../styles/editorial-map.css';
+import MoneyText from './money/MoneyText.astro';
 import { edgeGeometry, targetsOf } from './relationship-map/geometry';
 import type { EdgeType, MapLayout, MapNode, MapRelationship } from './relationship-map/types';
 
@@ -325,7 +326,7 @@ const canvasStyle = [
 							return legend ? <span class="rm-index-type"> ({legend.toLowerCase()})</span> : null;
 						})()}
 						<br />
-						{r.description}
+						<MoneyText text={r.description} />
 					</li>
 				))}
 			</ul>
@@ -334,6 +335,7 @@ const canvasStyle = [
 </section>
 
 <script>
+	import { appendTextWithEuroGloss, setTextWithEuroGloss } from '../lib/money/historical-money';
 	import { segment, shift, type Box } from './relationship-map/geometry';
 
 	type MetaItem = string | { text: string; italic?: boolean };
@@ -469,7 +471,8 @@ const canvasStyle = [
 				});
 				li.append(link);
 			});
-			li.append(` : ${r.description}`);
+			li.append(' : ');
+			appendTextWithEuroGloss(li, r.description);
 			return li;
 		}
 
@@ -486,10 +489,10 @@ const canvasStyle = [
 				detailEyebrow.textContent = n.eyebrow ?? '';
 				detailTitle.textContent = n.label;
 				setMeta(n.meta ?? []);
-				detailDesc.textContent = n.description;
+				setTextWithEuroGloss(detailDesc, n.description);
 				for (const pt of n.points ?? []) {
 					const li = document.createElement('li');
-					li.textContent = pt;
+					setTextWithEuroGloss(li, pt);
 					pointsList.append(li);
 				}
 				pointsWrap.hidden = !n.points?.length;
@@ -502,7 +505,7 @@ const canvasStyle = [
 				detailEyebrow.textContent = r.typeLabel ? `Relation · ${r.typeLabel}` : 'Relation';
 				detailTitle.textContent = r.title;
 				setMeta([{ text: `« ${r.label} »`, italic: true }]);
-				detailDesc.textContent = r.description;
+				setTextWithEuroGloss(detailDesc, r.description);
 				pointsWrap.hidden = true;
 				relsWrap.hidden = true;
 				setLinks(r.links);

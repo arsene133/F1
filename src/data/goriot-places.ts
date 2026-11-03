@@ -1,3 +1,4 @@
+import { eur } from '../lib/money/historical-money';
 export type PlaceCategory =
 	| 'pension'
 	| 'aristocratie'
@@ -255,12 +256,12 @@ export const goriotPlaces: GoriotPlace[] = [
 		historicalAddress: 'Galeries du Palais-Royal, maison de jeu au n° 9 (« court au numéro 9 » dans le texte)',
 		modernLocation: 'Domaine du Palais-Royal (arcades / galerie de Valois), 1er arrondissement',
 		characters: ['Delphine de Nucingen', 'Eugène de Rastignac'],
-		narrativeRole: 'Lieu des plaisirs et des tripots où Delphine envoie Rastignac jouer à la roulette ses derniers cent francs.',
-		literaryAnalysis: 'Delphine confie cent francs à Rastignac pour jouer au numéro 9 du Palais-Royal (« Eugène prend la jolie bourse, court au numéro 9 »). Sous la Restauration, les établissements de jeu concédés des arcades du Palais-Royal étaient identifiés par le numéro de leur travée ou arcade, et le n° 9 abritait l’un des cercles de jeu autorisés. Rastignac y empoche 7 000 francs nets (7 200 francs moins le pourboire au vieil habitué). Le repère situe cet ensemble emblématique des galeries du Palais-Royal.',
+		narrativeRole: `Lieu des plaisirs et des tripots où Delphine envoie Rastignac jouer à la roulette ses derniers cent francs ${eur(100, 'goriot-1819')}.`,
+		literaryAnalysis: `Delphine confie cent francs à Rastignac pour jouer au numéro 9 du Palais-Royal (« Eugène prend la jolie bourse, court au numéro 9 »). Sous la Restauration, les établissements de jeu concédés des arcades du Palais-Royal étaient identifiés par le numéro de leur travée ou arcade, et le n° 9 abritait l’un des cercles de jeu autorisés. Rastignac y empoche 7 000 francs nets ${eur(7000, 'goriot-1819')} (7 200 francs moins le pourboire au vieil habitué). Le repère situe cet ensemble emblématique des galeries du Palais-Royal.`,
 		observationPoint: 'Le contraste entre les galeries scintillantes du Palais-Royal et la détresse financière d’une baronne prisonnière de son régime matrimonial.',
 		eventOrder: 6,
 		narrativeStepTitle: '6. Le coup de roulette salvateur',
-		narrativeStepExplanation: 'Delphine mandate Eugène pour jouer à la roulette au n° 9 du Palais-Royal. Grâce à son audace sur le numéro 21, il en rapporte sept mille francs et lie son sort à la baronne.',
+		narrativeStepExplanation: `Delphine mandate Eugène pour jouer à la roulette au n° 9 du Palais-Royal. Grâce à son audace sur le numéro 21, il en rapporte sept mille francs ${eur(7000, 'goriot-1819')} et lie son sort à la baronne.`,
 		quotation: 'Risquez les cent francs à un jeu qu’on nomme la roulette, et perdez tout, ou rapportez-moi six mille francs. Je vous dirai mes chagrins à votre retour.',
 		quotationReference: 'Le Père Goriot, deuxième partie (« L’Entrée dans le monde »)',
 	},
@@ -356,11 +357,11 @@ export const goriotPlaces: GoriotPlace[] = [
 		modernLocation: 'Place Sainte-Geneviève, 5e arrondissement',
 		characters: ['Eugène de Rastignac', 'Christophe (garçon de peine)', 'Le père Goriot (défunt)'],
 		narrativeRole: 'Paroisse de quartier où sont célébrées les obsèques réduites du père Goriot, en l’absence de ses deux filles.',
-		literaryAnalysis: 'Balzac dépeint une cérémonie religieuse expédiée par un clergé mercenaire, payée soixante-dix francs empruntés par Rastignac. L’édifice paroissial est précisément identifié place Sainte-Geneviève ; seuls le jeune étudiant et un garçon de peine accompagnent la bière dans une chapelle basse et sombre.',
+		literaryAnalysis: `Balzac dépeint une cérémonie religieuse expédiée par un clergé mercenaire, payée soixante-dix francs ${eur(70, 'goriot-1819')} empruntés par Rastignac. L’édifice paroissial est précisément identifié place Sainte-Geneviève ; seuls le jeune étudiant et un garçon de peine accompagnent la bière dans une chapelle basse et sombre.`,
 		observationPoint: 'La solitude absolue du mourant indigent face à la tarification du culte et à la défection des héritières.',
 		eventOrder: 10,
 		narrativeStepTitle: '10. L’office méprisé à Saint-Étienne-du-Mont',
-		narrativeStepExplanation: 'Faute d’argent, le corps du vieillard n’a droit qu’aux vêpres expédiées pour soixante-dix francs. Seuls Eugène et Christophe veillent le cercueil dans l’église paroissiale.',
+		narrativeStepExplanation: `Faute d’argent, le corps du vieillard n’a droit qu’aux vêpres expédiées pour soixante-dix francs ${eur(70, 'goriot-1819')}. Seuls Eugène et Christophe veillent le cercueil dans l’église paroissiale.`,
 		quotation: 'Les deux prêtres, l’enfant de chœur et le bedeau vinrent et donnèrent tout ce qu’on peut avoir pour soixante-dix francs dans une époque où la religion n’est pas assez riche pour prier gratis.',
 		quotationReference: 'Le Père Goriot, quatrième partie (« La Mort du père »)',
 	},

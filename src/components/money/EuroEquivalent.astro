@@ -1,0 +1,19 @@
+---
+/**
+ * Équivalent discret, en euros de 2026, d'une somme historique en francs.
+ * À placer juste après la somme d'origine, qui reste inchangée :
+ *   douze cents francs <EuroEquivalent francs={1200} period="goriot-1819" />
+ */
+import { eur, EURO_GLOSS_CLASS, type MoneyPeriodId } from '../../lib/money/historical-money';
+
+interface Props {
+	francs: number | [number, number];
+	period: MoneyPeriodId;
+	/** Conversion préalable d'une autre dénomination, ex. « 3 000 francs » pour « mille écus ». */
+	inFrancs?: string;
+}
+
+const { francs, period, inFrancs } = Astro.props;
+---
+
+<span class={EURO_GLOSS_CLASS}>{eur(francs, period, { inFrancs })}</span>

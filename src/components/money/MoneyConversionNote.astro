@@ -1,0 +1,75 @@
+---
+/**
+ * Note de transparence éditoriale sur les équivalents en euros de 2026.
+ * Les coefficients et les sources viennent tous de lib/money/historical-money.ts.
+ */
+import {
+	MONEY_PERIODS,
+	MONEY_SOURCES,
+	NATIONAL_INCOME_PER_ADULT_2009_EUROS,
+	TARGET_YEAR,
+	euroEquivalentText,
+	type MoneyPeriodId,
+} from '../../lib/money/historical-money';
+
+interface Props {
+	periods: MoneyPeriodId[];
+	/** Décennie de comparaison des revenus : 1820 (Balzac) ou 1860 (Zola). */
+	incomeDecade: 1820 | 1860;
+	/** Revenu national moyen par adulte de la décennie, en francs courants (Piketty 2010, Table A2). */
+	incomeFrancs: number;
+}
+
+const { periods, incomeDecade, incomeFrancs } = Astro.props;
+const incomeRatio = Math.round(NATIONAL_INCOME_PER_ADULT_2009_EUROS[2009] / NATIONAL_INCOME_PER_ADULT_2009_EUROS[incomeDecade]);
+const fr = new Intl.NumberFormat('fr-FR');
+---
+
+<aside class="money-note" aria-labelledby="money-note-title">
+	<h2 class="money-note-title" id="money-note-title">Note sur les équivalents en euros</h2>
+	<p>
+		Les équivalents en euros sont des estimations du pouvoir d’achat en {TARGET_YEAR}. Ils reposent sur des séries
+		historiques de prix à la consommation et sur des travaux consacrés à l’évolution du franc et des revenus. La conversion des sommes
+		du XIX<sup>e</sup> siècle reste approximative : elle dépend de la période considérée et de la méthode retenue.
+	</p>
+	<ul class="money-note-periods">
+		{
+			periods.map((id) => {
+				const p = MONEY_PERIODS[id];
+				return (
+					<li>
+						<strong>{p.label}</strong> : 1 franc, {euroEquivalentText(1, id)}. {p.reliability}
+					</li>
+				);
+			})
+		}
+	</ul>
+	<details class="money-note-method">
+		<summary>Méthode et sources</summary>
+		<p>
+			Les sommes ne sont pas converties au taux officiel (1 € = 6,559 57 francs de 2002), ni d’après le poids d’or ou
+			d’argent des pièces : un franc germinal contenait la même quantité de métal de 1803 à 1914, mais ce qu’il permettait
+			d’acheter a varié. On suit donc les prix à la consommation : l’indice historique publié par Thomas Piketty relie
+			l’année de l’action à 1900 ; les coefficients de l’INSEE, qui ne remontent qu’à 1901, prolongent la série
+			jusqu’en 2025 ; la hausse moyenne des prix observée de janvier à septembre 2026 (+1,9 %) donne les euros de
+			{TARGET_YEAR}. Les résultats sont arrondis à deux chiffres significatifs.
+		</p>
+		<p>
+			<strong>Une autre mesure donne des montants bien plus élevés.</strong> Rapportées aux revenus de l’époque, ces
+			sommes pesaient beaucoup plus lourd : dans les années {incomeDecade}, le revenu national moyen était d’environ
+			{fr.format(incomeFrancs)} francs par adulte et par an, soit, à pouvoir d’achat égal, environ {incomeRatio} fois
+			moins qu’en 2009. Une dot ou une dette exprimée en « années de revenu moyen » paraîtrait donc environ {incomeRatio}
+			fois plus importante que son équivalent en pouvoir d’achat. Les équivalents affichés mesurent ce que la somme
+			permettait d’acheter, et non la place qu’elle donnait dans la société.
+		</p>
+		<ul class="money-note-sources">
+			{
+				MONEY_SOURCES.map((s) => (
+					<li>
+						<a href={s.href} target="_blank" rel="noopener noreferrer">{s.label}</a>. {s.detail}
+					</li>
+				))
+			}
+		</ul>
+	</details>
+</aside>

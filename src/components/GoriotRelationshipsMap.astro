@@ -591,6 +591,7 @@ const canvasStyle = [
 </div>
 
 <script>
+	import { setTextWithEuroGloss } from '../lib/money/historical-money';
 	import type { Box } from './relationship-map/geometry';
 	import { layoutGoriotMap, type LayoutCluster, type Size } from './relationship-map/goriot-layout';
 	import { edgePath, type Rect } from './relationship-map/label-placement';
@@ -941,7 +942,7 @@ const canvasStyle = [
 					detailCluster.hidden = true;
 				}
 
-				detailDesc.textContent = c.description;
+				setTextWithEuroGloss(detailDesc, c.description);
 
 				// Citation du personnage
 				if (c.quote) {
@@ -955,7 +956,7 @@ const canvasStyle = [
 				// Points clés
 				for (const pt of c.keyFacts) {
 					const li = document.createElement('li');
-					li.textContent = pt;
+					setTextWithEuroGloss(li, pt);
 					pointsList.append(li);
 				}
 				pointsWrap.hidden = c.keyFacts.length === 0;
@@ -998,7 +999,7 @@ const canvasStyle = [
 
 				detailRoleWrap.hidden = true;
 				detailCluster.hidden = true;
-				detailDesc.textContent = r.description;
+				setTextWithEuroGloss(detailDesc, r.description);
 
 				// Citation textuelle sur la relation
 				if (r.textualQuote) {
@@ -1039,7 +1040,7 @@ const canvasStyle = [
 					detailCluster.textContent = 'Centre gravitationnel du roman';
 				}
 
-				detailDesc.textContent = cl.description;
+				setTextWithEuroGloss(detailDesc, cl.description);
 				detailQuoteWrap.hidden = true;
 
 				pointsWrap.hidden = false;
