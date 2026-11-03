@@ -67,27 +67,38 @@ describe('arrondi d’affichage', () => {
 		expect(roundEuroAmount(99_994)).toBe(99_990);
 	});
 
-	test('100 000 € et plus : à la dizaine de milliers d’euros (un seul arrondi)', () => {
-		expect(roundEuroAmount(243_000)).toBe(240_000);
-		expect(roundEuroAmount(246_000)).toBe(250_000);
-		expect(roundEuroAmount(245_000)).toBe(250_000);
-		expect(roundEuroAmount(580_000)).toBe(580_000);
-		expect(roundEuroAmount(104_999)).toBe(100_000);
-		// Pas de double arrondi (244 800 → 245 000 → 250 000) : 244 801,69 → 240 000.
-		expect(roundEuroAmount(244_800)).toBe(240_000);
-		expect(roundEuroAmount(244_801.69)).toBe(240_000);
+	test('100 000 € et plus : aux 50 000 € près (un seul arrondi)', () => {
+		expect(roundEuroAmount(224_000)).toBe(200_000);
+		expect(roundEuroAmount(226_000)).toBe(250_000);
+		expect(roundEuroAmount(240_000)).toBe(250_000);
+		expect(roundEuroAmount(244_800)).toBe(250_000);
+		expect(roundEuroAmount(274_000)).toBe(250_000);
+		expect(roundEuroAmount(276_000)).toBe(300_000);
+		expect(roundEuroAmount(580_000)).toBe(600_000);
+		expect(roundEuroAmount(124_999)).toBe(100_000);
+		// Pas de double arrondi (274 600 → 275 000 → 300 000) : 274 999 → 250 000.
+		expect(roundEuroAmount(274_999)).toBe(250_000);
+	});
+
+	test('demi-pas : arrondi vers le haut', () => {
+		expect(roundEuroAmount(4.25)).toBe(4.5);
+		expect(roundEuroAmount(16.5)).toBe(17);
+		expect(roundEuroAmount(645)).toBe(650);
+		expect(roundEuroAmount(225_000)).toBe(250_000);
+		expect(roundEuroAmount(275_000)).toBe(300_000);
+		expect(roundEuroAmount(1_225_000)).toBe(1_250_000);
 	});
 
 	test('seuils : juste en dessous, au seuil, juste au-dessus', () => {
 		expect([9.99, 10, 10.01].map(euroRoundingStep)).toEqual([0.5, 1, 1]);
 		expect([99.99, 100, 100.01].map(euroRoundingStep)).toEqual([1, 10, 10]);
-		expect([99_999.99, 100_000, 100_000.01].map(euroRoundingStep)).toEqual([10, 10_000, 10_000]);
-		expect([999_999, 1_000_000, 1_000_001].map(euroRoundingStep)).toEqual([10_000, 100_000, 100_000]);
+		expect([99_999.99, 100_000, 100_000.01].map(euroRoundingStep)).toEqual([10, 50_000, 50_000]);
+		expect([999_999, 1_000_000, 1_000_001].map(euroRoundingStep)).toEqual([50_000, 50_000, 50_000]);
 		expect(roundEuroAmount(99_999.99)).toBe(100_000);
 		expect(roundEuroAmount(100_000)).toBe(100_000);
 		expect(roundEuroAmount(100_000.01)).toBe(100_000);
-		expect(roundEuroAmount(994_999)).toBe(990_000);
-		expect(roundEuroAmount(995_000)).toBe(1_000_000);
+		expect(roundEuroAmount(974_999)).toBe(950_000);
+		expect(roundEuroAmount(975_000)).toBe(1_000_000);
 		expect(roundEuroAmount(9.74)).toBe(9.5);
 		expect(roundEuroAmount(9.99)).toBe(10);
 		expect(roundEuroAmount(10)).toBe(10);
@@ -98,14 +109,17 @@ describe('arrondi d’affichage', () => {
 		expect(roundEuroAmount(105)).toBe(110);
 	});
 
-	test('millions : au dixième de million, sans zéro superflu', () => {
-		expect(roundEuroAmount(1_260_000)).toBe(1_300_000);
+	test('millions : pas de 50 000 €, puis notation en millions sans zéro superflu', () => {
+		expect(roundEuroAmount(1_260_000)).toBe(1_250_000);
 		expect(roundEuroAmount(1_200_000)).toBe(1_200_000);
-		expect(formatEuroAmount(1_260_000)).toBe(`1,3${NBSP}million d’euros`);
+		expect(formatEuroAmount(1_260_000)).toBe(`1,25${NBSP}million d’euros`);
 		expect(formatEuroAmount(1_200_000)).toBe(`1,2${NBSP}million d’euros`);
+		expect(formatEuroAmount(1_310_000)).toBe(`1,3${NBSP}million d’euros`);
 		expect(formatEuroAmount(2_000_000)).toBe(`2${NBSP}millions d’euros`);
-		expect(formatEuroAmount(5_040_000)).toBe(`5${NBSP}millions d’euros`);
+		expect(formatEuroAmount(5_020_000)).toBe(`5${NBSP}millions d’euros`);
+		expect(formatEuroAmount(5_060_000)).toBe(`5,05${NBSP}millions d’euros`);
 		expect(formatEuroAmount(999_996)).toBe(`1${NBSP}million d’euros`);
+		expect(formatEuroAmount(1_200_000)).not.toMatch(/,\d*0\D/);
 	});
 
 	test('montants simples affichés', () => {
@@ -118,10 +132,13 @@ describe('arrondi d’affichage', () => {
 			[1234, '1 230 €'],
 			[12_345, '12 350 €'],
 			[99_999.99, '100 000 €'],
-			[243_000, '240 000 €'],
-			[244_800, '240 000 €'],
-			[246_000, '250 000 €'],
-			[580_000, '580 000 €'],
+			[224_000, '200 000 €'],
+			[226_000, '250 000 €'],
+			[240_000, '250 000 €'],
+			[244_800, '250 000 €'],
+			[274_000, '250 000 €'],
+			[276_000, '300 000 €'],
+			[580_000, '600 000 €'],
 			[5, '5 €'],
 			[1.5, '1,5 €'],
 		];
@@ -135,22 +152,24 @@ describe('fourchettes', () => {
 		expect(formatEuroRange(6922.98, 7858.51)).toBe(`6${NNBSP}920 à 7${NNBSP}860${NBSP}€`);
 		expect(formatEuroRange(17_307.44, 19_646.29)).toBe(`17${NNBSP}310 à 19${NNBSP}650${NBSP}€`);
 		// Bornes de part et d’autre d’un seuil : chacune suit son propre palier.
-		expect(formatEuroRange(95_004, 131_400)).toBe(`95${NNBSP}000 à 130${NNBSP}000${NBSP}€`);
+		expect(formatEuroRange(95_004, 131_400)).toBe(`95${NNBSP}000 à 150${NNBSP}000${NBSP}€`);
 		expect(formatEuroRange(9.74, 10.4)).toBe(`9,5 à 10${NBSP}€`);
 	});
 
 	test('fourchettes en millions', () => {
-		expect(formatEuroRange(1_153_800, 1_309_800)).toBe(`1,2 à 1,3${NBSP}million d’euros`);
-		expect(formatEuroRange(5_769_000, 6_549_000)).toBe(`5,8 à 6,5${NBSP}millions d’euros`);
-		expect(formatEuroRange(1_150_000, 2_040_000)).toBe(`1,2 à 2${NBSP}millions d’euros`);
+		expect(formatEuroRange(1_153_800, 1_309_800)).toBe(`1,15 à 1,3${NBSP}million d’euros`);
+		expect(formatEuroRange(5_769_000, 6_549_000)).toBe(`5,75 à 6,55${NBSP}millions d’euros`);
+		expect(formatEuroRange(1_150_000, 2_040_000)).toBe(`1,15 à 2,05${NBSP}millions d’euros`);
+		// Borne basse sous le million : exprimée elle aussi en millions.
+		expect(formatEuroRange(940_000, 1_100_000)).toBe(`0,95 à 1,1${NBSP}million d’euros`);
 	});
 
 	test('une fourchette n’est jamais réduite à une valeur par le seul arrondi', () => {
 		// 5,26 et 5,74 tombent tous deux sur 5,5 : on arrondit vers l’extérieur.
 		expect(formatEuroRange(5.26, 5.74)).toBe(`5 à 6${NBSP}€`);
 		expect(formatEuroRange(641, 644)).toBe(`640 à 650${NBSP}€`);
-		expect(formatEuroRange(241_000, 244_000)).toBe(`240${NNBSP}000 à 250${NNBSP}000${NBSP}€`);
-		expect(formatEuroRange(1_210_000, 1_240_000)).toBe(`1,2 à 1,3${NBSP}million d’euros`);
+		expect(formatEuroRange(241_000, 244_000)).toBe(`200${NNBSP}000 à 250${NNBSP}000${NBSP}€`);
+		expect(formatEuroRange(1_210_000, 1_240_000)).toBe(`1,2 à 1,25${NBSP}million d’euros`);
 		// Bornes identiques en entrée : valeur unique.
 		expect(formatEuroRange(636.48, 636.48)).toBe(`640${NBSP}€`);
 	});
@@ -226,13 +245,13 @@ describe('typographie française', () => {
 			[7000, 'goriot-1819', '(soit environ 40 380 à 45 840 € de 2026)'],
 			[7200, 'goriot-1819', '(soit environ 41 540 à 47 150 € de 2026)'],
 			[12_000, 'goriot-1819', '(soit environ 69 230 à 78 590 € de 2026)'],
-			[200_000, 'goriot-1819', '(soit environ 1,2 à 1,3 million d’euros de 2026)'],
-			[800_000, 'goriot-1819', '(soit environ 4,6 à 5,2 millions d’euros de 2026)'],
-			[1_000_000, 'goriot-1819', '(soit environ 5,8 à 6,5 millions d’euros de 2026)'],
+			[200_000, 'goriot-1819', '(soit environ 1,15 à 1,3 million d’euros de 2026)'],
+			[800_000, 'goriot-1819', '(soit environ 4,6 à 5,25 millions d’euros de 2026)'],
+			[1_000_000, 'goriot-1819', '(soit environ 5,75 à 6,55 millions d’euros de 2026)'],
 			[3.5, 'charpentier-1882', '(soit environ 16 € de 2026)'],
 			[130, 'pot-bouille-1861', '(soit environ 640 € de 2026)'],
 			[5000, 'pot-bouille-1861', '(soit environ 24 480 € de 2026)'],
-			[50_000, 'pot-bouille-1861', '(soit environ 240 000 € de 2026)'],
+			[50_000, 'pot-bouille-1861', '(soit environ 250 000 € de 2026)'],
 			[[600_000, 700_000], 'pot-bouille-1861', '(soit environ 2,9 à 3,5 millions d’euros de 2026)'],
 		];
 		for (const [francs, period, expected] of cases) expect(norm(eur(francs, period))).toBe(expected);
@@ -274,7 +293,15 @@ describe('non-régression : la conversion n’est pas arrondie', () => {
 		expect(note).not.toContain('deux chiffres significatifs');
 		expect(note).toContain('au demi-euro');
 		expect(note).toContain('à la dizaine d’euros');
-		expect(note).toContain('à la dizaine de milliers d’euros');
+		expect(note).toContain('aux 50&#8239;000&nbsp;€ près');
+		expect(note).not.toContain('dizaine de milliers');
+		expect(note).not.toContain('dixième de million');
+	});
+
+	test('les montants d’origine en francs ne sont pas modifiés par la glose', () => {
+		expect(eur(3000, 'goriot-1819', { inFrancs: '3 000 francs' })).toMatch(/^\(3 000 francs, /);
+		const goriot = readFileSync('src/pages/goriot.astro', 'utf8');
+		expect(goriot).toContain('<EuroEquivalent francs={100} period="goriot-1819" />');
 	});
 });
 
@@ -303,7 +330,7 @@ describe('commission de Vautrin : 20 % d’une dot d’un million = 200 000 fran
 		expect(pacte?.description).toContain(`tribut de 200\u202f000 francs ${gloss}`);
 		const scene = goriotThemes.flatMap((t) => t.scenes).find((s) => s.title === 'Le pacte du jardin de la pension');
 		expect(scene?.summary).toContain(`commission de 200\u202f000 francs ${gloss}`);
-		expect(norm(gloss)).toBe('(soit environ 1,2 à 1,3 million d’euros de 2026)');
+		expect(norm(gloss)).toBe('(soit environ 1,15 à 1,3 million d’euros de 2026)');
 	});
 
 	test('plus aucune commission à 100 000 francs dans les données Goriot', () => {

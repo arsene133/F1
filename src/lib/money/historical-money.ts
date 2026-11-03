@@ -115,19 +115,21 @@ export function withFrenchThousands(text: string): string {
 
 const MILLION = 1_000_000;
 
+/** Pas d'arrondi des montants de 100 000 € et plus, millions compris. */
+const LARGE_AMOUNT_STEP = 50_000;
+
 /**
  * Pas d'arrondi selon le montant avant arrondi :
  * moins de 10 € → 0,50 € ; 10 à 99,99 € → 1 € ; 100 à 99 999,99 € → 10 € ;
- * 100 000 € et plus → 10 000 €. Les montants d'un million ou plus sont exprimés
- * en millions, au dixième (pas de 100 000 €).
+ * 100 000 € et plus → 50 000 €. Les montants d'un million ou plus, arrondis de
+ * même, sont ensuite exprimés en millions (« 1,25 million d’euros »).
  */
 export function euroRoundingStep(value: number): number {
 	const v = Math.abs(value);
 	if (v < 10) return 0.5;
 	if (v < 100) return 1;
 	if (v < 100_000) return 10;
-	if (v < MILLION) return 10_000;
-	return MILLION / 10;
+	return LARGE_AMOUNT_STEP;
 }
 
 type RoundingMode = 'nearest' | 'down' | 'up';
@@ -139,17 +141,27 @@ function roundToStep(value: number, step: number, mode: RoundingMode = 'nearest'
 }
 
 /**
- * Arrondi d'affichage d'un équivalent en euros (une seule fois, au dernier moment) :
- * 4,4 → 4,5 ; 16,7 → 17 ; 645 → 650 ; 12 345 → 12 350 ; 243 000 → 240 000 ;
- * 246 000 → 250 000 ; 1 260 000 → 1 300 000.
+ * Arrondi d'affichage d'un équivalent en euros (une seule fois, au dernier moment,
+ * demi-pas arrondi vers le haut) : 4,4 → 4,5 ; 16,7 → 17 ; 645 → 650 ;
+ * 12 345 → 12 350 ; 224 000 → 200 000 ; 226 000 → 250 000 ; 1 260 000 → 1 250 000.
  */
 export function roundEuroAmount(value: number, mode: RoundingMode = 'nearest'): number {
 	return roundToStep(value, euroRoundingStep(value), mode);
 }
 
-/** Montant en euros prêt à afficher : « 5 € », « 1 230 € », « 1,3 million d’euros ». */
+/** Montant en euros prêt à afficher : « 5 € », « 1 230 € », « 1,25 million d’euros ». */
 export function formatEuroAmount(value: number): string {
 	return formatEuroRange(value, value);
+}
+
+const frMillionsIntl = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 });
+
+/**
+ * Montant déjà arrondi (multiple de 50 000 €) exprimé en millions : deux décimales
+ * au plus, juste ce qu'il faut pour le pas de 50 000 € (« 1,25 », « 1,3 », « 2 »).
+ */
+function formatMillions(roundedEuros: number): string {
+	return frMillionsIntl.format(roundedEuros / MILLION).replace(/[   ]/g, NNBSP);
 }
 
 function millionUnit(millions: number): string {
@@ -158,7 +170,7 @@ function millionUnit(millions: number): string {
 }
 
 /**
- * « 6 à 6,5 € », « 6 920 à 7 860 € », « 640 € », « 1,2 à 1,3 million d’euros ».
+ * « 6 à 6,5 € », « 6 920 à 7 860 € », « 640 € », « 1,15 à 1,3 million d’euros ».
  *
  * Chaque borne est arrondie indépendamment. Une fourchette reste une fourchette :
  * si ses deux bornes, distinctes, tombent sur la même valeur arrondie, on arrondit
@@ -167,9 +179,7 @@ function millionUnit(millions: number): string {
 export function formatEuroRange(low: number, high: number): string {
 	if (low === high) {
 		const v = roundEuroAmount(low);
-		return v >= MILLION
-			? `${formatFrenchNumber(v / MILLION)}${NBSP}${millionUnit(v / MILLION)}`
-			: `${formatFrenchNumber(v)}${NBSP}€`;
+		return v >= MILLION ? `${formatMillions(v)}${NBSP}${millionUnit(v / MILLION)}` : `${formatFrenchNumber(v)}${NBSP}€`;
 	}
 	let lo = roundEuroAmount(low);
 	let hi = roundEuroAmount(high);
@@ -178,10 +188,11 @@ export function formatEuroRange(low: number, high: number): string {
 		hi = roundEuroAmount(high, 'up');
 	}
 	if (hi >= MILLION) {
-		// Les deux bornes en millions, pour une lecture homogène.
-		const loM = lo >= MILLION ? lo / MILLION : roundToStep(low / MILLION, 0.1);
-		const hiM = hi / MILLION;
-		return `${formatFrenchNumber(loM)} à ${formatFrenchNumber(hiM)}${NBSP}${millionUnit(hiM)}`;
+		// Les deux bornes en millions, pour une lecture homogène. Une borne basse
+		// inférieure à 100 000 € suit, exceptionnellement, le pas de 50 000 € pour
+		// rester lisible en millions.
+		const loRounded = lo >= 100_000 ? lo : roundToStep(low, LARGE_AMOUNT_STEP);
+		return `${formatMillions(loRounded)} à ${formatMillions(hi)}${NBSP}${millionUnit(hi / MILLION)}`;
 	}
 	return `${formatFrenchNumber(lo)} à ${formatFrenchNumber(hi)}${NBSP}€`;
 }
