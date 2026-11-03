@@ -117,14 +117,16 @@ const MILLION = 1_000_000;
 
 /**
  * Pas d'arrondi selon le montant avant arrondi :
- * moins de 10 € → 0,50 € ; 10 à 99,99 € → 1 € ; 100 € et plus → 10 €.
- * Les montants d'un million ou plus sont exprimés en millions, au dixième.
+ * moins de 10 € → 0,50 € ; 10 à 99,99 € → 1 € ; 100 à 99 999,99 € → 10 € ;
+ * 100 000 € et plus → 10 000 €. Les montants d'un million ou plus sont exprimés
+ * en millions, au dixième (pas de 100 000 €).
  */
 export function euroRoundingStep(value: number): number {
 	const v = Math.abs(value);
 	if (v < 10) return 0.5;
 	if (v < 100) return 1;
-	if (v < MILLION) return 10;
+	if (v < 100_000) return 10;
+	if (v < MILLION) return 10_000;
 	return MILLION / 10;
 }
 
@@ -138,7 +140,8 @@ function roundToStep(value: number, step: number, mode: RoundingMode = 'nearest'
 
 /**
  * Arrondi d'affichage d'un équivalent en euros (une seule fois, au dernier moment) :
- * 4,4 → 4,5 ; 16,7 → 17 ; 645 → 650 ; 12 345 → 12 350 ; 1 260 000 → 1 300 000.
+ * 4,4 → 4,5 ; 16,7 → 17 ; 645 → 650 ; 12 345 → 12 350 ; 243 000 → 240 000 ;
+ * 246 000 → 250 000 ; 1 260 000 → 1 300 000.
  */
 export function roundEuroAmount(value: number, mode: RoundingMode = 'nearest'): number {
 	return roundToStep(value, euroRoundingStep(value), mode);
