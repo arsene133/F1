@@ -200,8 +200,12 @@ describe.skipIf(!BUILT)('Boîte de Leitner de Pot-Bouille (/pot-bouille-leitner)
 			expect(await page.locator('[data-summary-forgotten]').innerText()).toBe('1');
 			expect(await page.locator('[data-summary-back]').innerText()).toBe('Terminer');
 
-			// Limite quotidienne atteinte et rien d’échu : « continuer » propose l’entraînement.
-			expect(await page.locator('[data-summary-continue]').innerText()).toBe('S’entraîner librement');
+			// Limite quotidienne atteinte et rien d’échu : le travail du jour est terminé.
+			expect(await page.locator('[data-summary-message]').innerText()).toBe(
+				'Tu as terminé les questions prévues pour aujourd’hui. Tu peux continuer à t’entraîner librement si tu le souhaites.',
+			);
+			expect(await page.locator('[data-summary-continue]').innerText()).toBe('Continuer à m’entraîner');
+			expect(await page.locator('[data-summary-saved]').innerText()).toContain('Ta progression est enregistrée');
 			await page.click('[data-summary-back]');
 			expect(await page.locator('[data-home]').isVisible()).toBe(true);
 			expect(await line(page, 'new')).toBe('Nouvelles questions : c’est fait pour aujourd’hui');
@@ -211,6 +215,136 @@ describe.skipIf(!BUILT)('Boîte de Leitner de Pot-Bouille (/pot-bouille-leitner)
 			expect(await page.locator('[data-home-message]').innerText()).toContain('8 nouvelles questions');
 			await page.click('[data-home-message] .lb-btn');
 			expect(await progress(page)).toMatch(/^Question 1 sur 5/);
+		} finally {
+			await context.close();
+		}
+	});
+
+	test('fin de séance, journée terminée : « Terminer » garde la progression, l’entraînement reste facultatif', async () => {
+		const { context, page } = await open();
+		try {
+			// Séance interrompue alors qu’il reste des nouvelles questions : la suite naturelle est la découverte.
+			await page.click('[data-start]');
+			await page.click('[data-reveal]');
+			await page.click('[data-assess="known"]');
+			await page.click('[data-session-quit]');
+			expect(await page.locator('[data-summary-continue]').innerText()).toBe('Découvrir de nouvelles questions');
+			expect(await page.locator('[data-summary-message]').innerText()).not.toContain('Tu as terminé');
+
+			// Reprise, puis fin des 7 questions restantes : le travail du jour est terminé.
+			await page.click('[data-summary-continue]');
+			for (let i = 0; i < 7; i++) {
+				await page.click('[data-reveal]');
+				await page.click('[data-assess="known"]');
+			}
+			expect(await page.locator('[data-summary-message]').innerText()).toContain('Tu as terminé les questions prévues pour aujourd’hui');
+			expect(await page.locator('[data-summary-message]').innerText()).toContain('si tu le souhaites');
+			const before = await page.evaluate((k) => localStorage.getItem(k), KEY);
+
+			// « Continuer à m’entraîner » lance directement un entraînement, sans rien changer à la progression.
+			await page.click('[data-summary-continue]');
+			expect(await page.locator('[data-session-title]').innerText()).toBe('Entraînement libre');
+			expect(await page.locator('[data-practice-note]').isVisible()).toBe(true);
+			for (let i = 0; i < 2; i++) {
+				await page.click('[data-reveal]');
+				await page.click(i ? '[data-assess="forgotten"]' : '[data-assess="known"]');
+			}
+			expect(await page.evaluate((k) => localStorage.getItem(k), KEY)).toBe(before);
+			await page.click('[data-session-quit]');
+			expect(await page.locator('[data-summary-saved]').innerText()).toBe('L’entraînement n’a pas modifié ta progression.');
+			expect(await page.locator('[data-summary-continue]').innerText()).toBe('Continuer à m’entraîner');
+
+			// « Terminer » revient à l’accueil ; la progression est intacte après rechargement.
+			await page.click('[data-summary-back]');
+			expect(await page.locator('[data-home]').isVisible()).toBe(true);
+			expect(await page.evaluate((k) => localStorage.getItem(k), KEY)).toBe(before);
+			await page.reload();
+			await page.waitForSelector('#leitner-app[data-ready="true"]');
+			expect(await stat(page, 'new')).toBe('92');
+			expect(await line(page, 'due')).toMatch(/^Rien à revoir aujourd’hui/);
+			expect(await line(page, 'new')).toBe('Nouvelles questions : c’est fait pour aujourd’hui');
+		} finally {
+			await context.close();
+		}
+	});
+
+	test('en-tête compact sur cette page seulement : mobile allégé, desktop et autres pages inchangés', async () => {
+		const context = await browser.newContext({ viewport: { width: 375, height: 667 } });
+		const page = await context.newPage();
+		const measure = (path: string) =>
+			page.goto(`${BASE}${path}`).then(() =>
+				page.evaluate(() => {
+					const header = document.querySelector('body > header')!;
+					const targets = [...header.querySelectorAll('h2 a, .internal-links > a, .dropdown-toggle')].map((e) => {
+						const r = e.getBoundingClientRect();
+						return { text: e.textContent!.trim(), h: r.height, w: r.width, right: r.right, visible: r.width > 0 };
+					});
+					return {
+						height: header.getBoundingClientRect().height,
+						targets,
+						overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+					};
+				}),
+			);
+		try {
+			const leitner = await measure('/pot-bouille-leitner/');
+			const potBouille = await measure('/pot-bouille/');
+			const homePage = await measure('/');
+			// Autres pages : en-tête d’origine, identique d’une page à l’autre.
+			expect(potBouille.height).toBe(homePage.height);
+			expect(potBouille.height).toBeGreaterThan(150);
+			// Page Leitner : nettement plus compact, sans débordement.
+			expect(leitner.height).toBeLessThanOrEqual(100);
+			expect(leitner.height).toBeLessThan(potBouille.height * 0.5);
+			expect(leitner.overflow).toBe(false);
+			// La navigation essentielle reste complète, avec des cibles tactiles de 44 px.
+			expect(leitner.targets.map((t) => t.text.replace(/\s+/g, ' '))).toEqual(
+				potBouille.targets.map((t) => t.text.replace(/\s+/g, ' ')),
+			);
+			expect(leitner.targets).toHaveLength(5);
+			leitner.targets.forEach((t) => {
+				expect(t.visible, t.text).toBe(true);
+				expect(t.h, t.text).toBeGreaterThanOrEqual(44);
+				expect(t.w, t.text).toBeGreaterThanOrEqual(44);
+				expect(t.right, t.text).toBeLessThanOrEqual(375);
+			});
+
+			// Clavier : le menu « Œuvres & auteurs » s’ouvre et reste utilisable.
+			await page.goto(URL);
+			await page.focus('#works-dropdown > summary');
+			await page.keyboard.press('Enter');
+			expect(await page.locator('#works-dropdown .dropdown-menu').isVisible()).toBe(true);
+			expect(await page.locator('#works-dropdown .dropdown-item').count()).toBe(8);
+			await page.keyboard.press('Tab');
+			const outline = await page.evaluate(() => getComputedStyle(document.activeElement!).outlineStyle);
+			expect(outline).not.toBe('none');
+
+			// Bureau : en-tête identique sur la page Leitner et sur les autres pages.
+			await page.setViewportSize({ width: 1280, height: 800 });
+			const desktopLeitner = await measure('/pot-bouille-leitner/');
+			const desktopOther = await measure('/pot-bouille/');
+			expect(desktopLeitner.height).toBe(desktopOther.height);
+		} finally {
+			await context.close();
+		}
+	});
+
+	test('en-tête compact en mode sombre : couleurs du thème conservées', async () => {
+		const context = await browser.newContext({ viewport: { width: 375, height: 667 }, colorScheme: 'dark' });
+		const page = await context.newPage();
+		try {
+			await page.goto(URL);
+			const colors = await page.evaluate(() => {
+				const header = document.querySelector('body > header')!;
+				return {
+					bg: getComputedStyle(header).backgroundColor,
+					link: getComputedStyle(header.querySelector('h2 a')!).color,
+					height: header.getBoundingClientRect().height,
+				};
+			});
+			expect(colors.bg).toBe('rgb(19, 21, 26)');
+			expect(colors.link).toBe('rgb(240, 242, 247)');
+			expect(colors.height).toBeLessThanOrEqual(100);
 		} finally {
 			await context.close();
 		}

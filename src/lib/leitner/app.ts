@@ -196,17 +196,21 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 		return Object.keys(state.cards).some((id) => byId.has(id));
 	}
 
-	/** L'action principale du moment : réviser, sinon découvrir, sinon s'entraîner. */
-	function primaryAction(): { label: string; run: () => void } {
+	/**
+	 * L'action principale du moment : réviser, sinon découvrir, sinon s'entraîner.
+	 * `kind` vaut « entrainement » quand le travail prévu pour aujourd'hui est terminé.
+	 */
+	function primaryAction(): { kind: Mode; label: string; run: () => void } {
 		const due = dueCardIds(cardIds, state.cards, today());
-		if (due.length > 0) return { label: 'Commencer ma révision', run: () => startSession('revision', due) };
+		if (due.length > 0) return { kind: 'revision', label: 'Commencer ma révision', run: () => startSession('revision', due) };
 		const queue = discoveryQueue();
 		if (queue.length > 0)
 			return {
+				kind: 'decouverte',
 				label: hasStarted() ? 'Découvrir de nouvelles questions' : 'Commencer ma révision',
 				run: () => startSession('decouverte', discoveryQueue()),
 			};
-		return { label: 'S’entraîner librement', run: () => openPractice(true) };
+		return { kind: 'entrainement', label: 'S’entraîner librement', run: () => openPractice(true) };
 	}
 
 	// ---------------------------------------------------------------- Accueil
@@ -354,12 +358,16 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 			n === 0 ? 'Aucune question ne correspond à ce choix.' : `${plural(n, 'question correspond', 'questions correspondent')} à ce choix.`;
 	}
 	practiceForm.addEventListener('change', updatePracticeCount);
-	practiceForm.addEventListener('submit', (e) => {
-		e.preventDefault();
+	/** Lance un entraînement libre avec les choix du formulaire (par défaut : 10 questions, tous thèmes). */
+	function startPractice(): void {
 		const selection = shuffle(practiceSelection());
 		const size = Number(new FormData(practiceForm).get('size') ?? 10);
 		if (selection.length === 0) return;
 		startSession('entrainement', size > 0 ? selection.slice(0, size) : selection);
+	}
+	practiceForm.addEventListener('submit', (e) => {
+		e.preventDefault();
+		startPractice();
 	});
 	$(R, '[data-practice-preset="interpretation"]').addEventListener('click', () => {
 		(practiceForm.elements.namedItem('category') as HTMLSelectElement).value = '';
@@ -517,17 +525,26 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 		$(summaryEl, '[data-summary-known]').textContent = String(known);
 		$(summaryEl, '[data-summary-forgotten]').textContent = String(forgotten);
 
+		const next = primaryAction();
+		const dayComplete = next.kind === 'entrainement';
+
 		let message: string;
-		if (s.results.length === 0) message = 'Aucune question révisée cette fois-ci.';
+		if (dayComplete)
+			message = 'Tu as terminé les questions prévues pour aujourd’hui. Tu peux continuer à t’entraîner librement si tu le souhaites.';
+		else if (s.results.length === 0) message = 'Aucune question révisée cette fois-ci.';
 		else if (forgotten === 0) message = 'Tout était su. Ces questions reviendront plus tard, de plus en plus espacées.';
 		else if (known >= forgotten) message = 'Bonne séance. Les questions à revoir reviendront vite : c’est comme ça qu’on les retient.';
 		else message = 'Séance utile : chercher une réponse, même sans la trouver, aide à la retenir.';
-		if (s.mode === 'entrainement') message += ' L’entraînement n’a pas modifié ta progression.';
 		$(summaryEl, '[data-summary-message]').textContent = message;
+		$(summaryEl, '[data-summary-saved]').textContent =
+			s.mode === 'entrainement'
+				? 'L’entraînement n’a pas modifié ta progression.'
+				: 'Ta progression est enregistrée : tu peux t’arrêter quand tu veux.';
 
-		const next = primaryAction();
-		$(summaryEl, '[data-summary-continue]').textContent =
-			next.label === 'Commencer ma révision' ? 'Continuer à réviser' : next.label;
+		const continueButton = $(summaryEl, '[data-summary-continue]');
+		continueButton.textContent =
+			next.kind === 'revision' ? 'Continuer à réviser' : dayComplete ? 'Continuer à m’entraîner' : next.label;
+		continueButton.dataset.next = next.kind;
 
 		session = null;
 		$(summaryEl, '#lb-summary-title').focus();
@@ -548,6 +565,8 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 	$(R, '[data-summary-back]').addEventListener('click', endSession);
 	$(R, '[data-summary-continue]').addEventListener('click', () => {
 		const next = primaryAction();
+		// Travail du jour terminé : entraînement libre immédiat, sans effet sur la progression.
+		if (next.kind === 'entrainement') return startPractice();
 		showSessionView(false);
 		renderAll();
 		next.run();

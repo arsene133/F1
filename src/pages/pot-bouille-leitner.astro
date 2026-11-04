@@ -34,7 +34,7 @@ const countIn = (category: string) => cards.filter((c) => c.category === categor
 	<head>
 		<BaseHead title={pageTitle} description={pageDescription} />
 	</head>
-	<body>
+	<body id="page-leitner">
 		<Header />
 
 		<main class="page-container leitner-page" id="leitner-app" data-total={cards.length}>
@@ -201,6 +201,7 @@ const countIn = (category: string) => cards.filter((c) => c.category === categor
 						<li>Questions à revoir : <strong data-summary-forgotten>0</strong></li>
 					</ul>
 					<p class="lb-summary-message" data-summary-message></p>
+					<p class="lb-summary-saved" data-summary-saved>Ta progression est enregistrée : tu peux t’arrêter quand tu veux.</p>
 					<div class="lb-summary-actions">
 						<button type="button" class="lb-btn lb-btn--primary" data-summary-back>Terminer</button>
 						<button type="button" class="lb-btn lb-btn--secondary" data-summary-continue>Continuer à réviser</button>
@@ -1033,6 +1034,11 @@ const countIn = (category: string) => cards.filter((c) => c.category === categor
 		max-width: 28rem;
 		color: var(--lb-muted);
 	}
+	.lb-summary-saved {
+		margin: -0.75rem auto 1.5rem;
+		font-size: 0.85rem;
+		color: var(--lb-muted);
+	}
 	.lb-summary-actions {
 		display: flex;
 		flex-wrap: wrap;
@@ -1355,6 +1361,40 @@ const countIn = (category: string) => cards.filter((c) => c.category === categor
 		.lb-bar-fill,
 		.lb-dist-fill {
 			transition: none;
+		}
+	}
+
+	/* En-tête du site compacté, sur cette page seulement (#page-leitner est
+	   l’identifiant du <body> de cette page) et uniquement sous 768 px : le
+	   titre tient sur une ligne, les quatre liens sur une autre (dès 375 px ;
+	   en dessous, ils passent proprement sur deux lignes), chaque cible tactile
+	   garde au moins 44 × 44 px. Le composant Header n’est pas modifié. */
+	@media (max-width: 768px) {
+		#page-leitner > header {
+			padding: 0 0.75em;
+		}
+		#page-leitner > header nav {
+			padding: 0.1em 0;
+		}
+		#page-leitner > header h2 {
+			padding: 0;
+			font-size: 0.9em;
+		}
+		#page-leitner > header h2 a {
+			box-sizing: border-box;
+			min-height: 44px;
+			padding: 0 0.1em;
+		}
+		#page-leitner > header .internal-links {
+			gap: 0;
+		}
+		#page-leitner > header .internal-links > a,
+		#page-leitner > header .dropdown-toggle {
+			justify-content: center;
+			min-width: 44px;
+			min-height: 44px;
+			padding: 0.4em 0.32em;
+			font-size: 0.85em;
 		}
 	}
 
