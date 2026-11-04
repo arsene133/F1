@@ -15,10 +15,10 @@ import { DAILY_GOAL_OPTIONS, DEFAULT_SETTINGS, NEW_PER_DAY_OPTIONS } from '../li
 
 const pageTitle = 'Réviser Pot-Bouille — boîte de Leitner';
 const pageDescription =
-	'Une boîte de Leitner pour comprendre, mémoriser et interpréter Pot-Bouille d’Émile Zola : 100 cartes de révision (œuvre, personnages, thèmes, écriture, interprétation, bac de français), avec répétition espacée.';
+	'Quelques questions pour mieux connaître et comprendre Pot-Bouille d’Émile Zola : 100 questions de révision (œuvre, personnages, thèmes, écriture, interprétation, bac de français), avec répétition espacée.';
 
 const boxPurpose: Record<number, string> = {
-	1: 'Cartes nouvelles ou difficiles',
+	1: 'Questions nouvelles ou difficiles',
 	2: 'Première consolidation',
 	3: 'Renforcement',
 	4: 'Mémoire à long terme',
@@ -38,107 +38,230 @@ const countIn = (category: string) => cards.filter((c) => c.category === categor
 		<Header />
 
 		<main class="page-container leitner-page" id="leitner-app" data-total={cards.length}>
-			<header class="lb-intro">
-				<p class="intro-eyebrow">Émile Zola · <cite>Pot-Bouille</cite> (1882) · Boîte de Leitner</p>
-				<h1>Réviser <cite>Pot-Bouille</cite></h1>
-				<p class="lb-subtitle">
-					<em>Une boîte de Leitner pour comprendre, mémoriser et interpréter le roman de Zola.</em>
-				</p>
-				<p class="lb-principle">
-					<strong>Le principe :</strong> chaque carte voyage entre cinq boîtes. Si vous connaissiez la réponse, elle
-					passe dans la boîte suivante et reviendra plus tard ; sinon, elle retourne dans la boîte 1 et revient
-					dès la prochaine séance. Les cartes faciles s’espacent, les cartes difficiles reviennent souvent.
-				</p>
+			<!-- ============================================================ -->
+			<!-- Écran d’accueil : une seule action principale                -->
+			<!-- ============================================================ -->
+			<section class="lb-home" data-home aria-labelledby="lb-title">
+				<p class="intro-eyebrow">Émile Zola · <cite>Pot-Bouille</cite></p>
+				<h1 id="lb-title">Réviser <cite>Pot-Bouille</cite></h1>
+				<p class="lb-subtitle">Quelques questions pour mieux connaître et comprendre le roman de Zola.</p>
 
-				<ol class="lb-boxes-strip" aria-label="Les cinq boîtes et leur rythme de révision">
-					{
-						BOXES.map((box) => (
-							<li class={`lb-box-step lb-box-${box}`}>
-								<span class="lb-box-step-name">Boîte {box}</span>
-								<span class="lb-box-step-interval">{intervalLabel(BOX_INTERVAL_DAYS[box])}</span>
-								<span class="lb-box-step-purpose">{boxPurpose[box]}</span>
-							</li>
-						))
-					}
-				</ol>
+				<button type="button" class="lb-btn lb-btn--primary lb-btn--hero" data-start>Commencer ma révision</button>
 
-				<aside class="lb-level-note" aria-label="Niveau et programme">
-					<p>
-						<strong>Pour qui ?</strong> Pour une élève ou un élève de seconde qui lit le roman et veut en garder
-						une connaissance solide. Les cartes « Se préparer au bac » vont plus loin : en <strong>première</strong>,
-						pour l’épreuve anticipée de français de la session 2027, <cite>Pot-Bouille</cite> est associé au
-						parcours « Dévoiler les rouages de la société ». Ce n’est pas une exigence du programme de seconde,
-						mais un entraînement anticipé.
+				<ul class="lb-summary-lines" aria-label="Où tu en es">
+					<li data-line="due">Questions à revoir aujourd’hui : –</li>
+					<li data-line="new">Nouvelles questions disponibles : –</li>
+					<li data-line="mastered">Questions maîtrisées : –</li>
+				</ul>
+
+				<div class="lb-home-message" data-home-message role="status" hidden></div>
+
+				<nav class="lb-choices" aria-label="Choisir une activité">
+					<p class="lb-choices-label">Ou choisis :</p>
+					<div class="lb-choices-row">
+						<button type="button" class="lb-choice" data-choice="revision">
+							<span class="lb-choice-name">Réviser</span>
+							<span class="lb-choice-desc">les questions du jour</span>
+						</button>
+						<button type="button" class="lb-choice" data-choice="decouverte">
+							<span class="lb-choice-name">Découvrir</span>
+							<span class="lb-choice-desc">de nouvelles questions</span>
+						</button>
+						<button type="button" class="lb-choice" data-choice="entrainement" aria-expanded="false" aria-controls="lb-practice">
+							<span class="lb-choice-name">S’entraîner</span>
+							<span class="lb-choice-desc">librement, sans rien changer</span>
+						</button>
+					</div>
+				</nav>
+
+				<form class="lb-practice" id="lb-practice" data-practice-form hidden>
+					<p class="lb-practice-intro">
+						Choisis tes questions. L’entraînement ne modifie pas ta progression.
 					</p>
-					<p class="lb-back-link">
-						<a href="/pot-bouille">Revoir la carte des personnages et la coupe de l’immeuble de <cite>Pot-Bouille</cite></a>
-					</p>
-				</aside>
-			</header>
+					<div class="lb-field">
+						<label for="practice-category">Thème</label>
+						<select id="practice-category" name="category">
+							<option value="">Tous les thèmes</option>
+							{categoryOrder.map((c) => <option value={c}>{categoryLabels[c]} ({countIn(c)})</option>)}
+						</select>
+					</div>
+					<details class="lb-more">
+						<summary>Plus d’options</summary>
+						<div class="lb-more-grid">
+							<div class="lb-field">
+								<label for="practice-difficulty">Difficulté</label>
+								<select id="practice-difficulty" name="difficulty">
+									<option value="">Toutes</option>
+									{Object.entries(difficultyLabels).map(([v, l]) => <option value={v}>{l}</option>)}
+								</select>
+							</div>
+							<div class="lb-field">
+								<label for="practice-skill">Type de question</label>
+								<select id="practice-skill" name="skill">
+									<option value="">Tous</option>
+									{Object.entries(skillLabels).map(([v, l]) => <option value={v}>{l}</option>)}
+								</select>
+							</div>
+							<div class="lb-field">
+								<label for="practice-size">Nombre de questions</label>
+								<select id="practice-size" name="size">
+									<option value="10">10</option>
+									<option value="20">20</option>
+									<option value="0">Toutes celles qui correspondent</option>
+								</select>
+							</div>
+						</div>
+					</details>
+					<p class="lb-help" data-practice-count aria-live="polite"></p>
+					<div class="lb-practice-actions">
+						<button type="submit" class="lb-btn lb-btn--primary">Commencer l’entraînement</button>
+						<button type="button" class="lb-linklike" data-practice-preset="interpretation">
+							ou seulement les questions d’interprétation
+						</button>
+					</div>
+				</form>
+
+				<p class="lb-progress-link"><a href="#progression">Voir ma progression</a></p>
+			</section>
 
 			<noscript>
 				<p class="lb-noscript">
-					La révision et l’enregistrement de votre progression nécessitent JavaScript. Vous pouvez tout de même
-					consulter toutes les cartes dans la section « Parcourir toutes les cartes », plus bas.
+					La révision et l’enregistrement de ta progression nécessitent JavaScript. Tu peux tout de même
+					lire toutes les questions dans « Voir ma progression », plus bas.
 				</p>
 			</noscript>
 
 			<p class="lb-storage-warning" id="lb-storage-warning" role="status" hidden></p>
 
 			<!-- ============================================================ -->
-			<!-- Tableau de bord                                               -->
+			<!-- Séance                                                        -->
 			<!-- ============================================================ -->
-			<section class="lb-dashboard" aria-labelledby="lb-dashboard-title">
-				<h2 id="lb-dashboard-title">Où en êtes-vous ?</h2>
-
-				<dl class="lb-stats">
-					<div class="lb-stat">
-						<dt>Cartes au total</dt>
-						<dd data-stat="total">{cards.length}</dd>
-					</div>
-					<div class="lb-stat lb-stat--due">
-						<dt>À revoir aujourd’hui</dt>
-						<dd data-stat="due">–</dd>
-					</div>
-					<div class="lb-stat">
-						<dt>Nouvelles cartes</dt>
-						<dd data-stat="new">–</dd>
-					</div>
-					<div class="lb-stat">
-						<dt>Cartes maîtrisées</dt>
-						<dd data-stat="mastered">–</dd>
-						<p class="lb-stat-help">arrivées en boîte 5</p>
-					</div>
-				</dl>
-
-				<div class="lb-progress-block">
-					<p class="lb-progress-label" id="lb-progress-label">
-						Progression globale : <strong data-stat="progress">–</strong>
-					</p>
-					<div
-						class="lb-bar"
-						role="progressbar"
-						aria-labelledby="lb-progress-label"
-						aria-valuemin="0"
-						aria-valuemax="100"
-						aria-valuenow="0"
-						data-bar="progress"
-					>
-						<span class="lb-bar-fill"></span>
-					</div>
-					<p class="lb-help">
-						Chemin parcouru par l’ensemble des cartes vers la boîte 5 : une carte nouvelle compte pour 0, une carte
-						en boîte 5 pour 1. Regarder une carte ne la fait jamais progresser ; seul un rappel réussi compte.
-					</p>
+			<section class="lb-session" data-session hidden aria-label="Séance de révision">
+				<div class="lb-session-bar">
+					<p class="lb-session-title" data-session-title></p>
+					<button type="button" class="lb-linklike" data-session-quit>Arrêter</button>
 				</div>
+				<div class="lb-bar lb-bar--thin" aria-hidden="true" data-bar="session"><span class="lb-bar-fill"></span></div>
 
-				<div class="lb-dashboard-grid">
-					<figure class="lb-panel lb-distribution">
-						<figcaption><h3>Répartition dans les boîtes</h3></figcaption>
-						<p class="lb-dist-new-line">
-							<strong data-dist="new">–</strong> carte(s) pas encore découverte(s), hors des boîtes.
+				<p class="lb-feedback" data-feedback role="status" aria-live="polite"></p>
+
+				<article class="lb-card" data-study-card aria-labelledby="study-question">
+					<p class="lb-card-eyebrow" data-study-eyebrow></p>
+					<p class="lb-card-count" data-session-progress></p>
+					<h2 id="study-question" class="lb-card-question" tabindex="-1" data-study-question></h2>
+					<p class="lb-practice-note" data-practice-note hidden>Entraînement libre : ta progression n’est pas modifiée.</p>
+
+					<div class="lb-card-tools">
+						<details class="lb-hint" data-study-hint-wrap>
+							<summary>Un indice ?</summary>
+							<p data-study-hint></p>
+						</details>
+						<details class="lb-hint lb-attempt">
+							<summary>Écrire ma réponse</summary>
+							<label for="study-attempt" class="sr-only">Ta réponse (facultatif, rien n’est enregistré)</label>
+							<textarea id="study-attempt" rows="3" data-study-attempt placeholder="Facultatif : rien n’est enregistré."></textarea>
+						</details>
+					</div>
+
+					<div class="lb-reveal-row" data-reveal-row>
+						<button type="button" class="lb-btn lb-btn--secondary lb-btn--wide" data-reveal>Voir la réponse</button>
+					</div>
+
+					<section class="lb-answer" data-answer hidden aria-labelledby="study-answer-title">
+						<h3 id="study-answer-title" tabindex="-1" data-answer-title>Réponse</h3>
+						<p class="lb-answer-text" data-answer-text></p>
+						<p class="lb-explanation" data-answer-explanation></p>
+						<blockquote class="lb-quote" data-answer-quote>
+							<p data-answer-quote-text></p>
+							<cite data-answer-quote-cite></cite>
+						</blockquote>
+						<p class="lb-reference" data-answer-reference></p>
+
+						<div class="lb-assess" role="group" aria-labelledby="lb-assess-title">
+							<p class="lb-assess-title" id="lb-assess-title">
+								Réponds honnêtement : une bonne réponse doit contenir les idées essentielles.
+							</p>
+							<p class="lb-assess-hint" data-assess-hint hidden>
+								Ici, il faut savoir expliquer le sens, pas seulement donner un fait.
+							</p>
+							<div class="lb-assess-buttons">
+								<button type="button" class="lb-btn lb-btn--again" data-assess="forgotten">À revoir</button>
+								<button type="button" class="lb-btn lb-btn--known" data-assess="known">Je savais</button>
+							</div>
+							<p class="lb-kbd-help">Au clavier : <kbd>R</kbd> à revoir · <kbd>S</kbd> je savais</p>
+						</div>
+					</section>
+				</article>
+
+				<section class="lb-summary" data-summary hidden aria-labelledby="lb-summary-title">
+					<h2 id="lb-summary-title" tabindex="-1">Séance terminée !</h2>
+					<ul class="lb-summary-counts">
+						<li>Questions révisées : <strong data-summary-total>0</strong></li>
+						<li>Questions réussies : <strong data-summary-known>0</strong></li>
+						<li>Questions à revoir : <strong data-summary-forgotten>0</strong></li>
+					</ul>
+					<p class="lb-summary-message" data-summary-message></p>
+					<div class="lb-summary-actions">
+						<button type="button" class="lb-btn lb-btn--primary" data-summary-back>Terminer</button>
+						<button type="button" class="lb-btn lb-btn--secondary" data-summary-continue>Continuer à réviser</button>
+					</div>
+				</section>
+			</section>
+
+			<p class="sr-only" aria-live="polite" data-announcer></p>
+
+			<!-- ============================================================ -->
+			<!-- Section secondaire : progression, questions, réglages        -->
+			<!-- ============================================================ -->
+			<section class="lb-secondary" id="progression" data-secondary aria-labelledby="lb-secondary-title">
+				<h2 id="lb-secondary-title">Voir ma progression</h2>
+
+				<details class="lb-fold" data-fold="stats">
+					<summary>Mes statistiques</summary>
+					<div class="lb-fold-body">
+						<dl class="lb-stats">
+							<div class="lb-stat">
+								<dt>Questions au total</dt>
+								<dd data-stat="total">{cards.length}</dd>
+							</div>
+							<div class="lb-stat">
+								<dt>À revoir aujourd’hui</dt>
+								<dd data-stat="due">–</dd>
+							</div>
+							<div class="lb-stat">
+								<dt>Jamais vues</dt>
+								<dd data-stat="new">–</dd>
+							</div>
+							<div class="lb-stat">
+								<dt>Maîtrisées</dt>
+								<dd data-stat="mastered">–</dd>
+							</div>
+						</dl>
+
+						<p class="lb-progress-label" id="lb-progress-label">
+							Progression globale : <strong data-stat="progress">–</strong>
 						</p>
-						<ol class="lb-dist" aria-label="Nombre de cartes par boîte">
+						<div
+							class="lb-bar"
+							role="progressbar"
+							aria-labelledby="lb-progress-label"
+							aria-valuemin="0"
+							aria-valuemax="100"
+							aria-valuenow="0"
+							data-bar="progress"
+						>
+							<span class="lb-bar-fill"></span>
+						</div>
+						<p class="lb-help">
+							Une question jamais vue compte pour 0, une question maîtrisée pour 1. Lire une question ne
+							la fait pas progresser : seule une bonne réponse compte.
+						</p>
+
+						<h3>Les cinq boîtes</h3>
+						<p class="lb-dist-new-line">
+							<strong data-dist="new">–</strong> question(s) jamais vue(s), hors des boîtes.
+						</p>
+						<ol class="lb-dist" aria-label="Nombre de questions par boîte">
 							{
 								BOXES.map((box) => (
 									<li class={`lb-dist-col lb-box-${box}`}>
@@ -149,12 +272,10 @@ const countIn = (category: string) => cards.filter((c) => c.category === categor
 								))
 							}
 						</ol>
-					</figure>
 
-					<div class="lb-panel lb-today">
 						<h3>Aujourd’hui</h3>
 						<p class="lb-goal-text" id="lb-goal-label" data-goal-text>
-							Cartes évaluées aujourd’hui : – sur un objectif de {DEFAULT_SETTINGS.dailyGoal}
+							Questions évaluées aujourd’hui : – sur un objectif de {DEFAULT_SETTINGS.dailyGoal}
 						</p>
 						<div
 							class="lb-bar lb-bar--goal"
@@ -167,388 +288,203 @@ const countIn = (category: string) => cards.filter((c) => c.category === categor
 						>
 							<span class="lb-bar-fill"></span>
 						</div>
-						<p class="lb-goal-message" data-goal-message>
+						<p class="lb-help" data-goal-message>
 							L’objectif est un repère, pas une obligation : mieux vaut un peu chaque jour que beaucoup une fois.
 						</p>
 
-						<h3 class="lb-history-title">Les 14 derniers jours</h3>
-						<ol class="lb-history" data-history aria-label="Cartes évaluées chaque jour pendant les 14 derniers jours"></ol>
+						<h3>Les 14 derniers jours</h3>
+						<ol class="lb-history" data-history aria-label="Questions évaluées chaque jour pendant les 14 derniers jours"></ol>
 						<p class="lb-history-legend" aria-hidden="true">
 							<span class="lb-key lb-key--known"></span> je savais
 							<span class="lb-key lb-key--forgotten"></span> à revoir
 						</p>
+
+						<div class="lb-attention" data-attention hidden>
+							<h3>Questions à surveiller</h3>
+							<p class="lb-help">Oubliées récemment ou plusieurs fois : relis-les.</p>
+							<ul class="lb-attention-list" data-attention-list></ul>
+						</div>
 					</div>
-				</div>
+				</details>
 
-				<div class="lb-panel lb-attention" data-attention hidden>
-					<h3>Cartes à surveiller</h3>
-					<p class="lb-help">Ces cartes ont été oubliées récemment ou plusieurs fois. Relisez-les dans « Parcourir ».</p>
-					<ul class="lb-attention-list" data-attention-list></ul>
-				</div>
-			</section>
+				<details class="lb-fold" data-fold="browse">
+					<summary>Toutes les questions</summary>
+					<div class="lb-fold-body">
+						<p class="lb-help lb-help--top">
+							Lis librement toutes les questions et leurs réponses. Les consulter ne change pas ta progression.
+						</p>
+						<form class="lb-browse-filters" data-browse-form>
+							<div class="lb-field lb-field--search">
+								<label for="browse-search">Rechercher</label>
+								<input id="browse-search" name="search" type="search" placeholder="Berthe, ironie, dot…" autocomplete="off" />
+							</div>
+							<div class="lb-field">
+								<label for="browse-category">Thème</label>
+								<select id="browse-category" name="category">
+									<option value="">Tous</option>
+									{categoryOrder.map((c) => <option value={c}>{categoryLabels[c]}</option>)}
+								</select>
+							</div>
+							<div class="lb-field">
+								<label for="browse-difficulty">Difficulté</label>
+								<select id="browse-difficulty" name="difficulty">
+									<option value="">Toutes</option>
+									{Object.entries(difficultyLabels).map(([v, l]) => <option value={v}>{l}</option>)}
+								</select>
+							</div>
+							<div class="lb-field">
+								<label for="browse-box">Boîte</label>
+								<select id="browse-box" name="box">
+									<option value="">Toutes</option>
+									<option value="0">Jamais vue</option>
+									{BOXES.map((b) => <option value={String(b)}>Boîte {b}</option>)}
+								</select>
+							</div>
+							<div class="lb-field">
+								<label for="browse-status">État</label>
+								<select id="browse-status" name="status">
+									<option value="">Tous</option>
+									<option value="new">Jamais vues</option>
+									<option value="learning">En cours</option>
+									<option value="mastered">Maîtrisées</option>
+								</select>
+							</div>
+							<button type="reset" class="lb-linklike">Effacer les filtres</button>
+						</form>
+						<p class="lb-browse-count" data-browse-count role="status">{cards.length} questions affichées</p>
+						<p class="lb-empty" data-browse-empty hidden>Aucune question ne correspond. Essaie de retirer un filtre.</p>
 
-			<!-- ============================================================ -->
-			<!-- Modes d’étude                                                 -->
-			<!-- ============================================================ -->
-			<section class="lb-study" aria-labelledby="lb-study-title">
-				<h2 id="lb-study-title">Travailler</h2>
-
-				<div class="lb-tabs" role="tablist" aria-label="Modes d’étude" data-tablist>
-					<button type="button" role="tab" id="tab-revision" aria-controls="panel-revision" aria-selected="true">
-						<span class="lb-tab-name">Révision quotidienne</span>
-						<span class="lb-tab-meta" data-tab-meta="revision">cartes du jour</span>
-					</button>
-					<button type="button" role="tab" id="tab-decouverte" aria-controls="panel-decouverte" aria-selected="false" tabindex="-1">
-						<span class="lb-tab-name">Découverte</span>
-						<span class="lb-tab-meta" data-tab-meta="decouverte">nouvelles cartes</span>
-					</button>
-					<button type="button" role="tab" id="tab-entrainement" aria-controls="panel-entrainement" aria-selected="false" tabindex="-1">
-						<span class="lb-tab-name">Entraînement</span>
-						<span class="lb-tab-meta">sans effet sur les boîtes</span>
-					</button>
-					<button type="button" role="tab" id="tab-parcourir" aria-controls="panel-parcourir" aria-selected="false" tabindex="-1">
-						<span class="lb-tab-name">Parcourir</span>
-						<span class="lb-tab-meta">toutes les cartes</span>
-					</button>
-				</div>
-
-				<!-- Révision quotidienne -->
-				<div class="lb-tabpanel" role="tabpanel" id="panel-revision" aria-labelledby="tab-revision" tabindex="0">
-					<p class="lb-mode-intro">
-						Les cartes dont la date de révision est arrivée. C’est le cœur de la méthode : ces révisions font
-						avancer les cartes d’une boîte à l’autre.
-					</p>
-					<div data-mode-start="revision"></div>
-				</div>
-
-				<!-- Découverte -->
-				<div class="lb-tabpanel" role="tabpanel" id="panel-decouverte" aria-labelledby="tab-decouverte" tabindex="0" hidden>
-					<p class="lb-mode-intro">
-						Les cartes que vous n’avez encore jamais vues, introduites quelques-unes à la fois, des plus simples
-						aux plus exigeantes. Une carte découverte entre dans la boîte 1.
-					</p>
-					<div class="lb-field lb-field--inline">
-						<label for="discover-category">Commencer par</label>
-						<select id="discover-category">
-							<option value="">toutes les catégories, en alternance</option>
-							{categoryOrder.map((c) => <option value={c}>{categoryLabels[c]}</option>)}
-						</select>
+						<ul class="lb-browse-list" data-browse-list>
+							{
+								cards.map((card) => (
+									<li
+										class="lb-browse-item"
+										id={`carte-${card.id}`}
+										data-card-id={card.id}
+										data-category={card.category}
+										data-difficulty={card.difficulty}
+										data-box="0"
+										data-status="new"
+									>
+										<details>
+											<summary>
+												<span class="lb-browse-meta">
+													{categoryLabels[card.category]} · {difficultyLabels[card.difficulty]} ·{' '}
+													<span data-box-chip>Jamais vue</span>
+												</span>
+												<span class="lb-browse-question">{card.question}</span>
+											</summary>
+											<div class="lb-browse-body">
+												<p class="lb-skill">{skillLabels[card.skill]}</p>
+												{card.hint && (
+													<p class="lb-browse-hint">
+														<strong>Indice :</strong> {card.hint}
+													</p>
+												)}
+												<p class="lb-answer-text">{card.answer}</p>
+												{card.explanation && <p class="lb-explanation">{card.explanation}</p>}
+												{card.quotation && (
+													<blockquote class="lb-quote">
+														<p>« {card.quotation.text} »</p>
+														<cite>
+															{card.quotation.speaker}, ch. {card.quotation.chapter}
+														</cite>
+													</blockquote>
+												)}
+												{card.reference && <p class="lb-reference">Dans le roman : {card.reference}</p>}
+												{card.focus && <p class="lb-reference">Personnages / thèmes : {card.focus.join(' · ')}</p>}
+											</div>
+										</details>
+									</li>
+								))
+							}
+						</ul>
 					</div>
-					<div data-mode-start="decouverte"></div>
-				</div>
+				</details>
 
-				<!-- Entraînement -->
-				<div class="lb-tabpanel" role="tabpanel" id="panel-entrainement" aria-labelledby="tab-entrainement" tabindex="0" hidden>
-					<p class="lb-mode-intro">
-						Choisissez librement vos questions, par exemple les questions d’interprétation avant un devoir.
-						<strong>L’entraînement ne modifie pas vos boîtes</strong> : il ne remplace pas la révision quotidienne.
-					</p>
-					<form class="lb-practice-form" data-practice-form>
+				<details class="lb-fold" data-fold="settings">
+					<summary>Réglages</summary>
+					<div class="lb-fold-body lb-settings-grid">
 						<div class="lb-field">
-							<label for="practice-category">Catégorie</label>
-							<select id="practice-category" name="category">
-								<option value="">Toutes</option>
-								{categoryOrder.map((c) => <option value={c}>{categoryLabels[c]} ({countIn(c)})</option>)}
+							<label for="setting-goal">Objectif par jour (questions)</label>
+							<select id="setting-goal" data-setting="dailyGoal">
+								{DAILY_GOAL_OPTIONS.map((n) => <option value={n} selected={n === DEFAULT_SETTINGS.dailyGoal}>{n}</option>)}
 							</select>
 						</div>
 						<div class="lb-field">
-							<label for="practice-difficulty">Difficulté</label>
-							<select id="practice-difficulty" name="difficulty">
-								<option value="">Toutes</option>
-								{Object.entries(difficultyLabels).map(([v, l]) => <option value={v}>{l}</option>)}
+							<label for="setting-new">Nouvelles questions par jour</label>
+							<select id="setting-new" data-setting="newPerDay">
+								{NEW_PER_DAY_OPTIONS.map((n) => <option value={n} selected={n === DEFAULT_SETTINGS.newPerDay}>{n}</option>)}
 							</select>
 						</div>
 						<div class="lb-field">
-							<label for="practice-skill">Type de question</label>
-							<select id="practice-skill" name="skill">
-								<option value="">Toutes</option>
-								{Object.entries(skillLabels).map(([v, l]) => <option value={v}>{l}</option>)}
-							</select>
-						</div>
-						<div class="lb-field">
-							<label for="practice-size">Nombre de cartes</label>
-							<select id="practice-size" name="size">
-								<option value="10">10</option>
-								<option value="20">20</option>
-								<option value="0">Toutes celles qui correspondent</option>
-							</select>
-						</div>
-						<div class="lb-practice-actions">
-							<p class="lb-help" data-practice-count aria-live="polite"></p>
-							<button type="submit" class="lb-btn lb-btn--primary">Commencer l’entraînement</button>
-							<button type="button" class="lb-btn lb-btn--ghost" data-practice-preset="interpretation">
-								Questions d’interprétation (avancé)
-							</button>
-						</div>
-					</form>
-				</div>
-
-				<!-- Parcourir -->
-				<div class="lb-tabpanel" role="tabpanel" id="panel-parcourir" aria-labelledby="tab-parcourir" tabindex="0" hidden>
-					<p class="lb-mode-intro">
-						Consultez toutes les cartes, avec leur réponse. Parcourir les cartes <strong>ne modifie pas</strong>
-						votre progression : seule une révision compte.
-					</p>
-					<form class="lb-browse-filters" data-browse-form>
-						<div class="lb-field">
-							<label for="browse-category">Catégorie</label>
-							<select id="browse-category" name="category">
-								<option value="">Toutes</option>
+							<label for="discover-category">Nouvelles questions : commencer par</label>
+							<select id="discover-category">
+								<option value="">tous les thèmes, en alternance</option>
 								{categoryOrder.map((c) => <option value={c}>{categoryLabels[c]}</option>)}
 							</select>
 						</div>
-						<div class="lb-field">
-							<label for="browse-difficulty">Difficulté</label>
-							<select id="browse-difficulty" name="difficulty">
-								<option value="">Toutes</option>
-								{Object.entries(difficultyLabels).map(([v, l]) => <option value={v}>{l}</option>)}
-							</select>
+						<div class="lb-reset">
+							<p class="lb-help">
+								Ta progression est enregistrée dans ce navigateur, sur cet appareil seulement. Aucun compte,
+								aucune donnée envoyée.
+							</p>
+							<button type="button" class="lb-btn lb-btn--danger" data-reset-open>Effacer ma progression…</button>
 						</div>
-						<div class="lb-field">
-							<label for="browse-box">Boîte</label>
-							<select id="browse-box" name="box">
-								<option value="">Toutes</option>
-								<option value="0">Pas encore découverte</option>
-								{BOXES.map((b) => <option value={String(b)}>Boîte {b}</option>)}
-							</select>
-						</div>
-						<div class="lb-field">
-							<label for="browse-status">État</label>
-							<select id="browse-status" name="status">
-								<option value="">Tous</option>
-								<option value="new">Nouvelles</option>
-								<option value="learning">Revues, en cours</option>
-								<option value="mastered">Maîtrisées</option>
-							</select>
-						</div>
-						<div class="lb-field lb-field--search">
-							<label for="browse-search">Rechercher</label>
-							<input id="browse-search" name="search" type="search" placeholder="Berthe, ironie, dot…" autocomplete="off" />
-						</div>
-						<button type="reset" class="lb-btn lb-btn--ghost">Effacer les filtres</button>
-					</form>
-					<p class="lb-browse-count" data-browse-count role="status">{cards.length} cartes affichées</p>
-					<p class="lb-empty" data-browse-empty hidden>
-						Aucune carte ne correspond à ces filtres. Essayez d’en retirer un.
-					</p>
-
-					<ul class="lb-browse-list" data-browse-list>
-						{
-							cards.map((card) => (
-								<li
-									class="lb-browse-item"
-									id={`carte-${card.id}`}
-									data-card-id={card.id}
-									data-category={card.category}
-									data-difficulty={card.difficulty}
-									data-box="0"
-									data-status="new"
-								>
-									<details>
-										<summary>
-											<span class="lb-chips">
-												<span class={`lb-chip lb-chip--cat lb-cat-${card.category}`}>{categoryLabels[card.category]}</span>
-												<span class={`lb-chip lb-chip--diff lb-diff-${card.difficulty}`}>{difficultyLabels[card.difficulty]}</span>
-												<span class="lb-chip lb-chip--box" data-box-chip>Nouvelle</span>
-											</span>
-											<span class="lb-browse-question">{card.question}</span>
-										</summary>
-										<div class="lb-browse-body">
-											<p class="lb-skill">{skillLabels[card.skill]}</p>
-											{card.hint && (
-												<p class="lb-browse-hint">
-													<strong>Indice :</strong> {card.hint}
-												</p>
-											)}
-											<p class="lb-answer-text">{card.answer}</p>
-											{card.explanation && <p class="lb-explanation">{card.explanation}</p>}
-											{card.quotation && (
-												<blockquote class="lb-quote">
-													<p>« {card.quotation.text} »</p>
-													<cite>
-														{card.quotation.speaker}, ch. {card.quotation.chapter}
-													</cite>
-												</blockquote>
-											)}
-											{(card.focus || card.reference) && (
-												<dl class="lb-meta">
-													{card.focus && (
-														<div>
-															<dt>Personnages / thèmes</dt>
-															<dd>{card.focus.join(' · ')}</dd>
-														</div>
-													)}
-													{card.reference && (
-														<div>
-															<dt>Dans le roman</dt>
-															<dd>{card.reference}</dd>
-														</div>
-													)}
-												</dl>
-											)}
-										</div>
-									</details>
-								</li>
-							))
-						}
-					</ul>
-				</div>
-
-				<!-- Séance en cours (révision, découverte ou entraînement) -->
-				<div class="lb-session" data-session hidden>
-					<div class="lb-session-bar">
-						<p class="lb-session-title" data-session-title></p>
-						<p class="lb-session-progress" data-session-progress></p>
-						<button type="button" class="lb-btn lb-btn--ghost lb-btn--small" data-session-quit>Terminer la séance</button>
 					</div>
-					<div class="lb-bar lb-bar--thin" aria-hidden="true" data-bar="session"><span class="lb-bar-fill"></span></div>
+				</details>
 
-					<article class="lb-card" data-study-card aria-labelledby="study-question">
-						<header class="lb-card-head">
-							<span class="lb-chips" data-study-chips></span>
-						</header>
-						<p class="lb-step">1. Lisez la question.</p>
-						<h3 id="study-question" class="lb-card-question" tabindex="-1" data-study-question></h3>
-						<details class="lb-hint" data-study-hint-wrap>
-							<summary>Besoin d’un indice ?</summary>
-							<p data-study-hint></p>
-						</details>
-
-						<div class="lb-attempt">
-							<label for="study-attempt" class="lb-step">2. Cherchez la réponse de mémoire. <span class="lb-optional">Vous pouvez l’écrire ici (facultatif, rien n’est enregistré).</span></label>
-							<textarea id="study-attempt" rows="3" data-study-attempt></textarea>
-						</div>
-
-						<div class="lb-reveal-row" data-reveal-row>
-							<button type="button" class="lb-btn lb-btn--primary lb-btn--large" data-reveal>
-								3. Afficher la réponse
-							</button>
-							<p class="lb-kbd-help">Raccourci : touche <kbd>Entrée</kbd> ou <kbd>Espace</kbd> sur le bouton.</p>
-						</div>
-
-						<section class="lb-answer" data-answer hidden aria-labelledby="study-answer-title">
-							<h4 id="study-answer-title" tabindex="-1" data-answer-title>Réponse</h4>
-							<p class="lb-answer-text" data-answer-text></p>
-							<p class="lb-explanation" data-answer-explanation></p>
-							<blockquote class="lb-quote" data-answer-quote>
-								<p data-answer-quote-text></p>
-								<cite data-answer-quote-cite></cite>
-							</blockquote>
-							<dl class="lb-meta" data-answer-meta></dl>
-
-							<div class="lb-assess" role="group" aria-labelledby="lb-assess-title">
-								<p class="lb-step" id="lb-assess-title">4. Évaluez honnêtement votre réponse.</p>
-								<p class="lb-assess-hint" data-assess-hint></p>
-								<div class="lb-assess-buttons">
-									<button type="button" class="lb-btn lb-btn--again" data-assess="forgotten">
-										<span class="lb-assess-label">À revoir</span>
-										<span class="lb-assess-effect" data-assess-effect="forgotten"></span>
-									</button>
-									<button type="button" class="lb-btn lb-btn--known" data-assess="known">
-										<span class="lb-assess-label">Je savais</span>
-										<span class="lb-assess-effect" data-assess-effect="known"></span>
-									</button>
-								</div>
-								<p class="lb-kbd-help">Raccourcis clavier : <kbd>R</kbd> à revoir · <kbd>S</kbd> je savais.</p>
-							</div>
-						</section>
-					</article>
-
-					<section class="lb-summary" data-summary hidden aria-labelledby="lb-summary-title">
-						<h3 id="lb-summary-title" tabindex="-1">Séance terminée</h3>
-						<p class="lb-summary-message" data-summary-message></p>
-						<dl class="lb-summary-stats">
-							<div class="lb-summary-stat lb-summary-stat--known">
-								<dt>Je savais</dt>
-								<dd data-summary-known>0</dd>
-							</div>
-							<div class="lb-summary-stat lb-summary-stat--forgotten">
-								<dt>À revoir</dt>
-								<dd data-summary-forgotten>0</dd>
-							</div>
-						</dl>
-						<div data-summary-review-wrap hidden>
-							<h4>À relire en priorité</h4>
-							<ul class="lb-summary-list" data-summary-list></ul>
-						</div>
-						<p class="lb-help" data-summary-next></p>
-						<div class="lb-summary-actions">
-							<button type="button" class="lb-btn lb-btn--primary" data-summary-back>Retour aux modes d’étude</button>
-						</div>
-					</section>
-				</div>
-
-				<p class="sr-only" aria-live="polite" data-announcer></p>
-			</section>
-
-			<!-- ============================================================ -->
-			<!-- Réglages, méthode, réinitialisation                          -->
-			<!-- ============================================================ -->
-			<section class="lb-settings" aria-labelledby="lb-settings-title">
-				<h2 id="lb-settings-title">Réglages</h2>
-				<div class="lb-settings-grid">
-					<div class="lb-field">
-						<label for="setting-goal">Objectif quotidien (cartes évaluées)</label>
-						<select id="setting-goal" data-setting="dailyGoal">
-							{DAILY_GOAL_OPTIONS.map((n) => <option value={n} selected={n === DEFAULT_SETTINGS.dailyGoal}>{n}</option>)}
-						</select>
-					</div>
-					<div class="lb-field">
-						<label for="setting-new">Nouvelles cartes par jour</label>
-						<select id="setting-new" data-setting="newPerDay">
-							{NEW_PER_DAY_OPTIONS.map((n) => <option value={n} selected={n === DEFAULT_SETTINGS.newPerDay}>{n}</option>)}
-						</select>
-					</div>
-					<div class="lb-reset">
-						<p class="lb-help">
-							Votre progression est enregistrée dans ce navigateur, sur cet appareil uniquement. Aucun compte,
-							aucune donnée envoyée.
-						</p>
-						<button type="button" class="lb-btn lb-btn--danger" data-reset-open>Effacer ma progression…</button>
-					</div>
-				</div>
-			</section>
-
-			<section class="lb-method" aria-labelledby="lb-method-title">
-				<h2 id="lb-method-title">Pourquoi ça marche</h2>
-				<div class="lb-method-grid">
-					<div>
-						<h3>Se tester plutôt que relire</h3>
+				<details class="lb-fold" data-fold="method">
+					<summary>Comment ça marche</summary>
+					<div class="lb-fold-body lb-method">
 						<p>
-							Chercher une réponse dans sa mémoire, même sans la trouver, la renforce davantage qu’une simple
-							relecture. C’est pourquoi la réponse reste cachée tant que vous n’avez pas essayé.
+							Chaque question voyage entre cinq boîtes. Si tu connaissais la réponse, elle passe dans la boîte
+							suivante et reviendra plus tard ; sinon, elle retourne dans la boîte 1 et revient dès la prochaine
+							séance. Les questions faciles s’espacent, les difficiles reviennent souvent.
 						</p>
-					</div>
-					<div>
-						<h3>Espacer les révisions</h3>
+						<ol class="lb-boxes-strip" aria-label="Les cinq boîtes et leur rythme de révision">
+							{
+								BOXES.map((box) => (
+									<li class={`lb-box-step lb-box-${box}`}>
+										<span class="lb-box-step-name">Boîte {box}</span>
+										<span class="lb-box-step-interval">{intervalLabel(BOX_INTERVAL_DAYS[box])}</span>
+										<span class="lb-box-step-purpose">{boxPurpose[box]}</span>
+									</li>
+								))
+							}
+						</ol>
+						<h3>Pourquoi ça marche</h3>
 						<p>
-							On oublie vite ce qu’on vient d’apprendre. Revoir une notion juste au moment où elle commence à
-							s’effacer la fixe plus durablement : c’est la répétition espacée. Les intervalles de 1, 3, 7 et
-							14 jours suivent ce principe.
+							<strong>Se tester plutôt que relire :</strong> chercher une réponse dans sa mémoire, même sans la
+							trouver, la renforce davantage qu’une relecture. <strong>Espacer :</strong> revoir une notion au
+							moment où elle commence à s’effacer la fixe plus durablement. <strong>Connaître, puis
+							comprendre :</strong> certaines questions demandent un fait, d’autres une explication du sens.
+						</p>
+						<h3>Pour qui ?</h3>
+						<p class="lb-level-note">
+							Pour une élève ou un élève de seconde qui lit le roman. Les questions « Se préparer au bac » vont
+							plus loin : en <strong>première</strong>, pour l’épreuve anticipée de français de la session 2027,
+							<cite>Pot-Bouille</cite> est associé au parcours « Dévoiler les rouages de la société ». Ce n’est
+							pas une exigence du programme de seconde, mais un entraînement anticipé.
+						</p>
+						<p class="lb-sources">
+							<strong>Sources des citations :</strong> toutes les phrases de Zola citées ont été vérifiées mot
+							pour mot sur le texte de l’édition G. Charpentier (1883), transcrit sur Wikisource. Quand aucune
+							citation sûre n’était disponible, la question décrit la scène sans la citer.
+						</p>
+						<p class="lb-back-link">
+							<a href="/pot-bouille">Revoir la carte des personnages et la coupe de l’immeuble de <cite>Pot-Bouille</cite></a>
 						</p>
 					</div>
-					<div>
-						<h3>Connaître, puis comprendre</h3>
-						<p>
-							Certaines cartes demandent un fait (<em>Connaître un fait</em>), d’autres une explication
-							(<em>Comprendre le sens</em>). Pour ces dernières, répondez « je savais » seulement si vous avez
-							su expliquer, pas seulement citer.
-						</p>
-					</div>
-				</div>
-				<p class="lb-sources">
-					<strong>Sources des citations :</strong> toutes les phrases de Zola citées sur les cartes ont été
-					vérifiées mot pour mot sur le texte de l’édition G. Charpentier (1883), transcrit sur Wikisource. Quand
-					aucune citation sûre n’était disponible, la carte décrit la scène sans la citer.
-				</p>
+				</details>
 			</section>
 
 			<dialog class="lb-dialog" data-reset-dialog aria-labelledby="lb-reset-title" aria-describedby="lb-reset-desc">
 				<form method="dialog">
-					<h2 id="lb-reset-title">Effacer toute votre progression ?</h2>
+					<h2 id="lb-reset-title">Effacer toute ta progression ?</h2>
 					<p id="lb-reset-desc">
-						Toutes les cartes retourneront à l’état « nouvelle » et votre historique sera supprimé. Cette action
-						est définitive. Vos réglages sont conservés.
+						Toutes les questions redeviendront « jamais vues » et ton historique sera supprimé. C’est
+						définitif. Tes réglages sont conservés.
 					</p>
 					<div class="lb-dialog-actions">
 						<button type="submit" value="cancel" class="lb-btn lb-btn--primary" autofocus>Annuler</button>
@@ -635,114 +571,243 @@ const countIn = (category: string) => cards.filter((c) => c.category === categor
 		}
 	}
 
-	.leitner-page :is(h1, h2, h3, h4) {
+	.leitner-page.page-container {
+		max-width: 46rem;
+	}
+	.leitner-page :is(h1, h2, h3) {
 		color: var(--lb-heading);
 		font-family: var(--lb-serif);
 		font-weight: normal;
 	}
 	.leitner-page h2 {
-		font-size: clamp(1.45rem, 3vw, 1.85rem);
+		font-size: clamp(1.4rem, 3vw, 1.75rem);
 		margin: 0 0 1rem;
 	}
 	.leitner-page h3 {
 		font-size: 1.15rem;
-		margin: 0 0 0.6rem;
-	}
-	.leitner-page h4 {
-		font-size: 1.02rem;
-		margin: 0 0 0.4rem;
+		margin: 1.5rem 0 0.5rem;
 	}
 	.leitner-page a {
 		color: var(--lb-accent);
 	}
-	.leitner-page section + section {
-		margin-top: 3rem;
-	}
-
-	/* Focus visible sur tous les contrôles */
 	.leitner-page :is(button, select, input, textarea, summary, a, [tabindex]):focus-visible {
 		outline: 3px solid var(--lb-focus);
 		outline-offset: 2px;
 		border-radius: 6px;
 	}
-
-	/* En-tête --------------------------------------------------------------- */
-	.lb-intro {
-		max-width: 860px;
-		margin: 0 auto 2.5rem;
-		text-align: center;
+	.lb-help {
+		margin: 0.4rem 0 0;
+		font-size: 0.88rem;
+		color: var(--lb-muted);
 	}
-	.lb-intro .intro-eyebrow {
+	.lb-help--top {
+		margin: 0 0 1rem;
+	}
+
+	/* Boutons ------------------------------------------------------------- */
+	.lb-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 3rem;
+		padding: 0.6rem 1.4rem;
+		border: 2px solid transparent;
+		border-radius: 10px;
+		font: inherit;
+		font-weight: 700;
+		line-height: 1.25;
+		cursor: pointer;
+	}
+	.lb-btn--primary {
+		background: var(--lb-accent);
+		color: var(--lb-accent-ink);
+	}
+	.lb-btn--primary:hover {
+		filter: brightness(1.08);
+	}
+	.lb-btn--secondary {
+		background: var(--lb-surface);
+		border-color: var(--lb-accent);
+		color: var(--lb-accent);
+	}
+	.lb-btn--secondary:hover {
+		background: var(--lb-accent-soft);
+	}
+	.lb-btn--danger {
+		background: transparent;
+		border-color: var(--lb-danger);
+		color: var(--lb-danger);
+	}
+	.lb-btn--hero {
+		min-height: 3.5rem;
+		padding: 0.8rem 2rem;
+		font-size: 1.15rem;
+	}
+	.lb-btn--wide {
+		width: 100%;
+	}
+	.lb-linklike {
+		padding: 0.25rem 0;
+		border: 0;
+		background: none;
+		color: var(--lb-accent);
+		font: inherit;
+		text-align: left;
+		text-decoration: underline;
+		text-underline-offset: 0.18em;
+		cursor: pointer;
+	}
+
+	/* Accueil ------------------------------------------------------------- */
+	.lb-home {
+		text-align: center;
+		padding: 0.5rem 0 1rem;
+	}
+	.lb-home .intro-eyebrow {
 		--intro-eyebrow-color: var(--lb-accent);
 	}
-	.lb-intro h1 {
+	.lb-home h1 {
 		margin: 0 0 0.5rem;
-		font-size: clamp(2rem, 5vw, 3rem);
+		font-size: clamp(2.1rem, 6vw, 3rem);
 		line-height: 1.15;
 	}
 	.lb-subtitle {
-		margin: 0 0 1.25rem;
-		font-size: 1.15rem;
+		margin: 0 auto 2rem;
+		max-width: 30rem;
+		font-size: 1.12rem;
 		color: var(--lb-muted);
 	}
-	.lb-principle {
-		max-width: 680px;
-		margin: 0 auto 1.5rem;
-		text-align: left;
-	}
-	.lb-boxes-strip {
-		display: grid;
-		grid-template-columns: repeat(5, minmax(0, 1fr));
-		gap: 0.5rem;
+	.lb-summary-lines {
 		list-style: none;
-		margin: 0 0 1.5rem;
+		margin: 1.75rem auto 0;
 		padding: 0;
-		text-align: left;
+		display: grid;
+		gap: 0.35rem;
+		font-size: 1rem;
 	}
-	.lb-box-step {
-		display: flex;
-		flex-direction: column;
-		gap: 0.1rem;
-		padding: 0.7rem 0.75rem 0.75rem;
-		background: var(--lb-surface);
-		border: 1px solid var(--lb-border);
-		border-top: 6px solid var(--box-color);
-		border-radius: 8px;
-		font-size: 0.85rem;
-		line-height: 1.35;
-	}
-	.lb-box-step-name {
-		font-weight: 700;
+	.lb-summary-lines strong {
 		color: var(--lb-heading);
 	}
-	.lb-box-step-interval {
-		color: var(--lb-accent);
-		font-weight: 700;
+	.lb-home-message {
+		max-width: 32rem;
+		margin: 1.5rem auto 0;
+		padding: 1rem 1.2rem;
+		background: var(--lb-surface-alt);
+		border-radius: 12px;
+		text-align: left;
 	}
-	.lb-box-step-purpose {
+	.lb-home-message p {
+		margin: 0 0 0.75rem;
+	}
+	.lb-home-message .lb-message-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1.25rem;
+		align-items: center;
+	}
+	.lb-choices {
+		margin: 2.75rem auto 0;
+	}
+	.lb-choices-label {
+		margin: 0 0 0.6rem;
+		font-size: 0.9rem;
 		color: var(--lb-muted);
 	}
-	.lb-box-1 { --box-color: var(--lb-box-1); }
-	.lb-box-2 { --box-color: var(--lb-box-2); }
-	.lb-box-3 { --box-color: var(--lb-box-3); }
-	.lb-box-4 { --box-color: var(--lb-box-4); }
-	.lb-box-5 { --box-color: var(--lb-box-5); }
-
-	.lb-level-note {
-		max-width: 680px;
-		margin: 0 auto;
-		padding: 0.9rem 1.1rem;
-		text-align: left;
+	.lb-choices-row {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.6rem;
+	}
+	.lb-choice {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.1rem;
+		min-height: 3.5rem;
+		padding: 0.7rem 0.6rem;
+		border: 1px solid var(--lb-border);
+		border-radius: 12px;
+		background: var(--lb-surface);
+		color: var(--lb-ink);
+		font: inherit;
+		cursor: pointer;
+	}
+	.lb-choice:hover,
+	.lb-choice[aria-expanded='true'] {
+		border-color: var(--lb-accent);
+	}
+	.lb-choice-name {
+		font-weight: 700;
+	}
+	.lb-choice-desc {
+		font-size: 0.82rem;
+		color: var(--lb-muted);
+	}
+	.lb-practice {
+		max-width: 32rem;
+		margin: 1rem auto 0;
+		padding: 1.1rem 1.2rem;
 		background: var(--lb-surface-alt);
-		border-left: 4px solid var(--lb-accent);
-		border-radius: 0 8px 8px 0;
+		border-radius: 12px;
+		text-align: left;
+	}
+	.lb-practice-intro {
+		margin: 0 0 0.8rem;
+	}
+	.lb-more {
+		margin: 0.8rem 0 0;
+	}
+	.lb-more summary {
+		cursor: pointer;
 		font-size: 0.92rem;
+		color: var(--lb-accent);
 	}
-	.lb-level-note p {
-		margin: 0 0 0.5rem;
+	.lb-more-grid {
+		display: grid;
+		gap: 0.75rem;
+		margin-top: 0.75rem;
 	}
-	.lb-level-note p:last-child {
-		margin: 0;
+	.lb-practice-actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem 1rem;
+		margin-top: 0.9rem;
+	}
+	.lb-progress-link {
+		margin: 2rem 0 0;
+		font-size: 0.95rem;
+	}
+
+	/* Champs ---------------------------------------------------------------- */
+	.lb-field {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		min-width: 0;
+	}
+	.lb-field label {
+		font-size: 0.88rem;
+		font-weight: 700;
+	}
+	.leitner-page select,
+	.leitner-page input[type='search'],
+	.leitner-page textarea {
+		box-sizing: border-box;
+		width: 100%;
+		max-width: 100%;
+		min-height: 2.75rem;
+		padding: 0.45rem 0.6rem;
+		border: 1px solid var(--lb-border-strong);
+		border-radius: 8px;
+		background: var(--lb-surface);
+		color: var(--lb-ink);
+		font: inherit;
+		font-size: 1rem;
+	}
+	.leitner-page textarea {
+		resize: vertical;
+		margin-top: 0.5rem;
 	}
 
 	.lb-noscript,
@@ -750,67 +815,29 @@ const countIn = (category: string) => cards.filter((c) => c.category === categor
 		padding: 0.9rem 1.1rem;
 		border: 1px solid var(--lb-again);
 		background: var(--lb-again-soft);
-		border-radius: 8px;
+		border-radius: 10px;
 	}
 
-	/* Panneaux génériques ---------------------------------------------------- */
-	.lb-panel {
+	/* Séance ---------------------------------------------------------------- */
+	.lb-session {
+		padding-top: 0.25rem;
+	}
+	.lb-session-bar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-bottom: 0.4rem;
+	}
+	.lb-session-title {
 		margin: 0;
-		padding: 1.1rem 1.2rem;
-		background: var(--lb-surface);
-		border: 1px solid var(--lb-border);
-		border-radius: 10px;
-	}
-	.lb-help {
-		margin: 0.4rem 0 0;
-		font-size: 0.85rem;
+		font-size: 0.9rem;
+		font-weight: 700;
 		color: var(--lb-muted);
-	}
-
-	/* Tableau de bord ------------------------------------------------------- */
-	.lb-stats {
-		display: grid;
-		grid-template-columns: repeat(4, minmax(0, 1fr));
-		gap: 0.75rem;
-		margin: 0 0 1.25rem;
-	}
-	.lb-stat {
-		padding: 0.85rem 1rem;
-		background: var(--lb-surface);
-		border: 1px solid var(--lb-border);
-		border-radius: 10px;
-	}
-	.lb-stat dt {
-		font-size: 0.82rem;
-		color: var(--lb-muted);
-	}
-	.lb-stat dd {
-		margin: 0.15rem 0 0;
-		font-family: var(--lb-serif);
-		font-size: 2rem;
-		line-height: 1.1;
-		color: var(--lb-heading);
-		font-variant-numeric: tabular-nums;
-	}
-	.lb-stat--due {
-		border-color: var(--lb-accent);
-		background: var(--lb-accent-soft);
-	}
-	.lb-stat-help {
-		margin: 0.1rem 0 0;
-		font-size: 0.75rem;
-		color: var(--lb-muted);
-	}
-
-	.lb-progress-block {
-		margin-bottom: 1.25rem;
-	}
-	.lb-progress-label {
-		margin: 0 0 0.35rem;
 	}
 	.lb-bar {
 		position: relative;
-		height: 0.75rem;
+		height: 0.6rem;
 		background: var(--lb-surface-alt);
 		border: 1px solid var(--lb-border);
 		border-radius: 999px;
@@ -828,17 +855,257 @@ const countIn = (category: string) => cards.filter((c) => c.category === categor
 		background: var(--lb-known);
 	}
 	.lb-bar--thin {
-		height: 0.4rem;
-		margin-bottom: 1rem;
+		height: 0.3rem;
+		border: 0;
 	}
 	.lb-bar--thin .lb-bar-fill {
 		background: var(--lb-accent);
 	}
-
-	.lb-dashboard-grid {
+	.lb-feedback {
+		min-height: 1.6rem;
+		margin: 0.75rem 0 0;
+		font-size: 0.95rem;
+		font-weight: 700;
+	}
+	.lb-feedback[data-tone='known'] {
+		color: var(--lb-known);
+	}
+	.lb-feedback[data-tone='forgotten'] {
+		color: var(--lb-again);
+	}
+	.lb-card {
+		margin-top: 0.5rem;
+		padding: 1.5rem 1.4rem 1.6rem;
+		background: var(--lb-surface);
+		border: 1px solid var(--lb-border);
+		border-radius: 14px;
+	}
+	.lb-card-eyebrow {
+		margin: 0;
+		font-size: 0.82rem;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--lb-accent);
+	}
+	.lb-card-count {
+		margin: 0.15rem 0 0.9rem;
+		font-size: 0.82rem;
+		color: var(--lb-muted);
+		font-variant-numeric: tabular-nums;
+	}
+	.leitner-page .lb-card-question {
+		margin: 0 0 1rem;
+		font-size: clamp(1.3rem, 4.2vw, 1.65rem);
+		line-height: 1.3;
+	}
+	.lb-practice-note {
+		margin: -0.4rem 0 1rem;
+		font-size: 0.85rem;
+		color: var(--lb-muted);
+	}
+	.lb-card-tools {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.25rem 1.5rem;
+		margin-bottom: 1.25rem;
+	}
+	.lb-hint summary {
+		cursor: pointer;
+		color: var(--lb-accent);
+		font-size: 0.92rem;
+	}
+	.lb-hint p {
+		margin: 0.5rem 0 0;
+		padding: 0.5rem 0.75rem;
+		background: var(--lb-surface-alt);
+		border-radius: 8px;
+	}
+	.lb-hint[open] {
+		flex-basis: 100%;
+	}
+	.lb-answer {
+		margin-top: 0.25rem;
+	}
+	.leitner-page .lb-answer h3 {
+		margin: 0 0 0.5rem;
+		padding-top: 1rem;
+		border-top: 1px solid var(--lb-border);
+	}
+	.lb-answer-text {
+		margin: 0 0 0.6rem;
+		font-weight: 700;
+	}
+	.lb-explanation {
+		margin: 0 0 0.6rem;
+	}
+	.lb-quote {
+		margin: 0.75rem 0;
+		padding: 0.5rem 0.9rem;
+		border-left: 3px solid var(--lb-accent);
+		font-size: 1rem;
+	}
+	.lb-quote p {
+		margin: 0;
+		font-family: var(--lb-serif);
+		font-style: italic;
+	}
+	.lb-quote cite {
+		display: block;
+		margin-top: 0.3rem;
+		font-size: 0.82rem;
+		font-style: normal;
+		color: var(--lb-muted);
+	}
+	.lb-reference {
+		margin: 0.25rem 0 0;
+		font-size: 0.85rem;
+		color: var(--lb-muted);
+	}
+	.lb-assess {
+		margin-top: 1.4rem;
+	}
+	.lb-assess-title {
+		margin: 0 0 0.3rem;
+		font-size: 0.95rem;
+	}
+	.lb-assess-hint {
+		margin: 0 0 0.3rem;
+		font-size: 0.92rem;
+		color: var(--lb-accent);
+	}
+	.lb-assess-buttons {
 		display: grid;
-		grid-template-columns: 1.15fr 1fr;
-		gap: 1rem;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.75rem;
+		margin-top: 0.75rem;
+	}
+	.lb-assess-buttons .lb-btn {
+		min-height: 3.5rem;
+		font-size: 1.1rem;
+	}
+	.lb-btn--known {
+		background: var(--lb-known-soft);
+		border-color: var(--lb-known);
+		color: var(--lb-known);
+	}
+	.lb-btn--again {
+		background: var(--lb-again-soft);
+		border-color: var(--lb-again);
+		color: var(--lb-again);
+	}
+	.lb-btn--known:hover,
+	.lb-btn--again:hover {
+		filter: brightness(0.97);
+	}
+	.lb-kbd-help {
+		margin: 0.6rem 0 0;
+		font-size: 0.8rem;
+		color: var(--lb-muted);
+	}
+	.lb-kbd-help kbd {
+		padding: 0.05rem 0.35rem;
+		border: 1px solid var(--lb-border-strong);
+		border-bottom-width: 2px;
+		border-radius: 4px;
+		font-family: inherit;
+		font-size: 0.78rem;
+	}
+
+	.lb-summary {
+		margin-top: 1rem;
+		padding: 2rem 1.4rem;
+		background: var(--lb-surface);
+		border: 1px solid var(--lb-border);
+		border-radius: 14px;
+		text-align: center;
+	}
+	.lb-summary-counts {
+		list-style: none;
+		margin: 0 0 1rem;
+		padding: 0;
+		display: grid;
+		gap: 0.3rem;
+		font-size: 1.05rem;
+	}
+	.lb-summary-message {
+		margin: 0 auto 1.5rem;
+		max-width: 28rem;
+		color: var(--lb-muted);
+	}
+	.lb-summary-actions {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.75rem;
+	}
+
+	/* Section secondaire ------------------------------------------------- */
+	.lb-secondary {
+		margin-top: 4rem;
+		padding-top: 2rem;
+		border-top: 1px solid var(--lb-border);
+	}
+	.lb-fold {
+		border-bottom: 1px solid var(--lb-border);
+	}
+	.lb-fold > summary {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0.95rem 0.25rem;
+		font-weight: 700;
+		cursor: pointer;
+		list-style: none;
+	}
+	.lb-fold > summary::-webkit-details-marker {
+		display: none;
+	}
+	.lb-fold > summary::after {
+		content: '+';
+		font-size: 1.3rem;
+		font-weight: 400;
+		color: var(--lb-accent);
+	}
+	.lb-fold[open] > summary::after {
+		content: '–';
+	}
+	.lb-fold-body {
+		padding: 0.25rem 0.25rem 1.75rem;
+	}
+
+	.lb-stats {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 0.6rem;
+		margin: 0 0 1.25rem;
+	}
+	.lb-stat {
+		padding: 0.7rem 0.85rem;
+		background: var(--lb-surface-alt);
+		border-radius: 10px;
+	}
+	.lb-stat dt {
+		font-size: 0.8rem;
+		color: var(--lb-muted);
+	}
+	.lb-stat dd {
+		margin: 0.1rem 0 0;
+		font-size: 1.4rem;
+		font-weight: 700;
+		color: var(--lb-heading);
+		font-variant-numeric: tabular-nums;
+	}
+	.lb-progress-label {
+		margin: 0 0 0.35rem;
+	}
+	.lb-dist-new-line {
+		margin: 0 0 0.5rem;
+		font-size: 0.9rem;
+		color: var(--lb-muted);
+	}
+	.lb-dist-new-line strong {
+		color: var(--lb-heading);
 	}
 	.lb-dist {
 		display: grid;
@@ -846,16 +1113,8 @@ const countIn = (category: string) => cards.filter((c) => c.category === categor
 		gap: 0.5rem;
 		align-items: end;
 		list-style: none;
-		margin: 0.5rem 0 0;
-		padding: 0;
-	}
-	.lb-dist-new-line {
 		margin: 0;
-		font-size: 0.9rem;
-		color: var(--lb-muted);
-	}
-	.lb-dist-new-line strong {
-		color: var(--lb-heading);
+		padding: 0;
 	}
 	.lb-dist-col {
 		display: flex;
@@ -866,16 +1125,14 @@ const countIn = (category: string) => cards.filter((c) => c.category === categor
 	.lb-dist-count {
 		font-weight: 700;
 		font-variant-numeric: tabular-nums;
-		color: var(--lb-heading);
 	}
 	.lb-dist-track {
 		display: flex;
 		align-items: flex-end;
 		width: 100%;
-		max-width: 3.25rem;
-		height: 8.5rem;
+		max-width: 3rem;
+		height: 6rem;
 		background: var(--lb-surface-alt);
-		border: 1px solid var(--lb-border);
 		border-radius: 6px 6px 3px 3px;
 		overflow: hidden;
 	}
@@ -889,27 +1146,21 @@ const countIn = (category: string) => cards.filter((c) => c.category === categor
 	.lb-dist-label {
 		font-size: 0.76rem;
 		color: var(--lb-muted);
-		text-align: center;
-		line-height: 1.2;
 	}
-
+	.lb-box-1 { --box-color: var(--lb-box-1); }
+	.lb-box-2 { --box-color: var(--lb-box-2); }
+	.lb-box-3 { --box-color: var(--lb-box-3); }
+	.lb-box-4 { --box-color: var(--lb-box-4); }
+	.lb-box-5 { --box-color: var(--lb-box-5); }
 	.lb-goal-text {
 		margin: 0 0 0.4rem;
-	}
-	.lb-goal-message {
-		margin: 0.5rem 0 1rem;
-		font-size: 0.88rem;
-		color: var(--lb-muted);
-	}
-	.lb-history-title {
-		margin-top: 0.5rem;
 	}
 	.lb-history {
 		display: grid;
 		grid-template-columns: repeat(14, minmax(0, 1fr));
 		gap: 3px;
 		align-items: end;
-		height: 4.5rem;
+		height: 4rem;
 		list-style: none;
 		margin: 0;
 		padding: 0;
@@ -950,501 +1201,68 @@ const countIn = (category: string) => cards.filter((c) => c.category === categor
 		background: var(--lb-again);
 		opacity: 0.55;
 	}
-
-	.lb-attention {
-		margin-top: 1rem;
-		border-left: 4px solid var(--lb-again);
-	}
 	.lb-attention-list {
-		margin: 0.6rem 0 0;
+		margin: 0.5rem 0 0;
 		padding-left: 1.1rem;
 	}
 	.lb-attention-list li + li {
 		margin-top: 0.3rem;
 	}
-	.lb-attention-list button,
-	.lb-linklike {
-		padding: 0;
-		border: 0;
-		background: none;
-		color: var(--lb-accent);
-		font: inherit;
-		text-align: left;
-		text-decoration: underline;
-		cursor: pointer;
-	}
 
-	/* Onglets --------------------------------------------------------------- */
-	.lb-tabs {
-		display: grid;
-		grid-template-columns: repeat(4, minmax(0, 1fr));
-		gap: 0.4rem;
-		margin-bottom: 0;
-		border-bottom: 2px solid var(--lb-border);
-	}
-	.lb-tabs [role='tab'] {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 0.05rem;
-		padding: 0.65rem 0.85rem;
-		border: 1px solid var(--lb-border);
-		border-bottom: 0;
-		border-radius: 8px 8px 0 0;
-		background: var(--lb-surface-alt);
-		color: var(--lb-ink);
-		font: inherit;
-		text-align: left;
-		cursor: pointer;
-	}
-	.lb-tabs [role='tab'][aria-selected='true'] {
-		background: var(--lb-surface);
-		border-color: var(--lb-accent);
-		box-shadow: inset 0 3px 0 var(--lb-accent);
-	}
-	.lb-tab-name {
-		font-weight: 700;
-	}
-	.lb-tab-meta {
-		font-size: 0.78rem;
-		color: var(--lb-muted);
-	}
-	.lb-tabpanel {
-		padding: 1.25rem 1.2rem 1.4rem;
-		background: var(--lb-surface);
-		border: 1px solid var(--lb-border);
-		border-top: 0;
-		border-radius: 0 0 10px 10px;
-	}
-	.lb-mode-intro {
-		margin: 0 0 1rem;
-	}
-
-	/* Boutons et champs ----------------------------------------------------- */
-	.lb-btn {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		gap: 0.4rem;
-		min-height: 2.75rem;
-		padding: 0.55rem 1.1rem;
-		border: 2px solid transparent;
-		border-radius: 8px;
-		font: inherit;
-		font-weight: 700;
-		line-height: 1.25;
-		cursor: pointer;
-	}
-	.lb-btn--primary {
-		background: var(--lb-accent);
-		color: var(--lb-accent-ink);
-	}
-	.lb-btn--primary:hover {
-		filter: brightness(1.08);
-	}
-	.lb-btn--ghost {
-		background: transparent;
-		border-color: var(--lb-border-strong);
-		color: var(--lb-ink);
-	}
-	.lb-btn--ghost:hover {
-		border-color: var(--lb-accent);
-	}
-	.lb-btn--danger {
-		background: transparent;
-		border-color: var(--lb-danger);
-		color: var(--lb-danger);
-	}
-	.lb-btn--small {
-		min-height: 2.25rem;
-		padding: 0.3rem 0.8rem;
-		font-size: 0.88rem;
-	}
-	.lb-btn--large {
-		min-height: 3.1rem;
-		padding: 0.7rem 1.5rem;
-		font-size: 1.05rem;
-	}
-	.lb-field {
-		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
-		min-width: 0;
-	}
-	.lb-field label {
-		font-size: 0.85rem;
-		font-weight: 700;
-	}
-	.lb-field--inline {
-		flex-direction: row;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.5rem;
-		margin-bottom: 1rem;
-	}
-	.leitner-page select,
-	.leitner-page input[type='search'],
-	.leitner-page textarea {
-		box-sizing: border-box;
-		max-width: 100%;
-		min-height: 2.6rem;
-		padding: 0.45rem 0.6rem;
-		border: 1px solid var(--lb-border-strong);
-		border-radius: 6px;
-		background: var(--lb-surface);
-		color: var(--lb-ink);
-		font: inherit;
-		font-size: 1rem;
-	}
-	.leitner-page textarea {
-		width: 100%;
-		resize: vertical;
-	}
-	.lb-practice-form,
 	.lb-browse-filters {
 		display: grid;
 		grid-template-columns: repeat(4, minmax(0, 1fr));
-		gap: 0.75rem 1rem;
+		gap: 0.75rem;
 		align-items: end;
 	}
-	.lb-practice-actions {
-		grid-column: 1 / -1;
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.6rem 1rem;
-	}
-	.lb-practice-actions .lb-help {
-		flex-basis: 100%;
-		margin: 0;
-	}
 	.lb-field--search {
-		grid-column: span 3;
+		grid-column: 1 / -1;
 	}
-
-	/* Écran de démarrage d’un mode ----------------------------------------- */
-	.lb-start {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.75rem 1.25rem;
-		padding: 1rem 1.1rem;
-		background: var(--lb-surface-alt);
-		border: 1px solid var(--lb-border);
-		border-radius: 10px;
-	}
-	.lb-start p {
-		margin: 0;
-		flex: 1 1 18rem;
-	}
-	.lb-start .lb-start-actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-	}
-
-	/* Séance ---------------------------------------------------------------- */
-	.lb-session {
-		padding: 1.1rem 1.2rem 1.4rem;
-		background: var(--lb-surface);
-		border: 1px solid var(--lb-border);
-		border-radius: 10px;
-	}
-	.lb-session-bar {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.4rem 1rem;
-		margin-bottom: 0.5rem;
-	}
-	.lb-session-title {
-		margin: 0;
-		font-weight: 700;
-	}
-	.lb-session-progress {
-		margin: 0;
-		color: var(--lb-muted);
-		font-variant-numeric: tabular-nums;
-		flex: 1;
-	}
-	.lb-card {
-		max-width: 46rem;
-		margin: 0 auto;
-	}
-	.lb-chips {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.35rem;
-	}
-	.lb-chip {
-		display: inline-block;
-		padding: 0.1rem 0.55rem;
-		border: 1px solid var(--lb-border);
-		border-radius: 999px;
-		background: var(--lb-surface-alt);
-		font-size: 0.76rem;
-		font-weight: 700;
-		line-height: 1.5;
-		color: var(--lb-ink);
-		white-space: nowrap;
-	}
-	.lb-chip--cat {
-		border-color: var(--lb-accent);
-		color: var(--lb-accent);
-		background: var(--lb-accent-soft);
-	}
-	.lb-diff-avance {
-		border-color: var(--lb-ink);
-	}
-	.lb-chip--skill-comprendre {
-		border-style: dashed;
-		border-color: var(--lb-accent);
-	}
-	.lb-chip--practice {
-		border-color: var(--lb-again);
-		color: var(--lb-again);
-		background: var(--lb-again-soft);
-	}
-	.lb-step {
-		margin: 1.1rem 0 0.35rem;
-		font-size: 0.82rem;
-		font-weight: 700;
-		letter-spacing: 0.02em;
-		color: var(--lb-muted);
-		display: block;
-	}
-	.lb-optional {
-		font-weight: 400;
-	}
-	.lb-card-question {
-		margin: 0 0 0.6rem;
-		font-size: clamp(1.25rem, 2.6vw, 1.55rem) !important;
-		line-height: 1.3;
-	}
-	.lb-hint {
-		margin: 0.25rem 0 0;
-	}
-	.lb-hint summary,
-	.lb-browse-item summary {
-		cursor: pointer;
-	}
-	.lb-hint summary {
-		color: var(--lb-accent);
-		font-weight: 700;
-		font-size: 0.92rem;
-	}
-	.lb-hint p {
-		margin: 0.4rem 0 0;
-		padding: 0.5rem 0.75rem;
-		background: var(--lb-surface-alt);
-		border-radius: 6px;
-	}
-	.lb-reveal-row {
-		margin-top: 1rem;
-	}
-	.lb-kbd-help {
-		margin: 0.45rem 0 0;
-		font-size: 0.8rem;
-		color: var(--lb-muted);
-	}
-	.lb-kbd-help kbd {
-		padding: 0.05rem 0.35rem;
-		border: 1px solid var(--lb-border-strong);
-		border-bottom-width: 2px;
-		border-radius: 4px;
-		background: var(--lb-surface-alt);
-		font-family: inherit;
-		font-size: 0.78rem;
-	}
-	.lb-answer {
-		margin-top: 1.25rem;
-		padding: 1rem 1.1rem 1.2rem;
-		background: var(--lb-surface-alt);
-		border: 1px solid var(--lb-border);
-		border-left: 4px solid var(--lb-box-4);
-		border-radius: 0 10px 10px 0;
-	}
-	.lb-answer-text {
-		margin: 0 0 0.6rem;
-		font-weight: 700;
-	}
-	.lb-explanation {
-		margin: 0 0 0.6rem;
-	}
-	.lb-quote {
-		margin: 0.75rem 0;
-		padding: 0.6rem 0.9rem;
-		border-left: 3px solid var(--lb-accent);
-		background: var(--lb-surface);
-		border-radius: 0 6px 6px 0;
-		font-size: 1rem;
-	}
-	.lb-quote p {
-		margin: 0;
-		font-family: var(--lb-serif);
-		font-style: italic;
-	}
-	.lb-quote cite {
-		display: block;
-		margin-top: 0.3rem;
-		font-size: 0.82rem;
-		font-style: normal;
-		color: var(--lb-muted);
-	}
-	.lb-meta {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.4rem 1.5rem;
-		margin: 0.5rem 0 0;
-		font-size: 0.85rem;
-	}
-	.lb-meta dt {
-		font-weight: 700;
-		color: var(--lb-muted);
-	}
-	.lb-meta dd {
-		margin: 0;
-	}
-	.lb-assess {
-		margin-top: 1rem;
-		padding-top: 0.25rem;
-		border-top: 1px solid var(--lb-border);
-	}
-	.lb-assess-hint {
-		margin: 0 0 0.6rem;
+	.lb-browse-filters .lb-linklike {
+		grid-column: 1 / -1;
+		justify-self: start;
 		font-size: 0.9rem;
 	}
-	.lb-assess-buttons {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 0.75rem;
-	}
-	.lb-assess-buttons .lb-btn {
-		flex-direction: column;
-		gap: 0.1rem;
-		min-height: 3.6rem;
-	}
-	.lb-assess-label {
-		font-size: 1.05rem;
-	}
-	.lb-assess-effect {
-		font-size: 0.8rem;
-		font-weight: 400;
-	}
-	.lb-btn--known {
-		background: var(--lb-known-soft);
-		border-color: var(--lb-known);
-		color: var(--lb-known);
-	}
-	.lb-btn--again {
-		background: var(--lb-again-soft);
-		border-color: var(--lb-again);
-		color: var(--lb-again);
-	}
-	.lb-btn--known:hover,
-	.lb-btn--again:hover {
-		filter: brightness(0.97);
-	}
-
-	.lb-summary {
-		max-width: 40rem;
-		margin: 0 auto;
-	}
-	.lb-summary-stats {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 0.75rem;
-		margin: 1rem 0;
-	}
-	.lb-summary-stat {
-		padding: 0.7rem 1rem;
-		border-radius: 10px;
-		border: 1px solid var(--lb-border);
-	}
-	.lb-summary-stat dt {
-		font-size: 0.85rem;
-		font-weight: 700;
-	}
-	.lb-summary-stat dd {
-		margin: 0;
-		font-family: var(--lb-serif);
-		font-size: 2rem;
-		line-height: 1.1;
-	}
-	.lb-summary-stat--known {
-		background: var(--lb-known-soft);
-		color: var(--lb-known);
-	}
-	.lb-summary-stat--forgotten {
-		background: var(--lb-again-soft);
-		color: var(--lb-again);
-	}
-	.lb-summary-list {
-		margin: 0 0 1rem;
-		padding-left: 1.2rem;
-	}
-	.lb-summary-actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.6rem;
-		margin-top: 1rem;
-	}
-
-	/* Parcourir ------------------------------------------------------------- */
-	.lb-browse-filters {
-		margin-bottom: 0.75rem;
-	}
-	.lb-browse-filters button[type='reset'] {
-		align-self: end;
-	}
 	.lb-browse-count {
-		margin: 0.5rem 0;
+		margin: 0.75rem 0 0.5rem;
 		font-size: 0.9rem;
 		color: var(--lb-muted);
 	}
 	.lb-empty {
 		padding: 1rem;
 		border: 1px dashed var(--lb-border-strong);
-		border-radius: 8px;
+		border-radius: 10px;
 		text-align: center;
 	}
 	.lb-browse-list {
 		list-style: none;
 		margin: 0;
 		padding: 0;
-		display: grid;
-		gap: 0.5rem;
 	}
 	.lb-browse-item {
-		border: 1px solid var(--lb-border);
-		border-radius: 8px;
-		background: var(--lb-surface);
+		border-top: 1px solid var(--lb-border);
 		scroll-margin-top: 1rem;
 	}
 	.lb-browse-item summary {
 		display: flex;
 		flex-direction: column;
-		gap: 0.35rem;
-		padding: 0.7rem 0.9rem;
+		gap: 0.2rem;
+		padding: 0.75rem 0.25rem;
+		cursor: pointer;
 		list-style: none;
 	}
 	.lb-browse-item summary::-webkit-details-marker {
 		display: none;
 	}
-	.lb-browse-item summary::after {
-		content: 'Voir la réponse ▾';
+	.lb-browse-meta {
 		font-size: 0.78rem;
-		color: var(--lb-accent);
-		font-weight: 700;
-	}
-	.lb-browse-item details[open] summary::after {
-		content: 'Masquer la réponse ▴';
+		color: var(--lb-muted);
 	}
 	.lb-browse-question {
 		font-weight: 700;
 	}
 	.lb-browse-body {
-		padding: 0 0.9rem 0.9rem;
+		padding: 0 0.25rem 1rem;
 	}
 	.lb-skill {
 		margin: 0 0 0.4rem;
@@ -1456,43 +1274,67 @@ const countIn = (category: string) => cards.filter((c) => c.category === categor
 		font-size: 0.9rem;
 	}
 	.lb-browse-item[data-status='mastered'] [data-box-chip] {
-		background: var(--lb-known-soft);
-		border-color: var(--lb-known);
 		color: var(--lb-known);
+		font-weight: 700;
 	}
 	.lb-browse-item.is-highlighted {
 		outline: 3px solid var(--lb-accent);
+		border-radius: 6px;
 	}
 
-	/* Réglages et méthode --------------------------------------------------- */
 	.lb-settings-grid {
 		display: grid;
-		grid-template-columns: 1fr 1fr 2fr;
+		grid-template-columns: 1fr 1fr;
 		gap: 1rem 1.5rem;
-		align-items: start;
+	}
+	.lb-reset {
+		grid-column: 1 / -1;
 	}
 	.lb-reset .lb-help {
 		margin: 0 0 0.6rem;
 	}
-	.lb-method-grid {
+
+	.lb-method p {
+		margin: 0 0 0.75rem;
+	}
+	.lb-boxes-strip {
 		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 1rem 1.5rem;
+		grid-template-columns: repeat(5, minmax(0, 1fr));
+		gap: 0.4rem;
+		list-style: none;
+		margin: 0.75rem 0 0;
+		padding: 0;
 	}
-	.lb-method-grid p {
-		margin: 0;
+	.lb-box-step {
+		display: flex;
+		flex-direction: column;
+		padding: 0.55rem 0.6rem;
+		border-top: 5px solid var(--box-color);
+		background: var(--lb-surface-alt);
+		border-radius: 6px;
+		font-size: 0.8rem;
+		line-height: 1.35;
 	}
-	.lb-sources {
-		margin: 1.25rem 0 0;
-		font-size: 0.85rem;
+	.lb-box-step-name {
+		font-weight: 700;
+	}
+	.lb-box-step-interval {
+		color: var(--lb-accent);
+		font-weight: 700;
+	}
+	.lb-box-step-purpose {
 		color: var(--lb-muted);
+	}
+	.lb-level-note,
+	.lb-sources {
+		font-size: 0.92rem;
 	}
 
 	.lb-dialog {
-		max-width: min(32rem, calc(100vw - 2rem));
+		max-width: min(30rem, calc(100vw - 2rem));
 		padding: 1.4rem 1.5rem;
 		border: 1px solid var(--lb-border);
-		border-radius: 12px;
+		border-radius: 14px;
 		background: var(--lb-surface);
 		color: var(--lb-ink);
 	}
@@ -1517,61 +1359,41 @@ const countIn = (category: string) => cards.filter((c) => c.category === categor
 	}
 
 	/* Mobile ---------------------------------------------------------------- */
-	@media (max-width: 820px) {
-		.lb-boxes-strip {
-			grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
-		}
-		.lb-stats {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-		}
-		.lb-dashboard-grid,
-		.lb-settings-grid,
-		.lb-method-grid {
+	@media (max-width: 640px) {
+		.lb-choices-row {
 			grid-template-columns: 1fr;
 		}
-		.lb-tabs {
+		.lb-choice {
+			flex-direction: row;
+			justify-content: space-between;
+			gap: 0.75rem;
+			text-align: left;
+		}
+		.lb-btn--hero {
+			width: 100%;
+		}
+		.lb-card {
+			padding: 1.15rem 1rem 1.25rem;
+		}
+		.lb-stats,
+		.lb-boxes-strip {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
-			border-bottom: 0;
 		}
-		.lb-tabs [role='tab'] {
-			border-bottom: 1px solid var(--lb-border);
-			border-radius: 8px;
+		.lb-browse-filters,
+		.lb-settings-grid {
+			grid-template-columns: 1fr 1fr;
 		}
-		.lb-tabpanel {
-			margin-top: 0.5rem;
-			border-top: 1px solid var(--lb-border);
-			border-radius: 10px;
-		}
-		.lb-practice-form,
-		.lb-browse-filters {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-		}
-		.lb-field--search {
-			grid-column: 1 / -1;
+		.lb-summary-actions .lb-btn {
+			width: 100%;
 		}
 	}
-	@media (max-width: 480px) {
-		.lb-tabpanel,
-		.lb-session,
-		.lb-panel {
-			padding-left: 0.85rem;
-			padding-right: 0.85rem;
-		}
-		.lb-practice-form,
-		.lb-browse-filters {
+	@media (max-width: 400px) {
+		.lb-browse-filters,
+		.lb-settings-grid {
 			grid-template-columns: 1fr;
 		}
 		.lb-assess-buttons {
-			grid-template-columns: 1fr;
-		}
-		.lb-dist-track {
-			height: 6.5rem;
-		}
-		.lb-stat dd {
-			font-size: 1.6rem;
-		}
-		.lb-tab-meta {
-			display: none;
+			gap: 0.5rem;
 		}
 	}
 </style>

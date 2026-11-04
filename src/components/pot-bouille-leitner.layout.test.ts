@@ -39,16 +39,19 @@ async function open(width = 1200, height = 900): Promise<{ context: BrowserConte
 	return { context, page, errors };
 }
 
-const stat = (page: Page, name: string) => page.locator(`.lb-stats [data-stat="${name}"]`).innerText();
+const line = (page: Page, name: string) => page.locator(`[data-line="${name}"]`).innerText();
+const stat = (page: Page, name: string) => page.locator(`.lb-stats [data-stat="${name}"]`).textContent();
+const progress = (page: Page) => page.locator('[data-session-progress]').innerText();
 
-/** Découvre `n` cartes en répondant toujours `result`. */
+/** Découvre `n` questions en répondant toujours `result`, puis revient à l'accueil. */
 async function discover(page: Page, n: number, result: 'known' | 'forgotten') {
-	await page.click('#tab-decouverte');
-	await page.click('[data-mode-start="decouverte"] .lb-btn--primary');
+	await page.click('[data-choice="decouverte"]');
 	for (let i = 0; i < n; i++) {
 		await page.click('[data-reveal]');
 		await page.click(`[data-assess="${result}"]`);
 	}
+	await page.click('[data-session-quit]');
+	await page.click('[data-summary-back]');
 }
 
 describe.skipIf(!BUILT)('Boîte de Leitner de Pot-Bouille (/pot-bouille-leitner)', () => {
@@ -63,78 +66,106 @@ describe.skipIf(!BUILT)('Boîte de Leitner de Pot-Bouille (/pot-bouille-leitner)
 		server?.kill();
 	});
 
-	test('premier chargement : titre, tableau de bord vide, aucune erreur', async () => {
+	test('accueil : titre, une action principale, trois informations, le reste replié', async () => {
 		const { context, page, errors } = await open();
 		try {
 			expect(await page.locator('h1').innerText()).toBe('Réviser Pot-Bouille');
-			expect(await page.locator('.lb-subtitle').innerText()).toContain('Une boîte de Leitner pour comprendre');
+			expect(await page.locator('.lb-subtitle').innerText()).toBe(
+				'Quelques questions pour mieux connaître et comprendre le roman de Zola.',
+			);
+			expect(await page.locator('[data-start]').innerText()).toBe('Commencer ma révision');
+			expect(await page.locator('.lb-home .lb-btn--primary:visible').count()).toBe(1);
+			expect(await line(page, 'due')).toBe('Aucune question à revoir pour l’instant');
+			expect(await line(page, 'new')).toBe('8 nouvelles questions disponibles');
+			expect(await line(page, 'mastered')).toBe('0 question maîtrisée');
+			// Trois choix simples ; ni graphique ni boîtes sur l’écran d’accueil.
+			expect(await page.locator('[data-choice]').count()).toBe(3);
+			expect(await page.locator('.lb-home').innerText()).not.toMatch(/[Bb]oîte/);
+			// Statistiques, liste complète, réglages et méthode : repliés dans « Voir ma progression ».
+			expect(await page.locator('#progression h2').innerText()).toBe('Voir ma progression');
+			expect(await page.locator('.lb-fold[open]').count()).toBe(0);
+			expect(await page.locator('.lb-dist').isVisible()).toBe(false);
+			expect(await page.locator('[data-browse-list]').isVisible()).toBe(false);
 			expect(await stat(page, 'total')).toBe('100');
-			expect(await stat(page, 'new')).toBe('100');
-			expect(await stat(page, 'due')).toBe('0');
-			expect(await stat(page, 'mastered')).toBe('0');
-			expect(await page.locator('.lb-boxes-strip li').count()).toBe(5);
-			// État vide de la révision quotidienne : invite à la découverte.
-			expect(await page.locator('[data-mode-start="revision"]').innerText()).toContain('pas encore commencé');
 			expect(errors).toEqual([]);
 		} finally {
 			await context.close();
 		}
 	});
 
-	test('séance de découverte : question seule, réponse révélée, évaluation, persistance après rechargement', async () => {
+	test('séance : question seule, réponse révélée, retour immédiat, persistance après rechargement', async () => {
 		const { context, page, errors } = await open();
 		try {
-			await page.click('#tab-decouverte');
-			await page.click('[data-mode-start="decouverte"] .lb-btn--primary');
-			expect(await page.locator('[data-session]').isVisible()).toBe(true);
+			await page.click('[data-start]'); // premier usage : découverte
+			expect(await page.locator('[data-home]').isVisible()).toBe(false);
+			expect(await page.locator('#progression').isVisible()).toBe(false);
 			expect(await page.locator('[data-study-question]').innerText()).not.toBe('');
-			// La réponse est cachée tant qu'on ne l'a pas demandée ; les boutons d'évaluation aussi.
+			expect(await page.locator('[data-study-eyebrow]').innerText()).not.toBe('');
+			expect(await progress(page)).toMatch(/^Question 1 sur 8 · /);
 			expect(await page.locator('[data-answer]').isVisible()).toBe(false);
 			expect(await page.locator('[data-assess="known"]').isVisible()).toBe(false);
-			expect(await page.locator('[data-session-progress]').innerText()).toBe('Carte 1 sur 8');
+			expect(await page.locator('[data-reveal]').innerText()).toBe('Voir la réponse');
 
 			await page.click('[data-reveal]');
-			expect(await page.locator('[data-answer]').isVisible()).toBe(true);
+			expect(await page.locator('[data-answer-title]').innerText()).toBe('Réponse');
 			expect(await page.locator('[data-answer-text]').innerText()).not.toBe('');
-			expect(await page.locator('[data-assess-effect="known"]').innerText()).toContain('boîte 2');
+			expect(await page.locator('#lb-assess-title').innerText()).toContain('Réponds honnêtement');
+			// Aucun vocabulaire technique pendant la révision.
+			expect(await page.locator('[data-session]').innerText()).not.toMatch(/[Bb]oîte|intervalle/);
+
 			await page.click('[data-assess="known"]');
-			expect(await page.locator('[data-session-progress]').innerText()).toBe('Carte 2 sur 8');
+			expect(await page.locator('[data-feedback]').innerText()).toBe('Bien joué. Cette question reviendra plus tard.');
+			expect(await progress(page)).toMatch(/^Question 2 sur 8/);
 
 			await page.click('[data-reveal]');
 			await page.click('[data-assess="forgotten"]');
-			// La carte oubliée revient en fin de séance : 9 cartes au lieu de 8.
-			expect(await page.locator('[data-session-progress]').innerText()).toBe('Carte 3 sur 9');
+			expect(await page.locator('[data-feedback]').innerText()).toBe('Pas grave. Tu la retrouveras en fin de séance.');
+			expect(await progress(page)).toMatch(/^Question 3 sur 9/); // la question oubliée revient en fin de séance
 
 			const stored = await page.evaluate((k) => JSON.parse(localStorage.getItem(k) || 'null'), KEY);
 			expect(stored.version).toBe(1);
-			const entries = Object.values(stored.cards) as { box: number; successCount: number; failureCount: number; history: unknown[] }[];
+			const entries = Object.values(stored.cards) as { box: number; history: unknown[] }[];
 			expect(entries.map((e) => e.box).sort()).toEqual([1, 2]);
 			expect(entries.every((e) => e.history.length === 1)).toBe(true);
 
 			await page.reload();
 			await page.waitForSelector('#leitner-app[data-ready="true"]');
+			expect(await line(page, 'due')).toBe('1 question à revoir aujourd’hui');
+			expect(await line(page, 'new')).toBe('6 nouvelles questions disponibles');
 			expect(await stat(page, 'new')).toBe('98');
-			expect(await stat(page, 'due')).toBe('1'); // la carte oubliée, à revoir aujourd'hui
-			expect(await page.locator('[data-dist="1"]').innerText()).toBe('1');
-			expect(await page.locator('[data-dist="2"]').innerText()).toBe('1');
+			expect(await page.locator('[data-dist="1"]').textContent()).toBe('1');
+			expect(await page.locator('[data-dist="2"]').textContent()).toBe('1');
 			expect(errors).toEqual([]);
 		} finally {
 			await context.close();
 		}
 	});
 
-	test('révision quotidienne : seules les cartes échues sont proposées, puis état « rien à réviser »', async () => {
+	test('question « comprendre » : le rappel sur l’explication du sens apparaît', async () => {
 		const { context, page } = await open();
 		try {
-			await discover(page, 3, 'known'); // 3 cartes en boîte 2, à revoir demain
-			await page.click('[data-session-quit]');
-			await page.click('[data-summary-back]');
-			await page.click('#tab-revision');
-			expect(await stat(page, 'due')).toBe('0');
-			expect(await page.locator('[data-mode-start="revision"]').innerText()).toContain('Rien à réviser aujourd’hui');
-			expect(await page.locator('[data-mode-start="revision"]').innerText()).toContain('3 cartes');
+			await page.click('[data-choice="entrainement"]');
+			await page.click('[data-practice-preset="interpretation"]');
+			await page.click('[data-reveal]');
+			expect(await page.locator('[data-assess-hint]').isVisible()).toBe(true);
+			expect(await page.locator('[data-assess-hint]').innerText()).toContain('expliquer le sens');
+		} finally {
+			await context.close();
+		}
+	});
 
-			// On simule le passage du temps : deux cartes deviennent échues.
+	test('révision : seules les questions échues sont proposées ; sinon état vide avec découverte ou entraînement', async () => {
+		const { context, page } = await open();
+		try {
+			await discover(page, 3, 'known'); // 3 questions à revoir demain
+			expect(await line(page, 'due')).toMatch(/^Rien à revoir aujourd’hui · prochaine révision /);
+			expect(await page.locator('[data-start]').innerText()).toBe('Découvrir de nouvelles questions');
+			await page.click('[data-choice="revision"]');
+			expect(await page.locator('[data-home-message]').innerText()).toContain('Rien à revoir aujourd’hui');
+			expect(await page.locator('[data-home-message] button').count()).toBe(2);
+			expect(await page.locator('[data-session]').isVisible()).toBe(false);
+
+			// Passage du temps simulé : deux questions deviennent échues.
 			await page.evaluate((k) => {
 				const s = JSON.parse(localStorage.getItem(k)!);
 				const ids = Object.keys(s.cards);
@@ -144,54 +175,75 @@ describe.skipIf(!BUILT)('Boîte de Leitner de Pot-Bouille (/pot-bouille-leitner)
 			}, KEY);
 			await page.reload();
 			await page.waitForSelector('#leitner-app[data-ready="true"]');
-			expect(await stat(page, 'due')).toBe('2');
-			await page.click('[data-mode-start="revision"] .lb-btn--primary');
-			expect(await page.locator('[data-session-progress]').innerText()).toBe('Carte 1 sur 2');
-			expect(await page.locator('[data-study-chips]').innerText()).toContain('Boîte 2');
-			await page.click('[data-reveal]');
-			expect(await page.locator('[data-assess-effect="known"]').innerText()).toContain('boîte 3, revue dans 3 jours');
+			expect(await line(page, 'due')).toBe('2 questions à revoir aujourd’hui');
+			expect(await page.locator('[data-start]').innerText()).toBe('Commencer ma révision');
+			await page.click('[data-start]');
+			expect(await page.locator('[data-session-title]').innerText()).toBe('Révision du jour');
+			expect(await progress(page)).toMatch(/^Question 1 sur 2/);
 		} finally {
 			await context.close();
 		}
 	});
 
-	test('clavier : onglets aux flèches, révélation au clavier, raccourcis R et S, bilan de séance', async () => {
+	test('fin de séance : bilan en trois chiffres, « Terminer » et « Continuer à réviser »', async () => {
 		const { context, page } = await open();
 		try {
-			await page.focus('#tab-revision');
-			await page.keyboard.press('ArrowRight');
-			expect(await page.evaluate(() => document.activeElement?.id)).toBe('tab-decouverte');
-			expect(await page.locator('#panel-decouverte').isVisible()).toBe(true);
-			await page.keyboard.press('End');
-			expect(await page.evaluate(() => document.activeElement?.id)).toBe('tab-parcourir');
-			await page.keyboard.press('Home');
-			await page.keyboard.press('ArrowRight');
+			await page.click('[data-start]');
+			for (let i = 0; i < 9; i++) {
+				// 8 nouvelles questions ; la première oubliée revient une fois (9 au total).
+				await page.click('[data-reveal]');
+				await page.click(i === 0 ? '[data-assess="forgotten"]' : '[data-assess="known"]');
+			}
+			expect(await page.locator('#lb-summary-title').innerText()).toBe('Séance terminée !');
+			expect(await page.locator('[data-summary-total]').innerText()).toBe('9');
+			expect(await page.locator('[data-summary-known]').innerText()).toBe('8');
+			expect(await page.locator('[data-summary-forgotten]').innerText()).toBe('1');
+			expect(await page.locator('[data-summary-back]').innerText()).toBe('Terminer');
 
-			await page.click('[data-mode-start="decouverte"] .lb-btn--primary');
+			// Limite quotidienne atteinte et rien d’échu : « continuer » propose l’entraînement.
+			expect(await page.locator('[data-summary-continue]').innerText()).toBe('S’entraîner librement');
+			await page.click('[data-summary-back]');
+			expect(await page.locator('[data-home]').isVisible()).toBe(true);
+			expect(await line(page, 'new')).toBe('Nouvelles questions : c’est fait pour aujourd’hui');
+
+			// La limite quotidienne de découverte est respectée, avec possibilité de la dépasser.
+			await page.click('[data-choice="decouverte"]');
+			expect(await page.locator('[data-home-message]').innerText()).toContain('8 nouvelles questions');
+			await page.click('[data-home-message] .lb-btn');
+			expect(await progress(page)).toMatch(/^Question 1 sur 5/);
+		} finally {
+			await context.close();
+		}
+	});
+
+	test('clavier : choix accessibles, révélation au clavier, raccourcis R et S, focus visible', async () => {
+		const { context, page } = await open();
+		try {
+			await page.focus('[data-start]');
+			await page.keyboard.press('Enter');
+			expect(await page.locator('[data-session]').isVisible()).toBe(true);
+			expect(await page.evaluate(() => document.activeElement?.id)).toBe('study-question');
+
 			await page.focus('[data-reveal]');
 			await page.keyboard.press('Enter');
 			expect(await page.locator('[data-answer]').isVisible()).toBe(true);
 			await page.keyboard.press('s');
-			expect(await page.locator('[data-session-progress]').innerText()).toBe('Carte 2 sur 8');
+			expect(await progress(page)).toMatch(/^Question 2 sur 8/);
+
 			// Taper dans la zone de réponse ne déclenche pas de raccourci.
+			await page.click('.lb-attempt summary');
 			await page.fill('[data-study-attempt]', 'Zola, sous le Second Empire');
 			await page.focus('[data-reveal]');
 			await page.keyboard.press('Space');
 			await page.focus('[data-study-attempt]');
 			await page.keyboard.press('s');
-			expect(await page.locator('[data-session-progress]').innerText()).toBe('Carte 2 sur 8');
+			expect(await progress(page)).toMatch(/^Question 2 sur 8/);
 			await page.focus('[data-answer-title]');
 			await page.keyboard.press('r');
-			expect(await page.locator('[data-session-progress]').innerText()).toBe('Carte 3 sur 9');
+			expect(await progress(page)).toMatch(/^Question 3 sur 9/);
 
 			await page.click('[data-session-quit]');
 			expect(await page.locator('[data-summary]').isVisible()).toBe(true);
-			expect(await page.locator('[data-summary-known]').innerText()).toBe('1');
-			expect(await page.locator('[data-summary-forgotten]').innerText()).toBe('1');
-			expect(await page.locator('[data-summary-list] li').count()).toBe(1);
-
-			// Focus visible sur les contrôles.
-			await page.click('[data-summary-back]');
 			await page.keyboard.press('Tab');
 			const outline = await page.evaluate(() => getComputedStyle(document.activeElement!).outlineStyle);
 			expect(outline).not.toBe('none');
@@ -200,47 +252,49 @@ describe.skipIf(!BUILT)('Boîte de Leitner de Pot-Bouille (/pot-bouille-leitner)
 		}
 	});
 
-	test('entraînement : sélection libre, sans aucun effet sur les boîtes', async () => {
+	test('entraînement : choix libre, sans aucun effet sur la progression', async () => {
 		const { context, page } = await open();
 		try {
-			await page.click('#tab-entrainement');
+			expect(await page.locator('[data-practice-form]').isVisible()).toBe(false);
+			await page.click('[data-choice="entrainement"]');
+			expect(await page.locator('[data-choice="entrainement"]').getAttribute('aria-expanded')).toBe('true');
 			await page.selectOption('#practice-category', 'interpreter');
-			expect(await page.locator('[data-practice-count]').innerText()).toContain('15 cartes');
-			await page.selectOption('#practice-size', '10');
+			expect(await page.locator('[data-practice-count]').innerText()).toContain('15 questions');
 			await page.click('[data-practice-form] button[type="submit"]');
-			expect(await page.locator('[data-session-progress]').innerText()).toBe('Carte 1 sur 10');
-			expect(await page.locator('[data-study-chips]').innerText()).toContain('sans effet sur vos boîtes');
-			expect(await page.locator('[data-study-chips]').innerText()).toContain('Interpréter');
+			expect(await page.locator('[data-session-title]').innerText()).toBe('Entraînement libre');
+			expect(await page.locator('[data-practice-note]').isVisible()).toBe(true);
+			expect(await progress(page)).toMatch(/^Question 1 sur 10/);
+			expect(await page.locator('[data-study-eyebrow]').textContent()).toMatch(/^Interpréter · /);
 			await page.click('[data-reveal]');
 			await page.click('[data-assess="known"]');
+			expect(await page.locator('[data-feedback]').innerText()).toBe('Bien joué.');
 			await page.click('[data-reveal]');
 			await page.click('[data-assess="forgotten"]');
-			expect(await page.locator('[data-session-progress]').innerText()).toBe('Carte 3 sur 10');
-			const stored = await page.evaluate((k) => localStorage.getItem(k), KEY);
-			expect(stored).toBeNull();
+			expect(await progress(page)).toMatch(/^Question 3 sur 10/);
+			expect(await page.evaluate((k) => localStorage.getItem(k), KEY)).toBeNull();
+			await page.click('[data-session-quit]');
+			await page.click('[data-summary-back]');
 			expect(await stat(page, 'new')).toBe('100');
 		} finally {
 			await context.close();
 		}
 	});
 
-	test('parcourir : filtres, recherche, état vide, et aucune modification de la progression', async () => {
+	test('toutes les questions : filtres, recherche, état vide, sans modifier la progression', async () => {
 		const { context, page } = await open();
 		try {
 			await discover(page, 2, 'known');
-			await page.click('[data-session-quit]');
-			await page.click('[data-summary-back]');
 			const before = await page.evaluate((k) => localStorage.getItem(k), KEY);
 
-			await page.click('#tab-parcourir');
+			await page.click('[data-fold="browse"] > summary');
 			const visible = () => page.locator('[data-browse-list] > li:not([hidden])').count();
 			expect(await visible()).toBe(100);
 			await page.selectOption('#browse-category', 'personnages');
 			expect(await visible()).toBe(20);
 			await page.selectOption('#browse-difficulty', 'facile');
-			const easyCharacters = await visible();
-			expect(easyCharacters).toBeGreaterThan(0);
-			expect(easyCharacters).toBeLessThan(20);
+			const easy = await visible();
+			expect(easy).toBeGreaterThan(0);
+			expect(easy).toBeLessThan(20);
 			await page.click('[data-browse-form] button[type="reset"]');
 			await page.waitForFunction(() => document.querySelectorAll('[data-browse-list] > li:not([hidden])').length === 100);
 
@@ -260,11 +314,26 @@ describe.skipIf(!BUILT)('Boîte de Leitner de Pot-Bouille (/pot-bouille-leitner)
 			expect(await visible()).toBe(0);
 			await page.fill('#browse-search', '');
 
-			// Ouvrir des cartes en mode Parcourir ne change rien à la progression.
 			const items = page.locator('[data-browse-list] > li summary');
 			for (let i = 0; i < 5; i++) await items.nth(i).click();
 			expect(await page.locator('[data-browse-list] > li').first().locator('.lb-answer-text').isVisible()).toBe(true);
 			expect(await page.evaluate((k) => localStorage.getItem(k), KEY)).toBe(before);
+		} finally {
+			await context.close();
+		}
+	});
+
+	test('statistiques détaillées et questions à surveiller, dans « Voir ma progression »', async () => {
+		const { context, page } = await open();
+		try {
+			await discover(page, 2, 'forgotten');
+			await page.click('[data-fold="stats"] > summary');
+			expect(await page.locator('.lb-dist').isVisible()).toBe(true);
+			expect(await page.locator('[data-history] li').count()).toBe(14);
+			expect(await page.locator('[data-attention-list] li').count()).toBe(2);
+			await page.locator('[data-attention-list] button').first().click();
+			expect(await page.locator('[data-fold="browse"]').getAttribute('open')).not.toBeNull();
+			expect(await page.locator('.lb-browse-item.is-highlighted details[open]').count()).toBe(1);
 		} finally {
 			await context.close();
 		}
@@ -293,13 +362,12 @@ describe.skipIf(!BUILT)('Boîte de Leitner de Pot-Bouille (/pot-bouille-leitner)
 		}
 	});
 
-	test('réinitialisation : demande une confirmation explicite, puis efface la progression', async () => {
+	test('réinitialisation : confirmation explicite, puis progression effacée', async () => {
 		const { context, page } = await open();
 		try {
 			await discover(page, 1, 'known');
-			await page.click('[data-session-quit]');
-			await page.click('[data-summary-back]');
 			expect(await stat(page, 'new')).toBe('99');
+			await page.click('[data-fold="settings"] > summary');
 
 			await page.click('[data-reset-open]');
 			expect(await page.locator('[data-reset-dialog]').isVisible()).toBe(true);
@@ -310,6 +378,7 @@ describe.skipIf(!BUILT)('Boîte de Leitner de Pot-Bouille (/pot-bouille-leitner)
 			await page.click('[data-reset-confirm]');
 			expect(await page.locator('[data-reset-dialog]').isVisible()).toBe(false);
 			expect(await stat(page, 'new')).toBe('100');
+			expect(await line(page, 'due')).toBe('Aucune question à revoir pour l’instant');
 			const stored = await page.evaluate((k) => JSON.parse(localStorage.getItem(k)!), KEY);
 			expect(stored.cards).toEqual({});
 		} finally {
@@ -317,28 +386,32 @@ describe.skipIf(!BUILT)('Boîte de Leitner de Pot-Bouille (/pot-bouille-leitner)
 		}
 	});
 
-	test('mobile (375 px) : pas de défilement horizontal, onglets et boutons utilisables', async () => {
-		const { context, page, errors } = await open(375, 800);
+	test('mobile (375 px) : action visible d’emblée, question et bouton sans défilement, grands boutons', async () => {
+		const { context, page, errors } = await open(375, 667);
 		try {
-			const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-			expect(overflow).toBeLessThanOrEqual(0);
-			const tabBoxes = await page.locator('[role="tab"]').evaluateAll((els) => els.map((e) => e.getBoundingClientRect().width));
-			tabBoxes.forEach((w) => expect(w).toBeGreaterThan(100));
+			const noOverflow = () => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth);
+			expect(await noOverflow()).toBe(true);
+			const start = await page.locator('[data-start]').boundingBox();
+			expect(start!.y + start!.height).toBeLessThan(667);
+			expect(start!.height).toBeGreaterThanOrEqual(44);
 
-			await discover(page, 1, 'known');
+			await page.click('[data-start]');
+			const reveal = await page.locator('[data-reveal]').boundingBox();
+			const scrollY = await page.evaluate(() => scrollY);
+			expect(reveal!.y + reveal!.height - scrollY).toBeLessThan(667); // question et bouton dans le premier écran
 			await page.click('[data-reveal]');
 			const buttons = await page.locator('.lb-assess-buttons .lb-btn').evaluateAll((els) =>
 				els.map((e) => {
 					const r = e.getBoundingClientRect();
-					return { w: r.width, h: r.height, right: r.right };
+					return { h: r.height, w: r.width, right: r.right };
 				}),
 			);
 			buttons.forEach((b) => {
-				expect(b.h).toBeGreaterThanOrEqual(44);
+				expect(b.h).toBeGreaterThanOrEqual(48);
+				expect(b.w).toBeGreaterThanOrEqual(120);
 				expect(b.right).toBeLessThanOrEqual(375);
 			});
-			const overflowSession = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-			expect(overflowSession).toBeLessThanOrEqual(0);
+			expect(await noOverflow()).toBe(true);
 			expect(errors).toEqual([]);
 		} finally {
 			await context.close();
@@ -351,24 +424,21 @@ describe.skipIf(!BUILT)('Boîte de Leitner de Pot-Bouille (/pot-bouille-leitner)
 		try {
 			await page.goto(URL);
 			await page.waitForSelector('#leitner-app[data-ready="true"]');
-			const colors = await page.evaluate(() => {
-				const stat = document.querySelector('.lb-stat')!;
-				return {
-					bg: getComputedStyle(stat).backgroundColor,
-					ink: getComputedStyle(document.querySelector('.leitner-page')!).color,
-					body: getComputedStyle(document.body).backgroundColor,
-				};
-			});
-			expect(colors.bg).toBe('rgb(28, 31, 39)');
+			const colors = await page.evaluate(() => ({
+				choice: getComputedStyle(document.querySelector('.lb-choice')!).backgroundColor,
+				ink: getComputedStyle(document.querySelector('.leitner-page')!).color,
+				body: getComputedStyle(document.body).backgroundColor,
+			}));
+			expect(colors.choice).toBe('rgb(28, 31, 39)');
+			expect(colors.ink).toBe('rgb(227, 230, 236)');
 			// Le fond sombre couvre toute la page, pas seulement le haut (texte clair lisible partout).
 			expect(colors.body).toBe('rgb(19, 21, 26)');
-			expect(colors.ink).toBe('rgb(227, 230, 236)');
 		} finally {
 			await context.close();
 		}
 	});
 
-	test('navigation : la page /pot-bouille renvoie vers la boîte de Leitner, et inversement', async () => {
+	test('navigation : /pot-bouille renvoie vers la boîte de Leitner, et inversement', async () => {
 		const { context, page } = await open();
 		try {
 			expect(await page.locator('.lb-back-link a[href="/pot-bouille"]').count()).toBe(1);

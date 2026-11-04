@@ -2,39 +2,37 @@
 // Boîte de Leitner de Pot-Bouille : interface (navigateur uniquement).
 //
 // La page est rendue statiquement par Astro ; ce module lit la progression
-// locale, remplit le tableau de bord et pilote les séances. Il n'est exécuté
-// que côté client (aucun risque d'écart d'hydratation : rien n'est hydraté,
-// les valeurs dépendant de la progression sont affichées « – » au rendu).
+// locale, remplit l'écran d'accueil et la section « Voir ma progression »,
+// et pilote les séances. Rien n'est hydraté : les valeurs qui dépendent de
+// la progression sont affichées « – » au rendu, puis complétées ici.
+//
+// Principe d'interface : une seule action principale par écran. Le
+// vocabulaire de la méthode (boîtes, intervalles) n'apparaît que dans la
+// section secondaire, jamais pendant une séance.
 // ==========================================================================
 
 import {
-	categoryLabels,
 	categoryShortLabels,
 	difficultyLabels,
 	potBouilleLeitnerCards,
-	skillLabels,
 	type LeitnerCard,
 	type LeitnerCategory,
 	type LeitnerDifficulty,
 } from '../../data/pot-bouille-leitner';
 import {
 	BOXES,
-	BOX_INTERVAL_DAYS,
 	cardStatus,
 	cardsNeedingAttention,
 	createProgress,
 	dailyActivity,
-	daysBetween,
 	deckStats,
 	dueCardIds,
 	introducedOn,
 	newCardIds,
-	nextBox,
 	nextDueDay,
 	reviewCard,
 	reviewsOn,
 	toDayKey,
-	type BoxNumber,
 	type DayKey,
 	type ReviewResult,
 } from './scheduler';
@@ -55,7 +53,7 @@ interface Session {
 	mode: Mode;
 	queue: string[];
 	index: number;
-	/** Cartes oubliées déjà remises en fin de file pendant cette séance. */
+	/** Questions oubliées déjà remises en fin de file pendant cette séance. */
 	requeued: Set<string>;
 	results: { id: string; result: ReviewResult }[];
 	revealed: boolean;
@@ -67,8 +65,8 @@ const byId = new Map(cards.map((c) => [c.id, c]));
 const difficultyRank: Record<LeitnerDifficulty, number> = { facile: 0, intermediaire: 1, avance: 2 };
 
 const modeTitles: Record<Mode, string> = {
-	revision: 'Révision quotidienne',
-	decouverte: 'Découverte',
+	revision: 'Révision du jour',
+	decouverte: 'Nouvelles questions',
 	entrainement: 'Entraînement libre',
 };
 
@@ -87,12 +85,7 @@ function dayKeyToDate(day: DayKey): Date {
 const longDate = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
 const shortDate = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' });
 
-function whenLabel(days: number): string {
-	if (days <= 0) return 'à la prochaine séance';
-	if (days === 1) return 'demain';
-	return `dans ${days} jours`;
-}
-
+/** « 1 question », « 3 questions » (0 et 1 au singulier, comme en français). */
 function plural(n: number, singular: string, pluralForm = `${singular}s`): string {
 	return `${n} ${n > 1 ? pluralForm : singular}`;
 }
@@ -119,17 +112,11 @@ function $(root: ParentNode, selector: string): HTMLElement {
 /** Ordre d'introduction : du plus simple au plus exigeant, en alternant les catégories. */
 export function introductionOrder(ids: readonly string[], category: LeitnerCategory | '' = ''): string[] {
 	const pool = ids.map((id) => byId.get(id)!).filter((c) => !category || c.category === category);
-	const buckets = new Map<string, LeitnerCard[]>();
-	for (const c of pool) {
-		const key = `${difficultyRank[c.difficulty]}`;
-		if (!buckets.has(key)) buckets.set(key, []);
-		buckets.get(key)!.push(c);
-	}
 	const out: string[] = [];
-	for (const key of ['0', '1', '2']) {
-		const group = buckets.get(key) ?? [];
+	for (const rank of [0, 1, 2]) {
 		const byCat = new Map<string, LeitnerCard[]>();
-		for (const c of group) {
+		for (const c of pool) {
+			if (difficultyRank[c.difficulty] !== rank) continue;
 			if (!byCat.has(c.category)) byCat.set(c.category, []);
 			byCat.get(c.category)!.push(c);
 		}
@@ -155,6 +142,7 @@ function shuffle<T>(items: T[]): T[] {
 // ---------------------------------------------------------------------------
 export function initLeitnerApp(root: HTMLElement | null = document.getElementById('leitner-app')): void {
 	if (!root) return;
+	const R = root;
 
 	const store = getBrowserStore();
 	const loaded = loadState(store, STORAGE_KEY);
@@ -162,257 +150,195 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 	let session: Session | null = null;
 	let extraNewToday = 0;
 
-	const warning = $(root, '#lb-storage-warning');
+	const warning = $(R, '#lb-storage-warning');
 	if (loaded.status === 'unavailable') {
 		warning.hidden = false;
 		warning.textContent =
-			'Ce navigateur ne permet pas d’enregistrer votre progression (navigation privée ou stockage bloqué). Vous pouvez réviser, mais rien ne sera conservé après la fermeture de la page.';
+			'Ce navigateur ne permet pas d’enregistrer ta progression (navigation privée ou stockage bloqué). Tu peux réviser, mais rien ne sera conservé après la fermeture de la page.';
 	} else if (loaded.status === 'reset-malformed' || loaded.status === 'reset-unsupported-version') {
 		warning.hidden = false;
 		warning.textContent =
-			'Les données de progression enregistrées étaient illisibles : une nouvelle progression a été commencée (une copie de l’ancienne a été conservée dans le navigateur).';
+			'Ta progression enregistrée était illisible : une nouvelle progression a commencé (une copie de l’ancienne a été conservée dans le navigateur).';
 	}
 
 	function persist(): void {
 		if (store && !saveState(store, STORAGE_KEY, state)) {
 			warning.hidden = false;
 			warning.textContent =
-				'Impossible d’enregistrer votre progression (espace de stockage plein ou bloqué). Votre séance continue, mais elle risque de ne pas être conservée.';
+				'Impossible d’enregistrer ta progression (stockage plein ou bloqué). Ta séance continue, mais elle risque de ne pas être conservée.';
 		}
 	}
 
-	const announcer = $(root, '[data-announcer]');
+	const announcer = $(R, '[data-announcer]');
 	function announce(message: string): void {
 		announcer.textContent = '';
 		window.setTimeout(() => (announcer.textContent = message), 30);
 	}
 
-	// ---------------------------------------------------------------- Tableau de bord
-	function setBar(name: string, ratio: number): void {
-		const bar = root!.querySelector<HTMLElement>(`[data-bar="${name}"]`);
-		if (!bar) return;
-		const pct = Math.max(0, Math.min(100, Math.round(ratio * 100)));
-		bar.style.setProperty('--value', `${pct}%`);
-		(bar.firstElementChild as HTMLElement | null)?.style.setProperty('--value', `${pct}%`);
-		if (bar.getAttribute('role') === 'progressbar') bar.setAttribute('aria-valuenow', String(pct));
+	const home = $(R, '[data-home]');
+	const secondary = $(R, '[data-secondary]');
+	const sessionView = $(R, '[data-session]');
+	const startButton = $(R, '[data-start]') as HTMLButtonElement;
+	const homeMessage = $(R, '[data-home-message]');
+	const practiceForm = $(R, '[data-practice-form]') as HTMLFormElement;
+	const practiceChoice = $(R, '[data-choice="entrainement"]');
+	const discoverSelect = $(R, '#discover-category') as HTMLSelectElement;
+
+	// ---------------------------------------------------------------- Files d'attente
+	function discoveryAllowance(): number {
+		return Math.max(0, state.settings.newPerDay + extraNewToday - introducedOn(cardIds, state.cards, today()));
+	}
+	function discoveryQueue(): string[] {
+		const category = discoverSelect.value as LeitnerCategory | '';
+		return introductionOrder(newCardIds(cardIds, state.cards), category).slice(0, discoveryAllowance());
+	}
+	function hasStarted(): boolean {
+		return Object.keys(state.cards).some((id) => byId.has(id));
 	}
 
-	function setStat(name: string, value: string): void {
-		root!.querySelectorAll<HTMLElement>(`[data-stat="${name}"]`).forEach((n) => (n.textContent = value));
+	/** L'action principale du moment : réviser, sinon découvrir, sinon s'entraîner. */
+	function primaryAction(): { label: string; run: () => void } {
+		const due = dueCardIds(cardIds, state.cards, today());
+		if (due.length > 0) return { label: 'Commencer ma révision', run: () => startSession('revision', due) };
+		const queue = discoveryQueue();
+		if (queue.length > 0)
+			return {
+				label: hasStarted() ? 'Découvrir de nouvelles questions' : 'Commencer ma révision',
+				run: () => startSession('decouverte', discoveryQueue()),
+			};
+		return { label: 'S’entraîner librement', run: () => openPractice(true) };
 	}
 
-	function renderDashboard(): void {
+	// ---------------------------------------------------------------- Accueil
+	function setLine(name: string, parts: (string | Node)[]): void {
+		$(R, `[data-line="${name}"]`).replaceChildren(...parts);
+	}
+
+	function renderHome(): void {
 		const day = today();
-		const stats = deckStats(cardIds, state.cards, day);
-		setStat('total', String(stats.total));
-		setStat('due', String(stats.dueToday));
-		setStat('new', String(stats.newCount));
-		setStat('mastered', String(stats.mastered));
-		setStat('progress', `${Math.round(stats.progress * 100)} %`);
-		setBar('progress', stats.progress);
+		const due = dueCardIds(cardIds, state.cards, day).length;
+		const remaining = newCardIds(cardIds, state.cards).length;
+		const allowance = Math.min(discoveryAllowance(), remaining);
+		const mastered = deckStats(cardIds, state.cards, day).mastered;
 
-		// Les barres sont à l'échelle de la boîte la plus remplie ; les cartes nouvelles sont comptées à part.
-		const max = Math.max(1, ...BOXES.map((b) => stats.boxes[b]));
-		const newLine = root!.querySelector<HTMLElement>('.lb-dist-new-line');
-		if (newLine) {
-			newLine.replaceChildren(
-				el('strong', { text: String(stats.newCount) }),
-				` ${stats.newCount > 1 ? 'cartes pas encore découvertes' : 'carte pas encore découverte'}, hors des boîtes.`,
-			);
-		}
-		BOXES.forEach((b) => {
-			const n = stats.boxes[b];
-			const count = root!.querySelector<HTMLElement>(`[data-dist="${b}"]`);
-			if (!count) return;
-			count.textContent = String(n);
-			const col = count.closest('li')!;
-			col.setAttribute('aria-label', `Boîte ${b} : ${plural(n, 'carte')}`);
-			col.querySelector<HTMLElement>('.lb-dist-fill')?.style.setProperty('--value', `${(n / max) * 100}%`);
-		});
-
-		const done = reviewsOn(cardIds, state.cards, day);
-		const goal = state.settings.dailyGoal;
-		$(root!, '[data-goal-text]').replaceChildren(
-			el('strong', { text: plural(done, 'carte évaluée', 'cartes évaluées') }),
-			` sur un objectif de ${goal}.`,
-		);
-		setBar('goal', done / goal);
-		const goalMessage = $(root!, '[data-goal-message]');
-		goalMessage.textContent =
-			done >= goal
-				? 'Objectif du jour atteint. Vous pouvez vous arrêter là : la régularité compte plus que la quantité.'
-				: done > 0
-					? `Encore ${plural(goal - done, 'carte')} pour atteindre votre objectif, si vous en avez le temps.`
-					: 'L’objectif est un repère, pas une obligation : mieux vaut un peu chaque jour que beaucoup une fois.';
-
-		const history = $(root!, '[data-history]');
-		history.replaceChildren();
-		const activity = dailyActivity(cardIds, state.cards, day, 14);
-		const peak = Math.max(1, ...activity.map((a) => a.known + a.forgotten));
-		for (const a of activity) {
-			const label = `${shortDate.format(dayKeyToDate(a.day))} : ${a.known} je savais, ${a.forgotten} à revoir`;
-			const li = el('li', { attrs: { title: label } }, [el('span', { className: 'sr-only', text: label })]);
-			const known = el('span', { className: 'lb-h-known' });
-			known.style.height = `${(a.known / peak) * 100}%`;
-			const forgotten = el('span', { className: 'lb-h-forgotten' });
-			forgotten.style.height = `${(a.forgotten / peak) * 100}%`;
-			li.append(known, forgotten);
-			history.append(li);
+		if (due > 0) {
+			setLine('due', [el('strong', { text: String(due) }), ` ${due > 1 ? 'questions' : 'question'} à revoir aujourd’hui`]);
+		} else if (hasStarted()) {
+			const next = nextDueDay(cardIds, state.cards, day);
+			setLine('due', [
+				next ? `Rien à revoir aujourd’hui · prochaine révision ${longDate.format(dayKeyToDate(next))}` : 'Rien à revoir aujourd’hui',
+			]);
+		} else {
+			setLine('due', ['Aucune question à revoir pour l’instant']);
 		}
 
-		const attention = cardsNeedingAttention(cardIds, state.cards);
-		const attentionWrap = $(root!, '[data-attention]');
-		const list = $(root!, '[data-attention-list]');
-		list.replaceChildren();
-		attentionWrap.hidden = attention.length === 0;
-		for (const id of attention) {
-			const card = byId.get(id)!;
-			const p = state.cards[id]!;
-			const button = el('button', { text: card.question, attrs: { type: 'button' } });
-			button.addEventListener('click', () => showInBrowse(id));
-			list.append(
-				el('li', {}, [button, el('span', { className: 'lb-help', text: ` (oubliée ${plural(p.failureCount, 'fois', 'fois')}, boîte ${p.box})` })]),
-			);
+		if (allowance > 0) {
+			setLine('new', [
+				el('strong', { text: String(allowance) }),
+				` ${allowance > 1 ? 'nouvelles questions disponibles' : 'nouvelle question disponible'}`,
+			]);
+		} else if (remaining > 0) {
+			setLine('new', ['Nouvelles questions : c’est fait pour aujourd’hui']);
+		} else {
+			setLine('new', ['Toutes les questions ont été découvertes']);
 		}
+		setLine('mastered', [el('strong', { text: String(mastered) }), ` ${mastered > 1 ? 'questions maîtrisées' : 'question maîtrisée'}`]);
 
-		const due = stats.dueToday;
-		$(root!, '[data-tab-meta="revision"]').textContent = due > 0 ? `${plural(due, 'carte')} à revoir` : 'rien à revoir';
-		$(root!, '[data-tab-meta="decouverte"]').textContent =
-			stats.newCount > 0 ? `${plural(stats.newCount, 'nouvelle carte', 'nouvelles cartes')}` : 'tout est découvert';
+		startButton.textContent = primaryAction().label;
+		updatePracticeCount();
 	}
 
-	// ---------------------------------------------------------------- Onglets
-	const tablist = $(root, '[data-tablist]');
-	const tabs = [...tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
-	const sessionView = $(root, '[data-session]');
-
-	function selectTab(tab: HTMLButtonElement, focus = false): void {
-		for (const t of tabs) {
-			const selected = t === tab;
-			t.setAttribute('aria-selected', String(selected));
-			t.tabIndex = selected ? 0 : -1;
-			const panel = document.getElementById(t.getAttribute('aria-controls')!);
-			if (panel) panel.hidden = !selected;
-		}
-		if (focus) tab.focus();
-		renderModeStarts();
-	}
-
-	tabs.forEach((tab, i) => {
-		tab.addEventListener('click', () => selectTab(tab));
-		tab.addEventListener('keydown', (e) => {
-			let next: number | null = null;
-			if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (i + 1) % tabs.length;
-			if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = (i - 1 + tabs.length) % tabs.length;
-			if (e.key === 'Home') next = 0;
-			if (e.key === 'End') next = tabs.length - 1;
-			if (next !== null) {
-				e.preventDefault();
-				selectTab(tabs[next], true);
-			}
-		});
+	startButton.addEventListener('click', () => {
+		hideMessage();
+		primaryAction().run();
 	});
 
-	function showStudyArea(inSession: boolean): void {
-		tablist.hidden = inSession;
-		for (const t of tabs) {
-			const panel = document.getElementById(t.getAttribute('aria-controls')!);
-			if (panel) panel.hidden = inSession || t.getAttribute('aria-selected') !== 'true';
-		}
-		sessionView.hidden = !inSession;
-	}
-
-	// ---------------------------------------------------------------- Écrans de démarrage
-	function startBlock(message: string, actions: { label: string; primary?: boolean; onClick: () => void }[]): HTMLElement {
-		const buttons = actions.map((a) => {
+	function showMessage(text: string, actions: { label: string; onClick: () => void }[] = []): void {
+		const buttons = actions.map((a, i) => {
 			const b = el('button', {
-				className: `lb-btn ${a.primary ? 'lb-btn--primary' : 'lb-btn--ghost'}`,
+				className: i === 0 ? 'lb-btn lb-btn--secondary' : 'lb-linklike',
 				text: a.label,
 				attrs: { type: 'button' },
 			});
 			b.addEventListener('click', a.onClick);
 			return b;
 		});
-		return el('div', { className: 'lb-start' }, [el('p', { text: message }), el('div', { className: 'lb-start-actions' }, buttons)]);
+		homeMessage.replaceChildren(el('p', { text }), el('div', { className: 'lb-message-actions' }, buttons));
+		homeMessage.hidden = false;
+	}
+	function hideMessage(): void {
+		homeMessage.hidden = true;
+		homeMessage.replaceChildren();
 	}
 
-	function discoveryQueue(): string[] {
-		const day = today();
-		const category = (document.getElementById('discover-category') as HTMLSelectElement | null)?.value as LeitnerCategory | '';
-		const allowance = Math.max(0, state.settings.newPerDay + extraNewToday - introducedOn(cardIds, state.cards, day));
-		return introductionOrder(newCardIds(cardIds, state.cards), category ?? '').slice(0, allowance);
+	function openPractice(open: boolean): void {
+		practiceForm.hidden = !open;
+		practiceChoice.setAttribute('aria-expanded', String(open));
+		if (open) {
+			hideMessage();
+			updatePracticeCount();
+			(practiceForm.querySelector('select') as HTMLSelectElement | null)?.focus();
+		}
 	}
 
-	function renderModeStarts(): void {
-		const day = today();
-		const due = dueCardIds(cardIds, state.cards, day);
-		const reviewStart = $(root!, '[data-mode-start="revision"]');
-		const started = Object.keys(state.cards).some((id) => byId.has(id));
-		if (due.length > 0) {
-			reviewStart.replaceChildren(
-				startBlock(`${plural(due.length, 'carte')} à revoir aujourd’hui. Comptez environ ${Math.max(1, Math.round(due.length * 0.75))} min.`, [
-					{ label: 'Commencer la révision', primary: true, onClick: () => startSession('revision', due) },
-				]),
-			);
-		} else {
-			const next = nextDueDay(cardIds, state.cards, day);
-			const nextCount = next ? dueCardIds(cardIds, state.cards, next).length : 0;
-			const message = !started
-				? 'Aucune carte à revoir : vous n’avez pas encore commencé. Passez par la Découverte pour faire entrer vos premières cartes dans la boîte 1.'
+	$(R, '[data-choice="revision"]').addEventListener('click', () => {
+		openPractice(false);
+		const due = dueCardIds(cardIds, state.cards, today());
+		if (due.length > 0) return startSession('revision', due);
+		const next = nextDueDay(cardIds, state.cards, today());
+		showMessage(
+			!hasStarted()
+				? 'Aucune question à revoir pour l’instant : commence par découvrir quelques questions.'
 				: next
-					? `Rien à réviser aujourd’hui : toutes vos cartes sont à jour. Prochaine révision ${longDate.format(dayKeyToDate(next))} (${plural(nextCount, 'carte')}). Vous pouvez découvrir de nouvelles cartes ou vous entraîner librement.`
-					: 'Rien à réviser aujourd’hui. Vous pouvez découvrir de nouvelles cartes ou vous entraîner librement.';
-			reviewStart.replaceChildren(
-				startBlock(message, [
-					{ label: 'Découvrir de nouvelles cartes', primary: !started, onClick: () => selectTab(tabs[1], true) },
-					{ label: 'S’entraîner librement', onClick: () => selectTab(tabs[2], true) },
-				]),
-			);
-		}
+					? `Rien à revoir aujourd’hui. Ta prochaine révision est prévue ${longDate.format(dayKeyToDate(next))}.`
+					: 'Rien à revoir aujourd’hui.',
+			[
+				{ label: 'Découvrir de nouvelles questions', onClick: () => $(R, '[data-choice="decouverte"]').click() },
+				{ label: 'ou s’entraîner librement', onClick: () => openPractice(true) },
+			],
+		);
+	});
 
-		const discoverStart = $(root!, '[data-mode-start="decouverte"]');
-		const remaining = newCardIds(cardIds, state.cards).length;
-		const introducedToday = introducedOn(cardIds, state.cards, day);
+	$(R, '[data-choice="decouverte"]').addEventListener('click', () => {
+		openPractice(false);
 		const queue = discoveryQueue();
+		if (queue.length > 0) return startSession('decouverte', queue);
+		const remaining = newCardIds(cardIds, state.cards).length;
 		if (remaining === 0) {
-			discoverStart.replaceChildren(
-				startBlock('Vous avez découvert toutes les cartes. Bravo ! Continuez la révision quotidienne pour les faire progresser jusqu’à la boîte 5.', [
-					{ label: 'Aller à la révision', primary: true, onClick: () => selectTab(tabs[0], true) },
-				]),
-			);
-		} else if (queue.length === 0) {
-			const categoryEmpty = newCardIds(cardIds, state.cards).length > 0 && introductionOrder(newCardIds(cardIds, state.cards), ((document.getElementById('discover-category') as HTMLSelectElement | null)?.value ?? '') as LeitnerCategory | '').length === 0;
-			discoverStart.replaceChildren(
-				categoryEmpty
-					? startBlock('Toutes les cartes de cette catégorie ont déjà été découvertes. Choisissez-en une autre.', [])
-					: startBlock(
-							`Vous avez découvert ${plural(introducedToday, 'carte')} aujourd’hui, comme prévu dans vos réglages. Il est conseillé d’en rester là pour ne pas surcharger les révisions des jours suivants.`,
-							[
-								{
-									label: 'Ajouter 5 cartes quand même',
-									onClick: () => {
-										extraNewToday += 5;
-										renderModeStarts();
-									},
-								},
-							],
-						),
-			);
+			showMessage('Tu as découvert toutes les questions. Continue à réviser chaque jour pour les retenir durablement.', [
+				{ label: 'S’entraîner librement', onClick: () => openPractice(true) },
+			]);
+		} else if (introductionOrder(newCardIds(cardIds, state.cards), discoverSelect.value as LeitnerCategory | '').length === 0) {
+			showMessage('Toutes les questions du thème choisi dans les réglages ont déjà été découvertes.', [
+				{
+					label: 'Découvrir tous les thèmes',
+					onClick: () => {
+						discoverSelect.value = '';
+						$(R, '[data-choice="decouverte"]').click();
+					},
+				},
+			]);
 		} else {
-			discoverStart.replaceChildren(
-				startBlock(
-					`${plural(queue.length, 'nouvelle carte', 'nouvelles cartes')} à découvrir aujourd’hui (${plural(remaining, 'carte')} encore jamais vue${remaining > 1 ? 's' : ''} au total).`,
-					[{ label: 'Découvrir ces cartes', primary: true, onClick: () => startSession('decouverte', discoveryQueue()) }],
-				),
+			showMessage(
+				`Tu as découvert ${plural(introducedOn(cardIds, state.cards, today()), 'nouvelle question', 'nouvelles questions')} aujourd’hui. C’est suffisant : en ajouter trop chargerait tes prochaines révisions.`,
+				[
+					{
+						label: 'En ajouter 5 quand même',
+						onClick: () => {
+							extraNewToday += 5;
+							hideMessage();
+							renderHome();
+							startSession('decouverte', discoveryQueue());
+						},
+					},
+				],
 			);
 		}
-		updatePracticeCount();
-	}
+	});
 
-	$(root, '#discover-category').addEventListener('change', renderModeStarts);
+	practiceChoice.addEventListener('click', () => openPractice(practiceForm.hidden));
 
 	// ---------------------------------------------------------------- Entraînement
-	const practiceForm = $(root, '[data-practice-form]') as HTMLFormElement;
 	function practiceSelection(): string[] {
 		const data = new FormData(practiceForm);
 		const category = String(data.get('category') ?? '');
@@ -424,8 +350,8 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 	}
 	function updatePracticeCount(): void {
 		const n = practiceSelection().length;
-		$(root!, '[data-practice-count]').textContent =
-			n === 0 ? 'Aucune carte ne correspond à cette sélection.' : `${plural(n, 'carte correspond', 'cartes correspondent')} à cette sélection.`;
+		$(R, '[data-practice-count]').textContent =
+			n === 0 ? 'Aucune question ne correspond à ce choix.' : `${plural(n, 'question correspond', 'questions correspondent')} à ce choix.`;
 	}
 	practiceForm.addEventListener('change', updatePracticeCount);
 	practiceForm.addEventListener('submit', (e) => {
@@ -435,7 +361,7 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 		if (selection.length === 0) return;
 		startSession('entrainement', size > 0 ? selection.slice(0, size) : selection);
 	});
-	$(root, '[data-practice-preset="interpretation"]').addEventListener('click', () => {
+	$(R, '[data-practice-preset="interpretation"]').addEventListener('click', () => {
 		(practiceForm.elements.namedItem('category') as HTMLSelectElement).value = '';
 		(practiceForm.elements.namedItem('difficulty') as HTMLSelectElement).value = 'avance';
 		(practiceForm.elements.namedItem('skill') as HTMLSelectElement).value = 'comprendre';
@@ -444,25 +370,49 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 	});
 
 	// ---------------------------------------------------------------- Séance
-	const questionEl = $(root, '[data-study-question]');
-	const chipsEl = $(root, '[data-study-chips]');
-	const hintWrap = $(root, '[data-study-hint-wrap]') as HTMLDetailsElement;
-	const attempt = $(root, '[data-study-attempt]') as HTMLTextAreaElement;
-	const revealRow = $(root, '[data-reveal-row]');
-	const revealButton = $(root, '[data-reveal]') as HTMLButtonElement;
-	const answerEl = $(root, '[data-answer]');
-	const cardEl = $(root, '[data-study-card]');
-	const summaryEl = $(root, '[data-summary]');
+	const questionEl = $(R, '[data-study-question]');
+	const hintWrap = $(R, '[data-study-hint-wrap]') as HTMLDetailsElement;
+	const attempt = $(R, '[data-study-attempt]') as HTMLTextAreaElement;
+	const attemptWrap = attempt.closest('details') as HTMLDetailsElement;
+	const revealRow = $(R, '[data-reveal-row]');
+	const revealButton = $(R, '[data-reveal]') as HTMLButtonElement;
+	const answerEl = $(R, '[data-answer]');
+	const cardEl = $(R, '[data-study-card]');
+	const summaryEl = $(R, '[data-summary]');
+	const feedback = $(R, '[data-feedback]');
+
+	function setBar(name: string, ratio: number): void {
+		const bar = R.querySelector<HTMLElement>(`[data-bar="${name}"]`);
+		if (!bar) return;
+		const pct = Math.max(0, Math.min(100, Math.round(ratio * 100)));
+		bar.style.setProperty('--value', `${pct}%`);
+		if (bar.getAttribute('role') === 'progressbar') bar.setAttribute('aria-valuenow', String(pct));
+	}
+
+	function setFeedback(text: string, tone: ReviewResult | '' = ''): void {
+		feedback.textContent = text;
+		if (tone) feedback.dataset.tone = tone;
+		else delete feedback.dataset.tone;
+	}
+
+	function showSessionView(inSession: boolean): void {
+		home.hidden = inSession;
+		secondary.hidden = inSession;
+		sessionView.hidden = !inSession;
+	}
 
 	function startSession(mode: Mode, queue: string[]): void {
 		if (queue.length === 0) return;
 		session = { mode, queue: [...queue], index: 0, requeued: new Set(), results: [], revealed: false };
-		$(root!, '[data-session-title]').textContent = modeTitles[mode];
-		showStudyArea(true);
+		$(R, '[data-session-title]').textContent = modeTitles[mode];
+		$(R, '[data-practice-note]').hidden = mode !== 'entrainement';
+		hideMessage();
+		setFeedback('');
+		showSessionView(true);
 		cardEl.hidden = false;
 		summaryEl.hidden = true;
 		renderCard();
-		sessionView.scrollIntoView({ block: 'start', behavior: 'smooth' });
+		sessionView.scrollIntoView({ block: 'start' });
 	}
 
 	function currentCard(): LeitnerCard | null {
@@ -470,38 +420,29 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 		return byId.get(session.queue[session.index]) ?? null;
 	}
 
-	function chip(text: string, className: string): HTMLElement {
-		return el('span', { className: `lb-chip ${className}`, text });
-	}
-
 	function renderCard(): void {
 		const card = currentCard();
 		if (!session || !card) return finishSession();
 		session.revealed = false;
-		const p = state.cards[card.id];
 
-		$(root!, '[data-session-progress]').textContent = `Carte ${session.index + 1} sur ${session.queue.length}`;
+		const topic = card.focus?.[0];
+		$(R, '[data-study-eyebrow]').textContent = topic
+			? `${categoryShortLabels[card.category]} · ${topic}`
+			: categoryShortLabels[card.category];
+		$(R, '[data-session-progress]').textContent =
+			`Question ${session.index + 1} sur ${session.queue.length} · ${difficultyLabels[card.difficulty]}`;
 		setBar('session', session.index / session.queue.length);
-
-		chipsEl.replaceChildren(
-			chip(categoryShortLabels[card.category], `lb-chip--cat lb-cat-${card.category}`),
-			chip(difficultyLabels[card.difficulty], `lb-chip--diff lb-diff-${card.difficulty}`),
-			chip(skillLabels[card.skill], `lb-chip--skill-${card.skill}`),
-			session.mode === 'entrainement'
-				? chip('Entraînement : sans effet sur vos boîtes', 'lb-chip--practice')
-				: chip(p ? `Boîte ${p.box}` : 'Nouvelle carte', 'lb-chip--box'),
-		);
-		chipsEl.setAttribute('aria-label', `${categoryLabels[card.category]}, niveau ${difficultyLabels[card.difficulty].toLowerCase()}`);
 
 		questionEl.textContent = card.question;
 		hintWrap.open = false;
 		hintWrap.hidden = !card.hint;
 		$(hintWrap, '[data-study-hint]').textContent = card.hint ?? '';
 		attempt.value = '';
+		attemptWrap.open = false;
 		revealRow.hidden = false;
 		answerEl.hidden = true;
 
-		// Réponse (préparée, mais masquée jusqu'au clic)
+		// Réponse préparée, masquée jusqu'au clic.
 		$(answerEl, '[data-answer-text]').textContent = card.answer;
 		const explanation = $(answerEl, '[data-answer-explanation]');
 		explanation.textContent = card.explanation ?? '';
@@ -512,27 +453,10 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 			$(quote, '[data-answer-quote-text]').textContent = `« ${card.quotation.text} »`;
 			$(quote, '[data-answer-quote-cite]').textContent = `${card.quotation.speaker}, ch. ${card.quotation.chapter}`;
 		}
-		const meta = $(answerEl, '[data-answer-meta]');
-		meta.replaceChildren();
-		if (card.focus?.length) meta.append(el('div', {}, [el('dt', { text: 'Personnages / thèmes' }), el('dd', { text: card.focus.join(' · ') })]));
-		if (card.reference) meta.append(el('div', {}, [el('dt', { text: 'Dans le roman' }), el('dd', { text: card.reference })]));
-		meta.hidden = meta.childElementCount === 0;
-
-		$(answerEl, '[data-assess-hint]').textContent =
-			card.skill === 'comprendre'
-				? 'Question de compréhension : choisissez « Je savais » seulement si vous avez su expliquer le sens, pas seulement donner un fait.'
-				: 'Question de connaissance : « Je savais » si l’essentiel de votre réponse était juste.';
-
-		if (session.mode === 'entrainement') {
-			$(answerEl, '[data-assess-effect="known"]').textContent = 'pour le bilan de la séance';
-			$(answerEl, '[data-assess-effect="forgotten"]').textContent = 'pour le bilan de la séance';
-		} else {
-			const from: BoxNumber = p?.box ?? 1;
-			const up = nextBox(from, 'known');
-			$(answerEl, '[data-assess-effect="known"]').textContent =
-				up === from ? `reste en boîte ${up}, revue ${whenLabel(BOX_INTERVAL_DAYS[up])}` : `→ boîte ${up}, revue ${whenLabel(BOX_INTERVAL_DAYS[up])}`;
-			$(answerEl, '[data-assess-effect="forgotten"]').textContent = '→ boîte 1, revue à la prochaine séance';
-		}
+		const reference = $(answerEl, '[data-answer-reference]');
+		reference.textContent = card.reference ? `Dans le roman : ${card.reference}` : '';
+		reference.hidden = !card.reference;
+		$(answerEl, '[data-assess-hint]').hidden = card.skill !== 'comprendre';
 
 		questionEl.focus({ preventScroll: true });
 	}
@@ -551,33 +475,31 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 		if (!session || !card || !session.revealed) return;
 		session.results.push({ id: card.id, result });
 
-		if (session.mode !== 'entrainement') {
+		if (session.mode === 'entrainement') {
+			setFeedback(result === 'known' ? 'Bien joué.' : 'Pas grave. Relis bien la réponse, elle finira par rentrer.', result);
+		} else {
 			const day = today();
 			const before = state.cards[card.id] ?? createProgress(day);
-			const after = reviewCard(before, result, day);
-			state = { ...state, cards: { ...state.cards, [card.id]: after } };
+			state = { ...state, cards: { ...state.cards, [card.id]: reviewCard(before, result, day) } };
 			persist();
-			announce(
-				result === 'known'
-					? `Carte placée en boîte ${after.box}, revue ${whenLabel(daysBetween(day, after.nextReview))}.`
-					: 'Carte replacée en boîte 1.',
-			);
-			// Une carte oubliée revient une fois en fin de séance.
-			if (result === 'forgotten' && !session.requeued.has(card.id)) {
+			if (result === 'known') {
+				setFeedback('Bien joué. Cette question reviendra plus tard.', 'known');
+			} else if (!session.requeued.has(card.id)) {
+				// Une question oubliée revient une fois en fin de séance.
 				session.requeued.add(card.id);
 				session.queue.push(card.id);
+				setFeedback('Pas grave. Tu la retrouveras en fin de séance.', 'forgotten');
+			} else {
+				setFeedback('Pas grave. Elle reviendra à ta prochaine révision.', 'forgotten');
 			}
-			renderDashboard();
-			refreshBrowseBadges();
-		} else {
-			announce(result === 'known' ? 'Noté : je savais.' : 'Noté : à revoir.');
+			renderAll();
 		}
 
 		session.index++;
 		renderCard();
 	}
 
-	root.querySelectorAll<HTMLButtonElement>('[data-assess]').forEach((b) =>
+	R.querySelectorAll<HTMLButtonElement>('[data-assess]').forEach((b) =>
 		b.addEventListener('click', () => assess(b.dataset.assess as ReviewResult)),
 	);
 
@@ -588,68 +510,47 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 		const forgotten = s.results.length - known;
 		cardEl.hidden = true;
 		summaryEl.hidden = false;
+		setFeedback('');
 		setBar('session', 1);
-		$(root!, '[data-session-progress]').textContent = `${plural(s.results.length, 'carte évaluée', 'cartes évaluées')}`;
+		$(R, '[data-session-progress]').textContent = '';
+		$(summaryEl, '[data-summary-total]').textContent = String(s.results.length);
 		$(summaryEl, '[data-summary-known]').textContent = String(known);
 		$(summaryEl, '[data-summary-forgotten]').textContent = String(forgotten);
 
-		const message = $(summaryEl, '[data-summary-message]');
-		if (s.results.length === 0) message.textContent = 'Aucune carte évaluée pendant cette séance.';
-		else if (forgotten === 0) message.textContent = 'Tout était su. Ces cartes reviendront plus tard, à intervalles de plus en plus longs.';
-		else if (known >= forgotten)
-			message.textContent = 'Bonne séance. Les cartes à revoir sont normales : c’est en les retrouvant souvent qu’elles finiront par se fixer.';
-		else
-			message.textContent =
-				'Séance utile : chercher une réponse, même sans la trouver, aide à la retenir. Relisez les cartes ci-dessous avant de passer à autre chose.';
+		let message: string;
+		if (s.results.length === 0) message = 'Aucune question révisée cette fois-ci.';
+		else if (forgotten === 0) message = 'Tout était su. Ces questions reviendront plus tard, de plus en plus espacées.';
+		else if (known >= forgotten) message = 'Bonne séance. Les questions à revoir reviendront vite : c’est comme ça qu’on les retient.';
+		else message = 'Séance utile : chercher une réponse, même sans la trouver, aide à la retenir.';
+		if (s.mode === 'entrainement') message += ' L’entraînement n’a pas modifié ta progression.';
+		$(summaryEl, '[data-summary-message]').textContent = message;
 
-		const forgottenIds = [...new Set(s.results.filter((r) => r.result === 'forgotten').map((r) => r.id))];
-		const list = $(summaryEl, '[data-summary-list]');
-		list.replaceChildren(
-			...forgottenIds.map((id) => {
-				const b = el('button', { className: 'lb-linklike', text: byId.get(id)!.question, attrs: { type: 'button' } });
-				b.addEventListener('click', () => {
-					endSession();
-					showInBrowse(id);
-				});
-				return el('li', {}, [b]);
-			}),
-		);
-		$(summaryEl, '[data-summary-review-wrap]').hidden = forgottenIds.length === 0;
+		const next = primaryAction();
+		$(summaryEl, '[data-summary-continue]').textContent =
+			next.label === 'Commencer ma révision' ? 'Continuer à réviser' : next.label;
 
-		const next = $(summaryEl, '[data-summary-next]');
-		if (s.mode === 'entrainement') {
-			next.textContent = 'Rappel : l’entraînement n’a pas modifié vos boîtes.';
-		} else {
-			const day = today();
-			const dueLeft = dueCardIds(cardIds, state.cards, day).length;
-			const nextDay = nextDueDay(cardIds, state.cards, day);
-			next.textContent =
-				dueLeft > 0
-					? `Il reste ${plural(dueLeft, 'carte')} à revoir aujourd’hui (dont les cartes à revoir de cette séance).`
-					: nextDay
-						? `Prochaine révision ${longDate.format(dayKeyToDate(nextDay))}.`
-						: '';
-		}
 		session = null;
 		$(summaryEl, '#lb-summary-title').focus();
 	}
 
 	function endSession(): void {
 		session = null;
-		showStudyArea(false);
-		renderModeStarts();
+		showSessionView(false);
+		renderAll();
+		startButton.focus({ preventScroll: true });
+		home.scrollIntoView({ block: 'start' });
 	}
 
-	$(root, '[data-session-quit]').addEventListener('click', () => {
+	$(R, '[data-session-quit]').addEventListener('click', () => {
 		if (session && session.results.length > 0) finishSession();
-		else {
-			endSession();
-			tabs.find((t) => t.getAttribute('aria-selected') === 'true')?.focus();
-		}
+		else endSession();
 	});
-	$(root, '[data-summary-back]').addEventListener('click', () => {
-		endSession();
-		tabs.find((t) => t.getAttribute('aria-selected') === 'true')?.focus();
+	$(R, '[data-summary-back]').addEventListener('click', endSession);
+	$(R, '[data-summary-continue]').addEventListener('click', () => {
+		const next = primaryAction();
+		showSessionView(false);
+		renderAll();
+		next.run();
 	});
 
 	// Raccourcis clavier : R (à revoir) et S (je savais) une fois la réponse affichée.
@@ -667,24 +568,91 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 		}
 	});
 
-	// ---------------------------------------------------------------- Parcourir (lecture seule)
-	const browseForm = $(root, '[data-browse-form]') as HTMLFormElement;
-	const browseItems = [...root.querySelectorAll<HTMLLIElement>('[data-browse-list] > li')];
-	const searchIndex = new Map(
-		browseItems.map((li) => {
-			const c = byId.get(li.dataset.cardId!)!;
-			const text = [c.question, c.answer, c.explanation, c.hint, c.focus?.join(' '), c.quotation?.text].join(' ');
-			return [li, normalize(text)];
-		}),
-	);
+	// ---------------------------------------------------------------- Statistiques (section secondaire)
+	function setStat(name: string, value: string): void {
+		R.querySelectorAll<HTMLElement>(`[data-stat="${name}"]`).forEach((n) => (n.textContent = value));
+	}
 
-	function normalize(s: string): string {
-		return s
+	function renderStats(): void {
+		const day = today();
+		const stats = deckStats(cardIds, state.cards, day);
+		setStat('total', String(stats.total));
+		setStat('due', String(stats.dueToday));
+		setStat('new', String(stats.newCount));
+		setStat('mastered', String(stats.mastered));
+		setStat('progress', `${Math.round(stats.progress * 100)} %`);
+		setBar('progress', stats.progress);
+
+		// Barres à l'échelle de la boîte la plus remplie ; les questions jamais vues sont comptées à part.
+		const max = Math.max(1, ...BOXES.map((b) => stats.boxes[b]));
+		$(R, '.lb-dist-new-line').replaceChildren(
+			el('strong', { text: String(stats.newCount) }),
+			` ${stats.newCount > 1 ? 'questions jamais vues' : 'question jamais vue'}, hors des boîtes.`,
+		);
+		BOXES.forEach((b) => {
+			const n = stats.boxes[b];
+			const count = R.querySelector<HTMLElement>(`[data-dist="${b}"]`);
+			if (!count) return;
+			count.textContent = String(n);
+			const col = count.closest('li')!;
+			col.setAttribute('aria-label', `Boîte ${b} : ${plural(n, 'question')}`);
+			col.querySelector<HTMLElement>('.lb-dist-fill')?.style.setProperty('--value', `${(n / max) * 100}%`);
+		});
+
+		const done = reviewsOn(cardIds, state.cards, day);
+		const goal = state.settings.dailyGoal;
+		$(R, '[data-goal-text]').replaceChildren(
+			el('strong', { text: plural(done, 'question évaluée', 'questions évaluées') }),
+			` aujourd’hui, sur un objectif de ${goal}.`,
+		);
+		setBar('goal', done / goal);
+		$(R, '[data-goal-message]').textContent =
+			done >= goal
+				? 'Objectif du jour atteint. Tu peux t’arrêter là : la régularité compte plus que la quantité.'
+				: 'L’objectif est un repère, pas une obligation : mieux vaut un peu chaque jour que beaucoup une fois.';
+
+		const history = $(R, '[data-history]');
+		history.replaceChildren();
+		const activity = dailyActivity(cardIds, state.cards, day, 14);
+		const peak = Math.max(1, ...activity.map((a) => a.known + a.forgotten));
+		for (const a of activity) {
+			const label = `${shortDate.format(dayKeyToDate(a.day))} : ${a.known} je savais, ${a.forgotten} à revoir`;
+			const li = el('li', { attrs: { title: label } }, [el('span', { className: 'sr-only', text: label })]);
+			const known = el('span', { className: 'lb-h-known' });
+			known.style.height = `${(a.known / peak) * 100}%`;
+			const forgotten = el('span', { className: 'lb-h-forgotten' });
+			forgotten.style.height = `${(a.forgotten / peak) * 100}%`;
+			li.append(known, forgotten);
+			history.append(li);
+		}
+
+		const attention = cardsNeedingAttention(cardIds, state.cards);
+		$(R, '[data-attention]').hidden = attention.length === 0;
+		$(R, '[data-attention-list]').replaceChildren(
+			...attention.map((id) => {
+				const button = el('button', { className: 'lb-linklike', text: byId.get(id)!.question, attrs: { type: 'button' } });
+				button.addEventListener('click', () => showInBrowse(id));
+				return el('li', {}, [button]);
+			}),
+		);
+	}
+
+	// ---------------------------------------------------------------- Toutes les questions (lecture seule)
+	const browseFold = $(R, '[data-fold="browse"]') as HTMLDetailsElement;
+	const browseForm = $(R, '[data-browse-form]') as HTMLFormElement;
+	const browseItems = [...R.querySelectorAll<HTMLLIElement>('[data-browse-list] > li')];
+	const normalize = (s: string) =>
+		s
 			.toLowerCase()
 			.normalize('NFD')
 			.replace(/\p{Diacritic}/gu, '')
 			.replace(/[’']/g, ' ');
-	}
+	const searchIndex = new Map(
+		browseItems.map((li) => {
+			const c = byId.get(li.dataset.cardId!)!;
+			return [li, normalize([c.question, c.answer, c.explanation, c.hint, c.focus?.join(' '), c.quotation?.text].join(' '))];
+		}),
+	);
 
 	function refreshBrowseBadges(): void {
 		for (const li of browseItems) {
@@ -692,7 +660,7 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 			li.dataset.box = p ? String(p.box) : '0';
 			li.dataset.status = cardStatus(p);
 			const badge = li.querySelector<HTMLElement>('[data-box-chip]');
-			if (badge) badge.textContent = p ? (p.box === 5 ? 'Boîte 5 · maîtrisée' : `Boîte ${p.box}`) : 'Nouvelle';
+			if (badge) badge.textContent = p ? (p.box === 5 ? 'Boîte 5 · maîtrisée' : `Boîte ${p.box}`) : 'Jamais vue';
 		}
 		applyBrowseFilters();
 	}
@@ -712,8 +680,8 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 			li.hidden = !visible;
 			if (visible) shown++;
 		}
-		$(root!, '[data-browse-count]').textContent = `${plural(shown, 'carte affichée', 'cartes affichées')} sur ${cards.length}`;
-		$(root!, '[data-browse-empty]').hidden = shown > 0;
+		$(R, '[data-browse-count]').textContent = `${plural(shown, 'question affichée', 'questions affichées')} sur ${cards.length}`;
+		$(R, '[data-browse-empty]').hidden = shown > 0;
 	}
 
 	browseForm.addEventListener('input', applyBrowseFilters);
@@ -724,7 +692,7 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 	function showInBrowse(id: string): void {
 		browseForm.reset();
 		applyBrowseFilters();
-		selectTab(tabs[3]);
+		browseFold.open = true;
 		const li = document.getElementById(`carte-${id}`);
 		if (!li) return;
 		const details = li.querySelector('details');
@@ -736,41 +704,40 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 	}
 
 	// ---------------------------------------------------------------- Réglages et réinitialisation
-	root.querySelectorAll<HTMLSelectElement>('[data-setting]').forEach((select) => {
+	R.querySelectorAll<HTMLSelectElement>('[data-setting]').forEach((select) => {
 		const key = select.dataset.setting as keyof LeitnerSettings;
-		select.value = String(state.settings[key]);
-		if (select.value !== String(state.settings[key])) {
-			select.append(el('option', { text: String(state.settings[key]), attrs: { value: String(state.settings[key]) } }));
-			select.value = String(state.settings[key]);
-		}
+		const current = String(state.settings[key]);
+		if (![...select.options].some((o) => o.value === current)) select.append(el('option', { text: current, attrs: { value: current } }));
+		select.value = current;
 		select.addEventListener('change', () => {
 			state = { ...state, settings: { ...state.settings, [key]: Number(select.value) } };
 			persist();
-			renderDashboard();
-			renderModeStarts();
+			renderAll();
 		});
 	});
+	discoverSelect.addEventListener('change', renderHome);
 
-	const dialog = $(root, '[data-reset-dialog]') as HTMLDialogElement;
+	const dialog = $(R, '[data-reset-dialog]') as HTMLDialogElement;
 	function doReset(): void {
 		state = resetState(store, STORAGE_KEY, state.settings);
 		extraNewToday = 0;
 		session = null;
-		showStudyArea(false);
+		showSessionView(false);
+		hideMessage();
 		renderAll();
-		announce('Votre progression a été effacée.');
+		announce('Ta progression a été effacée.');
 	}
-	$(root, '[data-reset-open]').addEventListener('click', () => {
+	$(R, '[data-reset-open]').addEventListener('click', () => {
 		if (typeof dialog.showModal === 'function') {
 			dialog.returnValue = '';
 			dialog.showModal();
-		} else if (window.confirm('Effacer toute votre progression ? Cette action est définitive.')) {
+		} else if (window.confirm('Effacer toute ta progression ? C’est définitif.')) {
 			doReset();
 		}
 	});
 	// Le bouton de confirmation efface tout de suite ; le formulaire (method="dialog") ferme ensuite la fenêtre.
 	$(dialog, '[data-reset-confirm]').addEventListener('click', doReset);
-	dialog.addEventListener('close', () => ($(root!, '[data-reset-open]') as HTMLButtonElement).focus());
+	dialog.addEventListener('close', () => ($(R, '[data-reset-open]') as HTMLButtonElement).focus());
 
 	// Synchronisation entre onglets du navigateur.
 	window.addEventListener('storage', (e) => {
@@ -779,7 +746,7 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 		renderAll();
 	});
 
-	// Si la page reste ouverte après minuit, les cartes du jour changent.
+	// Si la page reste ouverte après minuit, les questions du jour changent.
 	let lastDay = today();
 	document.addEventListener('visibilitychange', () => {
 		if (document.visibilityState === 'visible' && today() !== lastDay && !session) {
@@ -790,11 +757,11 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 	});
 
 	function renderAll(): void {
-		renderDashboard();
-		renderModeStarts();
+		renderHome();
+		renderStats();
 		refreshBrowseBadges();
 	}
 
 	renderAll();
-	root.dataset.ready = 'true';
+	R.dataset.ready = 'true';
 }
