@@ -1052,7 +1052,7 @@ export const potBouilleLeitnerCards: LeitnerCard[] = [
 		skill: 'comprendre',
 		question: 'Comment la répétition d’une même phrase caractérise-t-elle Mme Josserand ?',
 		answer:
-			'Elle répète à plusieurs reprises sa règle des vingt sous et des quarante sous. Cette formule toute faite résume sa philosophie : paraître plus riche qu’on ne l’est.',
+			'Elle répète sa règle des vingt sous et des quarante sous (ch. II, XVI), et Berthe, une fois mariée, la reprend presque mot pour mot (ch. XII, XIV). Cette formule toute faite résume sa philosophie : paraître plus riche qu’on ne l’est.',
 		explanation: 'Une phrase répétée qui caractérise un personnage s’appelle un leitmotiv.',
 		focus: ['Portraits et caractérisation', 'Mme Josserand'],
 		quotation: Q.faireEnvie,
