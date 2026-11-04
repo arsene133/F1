@@ -69,12 +69,25 @@ const literaryWorks: LiteraryWork[] = [
 	},
 ];
 
+interface LeitnerBox {
+	href: string;
+	title: string;
+	meta: string;
+}
+
+/** Boîtes de Leitner (révision par répétition espacée), une par œuvre. */
+const leitnerBoxes: LeitnerBox[] = [
+	{ href: '/pot-bouille-leitner', title: 'Pot-Bouille', meta: 'Émile Zola · 100 questions' },
+];
+
 const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
 const subpath = pathname.match(/[^\/]+/g);
 const currentSection = '/' + (subpath?.[0] || '');
 const isWorkActive = literaryWorks.some(
 	(w) => w.href === currentSection || pathname === w.href || pathname.startsWith(w.href + '/')
 );
+const isActive = (href: string) => href === currentSection || pathname === href || pathname.startsWith(href + '/');
+const isLeitnerActive = leitnerBoxes.some((b) => isActive(b.href));
 ---
 
 <header>
@@ -130,6 +143,42 @@ const isWorkActive = literaryWorks.some(
 				</ul>
 			</details>
 
+			<details class="dropdown" id="leitner-dropdown">
+				<summary
+					class:list={['dropdown-toggle', { active: isLeitnerActive }]}
+					aria-haspopup="true"
+				>
+					<span>Boîtes de Leitner</span>
+					<svg
+						class="dropdown-chevron"
+						viewBox="0 0 16 16"
+						width="12"
+						height="12"
+						aria-hidden="true"
+						focusable="false"
+					>
+						<path
+							fill="currentColor"
+							d="M3.2 5.5a.8.8 0 0 1 1.13 0L8 9.17l3.67-3.67a.8.8 0 1 1 1.13 1.13l-4.24 4.24a.8.8 0 0 1-1.13 0L3.2 6.63a.8.8 0 0 1 0-1.13z"
+						></path>
+					</svg>
+				</summary>
+				<ul class="dropdown-menu" role="menu">
+					{leitnerBoxes.map((box) => (
+						<li role="none">
+							<a
+								href={box.href}
+								role="menuitem"
+								class:list={['dropdown-item', { active: isActive(box.href) }]}
+							>
+								<span class="work-title">{box.title}</span>
+								<span class="work-meta">{box.meta}</span>
+							</a>
+						</li>
+					))}
+				</ul>
+			</details>
+
 			<HeaderLink href="/blog">Blog</HeaderLink>
 		</div>
 
@@ -166,28 +215,34 @@ const isWorkActive = literaryWorks.some(
 </header>
 
 <script>
-	// Gestion accessible du menu déroulant
+	// Gestion accessible des menus déroulants (« Œuvres & auteurs », « Boîtes de Leitner »)
 	function setupDropdown() {
-		const dropdown = document.getElementById('works-dropdown') as HTMLDetailsElement | null;
-		if (!dropdown) return;
+		const dropdowns = [...document.querySelectorAll<HTMLDetailsElement>('header details.dropdown')];
 
 		// Fermer au clic en dehors
 		document.addEventListener('click', (e) => {
-			if (!dropdown.open) return;
 			const target = e.target as Node;
-			if (!dropdown.contains(target)) {
-				dropdown.open = false;
+			for (const dropdown of dropdowns) {
+				if (dropdown.open && !dropdown.contains(target)) dropdown.open = false;
 			}
 		});
 
-		// Fermer avec Échap
-		dropdown.addEventListener('keydown', (e) => {
-			if (e.key === 'Escape' && dropdown.open) {
-				dropdown.open = false;
-				const summary = dropdown.querySelector('summary');
-				summary?.focus();
-			}
-		});
+		for (const dropdown of dropdowns) {
+			// Un seul menu ouvert à la fois
+			dropdown.addEventListener('toggle', () => {
+				if (!dropdown.open) return;
+				for (const other of dropdowns) if (other !== dropdown) other.open = false;
+			});
+
+			// Fermer avec Échap
+			dropdown.addEventListener('keydown', (e) => {
+				if (e.key === 'Escape' && dropdown.open) {
+					dropdown.open = false;
+					const summary = dropdown.querySelector('summary');
+					summary?.focus();
+				}
+			});
+		}
 	}
 
 	if (document.readyState === 'loading') {
@@ -256,7 +311,7 @@ const isWorkActive = literaryWorks.some(
 		border-bottom: none;
 	}
 
-	/* Menu déroulant Œuvres & auteurs */
+	/* Menus déroulants Œuvres & auteurs, Boîtes de Leitner */
 	.dropdown {
 		position: relative;
 		display: inline-block;
@@ -363,6 +418,53 @@ const isWorkActive = literaryWorks.some(
 	}
 	.work-sep {
 		opacity: 0.6;
+	}
+
+	/* Largeurs intermédiaires : cinq entrées de navigation, liens et icônes resserrés
+	   pour tenir sur une ligne sans débordement horizontal. */
+	@media (min-width: 769px) and (max-width: 1200px) {
+		header {
+			padding: 0 0.8em;
+		}
+		h2 {
+			font-size: 0.95em;
+			min-width: 7.5em;
+		}
+		.internal-links {
+			gap: 0;
+		}
+		nav .internal-links :global(a),
+		.dropdown-toggle {
+			padding: 1em 0.5em;
+		}
+		.social-links a {
+			padding: 0.3em;
+		}
+		.social-links svg {
+			width: 24px;
+			height: 24px;
+		}
+	}
+	@media (min-width: 769px) and (max-width: 960px) {
+		.social-links {
+			display: none;
+		}
+		nav .internal-links :global(a),
+		.dropdown-toggle {
+			padding: 1em 0.4em;
+			font-size: 0.95em;
+		}
+	}
+
+	@media (min-width: 769px) and (max-width: 860px) {
+		h2 {
+			font-size: 0.88em;
+			min-width: 6.5em;
+		}
+		nav .internal-links :global(a),
+		.dropdown-toggle {
+			padding: 1em 0.3em;
+		}
 	}
 
 	/* Responsive : tablette & mobile */

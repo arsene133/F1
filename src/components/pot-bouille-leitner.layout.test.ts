@@ -317,15 +317,16 @@ describe.skipIf(!BUILT)('Boîte de Leitner de Pot-Bouille (/pot-bouille-leitner)
 			// Autres pages : en-tête d’origine, identique d’une page à l’autre.
 			expect(potBouille.height).toBe(homePage.height);
 			expect(potBouille.height).toBeGreaterThan(150);
-			// Page Leitner : nettement plus compact, sans débordement.
-			expect(leitner.height).toBeLessThanOrEqual(100);
-			expect(leitner.height).toBeLessThan(potBouille.height * 0.5);
+			// Page Leitner : nettement plus compact, sans débordement (titre + deux lignes de
+			// liens depuis l’ajout du menu « Boîtes de Leitner »).
+			expect(leitner.height).toBeLessThanOrEqual(140);
+			expect(leitner.height).toBeLessThan(potBouille.height * 0.55);
 			expect(leitner.overflow).toBe(false);
 			// La navigation essentielle reste complète, avec des cibles tactiles de 44 px.
 			expect(leitner.targets.map((t) => t.text.replace(/\s+/g, ' '))).toEqual(
 				potBouille.targets.map((t) => t.text.replace(/\s+/g, ' ')),
 			);
-			expect(leitner.targets).toHaveLength(5);
+			expect(leitner.targets).toHaveLength(6);
 			leitner.targets.forEach((t) => {
 				expect(t.visible, t.text).toBe(true);
 				expect(t.h, t.text).toBeGreaterThanOrEqual(44);
@@ -368,7 +369,7 @@ describe.skipIf(!BUILT)('Boîte de Leitner de Pot-Bouille (/pot-bouille-leitner)
 			});
 			expect(colors.bg).toBe('rgb(19, 21, 26)');
 			expect(colors.link).toBe('rgb(240, 242, 247)');
-			expect(colors.height).toBeLessThanOrEqual(100);
+			expect(colors.height).toBeLessThanOrEqual(140);
 		} finally {
 			await context.close();
 		}

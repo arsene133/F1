@@ -184,4 +184,49 @@ describe.skipIf(!BUILT)('En-tête de navigation (/Header.astro) — E2E & Access
 
 		await page.close();
 	});
+
+	test('Menu « Boîtes de Leitner » : entrée Pot-Bouille, un seul menu ouvert, actif sur la page', async () => {
+		const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+		await page.goto(`${BASE}/`);
+		const leitner = page.locator('#leitner-dropdown');
+		const works = page.locator('#works-dropdown');
+		expect(await leitner.locator('summary').innerText()).toBe('Boîtes de Leitner');
+		expect(await leitner.locator('.dropdown-menu').isVisible()).toBe(false);
+
+		await works.locator('summary').click();
+		expect(await works.getAttribute('open')).not.toBeNull();
+		await leitner.locator('summary').click();
+		expect(await leitner.getAttribute('open')).not.toBeNull();
+		expect(await works.getAttribute('open')).toBeNull(); // un seul menu ouvert à la fois
+
+		const items = leitner.locator('.dropdown-item');
+		expect(await items.count()).toBe(1);
+		expect(await items.first().getAttribute('href')).toBe('/pot-bouille-leitner');
+		expect(await items.first().innerText()).toContain('Pot-Bouille');
+
+		// Échap referme et rend le focus au bouton du menu.
+		await items.first().focus();
+		await page.keyboard.press('Escape');
+		expect(await leitner.getAttribute('open')).toBeNull();
+		expect(await page.evaluate(() => document.activeElement?.closest('#leitner-dropdown') !== null)).toBe(true);
+
+		await leitner.locator('summary').click();
+		await items.first().click();
+		await page.waitForURL(/\/pot-bouille-leitner\/?$/);
+		expect(await page.locator('#leitner-dropdown summary').getAttribute('class')).toContain('active');
+		expect(await page.locator('#works-dropdown summary').getAttribute('class')).not.toContain('active');
+		await page.close();
+	});
+
+	test('Cinq entrées de navigation : aucune barre de défilement horizontale de 375 à 1440 px', async () => {
+		const page = await browser.newPage();
+		for (const width of [375, 390, 768, 769, 800, 900, 1024, 1200, 1440]) {
+			await page.setViewportSize({ width, height: 800 });
+			await page.goto(`${BASE}/`);
+			const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+			expect(overflow, `${width} px`).toBeLessThanOrEqual(0);
+			expect(await page.locator('#leitner-dropdown summary').isVisible(), `${width} px`).toBe(true);
+		}
+		await page.close();
+	});
 });
