@@ -6,9 +6,11 @@
 // et pilote les séances. Rien n'est hydraté : les valeurs qui dépendent de
 // la progression sont affichées « – » au rendu, puis complétées ici.
 //
-// Principe d'interface : une seule action principale par écran. Le
-// vocabulaire de la méthode (boîtes, intervalles) n'apparaît que dans la
-// section secondaire, jamais pendant une séance.
+// Principe d'interface : une seule action principale par écran, autour
+// d'une boîte de fiches visible en permanence (bac des nouvelles + cinq
+// compartiments). Pendant une séance, la boîte se réduit à une réglette et
+// chaque évaluation y range la fiche : le mouvement affiché est toujours
+// celui qui vient d'être enregistré.
 // ==========================================================================
 
 import {
@@ -19,20 +21,26 @@ import {
 	type LeitnerCategory,
 	type LeitnerDifficulty,
 } from '../../data/pot-bouille-leitner';
+import { boxIntervalLabel, boxPurpose } from './labels';
 import {
+	BOX_INTERVAL_DAYS,
 	BOXES,
 	cardStatus,
 	cardsNeedingAttention,
 	createProgress,
 	dailyActivity,
+	daysBetween,
 	deckStats,
 	dueCardIds,
 	introducedOn,
+	isDue,
 	newCardIds,
+	nextBox,
 	nextDueDay,
 	reviewCard,
 	reviewsOn,
 	toDayKey,
+	type BoxNumber,
 	type DayKey,
 	type ReviewResult,
 } from './scheduler';
@@ -56,7 +64,26 @@ interface Session {
 	/** Questions oubliées déjà remises en fin de file pendant cette séance. */
 	requeued: Set<string>;
 	results: { id: string; result: ReviewResult }[];
+	/** Déplacements réellement enregistrés pendant la séance (vide en entraînement). */
+	moves: { from: Slot; to: BoxNumber }[];
 	revealed: boolean;
+}
+
+/** Emplacement d'une fiche dans la boîte : le bac des nouvelles ou un compartiment. */
+type Slot = 'new' | BoxNumber;
+
+/**
+ * Nombre de feuilles dessinées pour une pile de `n` fiches : une par fiche
+ * jusqu'à 10, puis une croissance lente (la pile reste lisible à 100).
+ */
+export function sheetCount(n: number): number {
+	if (n <= 0) return 0;
+	if (n <= 10) return n;
+	return Math.min(18, 10 + Math.round(Math.log2(n / 10) * 2.5));
+}
+
+function prefersReducedMotion(): boolean {
+	return typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
 const cards = potBouilleLeitnerCards;
@@ -342,6 +369,210 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 
 	practiceChoice.addEventListener('click', () => openPractice(practiceForm.hidden));
 
+	// ---------------------------------------------------------------- La boîte
+	const intro = $(R, '[data-intro]');
+	const slotButtons = [...R.querySelectorAll<HTMLButtonElement>('[data-compartment]')];
+	const slotEl = (slot: Slot) => $(R, `[data-compartment="${slot}"]`) as HTMLButtonElement;
+	const drawer = $(R, '[data-drawer]');
+	let selectedSlot: Slot | null = null;
+
+	function slotOf(id: string): Slot {
+		return state.cards[id]?.box ?? 'new';
+	}
+
+	/** Pile de feuilles d'un compartiment ; les fiches à revoir sont sur le dessus, avec un onglet. */
+	function renderStack(stack: HTMLElement, total: number, due: number): void {
+		const n = sheetCount(total);
+		const d = due === 0 ? 0 : Math.min(n, Math.max(1, Math.round((n * due) / total)));
+		stack.style.setProperty('--n', String(Math.max(1, n)));
+		const sheets: HTMLElement[] = [];
+		for (let i = 0; i < n; i++) {
+			const sheet = el('span', { className: i >= n - d ? 'lb-sheet is-due' : 'lb-sheet' });
+			sheet.style.setProperty('--i', String(i));
+			sheets.push(sheet);
+		}
+		stack.replaceChildren(...sheets);
+		stack.closest('.lb-slot')!.classList.toggle('is-empty', total === 0);
+	}
+
+	/** « 12 fiches », le mot dans un élément à part (masqué sur la réglette mobile). */
+	function setCount(node: HTMLElement, n: number): void {
+		node.replaceChildren(String(n), el('span', { className: 'lb-unit', text: n > 1 ? ' fiches' : ' fiche' }));
+	}
+
+	function renderBox(): void {
+		const day = today();
+		const total: Record<BoxNumber, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+		const due: Record<BoxNumber, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+		for (const id of cardIds) {
+			const p = state.cards[id];
+			if (!p) continue;
+			total[p.box]++;
+			if (isDue(p, day)) due[p.box]++;
+		}
+
+		const remaining = newCardIds(cardIds, state.cards).length;
+		const allowance = Math.min(discoveryAllowance(), remaining);
+		const intake = slotEl('new');
+		renderStack($(intake, '[data-stack]'), remaining, allowance);
+		setCount($(intake, '[data-slot-count]'), remaining);
+		const intakeFlag = $(intake, '[data-slot-flag]');
+		intakeFlag.hidden = allowance === 0;
+		intakeFlag.textContent = `${allowance} à découvrir`;
+		intake.dataset.due = String(allowance > 0);
+		intake.setAttribute(
+			'aria-label',
+			`Nouvelles fiches, jamais vues : ${plural(remaining, 'fiche')}${allowance > 0 ? `, dont ${allowance} à découvrir aujourd’hui` : ''}`,
+		);
+
+		for (const b of BOXES) {
+			const slot = slotEl(b);
+			renderStack($(slot, '[data-stack]'), total[b], due[b]);
+			setCount($(slot, '[data-slot-count]'), total[b]);
+			const flag = $(slot, '[data-slot-flag]');
+			flag.hidden = due[b] === 0;
+			flag.replaceChildren(String(due[b]), el('span', { className: 'lb-flag-word', text: ' à revoir' }));
+			slot.dataset.due = String(due[b] > 0);
+			slot.setAttribute(
+				'aria-label',
+				`Compartiment ${b}, révision ${boxIntervalLabel(b)} : ${plural(total[b], 'fiche')}${due[b] > 0 ? `, dont ${due[b]} à revoir aujourd’hui` : ''}`,
+			);
+		}
+		if (selectedSlot !== null && !drawer.hidden) renderDrawer();
+	}
+
+	function relativeDay(day: DayKey): string {
+		const n = daysBetween(today(), day);
+		if (n <= 0) return 'aujourd’hui';
+		if (n === 1) return 'demain';
+		return `${longDate.format(dayKeyToDate(day))} (dans ${n} jours)`;
+	}
+
+	function drawerItem(id: string, status: string, isDueNow: boolean): HTMLLIElement {
+		const card = byId.get(id)!;
+		const p = state.cards[id];
+		const qId = `drawer-q-${id}`;
+		const open = el('button', {
+			className: 'lb-linklike',
+			text: 'Voir la fiche complète',
+			attrs: { type: 'button', 'aria-describedby': qId },
+		});
+		open.addEventListener('click', () => showInBrowse(id));
+		const meta = p
+			? `${categoryShortLabels[card.category]} · ${difficultyLabels[card.difficulty]} · sue ${plural(p.successCount, 'fois', 'fois')}, oubliée ${plural(p.failureCount, 'fois', 'fois')}`
+			: `${categoryShortLabels[card.category]} · ${difficultyLabels[card.difficulty]}`;
+		return el('li', { className: 'lb-drawer-card', attrs: { 'data-due': String(isDueNow), 'data-card-id': id } }, [
+			el('p', { className: 'lb-drawer-status' }, [
+				el('span', { className: 'lb-due-mark', text: isDueNow ? '⚑' : '◷', attrs: { 'aria-hidden': 'true' } }),
+				` ${status}`,
+			]),
+			el('p', { className: 'lb-drawer-q', text: card.question, attrs: { id: qId } }),
+			el('p', { className: 'lb-drawer-meta', text: meta }),
+			open,
+		]);
+	}
+
+	function renderDrawer(): void {
+		const slot = selectedSlot;
+		if (slot === null) return;
+		const title = $(drawer, '[data-drawer-title]');
+		const summary = $(drawer, '[data-drawer-summary]');
+		const list = $(drawer, '[data-drawer-list]');
+		const day = today();
+
+		if (slot === 'new') {
+			const remaining = newCardIds(cardIds, state.cards).length;
+			const queue = discoveryQueue();
+			title.textContent = 'Nouvelles fiches';
+			summary.textContent =
+				remaining === 0
+					? 'Le bac est vide : tu as découvert toutes les questions.'
+					: `${plural(remaining, 'fiche jamais vue', 'fiches jamais vues')}. ` +
+						(queue.length > 0
+							? `${queue.length > 1 ? `Les ${queue.length} prochaines` : 'La prochaine'} à découvrir aujourd’hui :`
+							: 'Plus de nouvelle fiche prévue aujourd’hui : reviens demain.');
+			list.replaceChildren(...queue.map((id) => drawerItem(id, 'À découvrir aujourd’hui', true)));
+			return;
+		}
+
+		const ids = cardIds
+			.filter((id) => state.cards[id]?.box === slot)
+			.sort((a, b) => daysBetween(state.cards[b]!.nextReview, state.cards[a]!.nextReview));
+		const dueCount = ids.filter((id) => isDue(state.cards[id]!, day)).length;
+		title.textContent = `Compartiment ${slot} · révision ${boxIntervalLabel(slot)}`;
+		summary.textContent =
+			ids.length === 0
+				? `Ce compartiment est vide pour l’instant. ${
+						slot === 1
+							? 'Les nouvelles fiches et les questions à revoir y arrivent.'
+							: `Une fiche y arrive depuis le compartiment ${slot - 1} quand tu la sais.`
+					}`
+				: `${plural(ids.length, 'fiche')}, dont ${dueCount} à revoir aujourd’hui. ${boxPurpose[slot]}.`;
+		list.replaceChildren(
+			...ids.map((id) => {
+				const p = state.cards[id]!;
+				const dueNow = isDue(p, day);
+				return drawerItem(id, dueNow ? 'À revoir aujourd’hui' : `Prochaine révision : ${relativeDay(p.nextReview)}`, dueNow);
+			}),
+		);
+	}
+
+	function selectSlot(slot: Slot | null): void {
+		selectedSlot = slot;
+		for (const b of slotButtons) b.setAttribute('aria-expanded', String(slot !== null && b.dataset.compartment === String(slot)));
+		drawer.hidden = slot === null;
+		if (slot !== null) renderDrawer();
+	}
+
+	for (const button of slotButtons) {
+		button.addEventListener('click', () => {
+			if (R.dataset.view === 'session') return;
+			const slot: Slot = button.dataset.compartment === 'new' ? 'new' : (Number(button.dataset.compartment) as BoxNumber);
+			selectSlot(selectedSlot === slot ? null : slot);
+		});
+	}
+	$(drawer, '[data-drawer-close]').addEventListener('click', () => {
+		const previous = selectedSlot;
+		selectSlot(null);
+		if (previous !== null) slotEl(previous).focus();
+	});
+	drawer.addEventListener('keydown', (e) => {
+		if (e.key !== 'Escape' || selectedSlot === null) return;
+		const previous = selectedSlot;
+		selectSlot(null);
+		slotEl(previous).focus();
+	});
+
+	/** Fiche qui vole de la carte vers son compartiment d'arrivée (rien si l'utilisateur limite les animations). */
+	function flyToSlot(from: DOMRect, to: Slot): void {
+		const target = slotEl(to);
+		target.classList.remove('is-receiving');
+		void target.offsetWidth; // relance l'animation si la même cible reçoit deux fiches de suite
+		target.classList.add('is-receiving');
+		window.setTimeout(() => target.classList.remove('is-receiving'), 900);
+		if (prefersReducedMotion() || typeof document.body.animate !== 'function' || from.width === 0) return;
+
+		const well = target.querySelector('.lb-slot-well')!.getBoundingClientRect();
+		const w = Math.min(150, from.width * 0.45);
+		const h = w * 0.62;
+		const sx = from.left + from.width / 2;
+		const sy = Math.min(Math.max(from.top + h, h), window.innerHeight - h);
+		const ex = well.left + well.width / 2;
+		const ey = well.top + well.height / 2;
+		const ghost = el('div', { className: 'lb-ghost', attrs: { 'aria-hidden': 'true' } });
+		Object.assign(ghost.style, { left: `${sx - w / 2}px`, top: `${sy - h / 2}px`, width: `${w}px`, height: `${h}px` });
+		document.body.append(ghost);
+		const animation = ghost.animate(
+			[
+				{ transform: 'translate(0, 0) scale(1) rotate(0deg)', opacity: 1 },
+				{ transform: `translate(${(ex - sx) * 0.6}px, ${(ey - sy) * 0.6 - 24}px) scale(0.55) rotate(-3deg)`, opacity: 1, offset: 0.6 },
+				{ transform: `translate(${ex - sx}px, ${ey - sy}px) scale(0.22) rotate(-6deg)`, opacity: 0 },
+			],
+			{ duration: 480, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' },
+		);
+		animation.onfinish = animation.oncancel = () => ghost.remove();
+	}
+
 	// ---------------------------------------------------------------- Entraînement
 	function practiceSelection(): string[] {
 		const data = new FormData(practiceForm);
@@ -385,9 +616,40 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 	const revealRow = $(R, '[data-reveal-row]');
 	const revealButton = $(R, '[data-reveal]') as HTMLButtonElement;
 	const answerEl = $(R, '[data-answer]');
+	const assessGroup = $(R, '[data-assess-group]');
 	const cardEl = $(R, '[data-study-card]');
+	const indexCard = $(R, '[data-index-card]');
+	const frontFace = $(R, '[data-face-front]');
 	const summaryEl = $(R, '[data-summary]');
 	const feedback = $(R, '[data-feedback]');
+	const movement = $(R, '[data-movement]');
+	const boxSection = $(R, '[data-box-section]');
+
+	/** Relance une animation CSS décorative (sans effet si les animations sont réduites, voir la feuille de style). */
+	function replayClass(node: HTMLElement, className: string): void {
+		node.classList.remove(className);
+		void node.offsetWidth;
+		node.classList.add(className);
+	}
+	indexCard.addEventListener('animationend', () => indexCard.classList.remove('is-turning', 'is-drawn'));
+
+	/** « à la prochaine séance », « demain », « dans 3 jours » : quand reviendra une fiche rangée aujourd'hui. */
+	function returnsIn(box: BoxNumber): string {
+		const days = BOX_INTERVAL_DAYS[box];
+		return days === 0 ? 'à la prochaine séance' : days === 1 ? 'demain' : `dans ${days} jours`;
+	}
+
+	/** Phrase qui décrit le déplacement réellement enregistré. */
+	function movementText(from: Slot, to: BoxNumber, result: ReviewResult): string {
+		if (result === 'known') {
+			return from === to
+				? `Fiche laissée dans le compartiment ${to}, le dernier : elle reviendra ${returnsIn(to)}.`
+				: `Fiche rangée dans le compartiment ${to} : elle reviendra ${returnsIn(to)}.`;
+		}
+		if (from === 'new') return 'Fiche rangée dans le compartiment 1, celui des questions qui reviennent à chaque séance.';
+		if (from === 1) return 'La fiche reste dans le compartiment 1 : elle reviendra à chaque séance jusqu’à ce que tu la saches.';
+		return `Fiche replacée dans le compartiment 1 : une question oubliée recommence au début, pour revenir plus souvent.`;
+	}
 
 	function setBar(name: string, ratio: number): void {
 		const bar = R.querySelector<HTMLElement>(`[data-bar="${name}"]`);
@@ -403,24 +665,40 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 		else delete feedback.dataset.tone;
 	}
 
+	/**
+	 * Accueil ou séance. Pendant la séance, la boîte reste affichée, réduite à
+	 * une réglette (consultation désactivée) : on y voit les fiches se ranger.
+	 */
 	function showSessionView(inSession: boolean): void {
+		R.dataset.view = inSession ? 'session' : 'home';
+		intro.hidden = inSession;
 		home.hidden = inSession;
 		secondary.hidden = inSession;
 		sessionView.hidden = !inSession;
+		if (inSession) selectSlot(null);
+		for (const b of slotButtons) {
+			b.disabled = inSession;
+			if (!inSession) b.classList.remove('is-source');
+		}
+	}
+
+	function setSourceSlot(slot: Slot | null): void {
+		for (const b of slotButtons) b.classList.toggle('is-source', slot !== null && b.dataset.compartment === String(slot));
 	}
 
 	function startSession(mode: Mode, queue: string[]): void {
 		if (queue.length === 0) return;
-		session = { mode, queue: [...queue], index: 0, requeued: new Set(), results: [], revealed: false };
+		session = { mode, queue: [...queue], index: 0, requeued: new Set(), results: [], moves: [], revealed: false };
 		$(R, '[data-session-title]').textContent = modeTitles[mode];
 		$(R, '[data-practice-note]').hidden = mode !== 'entrainement';
 		hideMessage();
 		setFeedback('');
+		movement.textContent = '';
 		showSessionView(true);
 		cardEl.hidden = false;
 		summaryEl.hidden = true;
 		renderCard();
-		sessionView.scrollIntoView({ block: 'start' });
+		boxSection.scrollIntoView({ block: 'start' });
 	}
 
 	function currentCard(): LeitnerCard | null {
@@ -441,6 +719,20 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 			`Question ${session.index + 1} sur ${session.queue.length} · ${difficultyLabels[card.difficulty]}`;
 		setBar('session', session.index / session.queue.length);
 
+		// D'où vient la fiche : le bac des nouvelles ou un compartiment (repéré aussi sur la réglette).
+		const from = slotOf(card.id);
+		setSourceSlot(from);
+		$(R, '[data-card-origin]').textContent = from === 'new' ? 'Nouvelle fiche' : `Compartiment ${from}`;
+		const fromBox: BoxNumber = from === 'new' ? 1 : from;
+		const scheduled = session.mode !== 'entrainement';
+		const destKnown = nextBox(fromBox, 'known');
+		$(R, '[data-assess-dest="known"]').textContent = !scheduled
+			? ''
+			: destKnown === from
+				? `reste au compartiment ${destKnown}`
+				: `→ compartiment ${destKnown}`;
+		$(R, '[data-assess-dest="forgotten"]').textContent = !scheduled ? '' : from === 1 ? 'reste au compartiment 1' : '→ compartiment 1';
+
 		questionEl.textContent = card.question;
 		hintWrap.open = false;
 		hintWrap.hidden = !card.hint;
@@ -448,9 +740,14 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 		attempt.value = '';
 		attemptWrap.open = false;
 		revealRow.hidden = false;
+		frontFace.hidden = false;
 		answerEl.hidden = true;
+		assessGroup.hidden = true;
+		indexCard.dataset.side = 'front';
+		replayClass(indexCard, 'is-drawn');
 
-		// Réponse préparée, masquée jusqu'au clic.
+		// Verso préparé, masqué jusqu'au clic.
+		$(answerEl, '[data-answer-question]').textContent = card.question;
 		$(answerEl, '[data-answer-text]').textContent = card.answer;
 		const explanation = $(answerEl, '[data-answer-explanation]');
 		explanation.textContent = card.explanation ?? '';
@@ -464,16 +761,22 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 		const reference = $(answerEl, '[data-answer-reference]');
 		reference.textContent = card.reference ? `Dans le roman : ${card.reference}` : '';
 		reference.hidden = !card.reference;
-		$(answerEl, '[data-assess-hint]').hidden = card.skill !== 'comprendre';
+		$(assessGroup, '[data-assess-hint]').hidden = card.skill !== 'comprendre';
 
 		questionEl.focus({ preventScroll: true });
 	}
 
+	/** Retourne la fiche : le verso (réponse) remplace le recto ; l'animation est purement visuelle. */
 	function reveal(): void {
 		if (!session || session.revealed) return;
 		session.revealed = true;
 		revealRow.hidden = true;
+		frontFace.hidden = true;
 		answerEl.hidden = false;
+		assessGroup.hidden = false;
+		indexCard.dataset.side = 'back';
+		indexCard.classList.remove('is-drawn');
+		replayClass(indexCard, 'is-turning');
 		$(answerEl, '[data-answer-title]').focus({ preventScroll: false });
 	}
 	revealButton.addEventListener('click', reveal);
@@ -482,14 +785,22 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 		const card = currentCard();
 		if (!session || !card || !session.revealed) return;
 		session.results.push({ id: card.id, result });
+		const cardRect = indexCard.getBoundingClientRect();
 
 		if (session.mode === 'entrainement') {
 			setFeedback(result === 'known' ? 'Bien joué.' : 'Pas grave. Relis bien la réponse, elle finira par rentrer.', result);
+			movement.textContent = 'Entraînement libre : la fiche reste dans son compartiment.';
 		} else {
 			const day = today();
+			const from = slotOf(card.id);
 			const before = state.cards[card.id] ?? createProgress(day);
-			state = { ...state, cards: { ...state.cards, [card.id]: reviewCard(before, result, day) } };
+			const after = reviewCard(before, result, day);
+			state = { ...state, cards: { ...state.cards, [card.id]: after } };
 			persist();
+			// Le mouvement affiché est lu dans l'état enregistré, jamais supposé.
+			const to = after.box;
+			session.moves.push({ from, to });
+			movement.textContent = movementText(from, to, result);
 			if (result === 'known') {
 				setFeedback('Bien joué. Cette question reviendra plus tard.', 'known');
 			} else if (!session.requeued.has(card.id)) {
@@ -501,6 +812,7 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 				setFeedback('Pas grave. Elle reviendra à ta prochaine révision.', 'forgotten');
 			}
 			renderAll();
+			flyToSlot(cardRect, to);
 		}
 
 		session.index++;
@@ -519,7 +831,22 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 		cardEl.hidden = true;
 		summaryEl.hidden = false;
 		setFeedback('');
+		movement.textContent = '';
+		setSourceSlot(null);
 		setBar('session', 1);
+
+		// Ce que la séance a changé dans la boîte (déplacements enregistrés uniquement).
+		const advanced = s.moves.filter((m) => m.from === 'new' ? m.to > 1 : m.to > m.from).length;
+		const back = s.moves.filter((m) => m.to === 1).length;
+		const kept = s.moves.filter((m) => m.from === 5 && m.to === 5).length;
+		const parts = [
+			advanced > 0 ? plural(advanced, 'fiche a avancé', 'fiches ont avancé') : '',
+			back > 0 ? `${back} ${back > 1 ? 'sont rangées' : 'est rangée'} au compartiment 1` : '',
+			kept > 0 ? `${kept} ${kept > 1 ? 'restent' : 'reste'} au compartiment 5` : '',
+		].filter(Boolean);
+		const movesEl = $(summaryEl, '[data-summary-moves]');
+		movesEl.hidden = parts.length === 0;
+		movesEl.textContent = parts.length ? `Dans ta boîte : ${parts.join(', ')}.` : '';
 		$(R, '[data-session-progress]').textContent = '';
 		$(summaryEl, '[data-summary-total]').textContent = String(s.results.length);
 		$(summaryEl, '[data-summary-known]').textContent = String(known);
@@ -606,7 +933,7 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 		const max = Math.max(1, ...BOXES.map((b) => stats.boxes[b]));
 		$(R, '.lb-dist-new-line').replaceChildren(
 			el('strong', { text: String(stats.newCount) }),
-			` ${stats.newCount > 1 ? 'questions jamais vues' : 'question jamais vue'}, hors des boîtes.`,
+			` ${stats.newCount > 1 ? 'questions jamais vues' : 'question jamais vue'}, dans le bac des nouvelles.`,
 		);
 		BOXES.forEach((b) => {
 			const n = stats.boxes[b];
@@ -614,7 +941,7 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 			if (!count) return;
 			count.textContent = String(n);
 			const col = count.closest('li')!;
-			col.setAttribute('aria-label', `Boîte ${b} : ${plural(n, 'question')}`);
+			col.setAttribute('aria-label', `Compartiment ${b} : ${plural(n, 'question')}`);
 			col.querySelector<HTMLElement>('.lb-dist-fill')?.style.setProperty('--value', `${(n / max) * 100}%`);
 		});
 
@@ -679,7 +1006,7 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 			li.dataset.box = p ? String(p.box) : '0';
 			li.dataset.status = cardStatus(p);
 			const badge = li.querySelector<HTMLElement>('[data-box-chip]');
-			if (badge) badge.textContent = p ? (p.box === 5 ? 'Boîte 5 · maîtrisée' : `Boîte ${p.box}`) : 'Jamais vue';
+			if (badge) badge.textContent = p ? (p.box === 5 ? 'Compartiment 5 · maîtrisée' : `Compartiment ${p.box}`) : 'Jamais vue';
 		}
 		applyBrowseFilters();
 	}
@@ -777,10 +1104,12 @@ export function initLeitnerApp(root: HTMLElement | null = document.getElementByI
 
 	function renderAll(): void {
 		renderHome();
+		renderBox();
 		renderStats();
 		refreshBrowseBadges();
 	}
 
+	R.dataset.view = 'home';
 	renderAll();
 	R.dataset.ready = 'true';
 }

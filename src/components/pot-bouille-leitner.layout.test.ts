@@ -5,6 +5,8 @@ import { spawn, type ChildProcess } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { chromium, type Browser, type BrowserContext, type Page } from 'playwright';
+import { intervalLabel, intervalShort } from '../lib/leitner/labels';
+import { BOX_INTERVAL_DAYS, BOXES } from '../lib/leitner/scheduler';
 
 const BUILT = existsSync('dist/pot-bouille-leitner/index.html');
 const PORT = 4401;
@@ -42,6 +44,27 @@ async function open(width = 1200, height = 900): Promise<{ context: BrowserConte
 const line = (page: Page, name: string) => page.locator(`[data-line="${name}"]`).innerText();
 const stat = (page: Page, name: string) => page.locator(`.lb-stats [data-stat="${name}"]`).textContent();
 const progress = (page: Page) => page.locator('[data-session-progress]').innerText();
+const slotCount = (page: Page, slot: string | number) =>
+	page.locator(`[data-compartment="${slot}"] [data-slot-count]`).textContent();
+const stored = (page: Page) => page.evaluate((k) => JSON.parse(localStorage.getItem(k) || 'null'), KEY);
+
+/** Rend échues les fiches indiquées (passage du temps simulé), éventuellement dans une autre boîte, puis recharge. */
+async function makeDue(page: Page, changes: { index: number; box?: number }[]) {
+	await page.evaluate(
+		({ k, changes }) => {
+			const s = JSON.parse(localStorage.getItem(k)!);
+			const ids = Object.keys(s.cards);
+			for (const c of changes) {
+				s.cards[ids[c.index]].nextReview = '2020-01-01';
+				if (c.box) s.cards[ids[c.index]].box = c.box;
+			}
+			localStorage.setItem(k, JSON.stringify(s));
+		},
+		{ k: KEY, changes },
+	);
+	await page.reload();
+	await page.waitForSelector('#leitner-app[data-ready="true"]');
+}
 
 /** Découvre `n` questions en répondant toujours `result`, puis revient à l'accueil. */
 async function discover(page: Page, n: number, result: 'known' | 'forgotten') {
@@ -78,7 +101,8 @@ describe.skipIf(!BUILT)('Boîte de Leitner de Pot-Bouille (/pot-bouille-leitner)
 			expect(await line(page, 'due')).toBe('Aucune question à revoir pour l’instant');
 			expect(await line(page, 'new')).toBe('8 nouvelles questions disponibles');
 			expect(await line(page, 'mastered')).toBe('0 question maîtrisée');
-			// Trois choix simples ; ni graphique ni boîtes sur l’écran d’accueil.
+			// Trois choix simples ; la zone d’action reste sans vocabulaire technique
+			// (la boîte elle-même est affichée au-dessus, voir les tests « boîte »).
 			expect(await page.locator('[data-choice]').count()).toBe(3);
 			expect(await page.locator('.lb-home').innerText()).not.toMatch(/[Bb]oîte/);
 			// Statistiques, liste complète, réglages et méthode : repliés dans « Voir ma progression ».
@@ -569,6 +593,313 @@ describe.skipIf(!BUILT)('Boîte de Leitner de Pot-Bouille (/pot-bouille-leitner)
 			expect(colors.body).toBe('rgb(19, 21, 26)');
 		} finally {
 			await context.close();
+		}
+	});
+
+	// ------------------------------------------------------------------ Boîte physique
+
+	test('boîte : bac des nouvelles et cinq compartiments, intervalles réels, comptes et piles', async () => {
+		const { context, page, errors } = await open();
+		try {
+			expect(await page.locator('[data-compartment]').count()).toBe(6);
+			expect(await page.locator('.lb-compartments [data-compartment]').count()).toBe(5);
+			for (const b of BOXES) {
+				const slot = page.locator(`[data-compartment="${b}"]`);
+				expect(await slot.locator('.lb-slot-num').innerText()).toBe(String(b));
+				expect(await slot.locator('.lb-slot-interval').innerText()).toBe(intervalShort(BOX_INTERVAL_DAYS[b]));
+				expect(await slot.getAttribute('aria-label')).toBe(
+					`Compartiment ${b}, révision ${intervalLabel(BOX_INTERVAL_DAYS[b])} : 0 fiche`,
+				);
+				expect(await slotCount(page, b)).toBe('0 fiche');
+				expect(await slot.locator('[data-slot-flag]').isVisible()).toBe(false);
+			}
+			expect(await slotCount(page, 'new')).toBe('100 fiches');
+			expect(await page.locator('[data-compartment="new"] [data-slot-flag]').innerText()).toBe('8 à découvrir');
+			expect(await page.locator('.lb-box-rule').innerText()).toContain('retour au compartiment 1');
+
+			// 3 fiches sues, 1 oubliée : 3 au compartiment 2, 1 au compartiment 1 (à revoir aujourd’hui).
+			await page.click('[data-choice="decouverte"]');
+			for (const result of ['known', 'known', 'known', 'forgotten']) {
+				await page.click('[data-reveal]');
+				await page.click(`[data-assess="${result}"]`);
+			}
+			await page.click('[data-session-quit]');
+			await page.click('[data-summary-back]');
+			const check = async () => {
+				expect(await slotCount(page, 'new')).toBe('96 fiches');
+				expect(await slotCount(page, 1)).toBe('1 fiche');
+				expect(await slotCount(page, 2)).toBe('3 fiches');
+				expect(await slotCount(page, 3)).toBe('0 fiche');
+				expect(await page.locator('[data-compartment="2"] .lb-sheet').count()).toBe(3);
+				expect(await page.locator('[data-compartment="2"] .lb-sheet.is-due').count()).toBe(0);
+				expect(await page.locator('[data-compartment="1"] .lb-sheet.is-due').count()).toBe(1);
+				// Échéance signalée par un texte, pas seulement par une couleur.
+				expect(await page.locator('[data-compartment="1"] [data-slot-flag]').textContent()).toBe('1 à revoir');
+				expect(await page.locator('[data-compartment="1"]').getAttribute('aria-label')).toContain('dont 1 à revoir aujourd’hui');
+				expect(await page.locator('[data-compartment="2"] [data-slot-flag]').isVisible()).toBe(false);
+			};
+			await check();
+			await page.reload();
+			await page.waitForSelector('#leitner-app[data-ready="true"]');
+			await check(); // persistance après rechargement
+			expect(errors).toEqual([]);
+		} finally {
+			await context.close();
+		}
+	});
+
+	test('compartiment choisi : ses fiches et leur état, au clavier, sans modifier la progression', async () => {
+		const { context, page } = await open();
+		try {
+			await discover(page, 3, 'known');
+			await makeDue(page, [{ index: 1 }]);
+			const before = await page.evaluate((k) => localStorage.getItem(k), KEY);
+			const drawer = page.locator('[data-drawer]');
+			expect(await drawer.isVisible()).toBe(false);
+
+			await page.focus('[data-compartment="2"]');
+			await page.keyboard.press('Enter');
+			expect(await page.locator('[data-compartment="2"]').getAttribute('aria-expanded')).toBe('true');
+			expect(await page.locator('[data-compartment="3"]').getAttribute('aria-expanded')).toBe('false');
+			expect(await drawer.isVisible()).toBe(true);
+			expect(await page.locator('[data-drawer-title]').innerText()).toBe('Compartiment 2 · révision après 1 jour');
+			expect(await page.locator('[data-drawer-summary]').innerText()).toMatch(/^3 fiches, dont 1 à revoir aujourd’hui\./);
+			const items = page.locator('[data-drawer-list] > li');
+			expect(await items.count()).toBe(3);
+			// Les fiches échues d’abord, signalées par un texte et un repère.
+			expect(await items.first().getAttribute('data-due')).toBe('true');
+			expect(await items.first().locator('.lb-drawer-status').innerText()).toContain('À revoir aujourd’hui');
+			expect(await items.nth(1).locator('.lb-drawer-status').innerText()).toContain('Prochaine révision : demain');
+			expect(await page.locator('[data-drawer-list] > li[data-due="true"]').count()).toBe(1);
+
+			// Espace sur un autre compartiment : le tiroir change.
+			await page.focus('[data-compartment="3"]');
+			await page.keyboard.press('Space');
+			expect(await page.locator('[data-drawer-title]').innerText()).toBe('Compartiment 3 · révision après 3 jours');
+			expect(await page.locator('[data-drawer-summary]').innerText()).toContain('vide');
+			expect(await page.locator('[data-compartment="2"]').getAttribute('aria-expanded')).toBe('false');
+			// Échap referme et rend le focus au compartiment.
+			await page.focus('[data-drawer-close]');
+			await page.keyboard.press('Escape');
+			expect(await drawer.isVisible()).toBe(false);
+			expect(await page.evaluate(() => (document.activeElement as HTMLElement).dataset.compartment)).toBe('3');
+			const outline = await page.evaluate(() => getComputedStyle(document.activeElement!).outlineStyle);
+			expect(outline).not.toBe('none');
+
+			// Bac des nouvelles : les prochaines fiches à découvrir aujourd’hui.
+			await page.click('[data-compartment="new"]');
+			expect(await page.locator('[data-drawer-title]').innerText()).toBe('Nouvelles fiches');
+			expect(await items.count()).toBe(5);
+			// Un second clic referme.
+			await page.click('[data-compartment="new"]');
+			expect(await drawer.isVisible()).toBe(false);
+
+			// Inspecter une fiche : elle s’ouvre dans « Toutes les questions ».
+			await page.click('[data-compartment="2"]');
+			const id = await items.first().getAttribute('data-card-id');
+			await items.first().locator('button').click();
+			expect(await page.locator('[data-fold="browse"]').getAttribute('open')).not.toBeNull();
+			expect(await page.locator(`#carte-${id} details`).getAttribute('open')).not.toBeNull();
+			expect(await page.locator(`#carte-${id} [data-box-chip]`).innerText()).toBe('Compartiment 2');
+			expect(await page.evaluate((k) => localStorage.getItem(k), KEY)).toBe(before);
+		} finally {
+			await context.close();
+		}
+	});
+
+	test('mouvement : « Je savais » range la fiche au compartiment suivant, « À revoir » la renvoie au 1', async () => {
+		const { context, page, errors } = await open();
+		try {
+			await discover(page, 3, 'known'); // 3 fiches au compartiment 2
+			await makeDue(page, [{ index: 0 }, { index: 1 }, { index: 2, box: 5 }]);
+			const ids = Object.keys((await stored(page)).cards);
+			expect(await slotCount(page, 5)).toBe('1 fiche');
+			await page.click('[data-start]');
+			expect(await page.locator('#leitner-app').getAttribute('data-view')).toBe('session');
+			// La boîte reste visible pendant la séance, sans consultation possible.
+			expect(await page.locator('[data-box-section]').isVisible()).toBe(true);
+			expect(await page.locator('[data-compartment="2"]').isDisabled()).toBe(true);
+
+			// Ordre de révision : compartiments bas d’abord. Fiche 1 : compartiment 2 → 3.
+			expect(await page.locator('[data-card-origin]').innerText()).toBe('Compartiment 2');
+			expect(await page.locator('[data-compartment="2"]').getAttribute('class')).toContain('is-source');
+			await page.click('[data-reveal]');
+			expect(await page.locator('[data-assess-dest="known"]').innerText()).toBe('→ compartiment 3');
+			expect(await page.locator('[data-assess-dest="forgotten"]').innerText()).toBe('→ compartiment 1');
+			const boxesOf = async () => {
+				const cards = (await stored(page)).cards;
+				return [cards[ids[0]].box, cards[ids[1]].box].sort();
+			};
+			await page.click('[data-assess="known"]');
+			expect(await page.locator('.lb-ghost').count()).toBeGreaterThanOrEqual(1); // la fiche vole vers sa place
+			expect(await page.locator('[data-movement]').innerText()).toBe('Fiche rangée dans le compartiment 3 : elle reviendra dans 3 jours.');
+			expect(await slotCount(page, 2)).toBe('1 fiche'); // comptes mis à jour immédiatement
+			expect(await slotCount(page, 3)).toBe('1 fiche');
+			expect(await boxesOf()).toEqual([2, 3]); // état enregistré = mouvement affiché
+			await page.waitForFunction(() => document.querySelectorAll('.lb-ghost').length === 0);
+
+			// Fiche 2 : oubliée, elle retourne au compartiment 1, avec la raison.
+			expect(await page.locator('[data-card-origin]').innerText()).toBe('Compartiment 2');
+			await page.click('[data-reveal]');
+			await page.click('[data-assess="forgotten"]');
+			expect(await page.locator('[data-movement]').innerText()).toBe(
+				'Fiche replacée dans le compartiment 1 : une question oubliée recommence au début, pour revenir plus souvent.',
+			);
+			expect(await page.locator('[data-feedback]').innerText()).toBe('Pas grave. Tu la retrouveras en fin de séance.');
+			expect(await slotCount(page, 1)).toBe('1 fiche');
+			expect(await slotCount(page, 2)).toBe('0 fiche');
+			expect(await boxesOf()).toEqual([1, 3]);
+
+			// Fiche 3 : déjà au compartiment 5 (cas particulier : plafond).
+			expect(await page.locator('[data-card-origin]').innerText()).toBe('Compartiment 5');
+			await page.click('[data-reveal]');
+			expect(await page.locator('[data-assess-dest="known"]').innerText()).toBe('reste au compartiment 5');
+			await page.click('[data-assess="known"]');
+			expect(await page.locator('[data-movement]').innerText()).toBe(
+				'Fiche laissée dans le compartiment 5, le dernier : elle reviendra dans 14 jours.',
+			);
+			expect(await slotCount(page, 5)).toBe('1 fiche');
+
+			// La fiche oubliée revient en fin de séance, depuis le compartiment 1.
+			expect(await page.locator('[data-card-origin]').innerText()).toBe('Compartiment 1');
+			await page.click('[data-reveal]');
+			expect(await page.locator('[data-assess-dest="forgotten"]').innerText()).toBe('reste au compartiment 1');
+			await page.click('[data-assess="known"]');
+
+			// Bilan : ce qui a bougé dans la boîte.
+			expect(await page.locator('#lb-summary-title').innerText()).toBe('Séance terminée !');
+			expect(await page.locator('[data-summary-moves]').innerText()).toBe(
+				'Dans ta boîte : 2 fiches ont avancé, 1 est rangée au compartiment 1, 1 reste au compartiment 5.',
+			);
+			await page.click('[data-summary-back]');
+			expect(await page.locator('[data-compartment="2"]').isDisabled()).toBe(false);
+			await page.reload();
+			await page.waitForSelector('#leitner-app[data-ready="true"]');
+			expect(await slotCount(page, 1)).toBe('0 fiche');
+			expect(await slotCount(page, 2)).toBe('1 fiche');
+			expect(await slotCount(page, 3)).toBe('1 fiche');
+			expect(await slotCount(page, 5)).toBe('1 fiche');
+			expect(errors).toEqual([]);
+		} finally {
+			await context.close();
+		}
+	});
+
+	test('entraînement : la boîte ne bouge pas et le dit', async () => {
+		const { context, page } = await open();
+		try {
+			await discover(page, 2, 'known');
+			await page.waitForFunction(() => document.querySelectorAll('.lb-ghost').length === 0);
+			const counts = () => page.locator('[data-slot-count]').allTextContents();
+			const before = { counts: await counts(), store: await page.evaluate((k) => localStorage.getItem(k), KEY) };
+			await page.click('[data-choice="entrainement"]');
+			await page.click('[data-practice-form] button[type="submit"]');
+			await page.click('[data-reveal]');
+			expect(await page.locator('[data-assess-dest="known"]').isVisible()).toBe(false);
+			await page.click('[data-assess="known"]');
+			expect(await page.locator('.lb-ghost').count()).toBe(0);
+			expect(await page.locator('[data-movement]').innerText()).toBe('Entraînement libre : la fiche reste dans son compartiment.');
+			await page.click('[data-reveal]');
+			await page.click('[data-assess="forgotten"]');
+			expect(await counts()).toEqual(before.counts);
+			expect(await page.evaluate((k) => localStorage.getItem(k), KEY)).toBe(before.store);
+			await page.click('[data-session-quit]');
+			expect(await page.locator('[data-summary-moves]').isVisible()).toBe(false);
+		} finally {
+			await context.close();
+		}
+	});
+
+	test('fiche : recto puis verso, le brouillon reste visible ; animations réduites respectées', async () => {
+		for (const reducedMotion of ['no-preference', 'reduce'] as const) {
+			const context = await browser.newContext({ reducedMotion });
+			const page = await context.newPage();
+			try {
+				await page.goto(URL);
+				await page.waitForSelector('#leitner-app[data-ready="true"]');
+				await page.click('[data-start]');
+				expect(await page.locator('[data-face-front]').isVisible()).toBe(true);
+				expect(await page.locator('[data-index-card]').getAttribute('data-side')).toBe('front');
+				await page.click('.lb-attempt summary');
+				await page.fill('[data-study-attempt]', 'Zola');
+				await page.click('[data-reveal]');
+				// Verso : la question est rappelée, le recto est masqué, le brouillon reste à côté.
+				expect(await page.locator('[data-index-card]').getAttribute('data-side')).toBe('back');
+				expect(await page.locator('[data-face-front]').isVisible()).toBe(false);
+				expect(await page.locator('[data-answer-question]').innerText()).toBe(
+					await page.locator('[data-study-question]').textContent(),
+				);
+				expect(await page.locator('[data-study-attempt]').inputValue()).toBe('Zola');
+				expect(await page.locator('[data-study-attempt]').isVisible()).toBe(true);
+				const turning = await page.evaluate(() =>
+					document.querySelector('[data-index-card]')!.getAnimations().length,
+				);
+				await page.click('[data-assess="known"]');
+				const ghosts = await page.locator('.lb-ghost').count();
+				if (reducedMotion === 'reduce') {
+					expect(turning).toBe(0);
+					expect(ghosts).toBe(0);
+				} else {
+					expect(turning).toBeGreaterThan(0);
+					expect(ghosts).toBeGreaterThan(0);
+				}
+				// Dans les deux cas, la fiche est rangée et le compartiment d’arrivée est signalé.
+				expect(await page.locator('[data-compartment="2"]').getAttribute('class')).toContain('is-receiving');
+				expect(await page.locator('[data-movement]').innerText()).toContain('compartiment 2');
+			} finally {
+				await context.close();
+			}
+		}
+	});
+
+	test('largeurs 375, 390, 768, 1024, 1440 : boîte complète, réglette en séance, sans débordement', async () => {
+		for (const width of [375, 390, 768, 1024, 1440]) {
+			const height = width < 500 ? 700 : 900;
+			const { context, page, errors } = await open(width, height);
+			try {
+				const noOverflow = () => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth);
+				expect(await noOverflow(), `${width}`).toBe(true);
+				const slots = await page.locator('[data-compartment]').evaluateAll((els) =>
+					els.map((e) => {
+						const r = e.getBoundingClientRect();
+						const front = e.querySelector('.lb-slot-front')!;
+						return { left: r.left, right: r.right, top: r.top, w: r.width, h: r.height, clipped: front.scrollWidth > front.clientWidth + 1 };
+					}),
+				);
+				expect(slots).toHaveLength(6);
+				for (const s of slots) {
+					expect(s.left, `${width}`).toBeGreaterThanOrEqual(0);
+					expect(s.right, `${width}`).toBeLessThanOrEqual(width);
+					expect(s.w, `${width}`).toBeGreaterThanOrEqual(44);
+					expect(s.h, `${width}`).toBeGreaterThanOrEqual(44);
+					expect(s.clipped, `${width}`).toBe(false);
+				}
+				// Les cinq compartiments sur une même rangée, sans défilement.
+				const tops = new Set(slots.slice(1).map((s) => Math.round(s.top)));
+				expect(tops.size, `${width}`).toBe(1);
+
+				await page.click('[data-compartment="1"]');
+				expect(await page.locator('[data-drawer]').isVisible()).toBe(true);
+				expect(await noOverflow(), `${width}`).toBe(true);
+
+				await page.click('[data-start]');
+				await page.click('[data-reveal]');
+				await page.locator('[data-assess="known"]').scrollIntoViewIfNeeded();
+				// Réglette collée en haut de l’écran : la fiche y est rangée sous les yeux.
+				const rail = await page.locator('[data-box-section]').boundingBox();
+				expect(rail!.y, `${width}`).toBeGreaterThanOrEqual(-1);
+				expect(rail!.y + rail!.height, `${width}`).toBeLessThan(height * 0.3);
+				const assess = await page.locator('[data-assess="known"]').boundingBox();
+				expect(assess!.y + assess!.height, `${width}`).toBeLessThanOrEqual(height);
+				expect(await noOverflow(), `${width}`).toBe(true);
+				await page.click('[data-assess="known"]');
+				await page.click('[data-session-quit]');
+				expect(await page.locator('[data-summary]').isVisible()).toBe(true);
+				expect(await noOverflow(), `${width}`).toBe(true);
+				expect(errors).toEqual([]);
+			} finally {
+				await context.close();
+			}
 		}
 	});
 
