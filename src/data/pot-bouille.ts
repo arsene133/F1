@@ -3,7 +3,7 @@ import { eur } from '../lib/money/historical-money';
 
 // ==========================================================================
 // Données de la page Pot-Bouille d'Émile Zola (/pot-bouille)
-// Roman des mœurs bourgeoises et des coulisses du 28, rue de Choiseul (1882).
+// Roman des mœurs bourgeoises et des coulisses d’un immeuble de la rue de Choiseul (1882).
 // Les coordonnées sont définies pour le bureau (layout 900 × 560)
 // et pour le mobile (mobileLayout 360 × 740).
 // ==========================================================================
@@ -17,7 +17,7 @@ export const potBouilleCharacters: MapNode[] = [
 		eyebrow: 'L’ambitieux provincial · conquête par les femmes',
 		meta: ['22 ans', 'originaire de Plassans', 'commis puis directeur associé'],
 		description:
-			"Jeune provincial séduisant et calculateur débarquant à Paris. Logé au quatrième étage du 28, rue de Choiseul, il travaille au magasin de nouveautés « Au Bonheur des Dames ». Résolu à réussir, il fait des femmes de l'immeuble l'instrument privilégié de son apprentissage social avant de conquérir le grand commerce.",
+			"Jeune provincial séduisant et calculateur débarquant à Paris. Logé au quatrième étage d'un immeuble neuf de la rue de Choiseul, il travaille au magasin de nouveautés « Au Bonheur des Dames ». Résolu à réussir, il fait des femmes de l'immeuble l'instrument privilégié de son apprentissage social avant de conquérir le grand commerce.",
 		points: [
 			'S’installe à Paris grâce à l’appui de son compatriote Campardon (ch. I)',
 			'Séduit Marie Pichon (ch. IV) puis Berthe (ch. XII) ; Valérie Vabre, elle, repousse ses avances (ch. IV)',
@@ -147,7 +147,7 @@ export const potBouilleCharacters: MapNode[] = [
 		eyebrow: 'Propriétaire de l’immeuble · patriarche avare',
 		meta: ['ancien notaire de Versailles', 'père d’Auguste, Théophile et Clotilde'],
 		description:
-			"Propriétaire imposant de l'immeuble du 28, rue de Choiseul. Il refuse d'aider ses enfants de son vivant et consacre ses journées à un illusoire travail de compilation statistique. Frappé d'une attaque d'apoplexie au chapitre X, il meurt au chapitre XI sans testament et sans la fortune espérée, ce qui déchire ses héritiers.",
+			"Propriétaire imposant de l'immeuble de la rue de Choiseul. Il refuse d'aider ses enfants de son vivant et consacre ses journées à un illusoire travail de compilation statistique. Frappé d'une attaque d'apoplexie au chapitre X, il meurt au chapitre XI sans testament et sans la fortune espérée, ce qui déchire ses héritiers.",
 		points: [
 			'Incarne la figure tutélaire de l’ordre et de la propriété bourgeoise (ch. I)',
 			'Refuse d’aider financièrement ses fils malgré leurs supplications (ch. X)',
@@ -255,7 +255,7 @@ export const potBouilleCharacters: MapNode[] = [
 		description:
 			"Architecte jovial travaillant pour les édifices religieux, logé au troisième étage. Compatriote provençal d'Octave, il lui trouve son logement. À la demande de sa femme Rose (née Domergue), souffrante, il laisse s'installer au domicile conjugal la cousine de celle-ci, Gasparine, qui est sa maîtresse, dans une harmonie bourgeoise cynique.",
 		points: [
-			'Accueille Octave et lui loue sa chambre au 28, rue de Choiseul (ch. I)',
+			'Accueille Octave et lui loue sa chambre dans l’immeuble de la rue de Choiseul (ch. I)',
 			'Gère les travaux d’églises tout en affichant une dévotion de façade (ch. IV)',
 			'Accueille sa maîtresse Gasparine sous le toit conjugal aux côtés de son épouse Rose (ch. IX)',
 			'Fait l’éloge de la paix domestique retrouvée grâce à cette cohabitation (ch. IX)',
@@ -342,7 +342,7 @@ export const potBouilleCharacters: MapNode[] = [
 		eyebrow: 'Gardien de la respectabilité · mépris des humbles',
 		meta: ['ancien valet de chambre du duc de Vaugelade', 'loge du rez-de-chaussée'],
 		description:
-			"Ancien valet enrichi devenu concierge de l'immeuble avec son épouse. Gardien intransigeant des apparences bourgeoises du 28, rue de Choiseul, il traque sans pitié les infractions au règlement, déteste les ouvriers et méprise férocement les gens de service.",
+			"Ancien valet enrichi devenu concierge de l'immeuble avec son épouse. Gardien intransigeant des apparences bourgeoises de l'immeuble de la rue de Choiseul, il traque sans pitié les infractions au règlement, déteste les ouvriers et méprise férocement les gens de service.",
 		points: [
 			'Interdit formellement les bruits, malles et désordres dans l’escalier (ch. I)',
 			'Vénère la façade de respectabilité tout en méprisant les locataires pauvres (ch. IV)',
@@ -525,7 +525,7 @@ export const potBouilleRelationships: MapRelationship[] = [
 		type: 'social',
 		label: 'protecteur provincial',
 		description:
-			"Compatriote de Plassans, l'architecte Campardon accueille Octave Mouret à Paris, lui déniche sa chambre meublée au 28, rue de Choiseul et le fait engager chez les Hédouin (ch. I).",
+			"Compatriote de Plassans, l'architecte Campardon accueille Octave Mouret à Paris, lui déniche sa chambre meublée rue de Choiseul et le fait engager chez les Hédouin (ch. I).",
 		labelDx: 0,
 		labelDy: -12,
 		mLabelDx: 0,
@@ -717,7 +717,7 @@ export const potBouilleRelationships: MapRelationship[] = [
 ];
 
 // ==========================================================================
-// Tableau de synthèse : Qui anime l'immeuble du 28, rue de Choiseul ?
+// Tableau de synthèse : Qui anime l'immeuble de la rue de Choiseul ?
 // ==========================================================================
 export const potBouilleFunctions: Record<string, string> = {
 	mouret: 'Moteur de l’intrigue · conquérant',
@@ -745,7 +745,7 @@ export const potBouilleFunctions: Record<string, string> = {
 export const potBouilleMechanism = [
 	{
 		step: 'Façade',
-		text: 'Au 28, rue de Choiseul, un immeuble haussmannien feint la plus stricte respectabilité bourgeoise.',
+		text: 'Rue de Choiseul, un immeuble haussmannien feint la plus stricte respectabilité bourgeoise.',
 	},
 	{
 		step: 'Mariage',

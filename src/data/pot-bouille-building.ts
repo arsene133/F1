@@ -1,6 +1,6 @@
 import { eur } from '../lib/money/historical-money';
 // ==========================================================================
-// Données architecturales de l'immeuble du 28, rue de Choiseul (Pot-Bouille)
+// Données architecturales de l'immeuble de la rue de Choiseul (Pot-Bouille)
 // Coupe architecturale narrative conforme au texte d'Émile Zola (1882)
 // ==========================================================================
 

@@ -201,7 +201,7 @@ describe('Modèle de données de Pot-Bouille (src/data/pot-bouille.ts)', () => {
 	});
 });
 
-describe('Coupe architecturale du 28, rue de Choiseul (src/data/pot-bouille-building.ts)', () => {
+describe('Coupe architecturale de l’immeuble de la rue de Choiseul (src/data/pot-bouille-building.ts)', () => {
 	test('tous les étages sont définis du rez-de-chaussée aux combles', () => {
 		const levels = potBouilleBuildingFloors.map((f: BuildingFloor) => f.level);
 		expect(levels).toEqual([5, 4, 3, 2, 1, 0, -1]);

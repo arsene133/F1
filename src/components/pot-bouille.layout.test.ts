@@ -88,7 +88,9 @@ describe.skipIf(!BUILT)('Carte relationnelle de Pot-Bouille (/pot-bouille) — r
 			// Ancre de l'adresse de l'immeuble
 			const anchor = page.locator('.rm-anchor');
 			expect(await anchor.count()).toBe(1);
-			expect(await anchor.textContent()).toContain('28, rue de Choiseul');
+			expect(await anchor.textContent()).toContain('Rue de Choiseul');
+			// Le roman ne donne pas de numéro à l’immeuble (ch. I, éd. Charpentier 1883).
+			expect(await anchor.textContent()).not.toMatch(/\b28\b/);
 
 			// Nœuds rendus
 			const nodes = page.locator('.rm-node');
