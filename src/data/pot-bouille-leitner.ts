@@ -317,7 +317,7 @@ export const potBouilleLeitnerCards: LeitnerCard[] = [
 		skill: 'connaitre',
 		question: 'Qui est Octave Mouret au début du roman ?',
 		answer:
-			'Un jeune homme de vingt-deux ans, venu de Plassans (en Provence), qui arrive à Paris pour faire fortune. Il devient commis au magasin de nouveautés Au Bonheur des Dames.',
+			'Un jeune homme de vingt-deux ans, venu de Plassans (en Provence) après trois ans dans le commerce à Marseille, qui arrive à Paris pour faire fortune. Il devient commis au magasin de nouveautés Au Bonheur des Dames.',
 		focus: ['Octave Mouret'],
 		reference: 'ch. I',
 	},
@@ -420,8 +420,9 @@ export const potBouilleLeitnerCards: LeitnerCard[] = [
 		skill: 'connaitre',
 		question: 'Comment Pot-Bouille est-il reçu à sa parution en 1882 ?',
 		answer:
-			'Il fait scandale : une partie de la presse accuse Zola de calomnier les familles bourgeoises et de se complaire dans l’ordure. Des caricaturistes s’en moquent, comme André Gill avec « Le Pot-Bouille à Zola ».',
-		explanation: 'Cette indignation montre que la satire a touché juste : les lecteurs bourgeois se sont reconnus.',
+			'Il fait scandale : une partie de la presse accuse Zola de calomnier les familles bourgeoises et de se complaire dans l’ordure. Des caricaturistes s’en moquent, comme André Gill avec « Le Pot-Bouille à Zola » (La Nouvelle Lune, avril 1882).',
+		explanation:
+			'Cette indignation montre que la satire a touché juste : les lecteurs bourgeois se sont reconnus. Un avocat, Charles Duverdy, attaque même Zola en justice parce que le magistrat du roman porte son nom : le personnage est rebaptisé Duveyrier.',
 		focus: ['Réception'],
 	},
 
@@ -496,10 +497,10 @@ export const potBouilleLeitnerCards: LeitnerCard[] = [
 		skill: 'connaitre',
 		question: 'Comment se fait le mariage de Berthe Josserand ?',
 		answer:
-			'Après des années de chasse au mari menée par sa mère, Berthe épouse Auguste Vabre. Mme Josserand a promis une dot de cinquante mille francs qu’elle ne peut pas payer.',
+			'Après des années de chasse au mari menée par sa mère, Berthe épouse Auguste Vabre. Les Josserand promettent une dot de cinquante mille francs, payable par versements de dix mille francs et soi-disant garantie par une assurance qui n’existe plus : ils n’ont pas de quoi la payer.',
 		explanation: 'Le mariage est conclu comme une affaire, et cette dette jamais réglée empoisonne ensuite le ménage.',
 		focus: ['Berthe', 'Auguste Vabre', 'Mme Josserand'],
-		reference: 'ch. V, VIII',
+		reference: 'ch. V, VII-VIII',
 	},
 	{
 		id: 'perso-berthe-heritage',
@@ -558,7 +559,7 @@ export const potBouilleLeitnerCards: LeitnerCard[] = [
 		skill: 'connaitre',
 		question: 'Que se passe-t-il à la mort du vieux Vabre, le propriétaire ?',
 		answer:
-			'Ses enfants s’attendaient à un gros héritage. Mais il ne laisse ni testament ni fortune, et Auguste, Théophile et Clotilde se déchirent pour la succession.',
+			'Ses enfants s’attendaient à un gros héritage. Mais il ne laisse pas de testament et a tout perdu en jouant à la Bourse : il ne reste que l’immeuble, lourdement hypothéqué. Auguste, Théophile et Clotilde se déchirent pour la succession, et Duveyrier rachète la maison à bas prix.',
 		explanation: 'Autour du lit de mort, l’argent passe avant le deuil : la scène montre la cupidité de la famille Vabre.',
 		focus: ['Le vieux Vabre', 'Famille Vabre'],
 		reference: 'ch. X-XI',
@@ -583,7 +584,7 @@ export const potBouilleLeitnerCards: LeitnerCard[] = [
 		answer:
 			'Conseiller à la cour d’appel, il représente la loi et la morale. Pourtant, il fuit son foyer pour entretenir une maîtresse, Clarisse.',
 		explanation:
-			'Le juge qui condamne les autres ne respecte pas lui-même la morale qu’il défend. Abandonné par Clarisse, il tente même de se suicider (ch. XVII).',
+			'Le juge qui condamne les autres ne respecte pas lui-même la morale qu’il défend. Humilié par Clarisse, qu’il a retrouvée après qu’elle l’a quitté (ch. X), et méprisé par sa femme, il tente même de se suicider (ch. XVII).',
 		focus: ['Duveyrier', 'Clotilde Duveyrier'],
 		reference: 'ch. VII, X, XVII',
 	},
@@ -618,7 +619,7 @@ export const potBouilleLeitnerCards: LeitnerCard[] = [
 		skill: 'comprendre',
 		question: 'Comment l’éducation de Marie Pichon explique-t-elle qu’elle cède facilement à Octave ?',
 		answer:
-			'Ses parents, les Vuillaume, l’ont élevée dans l’ignorance, et sa seule lecture avant le mariage a été un roman sentimental de George Sand. Mariée à un petit employé, elle s’ennuie et devient la première conquête d’Octave.',
+			'Ses parents, les Vuillaume, l’ont élevée dans l’ignorance, et le seul roman qu’on lui a permis, quelques mois avant son mariage, est André, de George Sand. Mariée à un petit employé, elle s’ennuie et devient la première conquête d’Octave.',
 		explanation: 'Zola montre qu’une éducation fondée sur l’ignorance ne protège pas les jeunes filles : elle les rend au contraire vulnérables.',
 		focus: ['Marie Pichon', 'Les Vuillaume'],
 		quotation: Q.garderIgnorance,
@@ -730,9 +731,9 @@ export const potBouilleLeitnerCards: LeitnerCard[] = [
 		skill: 'connaitre',
 		question: 'Qu’est-ce qu’une dot, et quel rôle joue-t-elle dans le mariage de Berthe ?',
 		answer:
-			'La somme apportée par la famille de l’épouse au moment du mariage. Mme Josserand promet cinquante mille francs à Auguste, mais ne les verse jamais : la dot devient la source des disputes du couple.',
+			'La somme apportée par la famille de l’épouse au moment du mariage. Les Josserand promettent cinquante mille francs à Auguste, mais ne les versent jamais : la dot devient la source des disputes du couple.',
 		focus: ['Mariage et intérêts économiques', 'Berthe', 'Auguste Vabre'],
-		reference: 'ch. V, VIII, XII',
+		reference: 'ch. VII, XII, XVI',
 	},
 	{
 		id: 'theme-mariage-marche',
@@ -755,9 +756,9 @@ export const potBouilleLeitnerCards: LeitnerCard[] = [
 		skill: 'comprendre',
 		question: 'Pourquoi l’adultère est-il toléré dans l’immeuble tant qu’il reste caché ?',
 		answer:
-			'Parce que ce qui compte pour ces bourgeois n’est pas la morale réelle, mais la réputation. Campardon, Duveyrier ou Valérie trompent leur conjoint sans scandale ; l’affaire de Berthe ne devient grave que lorsqu’elle éclate au grand jour.',
+			'Parce que ce qui compte pour ces bourgeois n’est pas la morale réelle, mais la réputation. Campardon ou Duveyrier trompent leur femme sans scandale, et l’éclat de Théophile contre Valérie, au mariage de Berthe, est vite étouffé ; l’affaire de Berthe ne devient grave que lorsqu’elle éclate au grand jour.',
 		focus: ['Adultère et morale'],
-		reference: 'ch. IX, XIV-XV',
+		reference: 'ch. VIII-IX, XIV-XV',
 	},
 	{
 		id: 'theme-condition-feminine',
@@ -813,7 +814,7 @@ export const potBouilleLeitnerCards: LeitnerCard[] = [
 		skill: 'comprendre',
 		question: 'Que révèle la façon dont M. Gourd traite la piqueuse de bottines enceinte ?',
 		answer:
-			'Que la « respectabilité » de l’immeuble est une affaire de classe sociale : le concierge chasse l’ouvrière pauvre, alors qu’il ferme les yeux sur les fautes des bourgeois.',
+			'Que la « respectabilité » de l’immeuble est une affaire de classe sociale : le propriétaire refuse de la garder jusqu’à ses couches, et le concierge, qui surveillait son ventre avec horreur, la voit partir avec soulagement, alors qu’il ferme les yeux sur les fautes des bourgeois.',
 		focus: ['Domination sociale', 'M. Gourd'],
 		quotation: Q.duPeupleChezSoi,
 		reference: 'ch. XI, XIII',
@@ -837,7 +838,7 @@ export const potBouilleLeitnerCards: LeitnerCard[] = [
 		skill: 'comprendre',
 		question: 'À quelle condition la réconciliation de Berthe et d’Auguste est-elle négociée, et par qui ?',
 		answer:
-			'Auguste accepte de reprendre Berthe à condition que les Josserand paient enfin la dot. C’est l’abbé Mauduit qui est chargé de porter ces conditions.',
+			'Sur une idée de Duveyrier, Auguste propose de reprendre Berthe si les Josserand paient enfin la dot ; Clotilde charge l’abbé Mauduit de porter ces conditions. Mme Josserand refuse, et Auguste finit par reprendre sa femme sans avoir reçu la dot, le jour de l’enterrement de M. Josserand.',
 		explanation:
 			'Clotilde assure que « ce n’est pas un marché », alors que c’en est un : la religion sert de paravent à une transaction d’argent.',
 		focus: ['Religion et respectabilité', 'Mariage et intérêts économiques'],
@@ -1172,7 +1173,7 @@ export const potBouilleLeitnerCards: LeitnerCard[] = [
 		skill: 'comprendre',
 		question: 'Comment Zola dévoile-t-il les contradictions de la respectabilité bourgeoise ?',
 		answer:
-			'En montrant systématiquement l’envers de chaque façade : le magistrat a une maîtresse, la mère vertueuse vend sa fille, le prêtre couvre les fautes, le concierge chasse les pauvres mais pas les riches. L’ironie du narrateur souligne l’écart.',
+			'En montrant systématiquement l’envers de chaque façade : le magistrat a une maîtresse, la mère vertueuse vend sa fille, le prêtre couvre les fautes, le concierge s’acharne sur les pauvres mais ferme les yeux sur les riches. L’ironie du narrateur souligne l’écart.',
 		focus: ['Hypocrisie bourgeoise'],
 	},
 	{
@@ -1194,9 +1195,9 @@ export const potBouilleLeitnerCards: LeitnerCard[] = [
 		skill: 'comprendre',
 		question: 'Comment le mariage et l’argent déterminent-ils les relations entre les personnages ?',
 		answer:
-			'Les mariages se négocient comme des contrats (dot promise de Berthe), les liens familiaux se mesurent à l’héritage (mort du vieux Vabre) et même la réconciliation finale dépend du paiement de la dot.',
+			'Les mariages se négocient comme des contrats (dot promise de Berthe), les liens familiaux se mesurent à l’héritage (mort du vieux Vabre) et même la réconciliation finale est d’abord négociée contre le paiement de la dot.',
 		focus: ['Mariage et intérêts économiques', 'Argent'],
-		reference: 'ch. VIII, XI, XVII',
+		reference: 'ch. VII, XI, XVII',
 	},
 	{
 		id: 'interp-octave-ascension',
@@ -1249,7 +1250,7 @@ export const potBouilleLeitnerCards: LeitnerCard[] = [
 		skill: 'comprendre',
 		question: 'Pourquoi le scandale de Berthe est-il étouffé plutôt que réellement sanctionné ?',
 		answer:
-			'Parce que ce que redoute la bourgeoisie, c’est le bruit, pas la faute. Une fois la réputation sauvée et la question de la dot réglée, chacun a intérêt à faire comme si rien ne s’était passé.',
+			'Parce que ce que redoute la bourgeoisie, c’est le bruit, pas la faute. Une fois Berthe revenue chez son mari, même sans que la dot ait été payée, chacun a intérêt à faire comme si rien ne s’était passé.',
 		focus: ['Vie privée et conventions sociales', 'Berthe'],
 		reference: 'ch. XVII',
 	},
