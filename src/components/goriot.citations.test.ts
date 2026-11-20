@@ -35,5 +35,14 @@ describe('Citations de /goriot hors données : conformité au fac-similé de 191
 		// p. 342-343
 		expect(page).toContain('des deux rives de la Seine, où commençaient à briller les lumières. Ses yeux');
 		expect(page).toContain('et dit ces mots grandioses : — À nous deux maintenant !');
+		// Partie I (note Swedenborg) : « implique la personne », et non « sa personne »
+		expect(page).toContain('« enfin toute sa personne explique la pension, comme la pension implique la personne. »');
+		expect(page).not.toContain('comme la pension implique sa personne');
+		// Avant-propos de La Comédie humaine, éd. Houssiaux 1855, t. I, p. 18 et 23
+		expect(page).toContain('des écrivains mystiques qui se sont occupés des sciences dans leurs relations avec l’infini, tels que Swedenborg, Saint-Martin, etc.');
+		expect(page).toContain('les rudiments de la belle loi du soi pour soi sur laquelle repose l’unité de composition.');
+		expect(page).toContain('« comparaison entre l’Humanité et l’Animalité »');
+		expect(page).toContain('« Espèces Sociales »');
+		expect(page).toContain('« si la pensée, ou la passion, qui comprend la pensée et le sentiment, est l’élément social, elle en est aussi l’élément destructeur. »');
 	});
 });
